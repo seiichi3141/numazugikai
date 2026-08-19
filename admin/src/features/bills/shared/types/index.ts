@@ -18,7 +18,22 @@ export type BillWithContent = Bill & {
 
 export type BillWithCouncilSession = Bill & {
   council_sessions: { name: string } | null;
+  /** 本会議での討論。賛成・反対の立場表明があったかを見るために持つ */
+  bill_debates: { stance: "for" | "against" }[];
 };
+
+/**
+ * 議案の討論状況を数える。
+ *
+ * 市長提出議案はほとんどが可決されるため、議決結果だけでは
+ * 議論のあった議案が分からない。討論の有無がその手がかりになる。
+ */
+export function countDebateStances(
+  debates: ReadonlyArray<{ stance: "for" | "against" }>
+): { for: number; against: number; total: number } {
+  const against = debates.filter((d) => d.stance === "against").length;
+  return { for: debates.length - against, against, total: debates.length };
+}
 
 import type { SortConfig } from "@/lib/sort";
 

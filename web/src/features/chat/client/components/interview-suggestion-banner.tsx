@@ -1,5 +1,5 @@
-import type { Route } from "next";
 import { ArrowRight, BotMessageSquare, Check } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getInterviewLPLink } from "@/features/interview-config/shared/utils/interview-links";

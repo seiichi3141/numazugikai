@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { SOCIAL_LINKS, getSocialLinksArray } from "./social-links";
+import { getSocialLinksArray, SOCIAL_LINKS } from "./social-links";
 
 describe("getSocialLinksArray", () => {
   it("returns an array", () => {

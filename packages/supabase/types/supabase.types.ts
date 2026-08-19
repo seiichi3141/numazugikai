@@ -93,6 +93,60 @@ export type Database = {
           },
         ]
       }
+      bill_debates: {
+        Row: {
+          bill_id: string
+          council_member_id: string | null
+          created_at: string
+          id: string
+          seat_number: number | null
+          source_url: string
+          speaker_name: string
+          stance: Database["public"]["Enums"]["debate_stance_enum"]
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          bill_id: string
+          council_member_id?: string | null
+          created_at?: string
+          id?: string
+          seat_number?: number | null
+          source_url: string
+          speaker_name: string
+          stance: Database["public"]["Enums"]["debate_stance_enum"]
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bill_id?: string
+          council_member_id?: string | null
+          created_at?: string
+          id?: string
+          seat_number?: number | null
+          source_url?: string
+          speaker_name?: string
+          stance?: Database["public"]["Enums"]["debate_stance_enum"]
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_debates_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_debates_council_member_id_fkey"
+            columns: ["council_member_id"]
+            isOneToOne: false
+            referencedRelation: "council_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bills: {
         Row: {
           bill_number: string | null
@@ -107,6 +161,7 @@ export type Database = {
           created_at: string
           decided_on: string | null
           document_url: string | null
+          explanation_source: string | null
           id: string
           is_featured: boolean
           is_review_completed: boolean
@@ -141,6 +196,7 @@ export type Database = {
           created_at?: string
           decided_on?: string | null
           document_url?: string | null
+          explanation_source?: string | null
           id?: string
           is_featured?: boolean
           is_review_completed?: boolean
@@ -175,6 +231,7 @@ export type Database = {
           created_at?: string
           decided_on?: string | null
           document_url?: string | null
+          explanation_source?: string | null
           id?: string
           is_featured?: boolean
           is_review_completed?: boolean
@@ -1738,6 +1795,7 @@ export type Database = {
       chat_role_enum: "user" | "system" | "assistant"
       committee_kind_enum: "standing" | "steering" | "special"
       council_session_kind_enum: "regular" | "extraordinary"
+      debate_stance_enum: "for" | "against"
       difficulty_level_enum: "normal" | "hard"
       faction_vote_enum: "for" | "against" | "split" | "excluded"
       interview_config_status_enum: "public" | "closed"
@@ -1935,6 +1993,7 @@ export const Constants = {
       chat_role_enum: ["user", "system", "assistant"],
       committee_kind_enum: ["standing", "steering", "special"],
       council_session_kind_enum: ["regular", "extraordinary"],
+      debate_stance_enum: ["for", "against"],
       difficulty_level_enum: ["normal", "hard"],
       faction_vote_enum: ["for", "against", "split", "excluded"],
       interview_config_status_enum: ["public", "closed"],

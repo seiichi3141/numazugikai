@@ -2,9 +2,9 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { getCardStatusLabel } from "../../../shared/utils/bill-status";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
-import { getCardStatusLabel } from "../../../shared/utils/bill-status";
 
 interface CompactBillCardProps {
   bill: BillWithContent;

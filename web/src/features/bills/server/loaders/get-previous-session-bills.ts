@@ -6,10 +6,10 @@ import type { CouncilSession } from "@/features/council-sessions/shared/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillWithContent } from "../../shared/types";
 import {
+  countPublishedBillsByCouncilSession,
+  findBillIdsWithPublicInterview,
   findPreviousSessionBills,
   findTagsByBillIds,
-  findBillIdsWithPublicInterview,
-  countPublishedBillsByCouncilSession,
 } from "../repositories/bill-repository";
 
 const MAX_PREVIEW_BILLS = 5;

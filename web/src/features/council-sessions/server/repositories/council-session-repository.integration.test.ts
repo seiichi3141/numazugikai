@@ -1,12 +1,12 @@
-import { describe, it, expect, afterEach } from "vitest";
 import {
-  createTestCouncilSession,
   cleanupTestCouncilSession,
+  createTestCouncilSession,
 } from "@test-utils/utils";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   findActiveCouncilSession,
-  findCurrentCouncilSession,
   findCouncilSessionBySlug,
+  findCurrentCouncilSession,
   findPreviousCouncilSession,
 } from "./council-session-repository";
 

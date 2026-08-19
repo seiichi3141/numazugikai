@@ -1,4 +1,4 @@
-import { MockLanguageModelV3, convertArrayToReadableStream } from "ai/test";
+import { convertArrayToReadableStream, MockLanguageModelV3 } from "ai/test";
 
 const MOCK_FINISH_REASON = {
   unified: "stop" as const,

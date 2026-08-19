@@ -29,6 +29,7 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=ingest --target=sessions                   # 定例会の会期予定
  *   tsx src/main.ts --mode=ingest --target=members                    # 会派・議員
  *   tsx src/main.ts --mode=ingest --target=bills                      # 当年の定例会の議案
+ *   tsx src/main.ts --mode=ingest --target=minutes                    # 会議録から議案説明・討論
  *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
  *   tsx src/main.ts --mode=ingest --target=bills --force              # 内容が同じでも取り込み直す
  *
@@ -38,7 +39,13 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
 
 type Mode = "analyze" | "analyze-all" | "backfill" | "tag-backfill" | "ingest";
 
-const INGEST_TARGETS = ["sessions", "members", "bills", "all"] as const;
+const INGEST_TARGETS = [
+  "sessions",
+  "members",
+  "bills",
+  "minutes",
+  "all",
+] as const;
 
 /** --target をパースする。未指定は all。 */
 function parseIngestTarget(value: string | undefined): IngestMode {

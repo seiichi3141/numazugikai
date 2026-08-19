@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  type InterviewMode,
   INTERVIEW_MODES,
+  type InterviewMode,
 } from "@mirai-gikai/shared/interview-prompts/types";
 import { Loader2, Play, Settings2, Square } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";

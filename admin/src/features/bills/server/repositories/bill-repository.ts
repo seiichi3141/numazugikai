@@ -27,7 +27,7 @@ export async function findBillsWithCouncilSessions(
 
   const { data, error } = await supabase
     .from("bills")
-    .select("*, council_sessions(name)")
+    .select("*, council_sessions(name), bill_debates(stance)")
     .order(field, orderOptions);
 
   if (error) {

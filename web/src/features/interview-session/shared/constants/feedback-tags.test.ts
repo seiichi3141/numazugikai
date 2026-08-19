@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   FEEDBACK_RATING_THRESHOLD,
-  FEEDBACK_TAGS,
   FEEDBACK_TAG_LABELS,
+  FEEDBACK_TAGS,
 } from "./feedback-tags";
 
 describe("feedback-tags", () => {

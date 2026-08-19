@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DIFFICULTY_COOKIE_OPTIONS } from "../../shared/types/index";
 import {
-  setDifficultyLevelCore,
   type CookieStore,
+  setDifficultyLevelCore,
 } from "../services/set-difficulty-level-core";
 
 function createMockCookieStore() {

@@ -295,3 +295,108 @@ export async function saveContentHash(record: {
   );
   if (error) throw new Error(`取得記録の保存に失敗した: ${error.message}`);
 }
+
+// ---------------------------------------------------------------
+// 会議録由来の情報
+// ---------------------------------------------------------------
+
+/**
+ * 議案の当局説明を保存する。
+ *
+ * AI解説の材料として使うもので、会議録の全文ではなく当該議案の説明部分のみ。
+ */
+export async function updateBillExplanation(
+  billId: string,
+  explanation: string
+): Promise<void> {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("bills")
+    .update({ explanation_source: explanation })
+    .eq("id", billId);
+  if (error) throw new Error(`議案説明の保存に失敗した: ${error.message}`);
+}
+
+/** 議員名から議員IDを引く。会議録の表記ゆれを吸収するため空白を除いて突合する。 */
+export async function buildMemberIdByName(): Promise<Map<string, string>> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("council_members")
+    .select("id, name");
+  if (error) throw new Error(`議員の取得に失敗した: ${error.message}`);
+
+  const map = new Map<string, string>();
+  for (const row of data ?? []) {
+    map.set(row.name.replace(/[\s\u3000]/g, ""), row.id);
+  }
+  return map;
+}
+
+export type BillDebateUpsert = {
+  billId: string;
+  speakerName: string;
+  seatNumber: number | null;
+  councilMemberId: string | null;
+  stance: "for" | "against";
+  sourceUrl: string;
+};
+
+/** 討論を保存する。同じ議案・議員・立場の組は1件にまとめる。 */
+export async function upsertBillDebate(
+  debate: BillDebateUpsert
+): Promise<void> {
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("bill_debates").upsert(
+    {
+      bill_id: debate.billId,
+      speaker_name: debate.speakerName,
+      seat_number: debate.seatNumber,
+      council_member_id: debate.councilMemberId,
+      stance: debate.stance,
+      source_url: debate.sourceUrl,
+    },
+    { onConflict: "bill_id,speaker_name,stance" }
+  );
+  if (error) throw new Error(`討論の保存に失敗した: ${error.message}`);
+}
+
+/** 会期に属する議案を議案番号で引けるようにする（会議録との突合に使う）。 */
+export async function findBillIdsByNumberForSessions(
+  councilSessionIds: readonly string[]
+): Promise<Map<string, string>> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select("id, bill_number")
+    .in("council_session_id", councilSessionIds);
+  if (error) throw new Error(`議案の取得に失敗した: ${error.message}`);
+
+  return new Map(
+    (data ?? [])
+      .filter((row): row is { id: string; bill_number: string } =>
+        Boolean(row.bill_number)
+      )
+      .map((row) => [row.bill_number, row.id])
+  );
+}
+
+/** slug から会期IDを引く */
+export async function findCouncilSessionIdBySlug(
+  slug: string
+): Promise<string | null> {
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from("council_sessions")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  return data?.id ?? null;
+}
+
+/** DBにあるすべての会期IDを返す（会議録と議案の突合に使う）。 */
+export async function listCouncilSessionIds(): Promise<string[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.from("council_sessions").select("id");
+  if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
+  return (data ?? []).map((row) => row.id);
+}

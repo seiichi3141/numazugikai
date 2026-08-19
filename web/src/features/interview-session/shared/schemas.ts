@@ -1,9 +1,9 @@
-import { z } from "zod";
 import type { ContentRichnessResult } from "@mirai-gikai/shared/content-richness/schemas";
 import {
   type InterviewReportData,
   interviewReportSchema,
 } from "@mirai-gikai/shared/interview-report/schema";
+import { z } from "zod";
 
 // 意見スキーマ・レポートスキーマは web/admin 共通のため @mirai-gikai/shared に集約。
 // 既存の web 内 import を壊さないよう re-export する。

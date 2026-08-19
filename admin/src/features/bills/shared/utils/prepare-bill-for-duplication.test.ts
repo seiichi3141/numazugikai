@@ -21,6 +21,7 @@ const baseBill: Bill = {
   committee_result: null,
   decided_on: null,
   legal_basis: null,
+  explanation_source: null,
   document_url: null,
   is_featured: true,
   is_review_completed: true,

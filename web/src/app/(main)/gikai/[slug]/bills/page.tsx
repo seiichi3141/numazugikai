@@ -3,10 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
-import { routes } from "@/lib/routes";
-import { getCouncilSessionBySlug } from "@/features/council-sessions/server/loaders/get-council-session-by-slug";
 import { getBillsByCouncilSession } from "@/features/bills/server/loaders/get-bills-by-council-session";
 import { CouncilSessionBillList } from "@/features/council-sessions/client/components/council-session-bill-list";
+import { getCouncilSessionBySlug } from "@/features/council-sessions/server/loaders/get-council-session-by-slug";
+import { routes } from "@/lib/routes";
 
 type Props = {
   params: Promise<{ slug: string }>;

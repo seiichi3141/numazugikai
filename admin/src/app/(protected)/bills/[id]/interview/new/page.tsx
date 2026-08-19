@@ -2,9 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { InterviewConfigEditClient } from "@/features/interview-config/client/components/interview-config-edit-client";
 import { generateDefaultConfigName } from "@/features/interview-config/shared/utils/default-config-name";
 import { routes } from "@/lib/routes";

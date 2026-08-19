@@ -1,16 +1,16 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   PromptInput,
   PromptInputBody,
+  PromptInputButton,
+  PromptInputError,
+  PromptInputHint,
+  PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-  PromptInputSubmit,
-  PromptInputError,
-  PromptInputHint,
-  PromptInputButton,
 } from "./prompt-input";
 
 // nanoid をモックして安定した ID を返す

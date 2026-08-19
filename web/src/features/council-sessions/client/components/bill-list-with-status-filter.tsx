@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { BillWithContent } from "@/features/bills/shared/types";
 import { CompactBillCard } from "@/features/bills/client/components/bill-list/compact-bill-card";
+import type { BillWithContent } from "@/features/bills/shared/types";
 import { routes } from "@/lib/routes";
 
 type FilterType = "all" | "passed" | "rejected" | "other";

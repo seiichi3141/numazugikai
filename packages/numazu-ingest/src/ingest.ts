@@ -2,19 +2,22 @@ import { DiscussVisionClient } from "./fetchers/discussvision-client";
 import { NumazuSiteClient } from "./fetchers/numazu-site-client";
 import {
   finishIngestionRun,
+  listCouncilSessionIds,
   startIngestionRun,
 } from "./repositories/ingest-repository";
 import { ingestBillsForSession } from "./services/ingest-bills";
 import { ingestMembers } from "./services/ingest-members";
+import { ingestMinutes } from "./services/ingest-minutes";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
 import { CURRENT_TERM } from "./shared/constants-site";
 
 export { ingestBillsForSession } from "./services/ingest-bills";
 export { ingestMembers } from "./services/ingest-members";
+export { ingestMinutes } from "./services/ingest-minutes";
 export { ingestSessionSchedule } from "./services/ingest-sessions";
 export { CURRENT_TERM } from "./shared/constants-site";
 
-export type IngestMode = "sessions" | "members" | "bills" | "all";
+export type IngestMode = "sessions" | "members" | "bills" | "minutes" | "all";
 
 export type IngestOptions = {
   mode: IngestMode;
@@ -64,6 +67,9 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
     case "bills":
       return ingestBills(options, siteClient);
 
+    case "minutes":
+      return ingestMinutesForYear(options, discussVisionClient);
+
     case "all": {
       const sessions = await ingestSessionSchedule({
         force: options.force,
@@ -71,9 +77,32 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
       });
       const members = await ingestMembers({ client: discussVisionClient });
       const bills = await ingestBills(options, siteClient);
-      return { sessions, members, bills };
+      // 会議録は議案が入っている前提で突合するため最後に流す
+      const minutes = await ingestMinutesForYear(options, discussVisionClient);
+      return { sessions, members, bills, minutes };
     }
   }
+}
+
+/**
+ * 会議録を取り込む。議案との突合に会期IDが要るため、DBにある会期を全部渡す。
+ * 会議録は会期をまたいで議案番号が重複しうるが、突合先を会期集合に限ることで
+ * 直近の会期の議案に寄せる。
+ */
+async function ingestMinutesForYear(
+  options: IngestOptions,
+  client: DiscussVisionClient
+): Promise<unknown> {
+  const year = options.eraYear
+    ? options.eraYear + 2018
+    : new Date().getFullYear();
+  const councilSessionIds = await listCouncilSessionIds();
+  if (councilSessionIds.length === 0) {
+    throw new Error(
+      "会期が1件もない。先に --target=sessions と --target=bills を実行すること"
+    );
+  }
+  return ingestMinutes({ year, councilSessionIds, client });
 }
 
 async function ingestBills(

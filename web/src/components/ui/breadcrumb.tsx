@@ -1,5 +1,5 @@
-import type { Route } from "next";
 import { ChevronRight } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
 export interface BreadcrumbItem {

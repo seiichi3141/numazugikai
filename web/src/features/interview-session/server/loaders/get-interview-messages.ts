@@ -3,8 +3,8 @@ import "server-only";
 import type { InterviewMessage } from "../../shared/types";
 import { findInterviewMessagesBySessionId } from "../repositories/interview-session-repository";
 import {
-  verifySessionOwnership,
   type LoaderDeps,
+  verifySessionOwnership,
 } from "../utils/verify-session-ownership";
 
 export async function getInterviewMessages(

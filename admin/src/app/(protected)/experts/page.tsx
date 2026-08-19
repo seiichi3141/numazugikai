@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
+import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
 import { ExpertList } from "@/features/experts/server/components/expert-list";
 import { loadExperts } from "@/features/experts/server/loaders/load-experts";
-import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
 import { routes } from "@/lib/routes";
 
 export default async function ExpertsPage() {

@@ -1,9 +1,9 @@
+import { MessageSquareWarning, Plus } from "lucide-react";
 import type { Route } from "next";
-import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { routes } from "@/lib/routes";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import {
   Table,
   TableBody,
@@ -12,10 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { routes } from "@/lib/routes";
 import { BillActionsMenu } from "../../../client/components/bill-actions-menu/bill-actions-menu";
 import { PreviewButton } from "../../../client/components/bill-list/preview-button";
 import { PublishStatusBadge } from "../../../client/components/bill-list/publish-status-badge";
-import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import { ViewButton } from "../../../client/components/bill-list/view-button";
 import { BILL_STATUS_CONFIG } from "../../../shared/constants/bill-config";
 import type {
@@ -23,8 +23,41 @@ import type {
   BillStatus,
   BillWithCouncilSession,
 } from "../../../shared/types";
-import { getBillStatusLabel } from "../../../shared/types";
+import { countDebateStances, getBillStatusLabel } from "../../../shared/types";
 import { getBills } from "../../loaders/get-bills";
+
+/**
+ * 討論があった議案であることを示すバッジ。
+ *
+ * 市長提出議案はほとんどが可決されるため、議決結果だけでは
+ * 議論のあった議案が埋もれてしまう。反対討論の有無を前に出す。
+ */
+function DebateBadge({
+  debates,
+}: {
+  debates: BillWithCouncilSession["bill_debates"];
+}) {
+  const counts = countDebateStances(debates ?? []);
+  if (counts.total === 0) return null;
+
+  const label =
+    counts.against > 0
+      ? `反対討論 ${counts.against}件`
+      : `賛成討論 ${counts.for}件`;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
+        counts.against > 0
+          ? "text-red-700 bg-red-50"
+          : "text-blue-700 bg-blue-50"
+      }`}
+    >
+      <MessageSquareWarning className="h-3.5 w-3.5" />
+      {label}
+    </span>
+  );
+}
 
 function StatusBadge({ status }: { status: BillStatus }) {
   const config = BILL_STATUS_CONFIG[status];
@@ -124,7 +157,10 @@ function BillRow({ bill }: { bill: BillWithCouncilSession }) {
         </div>
       </TableCell>
       <TableCell>
-        <StatusBadge status={bill.status} />
+        <div className="flex flex-col items-start gap-1">
+          <StatusBadge status={bill.status} />
+          <DebateBadge debates={bill.bill_debates} />
+        </div>
       </TableCell>
       <TableCell className="text-gray-600">
         {bill.submitted_date

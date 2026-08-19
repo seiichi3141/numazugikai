@@ -1,5 +1,8 @@
-import type { PromptProvider } from "@/lib/prompt";
-import type { CompiledPrompt, PromptVariables } from "@/lib/prompt";
+import type {
+  CompiledPrompt,
+  PromptProvider,
+  PromptVariables,
+} from "@/lib/prompt";
 
 /**
  * テスト用の PromptProvider モック実装。
