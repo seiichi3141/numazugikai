@@ -5,8 +5,8 @@ type MiraiStanceInsert =
   Database["public"]["Tables"]["mirai_stances"]["Insert"];
 type TagInsert = Database["public"]["Tables"]["tags"]["Insert"];
 type BillsTagsInsert = Database["public"]["Tables"]["bills_tags"]["Insert"];
-type DietSessionInsert =
-  Database["public"]["Tables"]["diet_sessions"]["Insert"];
+type CouncilSessionInsert =
+  Database["public"]["Tables"]["council_sessions"]["Insert"];
 type InterviewConfigInsert =
   Database["public"]["Tables"]["interview_configs"]["Insert"];
 type InterviewQuestionInsert =
@@ -18,23 +18,25 @@ type InterviewMessageInsert =
 type InterviewReportInsert =
   Database["public"]["Tables"]["interview_report"]["Insert"];
 
-// 国会会期データ
-export const dietSessions: DietSessionInsert[] = [
+// 開発用のサンプル会期。
+// 実際の沼津市議会のデータは取り込み（@mirai-gikai/numazu-ingest）が入れるため、
+// シードの議案が実データに混ざらないよう会期を分けておく。
+export const councilSessions: CouncilSessionInsert[] = [
   {
-    name: "第219回国会（臨時会）",
-    slug: "219-rinji",
-    shugiin_url:
-      "https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/menu.htm",
-    start_date: "2025-10-21",
-    end_date: "2025-12-17",
+    name: "開発用サンプル会期A",
+    slug: "dev-sample-a",
+    session_number: 901,
+    kind: "regular",
+    start_date: "2026-02-06",
+    end_date: "2026-03-17",
   },
   {
-    name: "第218回国会（臨時会）",
-    slug: "218-rinji",
-    shugiin_url:
-      "https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/menu.htm",
-    start_date: "2025-08-01",
-    end_date: "2025-08-05",
+    name: "開発用サンプル会期B",
+    slug: "dev-sample-b",
+    session_number: 902,
+    kind: "regular",
+    start_date: "2025-10-21",
+    end_date: "2025-12-17",
   },
 ];
 
@@ -60,9 +62,8 @@ export const tags: TagInsert[] = [
 export const bills: BillInsert[] = [
   {
     name: "ガソリン税暫定税率廃止法案",
-    originating_house: "HR",
-    status: "in_originating_house",
-    status_note: "衆議院で審議中",
+    status: "in_committee",
+    status_note: "常任委員会で審査中",
     submitted_date: "2025-08-01T09:00:00+09:00",
     publish_status: "published",
     is_featured: true,
@@ -70,9 +71,8 @@ export const bills: BillInsert[] = [
   },
   {
     name: "こども家庭庁予算大幅増額法案",
-    originating_house: "HC",
-    status: "enacted",
-    status_note: "両院で可決、成立",
+    status: "passed",
+    status_note: "本会議で可決",
     submitted_date: "2025-01-20T10:00:00+09:00",
     publish_status: "published",
     is_featured: true,
@@ -80,9 +80,8 @@ export const bills: BillInsert[] = [
   },
   {
     name: "18歳選挙権完全実施法案",
-    originating_house: "HR",
     status: "rejected",
-    status_note: "衆議院で否決",
+    status_note: "本会議で否決",
     submitted_date: "2025-02-01T09:00:00+09:00",
     publish_status: "published",
     is_featured: false,
@@ -90,9 +89,8 @@ export const bills: BillInsert[] = [
   },
   {
     name: "学校給食無償化促進法案",
-    originating_house: "HC",
-    status: "enacted",
-    status_note: "両院で可決、4月から実施",
+    status: "passed",
+    status_note: "本会議で可決",
     submitted_date: "2025-01-10T09:00:00+09:00",
     publish_status: "published",
     is_featured: false,
@@ -101,11 +99,10 @@ export const bills: BillInsert[] = [
   // 第218回国会用の追加法案（デザイン確認用）- ループで生成
   ...Array.from({ length: 4 }, (_, i) => ({
     name: `学校給食無償化促進法案（第${i + 2}号）`,
-    originating_house: (i % 2 === 0 ? "HR" : "HC") as "HR" | "HC",
-    status: (i % 2 === 0 ? "enacted" : "in_originating_house") as
-      | "enacted"
-      | "in_originating_house",
-    status_note: i % 2 === 0 ? "両院で可決、成立" : "参議院で審議中",
+    status: (i % 2 === 0 ? "passed" : "in_committee") as
+      | "passed"
+      | "in_committee",
+    status_note: i % 2 === 0 ? "本会議で可決" : "常任委員会で審査中",
     submitted_date: `2025-08-0${i + 1}T09:00:00+09:00`,
     publish_status: "published" as const,
     is_featured: false,
@@ -113,9 +110,8 @@ export const bills: BillInsert[] = [
   })),
   {
     name: "船荷証券の電子化に関する法律案",
-    originating_house: "HR",
-    status: "in_originating_house",
-    status_note: "衆議院で審議中",
+    status: "in_committee",
+    status_note: "常任委員会で審査中",
     submitted_date: "2025-09-15T09:00:00+09:00",
     publish_status: "published",
     is_featured: false,
@@ -123,9 +119,8 @@ export const bills: BillInsert[] = [
   },
   {
     name: "中学生・高校生向けプログラミング教育必修化法案",
-    originating_house: "HR",
     status: "rejected",
-    status_note: "衆議院本会議で否決",
+    status_note: "本会議で否決",
     submitted_date: "2024-11-15T10:00:00+09:00",
     publish_status: "published",
     is_featured: false,

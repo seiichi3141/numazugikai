@@ -22,41 +22,46 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  BILL_CATEGORY_LABELS,
+  BILL_STATUS_LABELS,
+  BILL_SUBMITTER_LABELS,
+  type BillCategory,
   type BillStatus,
-  HOUSE_LABELS,
-  type OriginatingHouse,
+  type BillSubmitter,
 } from "@/features/bills/shared/types";
-import type { DietSession } from "@/features/diet-sessions/shared/types";
+import type { CouncilSession } from "@/features/council-sessions/shared/types";
 import type { BillCreateInput } from "../../shared/types";
 import { shouldAutoCloseInterviewOnBillStatus } from "../../shared/utils/should-auto-close-interview";
 import { ThumbnailUpload } from "./thumbnail-upload";
 
-const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
-  { value: "preparing", label: "準備中" },
-  { value: "introduced", label: "提出済み" },
-  { value: "in_originating_house", label: "審議中（提出院）" },
-  { value: "in_receiving_house", label: "審議中（送付院）" },
-  { value: "enacted", label: "成立" },
-  { value: "rejected", label: "否決" },
-];
-
-const ORIGINATING_HOUSE_OPTIONS = Object.entries(HOUSE_LABELS).map(
-  ([value, label]) => ({
-    value: value as OriginatingHouse,
+const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> =
+  Object.entries(BILL_STATUS_LABELS).map(([value, label]) => ({
+    value: value as BillStatus,
     label,
-  })
-);
+  }));
+
+const BILL_SUBMITTER_OPTIONS: Array<{ value: BillSubmitter; label: string }> =
+  Object.entries(BILL_SUBMITTER_LABELS).map(([value, label]) => ({
+    value: value as BillSubmitter,
+    label,
+  }));
+
+const BILL_CATEGORY_OPTIONS: Array<{ value: BillCategory; label: string }> =
+  Object.entries(BILL_CATEGORY_LABELS).map(([value, label]) => ({
+    value: value as BillCategory,
+    label,
+  }));
 
 interface BillFormFieldsProps {
   control: Control<BillCreateInput>;
   billId?: string;
-  dietSessions: DietSession[];
+  councilSessions: CouncilSession[];
 }
 
 export function BillFormFields({
   control,
   billId,
-  dietSessions,
+  councilSessions,
 }: BillFormFieldsProps) {
   return (
     <>
@@ -116,18 +121,21 @@ export function BillFormFields({
 
         <FormField
           control={control}
-          name="originating_house"
+          name="submitter"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>提出院 *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormLabel>提出者</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value ?? undefined}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="提出院を選択" />
+                    <SelectValue placeholder="提出者を選択" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {ORIGINATING_HOUSE_OPTIONS.map((option) => (
+                  {BILL_SUBMITTER_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -135,7 +143,59 @@ export function BillFormFields({
                 </SelectContent>
               </Select>
               <FormDescription>
-                議案を提出した議院を選択してください
+                議案を提出した主体を選択してください
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="bill_number"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>議案番号</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  value={field.value ?? ""}
+                  placeholder="議第58号"
+                />
+              </FormControl>
+              <FormDescription>
+                沼津市議会の議案番号（議第・報第・認第・発議第）
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>議案分類</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value ?? undefined}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="分類を選択" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {BILL_CATEGORY_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                地方自治法第96条の区分に対応します
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -224,7 +284,7 @@ export function BillFormFields({
 
       <FormField
         control={control}
-        name="shugiin_url"
+        name="source_url"
         render={({ field }) => (
           <FormItem>
             <FormLabel>衆議院URL</FormLabel>
@@ -266,7 +326,7 @@ export function BillFormFields({
 
       <FormField
         control={control}
-        name="diet_session_id"
+        name="council_session_id"
         render={({ field }) => (
           <FormItem>
             <FormLabel>国会会期</FormLabel>
@@ -280,7 +340,7 @@ export function BillFormFields({
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {dietSessions.map((session) => (
+                {councilSessions.map((session) => (
                   <SelectItem key={session.id} value={session.id}>
                     {session.name}（{session.start_date}〜{session.end_date}）
                   </SelectItem>

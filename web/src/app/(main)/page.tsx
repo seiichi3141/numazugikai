@@ -11,8 +11,8 @@ import { PreviousSessionSection } from "@/features/bills/server/components/previ
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
-import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
-import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
+import { CurrentCouncilSession } from "@/features/council-sessions/client/components/current-council-session";
+import { getCurrentCouncilSession } from "@/features/council-sessions/server/loaders/get-current-council-session";
 import { getJapanTime } from "@/lib/utils/date";
 
 export default async function Home() {
@@ -21,7 +21,7 @@ export default async function Home() {
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
   const [currentSession, currentDifficulty] = await Promise.all([
-    getCurrentDietSession(getJapanTime()),
+    getCurrentCouncilSession(getJapanTime()),
     getDifficultyLevel(),
   ]);
 
@@ -39,7 +39,7 @@ export default async function Home() {
       <Hero />
 
       {/* 本日の国会セクション */}
-      <CurrentDietSession session={currentSession} />
+      <CurrentCouncilSession session={currentSession} />
 
       {/* 議案一覧セクション */}
       <Container className="">

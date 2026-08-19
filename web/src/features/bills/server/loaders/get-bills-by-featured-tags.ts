@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveDietSession } from "@/features/diet-sessions/server/loaders/get-active-diet-session";
+import { getActiveCouncilSession } from "@/features/council-sessions/server/loaders/get-active-council-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
 import {
@@ -18,7 +18,7 @@ import {
 export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveDietSession();
+  const activeSession = await getActiveCouncilSession();
 
   return _getCachedBillsByFeaturedTags(
     difficultyLevel,
@@ -29,7 +29,7 @@ export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
 const _getCachedBillsByFeaturedTags = unstable_cache(
   async (
     difficultyLevel: DifficultyLevelEnum,
-    dietSessionId: string | null
+    councilSessionId: string | null
   ): Promise<BillsByTag[]> => {
     const featuredTags = await findFeaturedTags();
 
@@ -43,7 +43,7 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
         const data = await findPublishedBillsByTag(
           tag.id,
           difficultyLevel,
-          dietSessionId
+          councilSessionId
         );
 
         if (!data || data.length === 0) {

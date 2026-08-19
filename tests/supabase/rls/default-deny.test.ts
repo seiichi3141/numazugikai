@@ -19,7 +19,7 @@ const tables = [
   "tags",
   "bills_tags",
   "preview_tokens",
-  "diet_sessions",
+  "council_sessions",
   "interview_configs",
   "interview_questions",
   "interview_sessions",
@@ -46,15 +46,14 @@ describe("RLS default deny（全テーブル共通）", () => {
     it("bills: INSERT が拒否される", async () => {
       const { error } = await anon.from("bills").insert({
         name: "不正な挿入テスト",
-        originating_house: "HR",
-        status: "introduced",
+        status: "submitted",
         publish_status: "draft",
       });
       expect(error).not.toBeNull();
     });
 
-    it("diet_sessions: INSERT が拒否される", async () => {
-      const { error } = await anon.from("diet_sessions").insert({
+    it("council_sessions: INSERT が拒否される", async () => {
+      const { error } = await anon.from("council_sessions").insert({
         name: "不正な挿入テスト",
         start_date: "2025-01-01",
         end_date: "2025-06-30",
@@ -95,16 +94,15 @@ describe("RLS default deny（全テーブル共通）", () => {
       const client = await getAuthenticatedClient(email, password);
       const { error } = await client.from("bills").insert({
         name: "不正な挿入テスト",
-        originating_house: "HR",
-        status: "introduced",
+        status: "submitted",
         publish_status: "draft",
       });
       expect(error).not.toBeNull();
     });
 
-    it("diet_sessions: INSERT が拒否される", async () => {
+    it("council_sessions: INSERT が拒否される", async () => {
       const client = await getAuthenticatedClient(email, password);
-      const { error } = await client.from("diet_sessions").insert({
+      const { error } = await client.from("council_sessions").insert({
         name: "不正な挿入テスト",
         start_date: "2025-01-01",
         end_date: "2025-06-30",

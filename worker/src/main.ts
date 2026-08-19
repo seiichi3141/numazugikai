@@ -6,6 +6,7 @@ import {
 import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { resolveBackfillParams } from "@mirai-gikai/topic-analysis-core/backfill-params";
 import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
+import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
 
 /**
  * Cloud Run Job のエントリポイント。
@@ -23,10 +24,42 @@ import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
  *   tsx src/main.ts --mode=tag-backfill --bill-id=<uuid>         # 指定議案のタグ未抽出のみ
  *   tsx src/main.ts --mode=tag-backfill --bill-id=<uuid> --scope=all # 指定議案のタグを全件やり直し
  *
- * 必須env: SUPABASE_URL, SUPABASE_SECRET_KEY, AI_GATEWAY_API_KEY
+ *   沼津市議会の公開情報の取り込み（AIは使わない）:
+ *   tsx src/main.ts --mode=ingest --target=all                        # 会期・議員・議案をまとめて
+ *   tsx src/main.ts --mode=ingest --target=sessions                   # 定例会の会期予定
+ *   tsx src/main.ts --mode=ingest --target=members                    # 会派・議員
+ *   tsx src/main.ts --mode=ingest --target=bills                      # 当年の定例会の議案
+ *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
+ *   tsx src/main.ts --mode=ingest --target=bills --force              # 内容が同じでも取り込み直す
+ *
+ * 必須env: SUPABASE_URL, SUPABASE_SECRET_KEY
+ *   （ingest 以外のモードでは AI_GATEWAY_API_KEY も必要）
  */
 
-type Mode = "analyze" | "analyze-all" | "backfill" | "tag-backfill";
+type Mode = "analyze" | "analyze-all" | "backfill" | "tag-backfill" | "ingest";
+
+const INGEST_TARGETS = ["sessions", "members", "bills", "all"] as const;
+
+/** --target をパースする。未指定は all。 */
+function parseIngestTarget(value: string | undefined): IngestMode {
+  if (value === undefined) return "all";
+  if ((INGEST_TARGETS as readonly string[]).includes(value)) {
+    return value as IngestMode;
+  }
+  throw new Error(
+    `Invalid --target=${value} (expected ${INGEST_TARGETS.join(" / ")})`
+  );
+}
+
+/** `--era-year=8` のような数値引数をパースする。 */
+function parseNumber(value: string | undefined, label: string): number | undefined {
+  if (value === undefined) return undefined;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(`Invalid --${label}=${value} (expected a positive integer)`);
+  }
+  return parsed;
+}
 
 /** --strategy をパースする（未指定・不正値は fallback）。 */
 function parseStrategy(
@@ -65,7 +98,21 @@ async function main(): Promise<void> {
   // 接続情報が無ければ即座に失敗させる（部分実行を避ける）。
   requireEnv("SUPABASE_URL");
   requireEnv("SUPABASE_SECRET_KEY");
-  requireEnv("AI_GATEWAY_API_KEY");
+  // 取り込みはLLMを使わないため、AIのキーは他のモードでのみ要求する。
+  if (mode !== "ingest") {
+    requireEnv("AI_GATEWAY_API_KEY");
+  }
+
+  if (mode === "ingest") {
+    await runIngest({
+      mode: parseIngestTarget(args.target),
+      eraYear: parseNumber(args["era-year"], "era-year"),
+      month: parseNumber(args.month, "month"),
+      term: parseNumber(args.term, "term"),
+      force: args.force !== undefined && args.force !== "false",
+    });
+    return;
+  }
 
   if (mode === "analyze") {
     const versionId = args["version-id"];
@@ -116,7 +163,7 @@ async function main(): Promise<void> {
   }
 
   throw new Error(
-    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill")`
+    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "ingest")`
   );
 }
 

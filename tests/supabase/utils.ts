@@ -81,8 +81,8 @@ export async function cleanupTestUser(userId: string): Promise<void> {
 }
 
 // ── テストデータ作成ヘルパー ──
-/** テスト用 diet_session を作成 */
-export async function createTestDietSession(
+/** テスト用 council_session を作成 */
+export async function createTestCouncilSession(
   overrides: Partial<{
     name: string;
     start_date: string;
@@ -100,33 +100,34 @@ export async function createTestDietSession(
     ...overrides,
   };
   const { data, error } = await adminClient
-    .from("diet_sessions")
+    .from("council_sessions")
     .insert(defaults)
     .select()
     .single();
-  if (error) throw new Error(`diet_session 作成失敗: ${error.message}`);
+  if (error) throw new Error(`council_session 作成失敗: ${error.message}`);
   return data;
 }
 
-/** テスト用 diet_session を削除 */
-export async function cleanupTestDietSession(sessionId: string): Promise<void> {
-  await adminClient.from("diet_sessions").delete().eq("id", sessionId);
+/** テスト用 council_session を削除 */
+export async function cleanupTestCouncilSession(
+  sessionId: string
+): Promise<void> {
+  await adminClient.from("council_sessions").delete().eq("id", sessionId);
 }
 
 /** テスト用 bill を作成 */
 export async function createTestBill(
   overrides: Partial<{
     name: string;
-    originating_house: "HR" | "HC";
     status:
-      | "introduced"
-      | "in_originating_house"
-      | "in_receiving_house"
-      | "enacted"
+      | "submitted"
+      | "in_committee"
+      | "in_committee"
+      | "passed"
       | "rejected"
       | "preparing";
     publish_status: "draft" | "published" | "coming_soon";
-    diet_session_id: string;
+    council_session_id: string;
     is_featured: boolean;
     submitted_date: string;
     shugiin_url: string;
@@ -134,8 +135,7 @@ export async function createTestBill(
 ) {
   const defaults = {
     name: `テスト議案 ${Date.now()}`,
-    originating_house: "HR" as const,
-    status: "introduced" as const,
+    status: "submitted" as const,
     publish_status: "draft" as const,
     ...overrides,
   };

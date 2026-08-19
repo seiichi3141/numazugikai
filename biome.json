@@ -49,7 +49,9 @@
       "web/src/**/*",
       "admin/src/**/*",
       "tests/**/*",
-      "!.claude/worktrees"
+      "packages/numazu-ingest/**/*",
+      "!.claude/worktrees",
+      "!packages/numazu-ingest/**/__fixtures__"
     ]
   }
 }

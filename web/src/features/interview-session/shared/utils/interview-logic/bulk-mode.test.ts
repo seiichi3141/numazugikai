@@ -13,23 +13,32 @@ const makeBill = (
   overrides: Partial<BillWithContent> = {}
 ): BillWithContent => ({
   id: "bill-1",
-  name: "テスト法案",
+  name: "沼津市印鑑条例の一部改正",
   is_featured: false,
   is_review_completed: true,
-  originating_house: "HR",
-  shugiin_url: null,
+  source_url: null,
   slug: null,
-  diet_session_id: null,
+  council_session_id: null,
+  bill_number: null,
+  bill_number_kind: null,
+  bill_number_value: null,
+  category: null,
+  submitter: null,
+  committee_id: null,
+  committee_result: null,
+  decided_on: null,
+  legal_basis: null,
+  document_url: null,
   publish_status: "published",
   published_at: null,
   submitted_date: null,
   share_thumbnail_url: null,
-  status: "introduced",
+  status: "submitted",
   status_note: null,
-  status_order: BILL_STATUS_ORDER.introduced,
+  status_order: BILL_STATUS_ORDER.submitted,
   publish_status_order: 2,
   thumbnail_url: null,
-  knowledge_source: "厚生労働省の報告書",
+  knowledge_source: "沼津市の議案説明資料",
   use_knowledge_source_in_chat: false,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
@@ -107,7 +116,7 @@ describe("buildBulkModeSystemPrompt", () => {
   it("知識ソースがプロンプトに含まれる", () => {
     const result = buildBulkModeSystemPrompt(baseParams);
 
-    expect(result).toContain("厚生労働省の報告書");
+    expect(result).toContain("沼津市の議案説明資料");
   });
 
   it("知識ソース未設定の場合「（知識ソース未設定）」が含まれる", () => {

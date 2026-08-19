@@ -4,6 +4,7 @@ import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
+import { getCardStatusLabel } from "../../../shared/utils/bill-status";
 
 interface CompactBillCardProps {
   bill: BillWithContent;
@@ -11,12 +12,12 @@ interface CompactBillCardProps {
 }
 
 /**
- * コンパクトな水平レイアウトの法案カード
- * 過去国会セクションや過去国会議案一覧ページで使用
+ * コンパクトな水平レイアウトの議案カード
+ * 過去の定例会セクションや過去の定例会の議案一覧ページで使用
  */
 export function CompactBillCard({ bill, className }: CompactBillCardProps) {
   const displayTitle = bill.bill_content?.title || bill.name;
-  const statusLabel = bill.status === "enacted" ? "成立" : "提出";
+  const statusLabel = getCardStatusLabel(bill.status);
 
   return (
     <Card

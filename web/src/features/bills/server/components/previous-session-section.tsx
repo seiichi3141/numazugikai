@@ -3,13 +3,13 @@ import Image from "next/image";
 import type { Route } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import type { DietSession } from "@/features/diet-sessions/shared/types";
+import type { CouncilSession } from "@/features/council-sessions/shared/types";
 import { routes } from "@/lib/routes";
 import { CompactBillCard } from "../../client/components/bill-list/compact-bill-card";
 import type { BillWithContent } from "../../shared/types";
 
 interface PreviousSessionSectionProps {
-  session: DietSession;
+  session: CouncilSession;
   bills: BillWithContent[];
   totalBillCount: number;
 }
@@ -29,7 +29,7 @@ export function PreviousSessionSection({
     return null;
   }
 
-  const sessionBillsUrl = routes.kokkaiSessionBills(session.slug);
+  const sessionBillsUrl = routes.gikaiSessionBills(session.slug);
   const startDate = new Date(session.start_date);
   const endDate = new Date(session.end_date);
   const sessionDescription = `${startDate.getFullYear()}.${startDate.getMonth() + 1}月〜${endDate.getMonth() + 1}月に実施された${session.name}`;

@@ -1,15 +1,13 @@
-import type { BillStatusEnum, HouseEnum } from "../../../shared/types";
+import type { BillStatusEnum } from "../../../shared/types";
 import {
   calculateProgressWidth,
   getCurrentStep,
-  getOrderedSteps,
   getStatusMessage,
   getStepState,
 } from "../../../shared/utils/bill-progress";
 
 interface BillStatusProgressProps {
   status: BillStatusEnum;
-  originatingHouse: HouseEnum;
   statusNote?: string | null;
 }
 
@@ -25,12 +23,12 @@ interface ProgressStepProps {
   isPreparing: boolean;
 }
 
-// 基本ステップ定義
-const BASE_STEPS = [
-  { label: "法案\n提出" },
-  { label: "衆議院\n審議" },
-  { label: "参議院\n審議" },
-  { label: "法案\n成立" },
+// 市議会は一院制。委員会審査を経て本会議で議決する流れを表す
+const STEP_LABELS = [
+  "議案\n提出",
+  "委員会\n付託",
+  "委員会\n審査",
+  "本会議\n議決",
 ] as const;
 
 // ステータスバッジコンポーネント
@@ -95,13 +93,10 @@ function ProgressStep({
 
 export function BillStatusProgress({
   status,
-  originatingHouse,
   statusNote,
 }: BillStatusProgressProps) {
   const isPreparing = status === "preparing";
   const currentStep = getCurrentStep(status);
-
-  const orderedSteps = getOrderedSteps(originatingHouse, BASE_STEPS);
   const progressWidth = calculateProgressWidth(currentStep);
 
   const statusMessage = getStatusMessage(status, statusNote);
@@ -129,7 +124,7 @@ export function BillStatusProgress({
 
             {/* ステップドット */}
             <div className="relative flex justify-around">
-              {orderedSteps.map((step, index) => {
+              {STEP_LABELS.map((label, index) => {
                 const stepNumber = index + 1;
                 const isActive =
                   getStepState(stepNumber, currentStep, isPreparing) ===
@@ -138,7 +133,7 @@ export function BillStatusProgress({
                 return (
                   <ProgressStep
                     key={stepNumber}
-                    label={step.label}
+                    label={label}
                     stepNumber={stepNumber}
                     currentStep={currentStep}
                     isActive={isActive}

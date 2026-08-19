@@ -1,7 +1,7 @@
 import {
   bills,
   tags,
-  dietSessions,
+  councilSessions,
   createMiraiStances,
   createBillsTags,
   createInterviewConfig,
@@ -62,22 +62,22 @@ async function seedDatabase() {
 
     console.log(`✅ Inserted ${insertedTags.length} tags`);
 
-    // Insert diet sessions
-    console.log("🏛️  Inserting diet sessions...");
-    const { data: insertedDietSessions, error: dietSessionsError } =
-      await supabase.from("diet_sessions").insert(dietSessions).select("id");
+    // Insert council sessions
+    console.log("🏛️  Inserting council sessions...");
+    const { data: insertedCouncilSessions, error: councilSessionsError } =
+      await supabase.from("council_sessions").insert(councilSessions).select("id");
 
-    if (dietSessionsError) {
+    if (councilSessionsError) {
       throw new Error(
-        `Failed to insert diet sessions: ${dietSessionsError.message}`
+        `Failed to insert council sessions: ${councilSessionsError.message}`
       );
     }
 
-    if (!insertedDietSessions) {
-      throw new Error("No diet sessions were inserted");
+    if (!insertedCouncilSessions) {
+      throw new Error("No council sessions were inserted");
     }
 
-    console.log(`✅ Inserted ${insertedDietSessions.length} diet sessions`);
+    console.log(`✅ Inserted ${insertedCouncilSessions.length} council sessions`);
 
     // Insert bills
     console.log("📄 Inserting bills...");
@@ -96,30 +96,30 @@ async function seedDatabase() {
 
     console.log(`✅ Inserted ${insertedBills.length} bills`);
 
-    // Link first 3 bills to the 219 diet session (current session)
-    const session219Id = insertedDietSessions[0]?.id;
-    if (session219Id) {
+    // Link first 3 bills to sample session A
+    const session13Id = insertedCouncilSessions[0]?.id;
+    if (session13Id) {
       const billsToLink = insertedBills.slice(0, 3);
       for (const bill of billsToLink) {
         await supabase
           .from("bills")
-          .update({ diet_session_id: session219Id })
+          .update({ council_session_id: session13Id })
           .eq("id", bill.id);
       }
-      console.log(`🔗 Linked ${billsToLink.length} bills to 219 diet session`);
+      console.log(`🔗 Linked ${billsToLink.length} bills to sample session A`);
     }
 
-    // Link last 5 bills to the 218 diet session (previous session)
-    const session218Id = insertedDietSessions[1]?.id;
-    if (session218Id) {
-      const bills218 = insertedBills.slice(-5);
-      for (const bill of bills218) {
+    // Link last 5 bills to sample session B
+    const session12Id = insertedCouncilSessions[1]?.id;
+    if (session12Id) {
+      const billsForSampleB = insertedBills.slice(-5);
+      for (const bill of billsForSampleB) {
         await supabase
           .from("bills")
-          .update({ diet_session_id: session218Id })
+          .update({ council_session_id: session12Id })
           .eq("id", bill.id);
       }
-      console.log(`🔗 Linked ${bills218.length} bills to 218 diet session`);
+      console.log(`🔗 Linked ${billsForSampleB.length} bills to sample session B`);
     }
 
     const knowledgeSourceByBillName: Record<
@@ -648,7 +648,7 @@ async function seedDatabase() {
 
     console.log("🎉 Database seeding completed successfully!");
     console.log("\n📊 Summary:");
-    console.log(`  Diet Sessions: ${insertedDietSessions.length}`);
+    console.log(`  Council Sessions: ${insertedCouncilSessions.length}`);
     console.log(`  Tags: ${insertedTags.length}`);
     console.log(`  Bills: ${insertedBills.length}`);
     console.log(`  Bill Contents: ${insertedContents.length}`);

@@ -12,7 +12,7 @@ interface CsvImportConfig {
 }
 
 const CSV_IMPORTS: CsvImportConfig[] = [
-  { table: "diet_sessions", file: "diet_sessions_rows.csv" },
+  { table: "council_sessions", file: "council_sessions_rows.csv" },
   { table: "tags", file: "tags_rows.csv" },
   { table: "bills", file: "bills_rows.csv" },
   { table: "bill_contents", file: "bill_contents_rows.csv" },

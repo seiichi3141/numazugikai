@@ -22,7 +22,7 @@ const TABLES_TO_CLEAR = [
   "bills_tags",
   "bills",
   "tags",
-  "diet_sessions",
+  "council_sessions",
 ] as const;
 
 export async function clearAllData(supabase: AdminClient) {

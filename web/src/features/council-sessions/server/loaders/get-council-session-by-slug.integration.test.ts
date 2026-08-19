@@ -1,0 +1,47 @@
+import { describe, it, expect, vi, afterEach } from "vitest";
+import {
+  createTestCouncilSession,
+  cleanupTestCouncilSession,
+} from "@test-utils/utils";
+
+// unstable_cache はモジュール初期化時に評価されるため、
+// setup の共通モック（vitest.integration.setup.ts）だけでは不十分。
+// テストファイル内で vi.mock → 動的インポートの順序を保証する必要がある。
+vi.mock("next/cache", () => ({
+  unstable_cache: (fn: (...args: never[]) => unknown) => fn,
+}));
+
+const { getCouncilSessionBySlug } = await import(
+  "./get-council-session-by-slug"
+);
+
+describe("getCouncilSessionBySlug 統合テスト", () => {
+  let sessionIds: string[] = [];
+
+  afterEach(async () => {
+    for (const id of sessionIds) {
+      await cleanupTestCouncilSession(id);
+    }
+    sessionIds = [];
+  });
+
+  it("slug で会期を取得できる", async () => {
+    const slug = `test-slug-loader-${Date.now()}`;
+    const session = await createTestCouncilSession({ slug });
+    sessionIds.push(session.id);
+
+    const result = await getCouncilSessionBySlug(slug);
+
+    expect(result).not.toBeNull();
+    expect(result?.id).toBe(session.id);
+    expect(result?.slug).toBe(slug);
+  });
+
+  it("存在しない slug では null を返す", async () => {
+    const result = await getCouncilSessionBySlug(
+      "non-existent-slug-loader-999999999"
+    );
+
+    expect(result).toBeNull();
+  });
+});
