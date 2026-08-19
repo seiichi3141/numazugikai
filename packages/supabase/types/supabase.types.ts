@@ -440,40 +440,52 @@ export type Database = {
       interview_opinion: {
         Row: {
           bill_sentiment: string | null
+          concern: string | null
           content: string
           contextual_quote: string | null
           created_at: string
           id: string
           interview_report_id: string
           opinion_index: number
+          proposal: string | null
+          reasoning_types: string[]
           richness: number | null
           source_message_id: string | null
+          tags_extracted_at: string | null
           title: string
           topic_extracted_at: string | null
         }
         Insert: {
           bill_sentiment?: string | null
+          concern?: string | null
           content: string
           contextual_quote?: string | null
           created_at?: string
           id?: string
           interview_report_id: string
           opinion_index: number
+          proposal?: string | null
+          reasoning_types?: string[]
           richness?: number | null
           source_message_id?: string | null
+          tags_extracted_at?: string | null
           title: string
           topic_extracted_at?: string | null
         }
         Update: {
           bill_sentiment?: string | null
+          concern?: string | null
           content?: string
           contextual_quote?: string | null
           created_at?: string
           id?: string
           interview_report_id?: string
           opinion_index?: number
+          proposal?: string | null
+          reasoning_types?: string[]
           richness?: number | null
           source_message_id?: string | null
+          tags_extracted_at?: string | null
           title?: string
           topic_extracted_at?: string | null
         }
@@ -828,6 +840,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          parent_topic_id: string | null
           sort_order: number
           title: string
           version_id: string
@@ -836,6 +849,7 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          parent_topic_id?: string | null
           sort_order?: number
           title: string
           version_id: string
@@ -844,11 +858,19 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          parent_topic_id?: string | null
           sort_order?: number
           title?: string
           version_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "topic_parent_same_version_fkey"
+            columns: ["version_id", "parent_topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
+            referencedColumns: ["version_id", "id"]
+          },
           {
             foreignKeyName: "topic_version_id_fkey"
             columns: ["version_id"]
@@ -1561,4 +1583,3 @@ export const Constants = {
     },
   },
 } as const
-
