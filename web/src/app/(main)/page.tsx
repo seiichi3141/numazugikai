@@ -1,26 +1,25 @@
-import { ChevronRight, Search } from "lucide-react";
-import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { About } from "@/components/top/about";
 import { ComingSoonSection } from "@/components/top/coming-soon-section";
 import { TeamMirai } from "@/components/top/team-mirai";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
+import { BillSearchOverlay } from "@/features/bills/client/components/bill-search-overlay";
 import { BillsByTagSection } from "@/features/bills/server/components/bills-by-tag-section";
 import { CategoryTabs } from "@/features/bills/server/components/category-tabs";
 import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
 import { PreviousSessionSection } from "@/features/bills/server/components/previous-session-section";
+import { getFeaturedTags } from "@/features/bills/server/loaders/get-featured-tags";
+import { getSuggestableBills } from "@/features/bills/server/loaders/get-suggestable-bills";
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { chatBillName } from "@/features/bills/shared/utils/chat-bill-name";
+import { countTagChipItems } from "@/features/bills/shared/utils/tag-chip-items";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
 import { getLatestClosedDietSession } from "@/features/diet-sessions/server/loaders/get-latest-closed-diet-session";
-import { routes } from "@/lib/routes";
 import { getJapanTime } from "@/lib/utils/date";
-
-/** トップのタグ別一覧に出す1タグあたりの件数。全件は /bills で見せる。 */
-const BILLS_PER_TAG_ON_TOP = 2;
 
 /** カテゴリタブの「注目」から飛ばす先。 */
 const FEATURED_ANCHOR = "featured";
@@ -33,11 +32,15 @@ export default async function Home() {
     currentSession,
     latestClosedSession,
     currentDifficulty,
+    suggestableBills,
+    featuredTags,
   ] = await Promise.all([
     loadHomeData(),
     getCurrentDietSession(japanTime),
     getLatestClosedDietSession(japanTime),
     getDifficultyLevel(),
+    getSuggestableBills(),
+    getFeaturedTags(),
   ]);
 
   const inSession = currentSession !== null;
@@ -49,16 +52,19 @@ export default async function Home() {
   const pickedBillsByTag = billsByTag
     .map((group) => ({
       ...group,
-      bills: group.bills
-        .filter((bill) => !featuredIds.has(bill.id))
-        .slice(0, BILLS_PER_TAG_ON_TOP),
+      bills: group.bills.filter((bill) => !featuredIds.has(bill.id)),
     }))
     // 注目に出た法案しか無かったタグは、見出しだけが残るので落とす。
     .filter((group) => group.bills.length > 0);
 
+  // モーダルの件数は全会期の公開議案から数える。チップの飛び先が /bills で、
+  // あちらも全会期を数えるため、押す前と後で数字が変わらない。
+  // 候補用に取得済みの配列をそのまま使うので、集計のためのクエリは増えない。
+  const searchTagChips = countTagChipItems(featuredTags, suggestableBills);
+
   const toBillChatContext = (bill: BillWithContent) => {
     return {
-      name: `${bill.bill_content?.title}（${bill.name}）`,
+      name: chatBillName(bill),
       summary: bill.bill_content?.summary,
       tags: bill.tags?.map((tag) => tag.label) || [],
       isFeatured: featuredBills.some((b) => b.id === bill.id),
@@ -81,16 +87,9 @@ export default async function Home() {
             featuredAnchor={inSession ? FEATURED_ANCHOR : undefined}
           />
         </div>
-        {/* 全件を探す導線。トップはピックアップに留める */}
+        {/* 検索の入口。キーワードとテーマの両方をモーダルに並べる */}
         <div className="flex justify-end pt-2">
-          <Link
-            href={routes.billsList()}
-            className="inline-flex items-center gap-1 text-[13px] font-bold text-mirai-brand-teal-hover hover:underline"
-          >
-            <Search className="h-4 w-4" aria-hidden />
-            法案を検索する
-            <ChevronRight className="h-4 w-4" aria-hidden />
-          </Link>
+          <BillSearchOverlay tags={searchTagChips} bills={suggestableBills} />
         </div>
       </Container>
 
@@ -110,7 +109,7 @@ export default async function Home() {
               </section>
             )}
 
-            {/* タグ別議案一覧セクション（トップはピックアップなので各2件） */}
+            {/* タグ別議案一覧セクション（タグに紐づく議案を全件出す） */}
             <BillsByTagSection billsByTag={pickedBillsByTag} />
 
             {/* Coming soonセクション */}
