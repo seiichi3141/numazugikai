@@ -9,6 +9,9 @@ import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/type
 /**
  * 公開済み議案を難易度コンテンツ付きで取得
  */
+
+/** Supabase が1リクエストで返す行数の上限（既定値）。 */
+const SUPABASE_MAX_ROWS = 1000;
 export async function findPublishedBillsWithContents(
   difficultyLevel: DifficultyLevelEnum
 ) {
@@ -39,6 +42,52 @@ export async function findPublishedBillsWithContents(
   }
 
   return data;
+}
+
+/**
+ * 検索候補用に、公開済み議案の名称・タイトル・タグだけを取得する。
+ *
+ * `findPublishedBillsWithContents` は解説本文（数KB／件）まで引くため、候補の
+ * 絞り込みに使うには重すぎる。ここは候補行に出す最小限だけを選ぶ。
+ */
+export async function findPublishedBillsForSuggest(
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      `
+      id,
+      name,
+      bill_contents!inner (title),
+      bills_tags (tags (id, label))
+    `
+    )
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    // 提出日は null と同日の重複があるので、id を第2キーにして順序を固定する。
+    // 候補は上位数件で打ち切るため、並びが揺れると出る候補そのものが変わる。
+    .order("submitted_date", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: true });
+
+  if (error) {
+    // 候補は検索の補助なので、落とさずに空で返して検索自体は使える状態にする。
+    console.error("Failed to fetch bills for suggest:", error);
+    return [];
+  }
+
+  const rows = data ?? [];
+  // Supabase は max_rows を超えた行を返さない。到達したら古い議案が候補から
+  // 静かに落ちるので、気づけるようにログを残す。
+  if (rows.length >= SUPABASE_MAX_ROWS) {
+    console.warn(
+      `findPublishedBillsForSuggest hit the row limit (${SUPABASE_MAX_ROWS}). ` +
+        "候補から漏れる議案が出ているため、サーバー側検索への移行を検討する。"
+    );
+  }
+
+  return rows;
 }
 
 /**
@@ -285,17 +334,27 @@ export async function countPublishedBillsByDietSession(
 /**
  * featured_priorityが設定されているタグを取得
  */
+/**
+ * featured なタグを優先度順に取得する。
+ *
+ * 取得に失敗したときは `null` を返す。0件と区別できないと、呼び出し側が
+ * 「タグが無い」としてキャッシュに載せてしまい、一時的なエラーで絞り込みが
+ * 消えたまま固定される。
+ */
 export async function findFeaturedTags() {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("tags")
     .select("id, label, description, featured_priority")
     .not("featured_priority", "is", null)
-    .order("featured_priority", { ascending: true });
+    // 同じ優先度のタグは label で並べる。指定しないと順序が不定で、
+    // カテゴリタブの並びがデプロイごとに入れ替わりうる。
+    .order("featured_priority", { ascending: true })
+    .order("label", { ascending: true });
 
   if (error) {
     console.error("Failed to fetch featured tags:", error);
-    return [];
+    return null;
   }
 
   return data ?? [];

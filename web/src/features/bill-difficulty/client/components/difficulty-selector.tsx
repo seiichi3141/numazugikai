@@ -12,7 +12,6 @@ import {
 
 interface DifficultySelectorProps {
   currentLevel: DifficultyLevelEnum;
-  label?: string;
   labelStyle?: CSSProperties;
   scrollToTop?: boolean;
   maintainScrollFromBottom?: boolean;
@@ -20,7 +19,6 @@ interface DifficultySelectorProps {
 
 export function DifficultySelector({
   currentLevel,
-  label,
   labelStyle,
   scrollToTop,
   maintainScrollFromBottom,
@@ -70,23 +68,29 @@ export function DifficultySelector({
     }
   };
 
+  const [labelPrefix, labelSuffix] =
+    selectedLevel === "hard"
+      ? ["説明を", "やさしく"]
+      : ["説明をもっと", "詳しく"];
+
   return (
     <div className="flex items-center gap-2">
+      {/*
+        文言は押したときに起きることを表す。詳しい版を読んでいるのに
+        「もっと詳しく」と出ていると、押す先がどちらなのか読み取れない。
+      */}
       <span className="text-sm font-bold" style={labelStyle}>
-        {label != null ? (
-          label
-        ) : (
-          <span>
-            <span className="hidden md:inline-block">説明をもっと</span>詳しく
-          </span>
-        )}
+        <span>
+          <span className="hidden md:inline-block">{labelPrefix}</span>
+          {labelSuffix}
+        </span>
       </span>
       <Switch
         id={`${uniqueId}-difficulty-toggle`}
         checked={selectedLevel === "hard"}
         onCheckedChange={handleToggle}
         disabled={isChanging}
-        aria-label="難易度を切り替え"
+        aria-label={`${labelPrefix}${labelSuffix}`}
       />
     </div>
   );
