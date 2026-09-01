@@ -300,23 +300,6 @@ export async function saveContentHash(record: {
 // 会議録由来の情報
 // ---------------------------------------------------------------
 
-/**
- * 議案の当局説明を保存する。
- *
- * AI解説の材料として使うもので、会議録の全文ではなく当該議案の説明部分のみ。
- */
-export async function updateBillExplanation(
-  billId: string,
-  explanation: string
-): Promise<void> {
-  const supabase = createAdminClient();
-  const { error } = await supabase
-    .from("bills")
-    .update({ explanation_source: explanation })
-    .eq("id", billId);
-  if (error) throw new Error(`議案説明の保存に失敗した: ${error.message}`);
-}
-
 /** 議員名から議員IDを引く。会議録の表記ゆれを吸収するため空白を除いて突合する。 */
 export async function buildMemberIdByName(): Promise<Map<string, string>> {
   const supabase = createAdminClient();
@@ -360,26 +343,6 @@ export async function upsertBillDebate(
   if (error) throw new Error(`討論の保存に失敗した: ${error.message}`);
 }
 
-/** 会期に属する議案を議案番号で引けるようにする（会議録との突合に使う）。 */
-export async function findBillIdsByNumberForSessions(
-  councilSessionIds: readonly string[]
-): Promise<Map<string, string>> {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select("id, bill_number")
-    .in("council_session_id", councilSessionIds);
-  if (error) throw new Error(`議案の取得に失敗した: ${error.message}`);
-
-  return new Map(
-    (data ?? [])
-      .filter((row): row is { id: string; bill_number: string } =>
-        Boolean(row.bill_number)
-      )
-      .map((row) => [row.bill_number, row.id])
-  );
-}
-
 /** slug から会期IDを引く */
 export async function findCouncilSessionIdBySlug(
   slug: string
@@ -391,14 +354,6 @@ export async function findCouncilSessionIdBySlug(
     .eq("slug", slug)
     .maybeSingle();
   return data?.id ?? null;
-}
-
-/** DBにあるすべての会期IDを返す（会議録と議案の突合に使う）。 */
-export async function listCouncilSessionIds(): Promise<string[]> {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase.from("council_sessions").select("id");
-  if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
-  return (data ?? []).map((row) => row.id);
 }
 
 /** 会期の期間一覧（委員会の開催日と会期を突合するために使う）。 */

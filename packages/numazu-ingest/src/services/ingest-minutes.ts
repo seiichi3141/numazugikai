@@ -2,14 +2,17 @@ import {
   buildCouncilWatchUrl,
   DiscussVisionClient,
 } from "../fetchers/discussvision-client";
+import { buildSessionSlug } from "../parsers/map-bill-status";
+import { parseAmivoiceSessionLabel } from "../parsers/parse-amivoice-html";
 import {
   extractBillExplanations,
   extractDebates,
 } from "../parsers/parse-minutes";
 import {
   buildMemberIdByName,
-  findBillIdsByNumberForSessions,
-  updateBillExplanation,
+  findBillIdsBySession,
+  findCouncilSessionIdBySlug,
+  updateBillExplanationIfLonger,
   upsertBillDebate,
 } from "../repositories/ingest-repository";
 import type { Council } from "../shared/discussvision-schemas";
@@ -42,14 +45,21 @@ export type IngestMinutesResult = {
  */
 export async function ingestMinutesForCouncil(params: {
   council: Council;
-  /** 突合対象の会期ID。会議録の議案番号からこの会期の議案を引く */
-  councilSessionIds: readonly string[];
   client?: DiscussVisionClient;
-}): Promise<IngestMinutesResult> {
+}): Promise<IngestMinutesResult | null> {
   const client = params.client ?? new DiscussVisionClient();
-  const billIdByNumber = await findBillIdsByNumberForSessions(
-    params.councilSessionIds
+
+  // 議案番号（議第N号）は年度をまたいで重複する。令和7年にも令和8年にも
+  // 「議第39号」があるため、会議の名称から会期を特定し、その会期の議案とだけ
+  // 突合する。会期がDBに無ければ何も取り込まない（誤った紐づけをしない）
+  const parsedLabel = parseAmivoiceSessionLabel(params.council.label);
+  if (!parsedLabel) return null;
+  const councilSessionId = await findCouncilSessionIdBySlug(
+    buildSessionSlug(parsedLabel.year, parsedLabel.sessionNumber)
   );
+  if (!councilSessionId) return null;
+
+  const billIdByNumber = await findBillIdsBySession(councilSessionId);
   const memberIdByName = await buildMemberIdByName();
 
   let unavailable = 0;
@@ -83,8 +93,11 @@ export async function ingestMinutesForCouncil(params: {
       for (const explanation of extractBillExplanations(text)) {
         const billId = billIdByNumber.get(explanation.billNumber);
         if (!billId) continue;
-        await updateBillExplanation(billId, explanation.body);
-        explanationCount += 1;
+        const updated = await updateBillExplanationIfLonger(
+          billId,
+          explanation.body
+        );
+        if (updated) explanationCount += 1;
       }
 
       for (const debate of extractDebates(text)) {
@@ -113,15 +126,9 @@ export async function ingestMinutesForCouncil(params: {
   };
 }
 
-/**
- * 指定年のすべての会議について会議録を取り込む。
- *
- * 会議録は会期をまたいで議案番号が重複しうるため（令和7年度議案と8年度議案）、
- * 突合対象の会期は呼び出し側が渡す。
- */
+/** 指定年のすべての会議について会議録を取り込む。 */
 export async function ingestMinutes(params: {
   year: number;
-  councilSessionIds: readonly string[];
   client?: DiscussVisionClient;
 }): Promise<IngestMinutesResult[]> {
   const client = params.client ?? new DiscussVisionClient();
@@ -129,13 +136,8 @@ export async function ingestMinutes(params: {
 
   const results: IngestMinutesResult[] = [];
   for (const council of councils) {
-    results.push(
-      await ingestMinutesForCouncil({
-        council,
-        councilSessionIds: params.councilSessionIds,
-        client,
-      })
-    );
+    const result = await ingestMinutesForCouncil({ council, client });
+    if (result) results.push(result);
   }
   return results;
 }

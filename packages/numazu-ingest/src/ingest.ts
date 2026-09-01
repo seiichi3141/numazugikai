@@ -2,7 +2,6 @@ import { DiscussVisionClient } from "./fetchers/discussvision-client";
 import { NumazuSiteClient } from "./fetchers/numazu-site-client";
 import {
   finishIngestionRun,
-  listCouncilSessionIds,
   startIngestionRun,
 } from "./repositories/ingest-repository";
 import { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
@@ -95,11 +94,7 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
   }
 }
 
-/**
- * 会議録を取り込む。議案との突合に会期IDが要るため、DBにある会期を全部渡す。
- * 会議録は会期をまたいで議案番号が重複しうるが、突合先を会期集合に限ることで
- * 直近の会期の議案に寄せる。
- */
+/** 会議録を取り込む。会期の特定は会議の名称から行う（ingest-minutes 側）。 */
 async function ingestMinutesForYear(
   options: IngestOptions,
   client: DiscussVisionClient
@@ -107,13 +102,7 @@ async function ingestMinutesForYear(
   const year = options.eraYear
     ? options.eraYear + 2018
     : new Date().getFullYear();
-  const councilSessionIds = await listCouncilSessionIds();
-  if (councilSessionIds.length === 0) {
-    throw new Error(
-      "会期が1件もない。先に --target=sessions と --target=bills を実行すること"
-    );
-  }
-  return ingestMinutes({ year, councilSessionIds, client });
+  return ingestMinutes({ year, client });
 }
 
 async function ingestBills(
