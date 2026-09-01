@@ -81,9 +81,9 @@
   --color-mirai-border-muted: #bebcbc;
 
   /* Stance semantic colors */
-  --color-stance-for-bg: #ecfcf1;
-  --color-stance-for-badge-start: #e2f6f3;
-  --color-stance-for-badge-end: #eef6e2;
+  --color-stance-for-bg: #eef5fb;
+  --color-stance-for-badge-start: #e3eef7;
+  --color-stance-for-badge-end: #f3f0e7;
   --color-stance-against: #c9272a;
   --color-stance-against-light: #d23c3f;
   --color-stance-against-bg: #fff1f1;
@@ -103,21 +103,22 @@
 
   /* Progress */
   --color-mirai-progress-track: #d9d9d9;
-  --color-mirai-progress-fill: #a9e89d;
+  --color-mirai-progress-fill: #cfe4f2;
 
   /* Gradient endpoints */
   /* 駿河湾の海面から空へ。本家のティール系グラデーションから離す */
   --color-mirai-gradient-start: #5aa9d6;
   --color-mirai-gradient-end: #cfe4f2;
 
-  /* Team Mirai brand (party design system) */
-  --color-mirai-brand-teal: #30bca7;
-  --color-mirai-brand-teal-hover: #089781;
-  --color-mirai-brand-teal-deep: #17594f;
-  --color-mirai-brand-mint: #e2f6f3;
+  /* 強調に使う面の色。駿河湾の青を薄く敷く */
+  --color-mirai-surface-accent: #e8f1f8;
+
+  /* 薄いグラデーション（ピル・カード・吹き出し）。海から砂浜へ */
+  --color-mirai-light-gradient-start: #e3eef7;
+  --color-mirai-light-gradient-end: #f3f0e7;
 
   /* Topic analysis */
-  --color-topic-info-bg: #e5f3f0;
+  --color-topic-info-bg: #e8f1f8;
   --color-topic-chip-bg: #f1f1f1;
   --color-topic-count: #6b7775;
   --color-topic-label: #909090;
@@ -262,7 +263,11 @@
   }
 
   .bg-mirai-light-gradient {
-    background-image: linear-gradient(to bottom, #e2f6f3, #eef6e2);
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-mirai-light-gradient-start),
+      var(--color-mirai-light-gradient-end)
+    );
   }
 
   .bg-mirai-white-fade {

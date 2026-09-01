@@ -39,7 +39,7 @@ export function LongPressSection() {
         {/* 右側：イラスト */}
         <div className="absolute bottom-[-54px] right-3 flex-shrink-0">
           <Image
-            src="/illustrations/inspiration-simple-green.svg"
+            src="/illustrations/inspiration-simple-blue.svg"
             alt="電球のイラスト"
             width={122}
             height={157}

@@ -1,6 +1,5 @@
 import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { CouncilSession } from "@/features/council-sessions/shared/types";
@@ -39,13 +38,9 @@ export function PreviousSessionSection({
       {/* Archiveヘッダー */}
       <div className="flex flex-col gap-1">
         <h2>
-          <Image
-            src="/icons/archive-typography.svg"
-            alt="Archive"
-            width={156}
-            height={36}
-            priority
-          />
+          <span className="font-lexend text-[32px] leading-none font-bold tracking-tight text-mirai-text">
+            Archive
+          </span>
         </h2>
         <p className="text-sm font-bold text-primary-accent">
           過去の定例会に提出された議案

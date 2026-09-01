@@ -24,7 +24,7 @@ export function LegalPageLayout({
         <Container className="space-y-10">
           <header className="space-y-2 border-b border-neutral-200 pb-6">
             {enLabel ? (
-              <p className="font-lexend text-sm font-semibold tracking-[0.14em] text-mirai-brand-teal-hover">
+              <p className="font-lexend text-sm font-semibold tracking-[0.14em] text-primary">
                 {enLabel}
               </p>
             ) : null}

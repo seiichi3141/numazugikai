@@ -20,7 +20,7 @@ export async function DifficultyInfoCard() {
       </div>
       <div className="absolute right-6 top-6 w-[121px] h-[128px]">
         <Image
-          src="/images/readingbook_woman_green.png"
+          src="/images/readingbook_woman_blue.png"
           alt=""
           width={121}
           height={128}

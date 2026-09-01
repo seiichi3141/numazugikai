@@ -1,5 +1,4 @@
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import type { CouncilSession } from "../../shared/types";
 import { BillListWithStatusFilter } from "./bill-list-with-status-filter";
@@ -19,13 +18,9 @@ export function CouncilSessionBillList({ session, bills }: Props) {
       {/* Archiveヘッダー */}
       <div className="flex flex-col gap-1">
         <h1>
-          <Image
-            src="/icons/archive-typography.svg"
-            alt="Archive"
-            width={156}
-            height={36}
-            priority
-          />
+          <span className="font-lexend text-[32px] leading-none font-bold tracking-tight text-mirai-text">
+            Archive
+          </span>
         </h1>
         <p className="text-sm font-bold text-primary-accent">
           過去の定例会に提出された議案

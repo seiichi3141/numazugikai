@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { LinkButton } from "./link-button";
 
@@ -9,13 +8,9 @@ export function About() {
         {/* ヘッダー */}
         <div className="flex flex-col gap-4">
           <h2>
-            <Image
-              src="/icons/about-typography.svg"
-              alt="About"
-              width={143}
-              height={36}
-              priority
-            />
+            <span className="font-lexend text-[32px] leading-none font-bold tracking-tight text-mirai-text">
+              About
+            </span>
           </h2>
           <p className="text-sm font-bold text-primary-accent">
             みらい議会＠沼津市とは
