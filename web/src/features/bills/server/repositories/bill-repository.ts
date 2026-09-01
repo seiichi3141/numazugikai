@@ -1,6 +1,8 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
+import type { BillSortKey } from "../../shared/utils/sort-bills";
 
 // ============================================================
 // Bills
@@ -558,4 +560,64 @@ export async function findBillIdsWithPublicInterview(
   }
 
   return new Set(data.map((row) => row.bill_id));
+}
+
+// ============================================================
+// 一覧の検索（DB側で絞り込み・並び替え・ページング）
+// ============================================================
+
+/** 一覧の絞り込み条件。RPC の引数と1対1で対応させる。 */
+export type BillsListFilter = {
+  difficultyLevel: DifficultyLevelEnum;
+  query: string;
+  tagId: string | null;
+  statusGroup: BillStatusGroup;
+  interviewOnly: boolean;
+};
+
+/**
+ * 一覧の1ページ分を検索する。
+ *
+ * 全件読んでアプリ側で絞ると、議案が1000件を超えたところで
+ * Supabase の返却上限（SUPABASE_MAX_ROWS）にも当たる。
+ */
+export async function searchBillsForList(
+  filter: BillsListFilter,
+  { sort, limit, offset }: { sort: BillSortKey; limit: number; offset: number }
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("search_bills_for_list", {
+    p_difficulty: filter.difficultyLevel,
+    p_query: filter.query,
+    p_tag_id: filter.tagId ?? undefined,
+    p_status_group: filter.statusGroup,
+    p_interview_only: filter.interviewOnly,
+    p_sort: sort,
+    p_limit: limit,
+    p_offset: offset,
+  });
+
+  if (error) {
+    throw new Error(`Failed to search bills: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+/** 一覧のチップに出す件数（ステータス別・タグ別）。 */
+export async function countBillsForListFacets(filter: BillsListFilter) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("count_bills_for_list_facets", {
+    p_difficulty: filter.difficultyLevel,
+    p_query: filter.query,
+    p_tag_id: filter.tagId ?? undefined,
+    p_status_group: filter.statusGroup,
+    p_interview_only: filter.interviewOnly,
+  });
+
+  if (error) {
+    throw new Error(`Failed to count bills facets: ${error.message}`);
+  }
+
+  return data ?? [];
 }

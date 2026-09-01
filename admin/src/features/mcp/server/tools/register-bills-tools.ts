@@ -44,7 +44,7 @@ export function registerBillsTools(server: McpServer): void {
       },
     },
     async ({ publish_status, status }) => {
-      const bills = await findBillsWithCouncilSessions();
+      const { rows: bills } = await findBillsWithCouncilSessions();
       const filtered = bills.filter((bill) => {
         if (publish_status && bill.publish_status !== publish_status)
           return false;

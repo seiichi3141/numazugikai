@@ -49,6 +49,30 @@ export type FeaturedTag = {
   priority: number;
 };
 
+/**
+ * 一覧のカードが読む項目だけの形。
+ *
+ * 一覧は DB 側で絞り込んでページごとに取るようになったので、`bills` の
+ * 全列は返ってこない。`BillWithContent` を要求すると使いもしない列を
+ * RPC に足すことになるため、実際に読む項目だけを求める。
+ * `BillWithContent` はこの形を満たすので、既存の呼び出しはそのまま通る。
+ */
+export type BillListItem = Pick<
+  Bill,
+  | "id"
+  | "name"
+  | "bill_number"
+  | "status"
+  | "submitted_date"
+  | "thumbnail_url"
+  | "is_review_completed"
+> & {
+  bill_content?: { title: string | null; summary: string | null };
+  tags: BillTag[];
+  hasPublicInterview?: boolean;
+  publicReportCount?: number;
+};
+
 export type BillWithContent = Bill & {
   bill_content?: BillContent;
   mirai_stance?: MiraiStance;

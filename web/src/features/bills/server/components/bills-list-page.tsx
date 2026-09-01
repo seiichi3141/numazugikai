@@ -18,27 +18,25 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
+import { BillsPagination } from "../../client/components/bill-list/bills-pagination";
 import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
 import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import {
   BILL_STATUS_GROUP_LABELS,
   BILL_STATUS_GROUPS,
-  countByStatusGroup,
-  filterByStatusGroup,
 } from "../../shared/utils/bill-status-group";
+import { TAG_ALL } from "../../shared/utils/bills-list-facets";
 import { chatBillName } from "../../shared/utils/chat-bill-name";
-import { filterBills } from "../../shared/utils/filter-bills";
 import {
   type BillsListParams,
   type BillsListSearchParams,
   billsListHref,
   parseBillsListParams,
 } from "../../shared/utils/parse-bills-list-params";
-import { sortBills } from "../../shared/utils/sort-bills";
 import { splitIntoRows } from "../../shared/utils/split-into-rows";
-import { countTagChipItems } from "../../shared/utils/tag-chip-items";
+import { toTagChipItemsFromCounts } from "../../shared/utils/tag-chip-items";
 import { tagChipRowCount } from "../../shared/utils/tag-chip-row-count";
-import { getBillsWithReportCounts } from "../loaders/get-bills-with-report-counts";
+import { getBillsListPage } from "../loaders/get-bills-list-page";
 import { getFeaturedTags } from "../loaders/get-featured-tags";
 
 /** 沼津市議会「本会議の報告」。掲載外の議案を含む審議結果が期ごとに並ぶ。 */
@@ -57,32 +55,25 @@ export async function BillsListPage({
   searchParams: BillsListSearchParams;
 }) {
   const params = parseBillsListParams(searchParams);
-  const [allBills, featuredTags, currentDifficulty] = await Promise.all([
-    getBillsWithReportCounts(),
-    getFeaturedTags(),
-    getDifficultyLevel(),
-  ]);
+  // 絞り込み・並び替え・ページングはDBが行う。全件をアプリに持ってくると、
+  // 議案が1000件を超えたあたりで絞り込みのクリックごとに待ち時間が出る。
+  // 難易度は cookie なのでI/Oを伴わない。ここで一度だけ読み、一覧にも渡す。
+  const currentDifficulty = await getDifficultyLevel();
+  const [{ bills, total, page, totalPages, facets }, featuredTags] =
+    await Promise.all([
+      getBillsListPage(params, currentDifficulty),
+      getFeaturedTags(),
+    ]);
 
-  // タグ以外の絞り込みを先に適用し、そこからタグ絞り込みを派生させる。
-  // 同じキーワード検索を2度走らせずに、タブとチップの母集合を作れる。
-  const withoutTag = filterBills(allBills, { ...params, tagId: null });
-  const scoped = params.tagId
-    ? withoutTag.filter((bill) =>
-        bill.tags.some((tag) => tag.id === params.tagId)
-      )
-    : withoutTag;
-  const statusCounts = countByStatusGroup(scoped);
-  const bills = sortBills(
-    filterByStatusGroup(scoped, params.status),
-    params.sort
-  );
-
-  // タグの件数は、タグ以外の絞り込みを適用した母集合から数える。タグ自身を
-  // 母集合に含めると、選択中のタグ以外がすべて0件になる。
-  const forTagCounts = filterByStatusGroup(withoutTag, params.status);
-  const tags = countTagChipItems(featuredTags, forTagCounts, params.tagId);
+  const statusCounts = facets.status;
+  const tags = toTagChipItemsFromCounts(featuredTags, facets.tag, params.tagId);
   const tagChips = [
-    { id: "all", label: "すべて", tagId: null, count: forTagCounts.length },
+    {
+      id: "all",
+      label: "すべて",
+      tagId: null,
+      count: facets.tag.get(TAG_ALL) ?? 0,
+    },
     ...tags.map((tag) => ({
       id: tag.id,
       label: tag.label,
@@ -224,7 +215,7 @@ export async function BillsListPage({
 
         <div className="mb-3 flex items-center gap-3">
           <p className="text-[13px] font-bold text-mirai-text-secondary">
-            {bills.length}件の議案
+            {total}件の議案
           </p>
           <BillsSortSelect params={params} />
         </div>
@@ -245,13 +236,20 @@ export async function BillsListPage({
             </div>
           </div>
         ) : (
-          <ul className="flex flex-col gap-3">
-            {bills.map((bill) => (
-              <li key={bill.id}>
-                <BillSearchCard bill={bill} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="flex flex-col gap-3">
+              {bills.map((bill) => (
+                <li key={bill.id}>
+                  <BillSearchCard bill={bill} />
+                </li>
+              ))}
+            </ul>
+            <BillsPagination
+              current={page}
+              total={totalPages}
+              href={(page) => href({ page })}
+            />
+          </>
         )}
 
         {/* 掲載外の議案は沼津市議会の公式ページに送る */}
@@ -269,12 +267,17 @@ export async function BillsListPage({
         </div>
       </Container>
 
-      {/* チャットはトップと同じものを出す。文脈は表示中の一覧に合わせる。 */}
+      {/*
+        チャットはトップと同じものを出す。文脈は表示中のページに合わせる。
+        絞り込み結果を全件渡していた頃と違い、渡せるのは今開いているページの
+        議案だけになる。全件をLLMの文脈に載せると議案数ぶんに膨らむので、
+        ページ単位で足りるとみなす。
+      */}
       <HomeChatClient
         currentDifficulty={currentDifficulty}
         bills={bills.map((bill) => ({
           name: chatBillName(bill),
-          summary: bill.bill_content?.summary,
+          summary: bill.bill_content?.summary ?? undefined,
           tags: bill.tags?.map((tag) => tag.label) ?? [],
         }))}
       />

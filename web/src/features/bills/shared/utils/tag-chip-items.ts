@@ -47,6 +47,20 @@ export function countTagChipItems(
     }
   }
 
+  return toTagChipItemsFromCounts(tags, counts, keepTagId);
+}
+
+/**
+ * すでに数えてある件数からチップの並びを作る。
+ *
+ * 一覧は議案をページごとにしか読まないので、手元の配列からタグを数えられない
+ * （表示中の30件だけを数えることになる）。DBが数えた件数をそのまま渡す。
+ */
+export function toTagChipItemsFromCounts(
+  tags: readonly BillTag[],
+  counts: ReadonlyMap<string, number>,
+  keepTagId?: string | null
+): TagChipItem[] {
   return tags
     .map((tag) => ({
       id: tag.id,

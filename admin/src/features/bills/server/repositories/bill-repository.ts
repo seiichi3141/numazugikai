@@ -10,8 +10,16 @@ import type {
 type BillContentInsert =
   Database["public"]["Tables"]["bill_contents"]["Insert"];
 
+/**
+ * 議案の一覧を取得する。
+ *
+ * `range` を渡すとその範囲だけを引き、`total` に絞り込み前の総件数が入る。
+ * 渡さない場合は全件を返すが、Supabase の返却上限（既定1000行）に当たると
+ * 古い議案が黙って落ちるので、一覧の表示には範囲を指定すること。
+ */
 export async function findBillsWithCouncilSessions(
-  sortConfig?: BillSortConfig
+  sortConfig?: BillSortConfig,
+  range?: { limit: number; offset: number }
 ) {
   const supabase = createAdminClient();
   const field = sortConfig?.field ?? "created_at";
@@ -25,15 +33,26 @@ export async function findBillsWithCouncilSessions(
     orderOptions.nullsFirst = false;
   }
 
-  const { data, error } = await supabase
+  const query = supabase
     .from("bills")
-    .select("*, council_sessions(name), bill_debates(stance)")
-    .order(field, orderOptions);
+    // 総件数はページ数の表示にしか使わないので、範囲を切るときだけ数える。
+    .select(
+      "*, council_sessions(name), bill_debates(stance)",
+      range ? { count: "exact" } : {}
+    )
+    .order(field, orderOptions)
+    // 並びを一意に決める。提出日やステータスは同じ値が大量にあるので、
+    // 決めておかないとページをまたいで同じ議案が二度出たり消えたりする。
+    .order("id", { ascending: true });
+
+  const { data, error, count } = await (range
+    ? query.range(range.offset, range.offset + range.limit - 1)
+    : query);
 
   if (error) {
     throw new Error(`Failed to fetch bills: ${error.message}`);
   }
-  return data;
+  return { rows: data ?? [], total: count ?? 0 };
 }
 
 export async function findBillById(billId: string) {

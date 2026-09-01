@@ -8,6 +8,7 @@ import type { Route } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { PaginationNav } from "@/components/ui/pagination-nav";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import {
   Table,
@@ -29,7 +30,7 @@ import type {
   BillWithCouncilSession,
 } from "../../../shared/types";
 import { countDebateStances, getBillStatusLabel } from "../../../shared/types";
-import { getBills } from "../../loaders/get-bills";
+import { getBillsPage } from "../../loaders/get-bills";
 
 /**
  * 討論があった議案であることを示すバッジ。
@@ -127,13 +128,25 @@ function StatusBadge({ status }: { status: BillStatus }) {
   );
 }
 
-export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
-  const bills = await getBills(sortConfig);
+export async function BillList({
+  sortConfig,
+  currentPage,
+  buildHref,
+}: {
+  sortConfig: BillSortConfig;
+  currentPage: number;
+  /** ページ番号からリンク先を作る。並び替えの状態を落とさないため。 */
+  buildHref: (page: number) => Route;
+}) {
+  const { bills, total, page, totalPages } = await getBillsPage(
+    sortConfig,
+    currentPage
+  );
 
   return (
     <div>
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="text-sm text-gray-600">{bills.length}件の議案</div>
+        <div className="text-sm text-gray-600">{total}件の議案</div>
         <Link href={routes.billNew()}>
           <Button>
             <Plus className="h-4 w-4 mr-1" />
@@ -179,6 +192,12 @@ export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
           </TableBody>
         </Table>
       </div>
+
+      <PaginationNav
+        totalPages={totalPages}
+        currentPage={page}
+        buildHref={buildHref}
+      />
     </div>
   );
 }

@@ -119,6 +119,14 @@
     "./ai/resolve-model": {
       "types": "./src/ai/resolve-model.ts",
       "default": "./src/ai/resolve-model.ts"
+    },
+    "./pagination/items": {
+      "types": "./src/pagination/pagination-items.ts",
+      "default": "./src/pagination/pagination-items.ts"
+    },
+    "./pagination/page-math": {
+      "types": "./src/pagination/page-math.ts",
+      "default": "./src/pagination/page-math.ts"
     }
   },
   "dependencies": {

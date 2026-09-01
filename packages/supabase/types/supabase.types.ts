@@ -1524,6 +1524,31 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: boolean
       }
+      bill_status_group: {
+        Args: { p_status: Database["public"]["Enums"]["bill_status_enum"] }
+        Returns: string
+      }
+      bills_list_rows: {
+        Args: {
+          p_difficulty: Database["public"]["Enums"]["difficulty_level_enum"]
+        }
+        Returns: {
+          bill_number: string
+          content_summary: string
+          content_title: string
+          has_public_interview: boolean
+          id: string
+          is_review_completed: boolean
+          name: string
+          status: Database["public"]["Enums"]["bill_status_enum"]
+          status_note: string
+          status_order: number
+          submitted_date: string
+          tags: Json
+          thumbnail_url: string
+          updated_at: string
+        }[]
+      }
       bulk_publish_reports: {
         Args: {
           p_config_id: string
@@ -1531,6 +1556,20 @@ export type Database = {
           p_min_content_richness: number
         }
         Returns: number
+      }
+      count_bills_for_list_facets: {
+        Args: {
+          p_difficulty: Database["public"]["Enums"]["difficulty_level_enum"]
+          p_interview_only?: boolean
+          p_query?: string
+          p_status_group?: string
+          p_tag_id?: string
+        }
+        Returns: {
+          count: number
+          key: string
+          kind: string
+        }[]
       }
       count_bulk_publish_targets: {
         Args: {
@@ -1756,9 +1795,39 @@ export type Database = {
         Args: { p_extracted_at: string; p_ids: string[] }
         Returns: undefined
       }
+      normalize_search_text: { Args: { value: string }; Returns: string }
       publish_topic_analysis_version: {
         Args: { p_version_id: string }
         Returns: undefined
+      }
+      search_bills_for_list: {
+        Args: {
+          p_difficulty: Database["public"]["Enums"]["difficulty_level_enum"]
+          p_interview_only?: boolean
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+          p_sort?: string
+          p_status_group?: string
+          p_tag_id?: string
+        }
+        Returns: {
+          bill_number: string
+          content_summary: string
+          content_title: string
+          has_public_interview: boolean
+          id: string
+          is_review_completed: boolean
+          name: string
+          public_report_count: number
+          status: Database["public"]["Enums"]["bill_status_enum"]
+          status_note: string
+          submitted_date: string
+          tags: Json
+          thumbnail_url: string
+          total_count: number
+          updated_at: string
+        }[]
       }
       set_active_council_session: {
         Args: { target_session_id: string }

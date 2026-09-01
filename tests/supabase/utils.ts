@@ -1,6 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../../packages/supabase/types/supabase.types";
 
+/** 生成型を使う。手書きの union は列挙漏れが起きるため。 */
+type BillInsert = Database["public"]["Tables"]["bills"]["Insert"];
+
 // ── 環境変数（`.env` または CI が供給。`npx supabase status` で確認） ──
 const SUPABASE_URL = process.env.SUPABASE_URL ?? "http://127.0.0.1:54421";
 const SECRET_KEY = requireEnv("SUPABASE_SECRET_KEY");
@@ -116,23 +119,7 @@ export async function cleanupTestCouncilSession(
 }
 
 /** テスト用 bill を作成 */
-export async function createTestBill(
-  overrides: Partial<{
-    name: string;
-    status:
-      | "submitted"
-      | "in_committee"
-      | "in_committee"
-      | "passed"
-      | "rejected"
-      | "preparing";
-    publish_status: "draft" | "published" | "coming_soon";
-    council_session_id: string;
-    is_featured: boolean;
-    submitted_date: string;
-    source_url: string;
-  }> = {}
-) {
+export async function createTestBill(overrides: Partial<BillInsert> = {}) {
   const defaults = {
     name: `テスト議案 ${Date.now()}`,
     status: "submitted" as const,

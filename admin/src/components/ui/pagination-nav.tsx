@@ -1,3 +1,4 @@
+import { paginationItems } from "@mirai-gikai/shared/pagination/items";
 import type { Route } from "next";
 import {
   Pagination,
@@ -9,8 +10,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { generatePageNumbers } from "../../shared/utils/pagination-utils";
+} from "./pagination";
 
 interface PaginationNavProps {
   totalPages: number;
@@ -55,18 +55,18 @@ export function PaginationNav({
           />
         </PaginationItem>
 
-        {generatePageNumbers(totalPages, currentPage).map((page) =>
-          typeof page === "string" ? (
-            <PaginationItem key={page}>
+        {paginationItems(currentPage, totalPages).map((item) =>
+          item.type === "gap" ? (
+            <PaginationItem key={`gap-${item.side}`}>
               <PaginationEllipsis />
             </PaginationItem>
           ) : (
-            <PaginationItem key={page}>
+            <PaginationItem key={item.page}>
               <PaginationLink
-                href={buildHref(page)}
-                isActive={page === currentPage}
+                href={buildHref(item.page)}
+                isActive={item.page === currentPage}
               >
-                {page}
+                {item.page}
               </PaginationLink>
             </PaginationItem>
           )

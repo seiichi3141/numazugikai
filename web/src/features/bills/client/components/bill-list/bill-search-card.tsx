@@ -4,7 +4,7 @@ import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card } from "@/components/ui/card";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
-import type { BillWithContent } from "../../../shared/types";
+import type { BillListItem } from "../../../shared/types";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillNumberLabel } from "./bill-number-label";
 import { BillPill } from "./bill-pill";
@@ -25,7 +25,7 @@ import { BillTag } from "./bill-tag";
  * タグと回答数だけはサムネの下でカード全幅に置く。左の段に押し込むと狭い画面で
  * チップが1つずつ折り返して縦に伸びる。
  */
-export function BillSearchCard({ bill }: { bill: BillWithContent }) {
+export function BillSearchCard({ bill }: { bill: BillListItem }) {
   const title = bill.bill_content?.title || bill.name;
   const summary = bill.bill_content?.summary;
   const reportCount = bill.publicReportCount ?? 0;
