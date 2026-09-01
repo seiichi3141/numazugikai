@@ -11,6 +11,7 @@ import { useOnPageView } from "@/lib/analytics/use-on-page-view";
 import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
 import { HamburgerMenu } from "./hamburger-menu";
+import { SiteTitle } from "./site-title";
 
 interface HeaderClientProps {
   difficultyLevel: DifficultyLevelEnum;
@@ -44,12 +45,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
                 width={42}
                 height={36}
               />
-              <Image
-                src="/img/service-logo.svg"
-                alt="みらい議会＠沼津市"
-                width={115}
-                height={21}
-              />
+              <SiteTitle />
             </Link>
           </div>
 
