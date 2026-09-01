@@ -1,5 +1,10 @@
 import "server-only";
 
+import { estimateCostUsd } from "@mirai-gikai/shared/ai/model-pricing";
+import {
+  resolveOpenAiModel,
+  toDisplayModelName,
+} from "@mirai-gikai/shared/ai/resolve-model";
 import {
   convertToModelMessages,
   type LanguageModel,
@@ -34,6 +39,7 @@ import type {
 } from "@/features/interview-session/shared/types";
 import { resolveInterviewChatLoaders } from "@/features/interview-session/shared/utils/resolve-interview-chat-loaders";
 import { DEFAULT_INTERVIEW_CHAT_MODEL } from "@/lib/ai/models";
+import { requireOpenAiApiKey } from "@/lib/ai/openai-key";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import { buildSummaryModelMessages } from "../../shared/utils/build-summary-model-messages";
@@ -262,12 +268,20 @@ async function generateStreamingResponse({
   };
 }) {
   // summaryフェーズもchatフェーズと同じモデルを使用（インタビューAIとモデルを揃える）
-  const model = isSummaryPhase
+  const configuredModel = isSummaryPhase
     ? (summaryModel ?? configChatModel ?? DEFAULT_INTERVIEW_CHAT_MODEL)
     : (chatModel ?? configChatModel ?? DEFAULT_INTERVIEW_CHAT_MODEL);
 
+  // 管理画面で設定されたモデル名は Gateway 形式（openai/...）で保存されるが、
+  // 実際の呼び出しは OpenAI API を直接行う（Gateway は経由しない）。
   const modelName =
-    typeof model === "string" ? model : (model.modelId ?? "unknown");
+    typeof configuredModel === "string"
+      ? toDisplayModelName(configuredModel)
+      : (configuredModel.modelId ?? "unknown");
+  const model =
+    typeof configuredModel === "string"
+      ? resolveOpenAiModel(configuredModel, { apiKey: requireOpenAiApiKey() })
+      : configuredModel;
 
   const handleError = (error: unknown) => {
     console.error("LLM generation error:", error);
@@ -295,7 +309,15 @@ async function generateStreamingResponse({
 
     // LLM利用コストを記録
     try {
-      const providerCost = extractGatewayCost(event);
+      // Gateway を経由しないため providerMetadata に費用が入らない。
+      // トークン数と単価から自前で算出する（コスト上限の判定に使う）。
+      const providerCost =
+        extractGatewayCost(event) ??
+        estimateCostUsd({
+          modelName,
+          inputTokens: event.totalUsage?.inputTokens,
+          outputTokens: event.totalUsage?.outputTokens,
+        });
       await recordChatUsage({
         userId,
         sessionId,

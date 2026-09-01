@@ -1,4 +1,9 @@
 import { openai } from "@ai-sdk/openai";
+import { estimateCostUsd } from "@mirai-gikai/shared/ai/model-pricing";
+import {
+  resolveOpenAiModel,
+  toDisplayModelName,
+} from "@mirai-gikai/shared/ai/resolve-model";
 import type { Database } from "@mirai-gikai/supabase";
 import {
   convertToModelMessages,
@@ -21,7 +26,8 @@ import {
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
-import { AI_MODELS } from "@/lib/ai/models";
+import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
+import { requireOpenAiApiKey } from "@/lib/ai/openai-key";
 import { env } from "@/lib/env";
 import {
   type CompiledPrompt,
@@ -100,9 +106,17 @@ export async function handleChatRequest({
     promptProvider
   );
   // Model configuration
-  const model = deps?.model ?? AI_MODELS.gpt5_4_mini_fast;
+  // モデル名は AI_MODELS の Gateway 形式（openai/...）で持つが、
+  // 実際の呼び出しは OpenAI API を直接行う（Gateway は経由しない）。
+  const configuredModel = deps?.model ?? DEFAULT_CHAT_MODEL;
   const modelName =
-    typeof model === "string" ? model : (model.modelId ?? "unknown");
+    typeof configuredModel === "string"
+      ? toDisplayModelName(configuredModel)
+      : (configuredModel.modelId ?? "unknown");
+  const model =
+    typeof configuredModel === "string"
+      ? resolveOpenAiModel(configuredModel, { apiKey: requireOpenAiApiKey() })
+      : configuredModel;
 
   // Determine if interview suggestion should be enabled
   const shouldSuggestInterview = await determineShouldSuggestInterview(
@@ -131,7 +145,15 @@ export async function handleChatRequest({
       tools,
       onFinish: async (event) => {
         try {
-          const providerCost = extractGatewayCost(event);
+          // Gateway を経由しないため providerMetadata に費用が入らない。
+          // トークン数と単価から自前で算出する（コスト上限の判定に使う）。
+          const providerCost =
+            extractGatewayCost(event) ??
+            estimateCostUsd({
+              modelName,
+              inputTokens: event.totalUsage?.inputTokens,
+              outputTokens: event.totalUsage?.outputTokens,
+            });
           await recordChatUsage({
             userId,
             sessionId: context.sessionId || undefined,

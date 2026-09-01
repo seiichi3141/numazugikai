@@ -43,8 +43,16 @@ export function isKnownModel(model: string): model is AiModel {
   return KNOWN_MODELS.has(model);
 }
 
-/** インタビューチャットのデフォルトモデル */
-export const DEFAULT_INTERVIEW_CHAT_MODEL = AI_MODELS.claude_haiku_4_5;
+/**
+ * インタビューチャットのデフォルトモデル。
+ *
+ * OpenAI API を直接呼ぶため、OpenAI のモデルであること。
+ * 他プロバイダを指定すると resolveOpenAiModel が落ちる。
+ */
+export const DEFAULT_INTERVIEW_CHAT_MODEL = AI_MODELS.gpt5_6_luna;
+
+/** AIチャット（議案ページ・トップ）のデフォルトモデル */
+export const DEFAULT_CHAT_MODEL = AI_MODELS.gpt5_6_luna;
 /** モデレーション評価のデフォルトモデル */
 export const DEFAULT_MODERATION_MODEL = AI_MODELS.gpt5_2;
 /** コンテンツ充実度評価のデフォルトモデル */

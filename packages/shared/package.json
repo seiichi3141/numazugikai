@@ -111,11 +111,21 @@
     "./interview-report/sync-opinions": {
       "types": "./src/interview-report/sync-opinions.ts",
       "default": "./src/interview-report/sync-opinions.ts"
+    },
+    "./ai/model-pricing": {
+      "types": "./src/ai/model-pricing.ts",
+      "default": "./src/ai/model-pricing.ts"
+    },
+    "./ai/resolve-model": {
+      "types": "./src/ai/resolve-model.ts",
+      "default": "./src/ai/resolve-model.ts"
     }
   },
   "dependencies": {
     "@mirai-gikai/supabase": "workspace:*",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "@ai-sdk/openai": "^3.0.1",
+    "ai": "^6.0.3"
   },
   "peerDependencies": {
     "zod": "^4.0.0"
