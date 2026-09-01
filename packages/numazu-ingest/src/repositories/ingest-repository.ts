@@ -400,3 +400,64 @@ export async function listCouncilSessionIds(): Promise<string[]> {
   if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
   return (data ?? []).map((row) => row.id);
 }
+
+/** 会期の期間一覧（委員会の開催日と会期を突合するために使う）。 */
+export async function listCouncilSessionPeriods(): Promise<
+  { id: string; startDate: string; endDate: string }[]
+> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("council_sessions")
+    .select("id, start_date, end_date");
+  if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    startDate: row.start_date,
+    endDate: row.end_date,
+  }));
+}
+
+/**
+ * 議案の当局説明を、いま保存されているものより長い場合だけ上書きする。
+ *
+ * 本会議の概要説明より委員会の課長説明の方が具体的で長いことが多い。
+ * 由来の異なる説明が混ざっても、常に最も充実したものが残るようにする。
+ */
+export async function updateBillExplanationIfLonger(
+  billId: string,
+  explanation: string
+): Promise<boolean> {
+  if (!explanation) return false;
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from("bills")
+    .select("explanation_source")
+    .eq("id", billId)
+    .maybeSingle();
+
+  const current = data?.explanation_source ?? "";
+  if (current.length >= explanation.length) return false;
+
+  const { error } = await supabase
+    .from("bills")
+    .update({ explanation_source: explanation })
+    .eq("id", billId);
+  if (error) throw new Error(`議案説明の保存に失敗した: ${error.message}`);
+  return true;
+}
+
+/** 委員会審査の事実（質疑回数・会議記録URL）を保存する。 */
+export async function updateBillCommitteeReview(
+  billId: string,
+  review: { qaCount: number; minutesUrl: string }
+): Promise<void> {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("bills")
+    .update({
+      committee_qa_count: review.qaCount,
+      committee_minutes_url: review.minutesUrl,
+    })
+    .eq("id", billId);
+  if (error) throw new Error(`委員会審査の保存に失敗した: ${error.message}`);
+}

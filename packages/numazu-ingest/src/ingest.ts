@@ -5,19 +5,27 @@ import {
   listCouncilSessionIds,
   startIngestionRun,
 } from "./repositories/ingest-repository";
+import { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
 import { ingestBillsForSession } from "./services/ingest-bills";
 import { ingestMembers } from "./services/ingest-members";
 import { ingestMinutes } from "./services/ingest-minutes";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
 import { CURRENT_TERM } from "./shared/constants-site";
 
+export { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
 export { ingestBillsForSession } from "./services/ingest-bills";
 export { ingestMembers } from "./services/ingest-members";
 export { ingestMinutes } from "./services/ingest-minutes";
 export { ingestSessionSchedule } from "./services/ingest-sessions";
 export { CURRENT_TERM } from "./shared/constants-site";
 
-export type IngestMode = "sessions" | "members" | "bills" | "minutes" | "all";
+export type IngestMode =
+  | "sessions"
+  | "members"
+  | "bills"
+  | "minutes"
+  | "amivoice"
+  | "all";
 
 export type IngestOptions = {
   mode: IngestMode;
@@ -69,6 +77,9 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
 
     case "minutes":
       return ingestMinutesForYear(options, discussVisionClient);
+
+    case "amivoice":
+      return ingestAmivoiceMinutes();
 
     case "all": {
       const sessions = await ingestSessionSchedule({

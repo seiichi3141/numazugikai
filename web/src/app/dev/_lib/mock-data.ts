@@ -36,6 +36,8 @@ const baseBill: BillWithContent = {
   decided_on: null,
   legal_basis: null,
   explanation_source: null,
+  committee_qa_count: null,
+  committee_minutes_url: null,
   document_url: null,
   status_note: null,
   status_order: 3,

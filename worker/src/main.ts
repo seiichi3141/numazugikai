@@ -29,7 +29,8 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=ingest --target=sessions                   # 定例会の会期予定
  *   tsx src/main.ts --mode=ingest --target=members                    # 会派・議員
  *   tsx src/main.ts --mode=ingest --target=bills                      # 当年の定例会の議案
- *   tsx src/main.ts --mode=ingest --target=minutes                    # 会議録から議案説明・討論
+ *   tsx src/main.ts --mode=ingest --target=minutes                    # 議会中継の会議録から議案説明・討論
+ *   tsx src/main.ts --mode=ingest --target=amivoice                   # 会議記録検索システムから議案説明・委員会審査・討論
  *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
  *   tsx src/main.ts --mode=ingest --target=bills --force              # 内容が同じでも取り込み直す
  *
@@ -44,6 +45,7 @@ const INGEST_TARGETS = [
   "members",
   "bills",
   "minutes",
+  "amivoice",
   "all",
 ] as const;
 

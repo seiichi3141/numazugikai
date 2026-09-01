@@ -156,6 +156,8 @@ export type Database = {
           bill_number_value: number | null
           category: Database["public"]["Enums"]["bill_category_enum"] | null
           committee_id: string | null
+          committee_minutes_url: string | null
+          committee_qa_count: number | null
           committee_result: string | null
           council_session_id: string | null
           created_at: string
@@ -191,6 +193,8 @@ export type Database = {
           bill_number_value?: number | null
           category?: Database["public"]["Enums"]["bill_category_enum"] | null
           committee_id?: string | null
+          committee_minutes_url?: string | null
+          committee_qa_count?: number | null
           committee_result?: string | null
           council_session_id?: string | null
           created_at?: string
@@ -226,6 +230,8 @@ export type Database = {
           bill_number_value?: number | null
           category?: Database["public"]["Enums"]["bill_category_enum"] | null
           committee_id?: string | null
+          committee_minutes_url?: string | null
+          committee_qa_count?: number | null
           committee_result?: string | null
           council_session_id?: string | null
           created_at?: string

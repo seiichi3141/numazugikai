@@ -25,6 +25,8 @@ const makeBill = (
   decided_on: null,
   legal_basis: null,
   explanation_source: null,
+  committee_qa_count: null,
+  committee_minutes_url: null,
   document_url: null,
   publish_status: "published",
   published_at: null,

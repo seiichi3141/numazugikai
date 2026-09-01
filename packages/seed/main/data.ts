@@ -22,21 +22,24 @@ type InterviewReportInsert =
 // 実際の沼津市議会のデータは取り込み（@mirai-gikai/numazu-ingest）が入れるため、
 // シードの議案が実データに混ざらないよう会期を分けておく。
 export const councilSessions: CouncilSessionInsert[] = [
+  // 日付は実在の会期と絶対に重ならない架空の過去にする。
+  // 実在の期間と重なると、委員会会議録の開催日と会期の突合で
+  // 実データを吸い込んでしまう
   {
     name: "開発用サンプル会期A",
     slug: "dev-sample-a",
     session_number: 901,
     kind: "regular",
-    start_date: "2026-02-06",
-    end_date: "2026-03-17",
+    start_date: "1999-02-01",
+    end_date: "1999-03-15",
   },
   {
     name: "開発用サンプル会期B",
     slug: "dev-sample-b",
     session_number: 902,
     kind: "regular",
-    start_date: "2025-10-21",
-    end_date: "2025-12-17",
+    start_date: "1999-10-01",
+    end_date: "1999-12-15",
   },
 ];
 
