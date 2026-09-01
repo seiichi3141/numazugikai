@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  cleanupTestUser,
+  createTestUser,
   getAnonClient,
   getAuthenticatedClient,
-  createTestUser,
-  cleanupTestUser,
 } from "../utils";
 
 /**

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { registerCouncilSessionsTools } from "../../admin/src/features/mcp/server/tools/register-diet-sessions-tools";
+import { registerCouncilSessionsTools } from "../../admin/src/features/mcp/server/tools/register-council-sessions-tools";
 import {
   cleanupTestCouncilSession,
   createTestCouncilSession,

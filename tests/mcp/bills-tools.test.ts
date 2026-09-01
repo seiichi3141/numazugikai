@@ -48,12 +48,12 @@ describe("MCP bills tools", () => {
       expect(draftIds).not.toContain(publishedBill.id);
       expect(draftResult.every((b) => b.publish_status === "draft")).toBe(true);
 
-      const enactedResult = await registry.callTool<
+      const passedResult = await registry.callTool<
         Array<{ id: string; status: string }>
       >("list_bills", { status: "passed" });
-      const enactedIds = enactedResult.map((b) => b.id);
-      expect(enactedIds).toContain(publishedBill.id);
-      expect(enactedIds).not.toContain(draftBill.id);
+      const passedIds = passedResult.map((b) => b.id);
+      expect(passedIds).toContain(publishedBill.id);
+      expect(passedIds).not.toContain(draftBill.id);
     });
 
     it("レスポンスに council_sessions(name) が含まれる", async () => {
@@ -232,7 +232,6 @@ describe("MCP bills tools", () => {
         .single();
       expect(data?.name).toBe("更新後");
       expect(data?.status).toBe("passed");
-      expect(data?.bill_number).toBe("HC");
       expect(data?.is_review_completed).toBe(true);
     });
 
@@ -255,7 +254,6 @@ describe("MCP bills tools", () => {
         .single();
       expect(data?.name).toBe("部分更新元");
       expect(data?.status).toBe("submitted");
-      expect(data?.bill_number).toBe("HR");
     });
 
     it("一部のフィールドのみ指定した場合、他のフィールドは変更されない", async () => {
@@ -286,7 +284,6 @@ describe("MCP bills tools", () => {
         .single();
       expect(data?.name).toBe("更新後の名前のみ");
       expect(data?.status).toBe("submitted");
-      expect(data?.bill_number).toBe("HR");
       expect(data?.is_featured).toBe(false);
       expect(data?.status_note).toBe("初期備考");
       expect(new Date(data?.submitted_date ?? "").toISOString()).toBe(
@@ -346,7 +343,7 @@ describe("MCP bills tools", () => {
       expect(data?.name).toBe("ナレッジ無し更新後");
     });
 
-    it("status を enacted に変更すると、紐づく公開中インタビューが自動で closed になる", async () => {
+    it("status を passed に変更すると、紐づく公開中インタビューが自動で closed になる", async () => {
       const bill = await createTestBill({ name: "成立前" });
       billIds.push(bill.id);
 

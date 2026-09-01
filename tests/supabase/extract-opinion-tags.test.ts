@@ -1,6 +1,6 @@
 import {
-  findUntaggedOpinions,
   findReportsToTag,
+  findUntaggedOpinions,
 } from "@mirai-gikai/topic-analysis-core/repository";
 import { extractOpinionTagsForReport } from "@mirai-gikai/topic-analysis-core/tag-backfill-service";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";

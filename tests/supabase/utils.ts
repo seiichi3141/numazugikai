@@ -130,7 +130,7 @@ export async function createTestBill(
     council_session_id: string;
     is_featured: boolean;
     submitted_date: string;
-    shugiin_url: string;
+    source_url: string;
   }> = {}
 ) {
   const defaults = {
