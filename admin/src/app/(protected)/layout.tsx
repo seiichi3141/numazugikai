@@ -22,7 +22,7 @@ export default async function MainLayout({
                   <Home className="h-5 w-5 text-white" />
                 </div>
                 <h1 className="text-xl font-semibold text-gray-900">
-                  みらい議会 Admin
+                  みらい議会＠沼津市 Admin
                 </h1>
               </div>
             </div>

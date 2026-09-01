@@ -99,7 +99,7 @@ const openDataBillSelect = <C extends string>(contentColumns: C) =>
 ` as const;
 
 /**
- * 公開中の議案を難易度別コンテンツ・チームみらいの賛否・タグ付きで
+ * 公開中の議案を難易度別コンテンツ・賛否スタンス・タグ付きで
  * 新しい順（created_at DESC, id DESC）に取得する。
  * 指定難易度のコンテンツが存在しない議案は含めない。
  */
@@ -136,7 +136,7 @@ export async function findOpenDataPublishedBills(params: {
 }
 
 /**
- * 公開中の議案を1件、難易度別コンテンツ・チームみらいの賛否・タグ付きで取得する。
+ * 公開中の議案を1件、難易度別コンテンツ・賛否スタンス・タグ付きで取得する。
  * 非公開・存在しない・指定難易度のコンテンツがない場合は null。
  */
 export async function findOpenDataPublishedBillById(params: {

@@ -82,7 +82,9 @@ export function toOpenDataBillDetail(
 }
 
 /**
- * チームみらいの賛否行をレスポンス形式（日本語ラベル付き）に変換する。
+ * 賛否スタンス行をレスポンス形式（日本語ラベル付き）に変換する。
+ *
+ * 廃止予定のフィールド（miraiStance）向け。沼津市議会では運用していない。
  */
 export function toOpenDataMiraiStance(
   stance: { type: StanceTypeEnum; comment: string | null } | null

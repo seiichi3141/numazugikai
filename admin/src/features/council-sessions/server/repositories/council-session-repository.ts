@@ -10,7 +10,7 @@ export async function findAllCouncilSessions() {
     .order("start_date", { ascending: false });
 
   if (error) {
-    throw new Error(`国会会期の取得に失敗しました: ${error.message}`);
+    throw new Error(`会期の取得に失敗しました: ${error.message}`);
   }
 
   return data;
@@ -37,7 +37,7 @@ export async function createCouncilSessionRecord(input: {
     .single();
 
   if (error) {
-    throw new Error(`国会会期の作成に失敗しました: ${error.message}`);
+    throw new Error(`会期の作成に失敗しました: ${error.message}`);
   }
 
   return data;
@@ -68,7 +68,7 @@ export async function updateCouncilSessionRecord(
     .single();
 
   if (error) {
-    throw new Error(`国会会期の更新に失敗しました: ${error.message}`);
+    throw new Error(`会期の更新に失敗しました: ${error.message}`);
   }
 
   return data;
@@ -82,7 +82,7 @@ export async function deleteCouncilSessionRecord(id: string) {
     .eq("id", id);
 
   if (error) {
-    throw new Error(`国会会期の削除に失敗しました: ${error.message}`);
+    throw new Error(`会期の削除に失敗しました: ${error.message}`);
   }
 }
 

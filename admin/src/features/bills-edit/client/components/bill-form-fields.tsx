@@ -229,11 +229,11 @@ export function BillFormFields({
         name="submitted_date"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>法案提出日 *</FormLabel>
+            <FormLabel>議案提出日 *</FormLabel>
             <FormControl>
               <Input type="date" {...field} />
             </FormControl>
-            <FormDescription>法案の提出日を設定してください</FormDescription>
+            <FormDescription>議案の提出日を設定してください</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -287,16 +287,16 @@ export function BillFormFields({
         name="source_url"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>衆議院URL</FormLabel>
+            <FormLabel>市議会ページURL</FormLabel>
             <FormControl>
               <Input
                 {...field}
                 value={field.value || ""}
-                placeholder="https://www.shugiin.go.jp/..."
+                placeholder="https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/..."
               />
             </FormControl>
             <FormDescription>
-              衆議院の議案ページURLを入力してください（「これから掲載される法案」表示時に外部リンクとして使用）
+              沼津市議会の議案ページURLを入力してください（「これから掲載される議案」表示時に外部リンクとして使用）
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -313,7 +313,7 @@ export function BillFormFields({
               <Input
                 {...field}
                 value={field.value || ""}
-                placeholder="221-kaku-1-mof-法案名"
+                placeholder="2026-02-teirei-gi-58"
               />
             </FormControl>
             <FormDescription>
@@ -329,14 +329,14 @@ export function BillFormFields({
         name="council_session_id"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>国会会期</FormLabel>
+            <FormLabel>会期</FormLabel>
             <Select
               onValueChange={field.onChange}
               value={field.value ?? undefined}
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="国会会期を選択" />
+                  <SelectValue placeholder="会期を選択" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -348,7 +348,7 @@ export function BillFormFields({
               </SelectContent>
             </Select>
             <FormDescription>
-              議案が提出された国会会期を選択してください
+              議案が提出された会期を選択してください
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -407,7 +407,7 @@ export function BillFormFields({
               <Textarea
                 {...field}
                 value={field.value ?? ""}
-                placeholder="議案の補足情報やチームみらいの仮説などを入力"
+                placeholder="議案の補足情報や論点の仮説などを入力"
                 className="min-h-[200px] resize-y"
               />
             </FormControl>

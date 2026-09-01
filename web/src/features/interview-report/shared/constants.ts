@@ -62,7 +62,7 @@ export const roleIcons: Record<InterviewReportRole, LucideIcon> = {
 
 /**
  * 役割ラベルとrole_titleを中黒で結合して表示用文字列を生成
- * 例：「専門家・物流業者」
+ * 例：「専門家・介護職」
  */
 export function formatRoleLabel(
   role?: string | null,

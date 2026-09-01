@@ -17,14 +17,14 @@ describe("CompactBillCard", () => {
       <CompactBillCard
         bill={createMockBill({
           bill_content: createMockBillContent({
-            title: "給食を無償にする法案",
+            title: "学校給食費を無償にする",
           }),
         })}
       />
     );
 
     expect(
-      screen.getByRole("heading", { name: /給食を無償にする法案/ })
+      screen.getByRole("heading", { name: /学校給食費を無償にする/ })
     ).toBeInTheDocument();
   });
 
@@ -36,7 +36,7 @@ describe("CompactBillCard", () => {
     render(
       <CompactBillCard
         bill={createMockBill({
-          name: "学校給食法の一部を改正する法律案",
+          name: "沼津市立学校給食共同調理場条例の一部を改正する条例",
           bill_content: undefined,
           is_review_completed: false,
         })}
@@ -44,8 +44,21 @@ describe("CompactBillCard", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: "学校給食法の一部を改正する法律案" })
+      screen.getByRole("heading", {
+        name: "沼津市立学校給食共同調理場条例の一部を改正する条例",
+      })
     ).toBeInTheDocument();
+  });
+
+  // 議案番号は公式資料と突き合わせるための手がかり。取り込めていない議案もある。
+  it("議案番号があるときだけ番号を出す", () => {
+    const { rerender } = render(
+      <CompactBillCard bill={createMockBill({ bill_number: "議第58号" })} />
+    );
+    expect(screen.getByText("議第58号")).toBeInTheDocument();
+
+    rerender(<CompactBillCard bill={createMockBill({ bill_number: null })} />);
+    expect(screen.queryByText("議第58号")).not.toBeInTheDocument();
   });
 
   it("レビュー完了のときだけ完了バッジを添える", () => {
@@ -107,7 +120,7 @@ describe("CompactBillCard", () => {
     render(
       <CompactBillCard
         bill={createMockBill({
-          name: "揮発油税等の暫定税率の廃止等に関する法律案",
+          name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: null,
         })}
       />
@@ -116,7 +129,7 @@ describe("CompactBillCard", () => {
     // レビュー完了バッジも img なので、サムネイルの代替テキストで狙う。
     expect(
       screen.queryByRole("img", {
-        name: "揮発油税等の暫定税率の廃止等に関する法律案",
+        name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
     ).not.toBeInTheDocument();
   });
@@ -125,7 +138,7 @@ describe("CompactBillCard", () => {
     render(
       <CompactBillCard
         bill={createMockBill({
-          name: "揮発油税等の暫定税率の廃止等に関する法律案",
+          name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: "https://example.com/thumb.png",
         })}
       />
@@ -133,7 +146,7 @@ describe("CompactBillCard", () => {
 
     expect(
       screen.getByRole("img", {
-        name: "揮発油税等の暫定税率の廃止等に関する法律案",
+        name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
     ).toBeInTheDocument();
   });

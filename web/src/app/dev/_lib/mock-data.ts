@@ -20,9 +20,9 @@ export function createMockBillContent(
   return {
     id: "mock-content-001",
     bill_id: "mock-bill-001",
-    title: "サンプル法案のタイトル",
+    title: "サンプル議案のタイトル",
     summary:
-      "この法案は開発プレビュー用のサンプルデータです。法案の要約文がここに表示されます。実際のデータではありません。",
+      "この議案は開発プレビュー用のサンプルデータです。議案の要約文がここに表示されます。実際のデータではありません。",
     content: "# サンプルコンテンツ\n\n本文がここに入ります。",
     difficulty_level: "normal",
     created_at: "2026-02-15T00:00:00Z",

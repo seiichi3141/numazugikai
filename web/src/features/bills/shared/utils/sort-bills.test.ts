@@ -85,7 +85,7 @@ describe("sortBills", () => {
   });
 
   // 提出日なしを先頭に出すと「新しい順」の意味が壊れる。
-  it("提出日が無い法案は昇順でも降順でも最後尾にする", () => {
+  it("提出日が無い議案は昇順でも降順でも最後尾にする", () => {
     const bills = [
       bill("none", { submitted_date: null }),
       bill("dated", { submitted_date: "2026-01-01" }),

@@ -5,7 +5,6 @@ import {
   type PromptOverridesByMode,
   parsePromptOverridesByMode,
 } from "@mirai-gikai/shared/interview-prompts/sections";
-import type { InterviewMode } from "@mirai-gikai/shared/interview-prompts/types";
 import { Eye } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
@@ -265,7 +264,7 @@ export function InterviewConfigForm({
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      インタビュー機能の有効/無効を設定します。公開設定は法案ごとに1つのみ可能です。
+                      インタビュー機能の有効/無効を設定します。公開設定は議案ごとに1つのみ可能です。
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -6,12 +6,13 @@ import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
+import { BillNumberLabel } from "./bill-number-label";
 import { BillPill } from "./bill-pill";
 import { BillStatusBadge } from "./bill-status-badge";
 import { BillTag } from "./bill-tag";
 
 /**
- * 法案一覧（/bills）のカード。
+ * 議案一覧（/bills）のカード。
  *
  * 既存の BillCard は画像が全幅上部、CompactBillCard は要約とタグを持たないため、
  * 一覧のデザイン（右のサムネ＋要約＋タグ）にどちらも合わない。既存のカードには
@@ -39,7 +40,7 @@ export function BillSearchCard({ bill }: { bill: BillWithContent }) {
       >
         <div className="flex gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            {/* タイトルは省略しない。何の法案かが読めないと選べない。 */}
+            {/* タイトルは省略しない。何の議案かが読めないと選べない。 */}
             <h3 className="text-base font-bold leading-relaxed">
               {title}
               {bill.is_review_completed && (
@@ -52,6 +53,7 @@ export function BillSearchCard({ bill }: { bill: BillWithContent }) {
 
             <div className="flex flex-wrap items-center gap-3">
               <BillStatusBadge status={bill.status} className="w-fit" />
+              <BillNumberLabel billNumber={bill.bill_number} />
               {bill.submitted_date && (
                 <span className="text-xs font-medium text-mirai-text-muted">
                   {formatDateWithDots(bill.submitted_date)} 提出

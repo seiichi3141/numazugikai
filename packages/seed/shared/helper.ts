@@ -10,19 +10,19 @@ export function createAdminClient() {
   );
 }
 
+// シードが作るデータだけを消す。
+// 議案（bills）・会期（council_sessions）とその付随データは
+// 取り込み（@mirai-gikai/numazu-ingest）が入れるため、シードでは触らない。
+// ここに bills を含めると、取り込み済みの実データが `pnpm seed` で消える。
 const TABLES_TO_CLEAR = [
   "interview_report",
   "interview_messages",
   "interview_sessions",
   "interview_questions",
   "interview_configs",
-  "mirai_stances",
   "chats",
-  "bill_contents",
   "bills_tags",
-  "bills",
   "tags",
-  "council_sessions",
 ] as const;
 
 export async function clearAllData(supabase: AdminClient) {

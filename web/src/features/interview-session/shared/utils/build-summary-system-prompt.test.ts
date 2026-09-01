@@ -44,9 +44,9 @@ const makeBill = (
   bill_content: {
     id: "bc-1",
     bill_id: "bill-1",
-    title: "テスト法案タイトル",
-    summary: "テスト法案の要約です",
-    content: "テスト法案の内容",
+    title: "テスト議案タイトル",
+    summary: "テスト議案の要約です",
+    content: "テスト議案の内容",
     difficulty_level: "normal",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -66,9 +66,9 @@ describe("buildSummarySystemPrompt", () => {
       ],
     });
 
-    expect(result).toContain("テスト法案");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案の要約です");
+    expect(result).toContain("テスト議案");
+    expect(result).toContain("テスト議案タイトル");
+    expect(result).toContain("テスト議案の要約です");
     expect(result).toContain("- 医療");
     expect(result).toContain("- 教育");
     expect(result).toContain("assistant: こんにちは");
@@ -82,9 +82,9 @@ describe("buildSummarySystemPrompt", () => {
       messages: [{ role: "user", content: "テスト" }],
     });
 
-    expect(result).toContain("- 法案名: \n");
-    expect(result).toContain("- 法案タイトル: \n");
-    expect(result).toContain("- 法案要約: \n");
+    expect(result).toContain("- 議案名: \n");
+    expect(result).toContain("- 議案タイトル: \n");
+    expect(result).toContain("- 議案要約: \n");
   });
 
   it("テーマ未設定の場合「（テーマ未設定）」が含まれる", () => {

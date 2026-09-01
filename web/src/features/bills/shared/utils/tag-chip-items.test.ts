@@ -64,7 +64,7 @@ describe("countTagChipItems", () => {
     expect(items.map((i) => i.id)).toEqual(["c", "a", "b"]);
   });
 
-  // 運用途中のタグ（省庁名など）は法案に付いていても絞り込みには出さない。
+  // 運用途中のタグ（部署名など）は議案に付いていても絞り込みには出さない。
   it("渡していないタグは議案に付いていても返さない", () => {
     const items = countTagChipItems([tag("税金")], [bill("税金", "財務省")]);
 

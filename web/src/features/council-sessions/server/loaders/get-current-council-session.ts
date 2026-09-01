@@ -4,7 +4,7 @@ import type { CouncilSession } from "../../shared/types";
 import { findCurrentCouncilSession } from "../repositories/council-session-repository";
 
 /**
- * 指定日時点で開催中の国会会期を取得
+ * 指定日時点で開催中の会期を取得
  * 指定日が開始日と終了日の範囲内にある会期を返す
  */
 export async function getCurrentCouncilSession(

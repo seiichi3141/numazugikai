@@ -1,14 +1,23 @@
 /**
  * 外部リンク定数
  */
+
+/** 沼津市議会の公式ページ。議会の仕組み・日程などの一次情報はここに委ねる */
+const NUMAZU_COUNCIL_OFFICIAL =
+  "https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/index.htm";
+
 export const EXTERNAL_LINKS = {
   REPORT: "https://forms.gle/wJXXMt6cv2ZdiCgg6",
-  ABOUT_NOTE: "https://note.com/team_mirai_jp/n/nd1656aa5f86d",
-  DONATION: "https://team-mir.ai/support/donation",
-  TEAM_MIRAI_ABOUT: "https://team-mir.ai/about",
-  TERMS: "https://team-mir.ai/terms",
-  PRIVACY: "https://team-mir.ai/privacy",
-  FAQ: "https://team-mirai.notion.site/FAQ-28cf6f56bae180bd84e7f7ae80f806a1",
+  NUMAZU_COUNCIL: NUMAZU_COUNCIL_OFFICIAL,
+  /** フォーク元「みらい議会」の自主制作ガイドライン */
   FORK_GUIDELINES_NOTE: "https://note.com/team_mirai_jp/n/nc59ec347e8c7",
-  GITHUB_REPO: "https://github.com/team-mirai/mirai-gikai",
+  GITHUB_REPO: "https://github.com/seiichi3141/numazugikai",
+
+  /**
+   * フォーク元の本家サービス。
+   *
+   * 本家の FORK_GUIDELINES が掲載を推奨しており、免責文言と合わせて
+   * フッターから参照する。
+   */
+  UPSTREAM_SERVICE: "https://gikai.team-mir.ai/",
 } as const;

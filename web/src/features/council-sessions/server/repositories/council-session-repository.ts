@@ -3,7 +3,7 @@ import { createAdminClient } from "@mirai-gikai/supabase";
 import type { CouncilSession } from "../../shared/types";
 
 /**
- * アクティブな国会会期を取得
+ * アクティブな会期を取得
  */
 export async function findActiveCouncilSession(): Promise<CouncilSession | null> {
   const supabase = createAdminClient();
@@ -23,7 +23,7 @@ export async function findActiveCouncilSession(): Promise<CouncilSession | null>
 }
 
 /**
- * 指定日時点で開催中の国会会期を取得
+ * 指定日時点で開催中の会期を取得
  */
 export async function findCurrentCouncilSession(
   targetDate: string
@@ -48,7 +48,7 @@ export async function findCurrentCouncilSession(
 }
 
 /**
- * slugで国会会期を取得
+ * slugで会期を取得
  */
 export async function findCouncilSessionBySlug(
   slug: string
@@ -70,7 +70,7 @@ export async function findCouncilSessionBySlug(
 }
 
 /**
- * 指定日より前の直近の国会会期を取得
+ * 指定日より前の直近の会期を取得
  */
 export async function findPreviousCouncilSession(
   beforeStartDate: string

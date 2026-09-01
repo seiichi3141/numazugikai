@@ -8,9 +8,9 @@ export function registerCouncilSessionsTools(server: McpServer): void {
   server.registerTool(
     "list_council_sessions",
     {
-      title: "国会会期一覧を取得",
+      title: "会期一覧を取得",
       description:
-        "登録されているすべての国会会期を返す。議案作成時のcouncil_session_id指定に利用できる。",
+        "登録されているすべての会期を返す。議案作成時のcouncil_session_id指定に利用できる。",
       inputSchema: {},
     },
     async () => {

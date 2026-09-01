@@ -13,7 +13,7 @@ type CurrentCouncilSessionProps = {
 };
 
 /**
- * 今国会の状況カード。
+ * 沼津市議会の会期の状況カード。
  *
  * 会期中は進行バーと残り日数を出す。パーセンテージだけだと寄付の目標額のように
  * 読まれるため、召集日と閉会予定日を併記する。
@@ -48,7 +48,7 @@ export function CurrentCouncilSession({
                 : "bg-mirai-surface-muted text-mirai-text-secondary"
             }`}
           >
-            {inSession ? "国会会期中" : "国会閉会中"}
+            {inSession ? "会期中" : "閉会中"}
           </span>
           {inSession && (
             <span className="text-[15px] font-bold text-mirai-brand-teal-deep md:ml-auto">

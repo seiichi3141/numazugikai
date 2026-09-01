@@ -14,16 +14,16 @@ describe("BillCard", () => {
       <BillCard
         bill={createMockBill({
           bill_content: createMockBillContent({
-            title: "ガソリン税を安くする法案",
-            summary: "ガソリンにかかる税金を下げる法案です。",
+            title: "国民健康保険税を引き下げる",
+            summary: "国民健康保険税の税率を引き下げる条例改正です。",
           }),
         })}
       />
     );
 
-    expect(screen.getByText("ガソリン税を安くする法案")).toBeInTheDocument();
+    expect(screen.getByText("国民健康保険税を引き下げる")).toBeInTheDocument();
     expect(
-      screen.getByText("ガソリンにかかる税金を下げる法案です。")
+      screen.getByText("国民健康保険税の税率を引き下げる条例改正です。")
     ).toBeInTheDocument();
   });
 
@@ -42,7 +42,7 @@ describe("BillCard", () => {
     render(
       <BillCard
         bill={createMockBill({
-          name: "揮発油税等の暫定税率の廃止等に関する法律案",
+          name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: null,
         })}
       />
@@ -51,7 +51,7 @@ describe("BillCard", () => {
     // レビュー完了バッジも img なので、サムネイルの代替テキストで狙う。
     expect(
       screen.queryByRole("img", {
-        name: "揮発油税等の暫定税率の廃止等に関する法律案",
+        name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
     ).not.toBeInTheDocument();
   });
@@ -60,7 +60,7 @@ describe("BillCard", () => {
     render(
       <BillCard
         bill={createMockBill({
-          name: "揮発油税等の暫定税率の廃止等に関する法律案",
+          name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: "https://example.com/thumb.png",
         })}
       />
@@ -68,7 +68,7 @@ describe("BillCard", () => {
 
     expect(
       screen.getByRole("img", {
-        name: "揮発油税等の暫定税率の廃止等に関する法律案",
+        name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
     ).toBeInTheDocument();
   });
@@ -82,7 +82,7 @@ describe("BillCard", () => {
     render(
       <BillCard
         bill={createMockBill({
-          name: "揮発油税等の暫定税率の廃止等に関する法律案",
+          name: "沼津市国民健康保険税条例の一部を改正する条例",
           is_featured: true,
           thumbnail_url: "https://example.com/thumb.png",
         })}
@@ -92,7 +92,7 @@ describe("BillCard", () => {
     expect(screen.getByText(/注目/)).toBeInTheDocument();
     expect(
       screen.getByRole("img", {
-        name: "揮発油税等の暫定税率の廃止等に関する法律案",
+        name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
     ).toBeInTheDocument();
   });
@@ -147,7 +147,7 @@ describe("BillCard", () => {
 
   /*
     日付そのものの有無で見る。文字列で否定すると、同じカードにある
-    ステータスバッジの「法案提出前」「法案成立」まで拾ってしまう。
+    ステータスバッジの「提出前」「可決」まで拾ってしまう。
   */
   it("提出日が無ければ日付を出さない", () => {
     const { container } = render(

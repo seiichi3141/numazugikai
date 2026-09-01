@@ -18,7 +18,7 @@ export function About() {
             />
           </h2>
           <p className="text-sm font-bold text-primary-accent">
-            みらい議会とは
+            みらい議会＠沼津市とは
           </p>
         </div>
 
@@ -26,26 +26,29 @@ export function About() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <h3 className="text-2xl font-bold leading-[43.2px]">
-              国会での議論を
+              沼津市議会の議論を
               <br />
               できる限りわかりやすく
             </h3>
             <p className="text-[15px] leading-[28px] text-black">
-              みらい議会は、国会で今どんな法案が検討されているか、わかりやすく伝えるプラットフォームです。国民の意見を政治に届けることを目指して、継続的にアップデートしていきます。
+              みらい議会＠沼津市は、沼津市議会でいまどんな議案が審議されているかを、わかりやすく伝えるサービスです。市民の声が市政に届くことを目指して、継続的にアップデートしていきます。
+            </p>
+            <p className="text-[15px] leading-[28px] text-mirai-text-subtle">
+              本サービスは有志が運営する非公式のサービスであり、沼津市および沼津市議会が運営するものではありません。議案の正式な内容や議会の日程は、沼津市議会の公式ページをご確認ください。
             </p>
           </div>
 
-          {/* もっと詳しく知るボタン */}
+          {/* 沼津市議会の公式ページへ */}
           <LinkButton
-            href={EXTERNAL_LINKS.ABOUT_NOTE}
+            href={EXTERNAL_LINKS.NUMAZU_COUNCIL}
             icon={{
-              src: "/icons/note-icon.png",
-              alt: "note",
-              width: 25,
-              height: 25,
+              src: "/icons/info-icon.svg",
+              alt: "",
+              width: 23,
+              height: 22,
             }}
           >
-            みらい議会とは
+            沼津市議会の公式ページ
           </LinkButton>
         </div>
       </div>

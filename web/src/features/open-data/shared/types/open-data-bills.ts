@@ -50,7 +50,13 @@ export type OpenDataBillItem = {
   documentUrl: string | null;
   publishedAt: string | null;
   tags: OpenDataBillTag[];
-  /** チームみらいの賛否。未表明の場合は null */
+  /**
+   * 賛否スタンス。未表明の場合は null。
+   *
+   * 廃止予定。フォーク元「みらい議会」で特定政党の賛否を表していたフィールド。
+   * 沼津市議会には該当する所属議員がおらず運用していないため通常は null。
+   * 互換性のために残している。
+   */
   miraiStance: OpenDataMiraiStance | null;
   createdAt: string;
 };

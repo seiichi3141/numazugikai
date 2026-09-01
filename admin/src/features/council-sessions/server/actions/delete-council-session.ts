@@ -20,7 +20,7 @@ export async function deleteCouncilSession(input: DeleteCouncilSessionInput) {
   } catch (error) {
     console.error("Delete council session error:", error);
     return {
-      error: getErrorMessage(error, "国会会期の削除中にエラーが発生しました"),
+      error: getErrorMessage(error, "会期の削除中にエラーが発生しました"),
     };
   }
 }

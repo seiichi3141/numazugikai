@@ -20,7 +20,7 @@ export default function DevelopersGroupLayout({
       <GoogleAnalytics gaId={env.analytics.gaTrackingId ?? ""} />
       <AuthGate />
       <Header />
-      {/* Team Mirai デザインシステム準拠: 白を基調のキャンバスにする */}
+      {/* サイト共通の配色に合わせ、白を基調のキャンバスにする */}
       <main className="min-h-dvh bg-white pt-24">{children}</main>
       <Footer />
     </>

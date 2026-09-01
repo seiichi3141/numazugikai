@@ -5,7 +5,7 @@ import { findPreviousCouncilSession } from "../repositories/council-session-repo
 import { getActiveCouncilSession } from "./get-active-council-session";
 
 /**
- * 前回の国会会期を取得
+ * 前回の会期を取得
  * アクティブなセッションより古いセッションを返す
  * アクティブなセッションがない場合、または古いセッションがない場合はnullを返す
  */

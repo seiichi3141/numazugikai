@@ -14,26 +14,26 @@ import type { InterviewPromptInput } from "./types";
 
 const baseInput: InterviewPromptInput = {
   bill: {
-    name: "揮発油税等の暫定税率の廃止等に関する法律案",
+    name: "沼津市営墓地条例の一部を改正する条例",
     knowledge_source: "補足資料",
     bill_content: {
-      title: "ガソリン税を安くする法案",
-      summary: "ガソリンにかかる税金を下げる法案です。",
+      title: "市営墓地の使用料を見直す条例案",
+      summary: "市営墓地の使用料と管理料を改定する条例案です。",
       content: "本文",
     },
   },
-  interviewConfig: { themes: ["家計への影響", "物流への影響"] },
+  interviewConfig: { themes: ["家計への影響", "お墓の管理"] },
   questions: [
     {
       id: "q1",
-      question: "この法案をご存じでしたか？",
+      question: "この議案をご存じでしたか？",
       quick_replies: ["知っていた", "知らなかった"],
       follow_up_guide: "知った経緯を聞く",
     },
     {
       id: "q2",
-      question: "生活への影響を教えてください",
-      target_audience: "自動車を日常的に使う方",
+      question: "暮らしへの影響を教えてください",
+      target_audience: "市営墓地を利用している方",
     },
   ],
   currentStage: "chat",

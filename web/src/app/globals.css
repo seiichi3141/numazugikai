@@ -106,8 +106,9 @@
   --color-mirai-progress-fill: #a9e89d;
 
   /* Gradient endpoints */
-  --color-mirai-gradient-start: #64d8c6;
-  --color-mirai-gradient-end: #bcecd3;
+  /* 駿河湾の海面から空へ。本家のティール系グラデーションから離す */
+  --color-mirai-gradient-start: #5aa9d6;
+  --color-mirai-gradient-end: #cfe4f2;
 
   /* Team Mirai brand (party design system) */
   --color-mirai-brand-teal: #30bca7;
@@ -122,7 +123,7 @@
   --color-topic-label: #909090;
   --color-topic-affected: #c8642a;
   --color-topic-industry: #2563a8;
-  --color-topic-expert: #0f8472;
+  --color-topic-expert: #14507c;
   --color-topic-citizen: #909090;
 
   /* 引用文の明朝体（Noto Serif JP） */
@@ -137,8 +138,9 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #2aa693;
-  --primary-accent: #0f8472;
+  /* 駿河湾・富士山の青。本家のティールグリーンから明確に離す */
+  --primary: #1b6ca8;
+  --primary-accent: #14507c;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);

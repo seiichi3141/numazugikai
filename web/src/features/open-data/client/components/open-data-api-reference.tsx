@@ -43,15 +43,15 @@ export function OpenDataApiReference() {
           shell: ["httpie", "wget"],
         },
         showDeveloperTools: "never",
-        // Team Mirai デザインシステム準拠: 白キャンバス + teal アクセント。
-        // ミントは面積を絞り、サイドバーの1面のみに使う（パネル類はニュートラル）
+        // サイト共通の配色に合わせる: 白キャンバス + primary（駿河湾ブルー）
+        // アクセント。色の面積は絞り、パネル類はニュートラルのままにする
         customCss: `
           .scalar-api-reference {
             --scalar-background-1: var(--color-white);
             --scalar-background-2: var(--color-mirai-surface-gray);
             --scalar-background-3: var(--color-mirai-surface-tag);
             --scalar-sidebar-background-1: var(--color-white);
-            --scalar-color-accent: var(--color-mirai-brand-teal-hover);
+            --scalar-color-accent: var(--color-primary-accent);
             /* サイト共通の浮動ヘッダーの下に潜り込まないよう、ヘッダー分の高さを
                Scalarに伝える（(developers) レイアウトの pt-24 = 6rem と揃える） */
             --scalar-custom-header-height: 6rem;

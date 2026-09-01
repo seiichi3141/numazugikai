@@ -8,7 +8,7 @@ import { findLatestClosedCouncilSession } from "../repositories/council-session-
 /**
  * 指定日より前に閉会した直近の会期を取得する。
  *
- * 閉会中のトップページで「第○回国会は終了しました」を出すために使う。
+ * 閉会中のトップページで「○○定例会は終了しました」を出すために使う。
  * `getPreviousCouncilSession` はアクティブ会期を起点にするため、閉会中は null に
  * なるか、ひとつ前の会期を返してしまう。
  */

@@ -34,16 +34,14 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(session.name);
   const [editSlug, setEditSlug] = useState(session.slug ?? "");
-  const [editShugiinUrl, setEditShugiinUrl] = useState(
-    session.source_url ?? ""
-  );
+  const [editSourceUrl, setEditSourceUrl] = useState(session.source_url ?? "");
   const [editStartDate, setEditStartDate] = useState(session.start_date);
   const [editEndDate, setEditEndDate] = useState(session.end_date);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleUpdate = async () => {
     if (!editName.trim()) {
-      toast.error("国会名を入力してください");
+      toast.error("会期名を入力してください");
       return;
     }
 
@@ -61,7 +59,7 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
     if (
       editName === session.name &&
       editSlug === (session.slug ?? "") &&
-      editShugiinUrl === (session.source_url ?? "") &&
+      editSourceUrl === (session.source_url ?? "") &&
       editStartDate === session.start_date &&
       editEndDate === session.end_date
     ) {
@@ -76,7 +74,7 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
         id: session.id,
         name: editName,
         slug: editSlug || null,
-        source_url: editShugiinUrl || null,
+        source_url: editSourceUrl || null,
         start_date: editStartDate,
         end_date: editEndDate,
       });
@@ -84,12 +82,12 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("国会会期を更新しました");
+        toast.success("会期を更新しました");
         setIsEditing(false);
       }
     } catch (error) {
       console.error("Update council session error:", error);
-      toast.error("国会会期の更新に失敗しました");
+      toast.error("会期の更新に失敗しました");
     } finally {
       setIsSubmitting(false);
     }
@@ -104,11 +102,11 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("国会会期を削除しました");
+        toast.success("会期を削除しました");
       }
     } catch (error) {
       console.error("Delete council session error:", error);
-      toast.error("国会会期の削除に失敗しました");
+      toast.error("会期の削除に失敗しました");
     } finally {
       setIsSubmitting(false);
     }
@@ -117,7 +115,7 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
   const handleCancel = () => {
     setEditName(session.name);
     setEditSlug(session.slug ?? "");
-    setEditShugiinUrl(session.source_url ?? "");
+    setEditSourceUrl(session.source_url ?? "");
     setEditStartDate(session.start_date);
     setEditEndDate(session.end_date);
     setIsEditing(false);
@@ -132,9 +130,7 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success(
-          `「${session.name}」をアクティブな国会会期に設定しました`
-        );
+        toast.success(`「${session.name}」をアクティブな会期に設定しました`);
         router.refresh();
       }
     } catch (error) {
@@ -163,14 +159,14 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                placeholder="国会名"
+                placeholder="会期名"
                 disabled={isSubmitting}
               />
               <Input
                 type="text"
                 value={editSlug}
                 onChange={(e) => setEditSlug(e.target.value)}
-                placeholder="スラッグ（例: 219-rinji）"
+                placeholder="スラッグ（例: 2026-02-teirei）"
                 disabled={isSubmitting}
               />
               <Input
@@ -188,9 +184,9 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
             </div>
             <Input
               type="url"
-              value={editShugiinUrl}
-              onChange={(e) => setEditShugiinUrl(e.target.value)}
-              placeholder="衆議院URL（https://www.shugiin.go.jp/...）"
+              value={editSourceUrl}
+              onChange={(e) => setEditSourceUrl(e.target.value)}
+              placeholder="市議会ページURL（https://www.city.numazu.shizuoka.jp/...）"
               disabled={isSubmitting}
             />
           </div>
@@ -225,7 +221,7 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline"
                 >
-                  衆議院ページ ↗
+                  市議会ページ ↗
                 </a>
               </div>
             )}
@@ -264,13 +260,13 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle className="text-orange-600">
-                        アクティブな国会会期の変更
+                        アクティブな会期の変更
                       </AlertDialogTitle>
                       <AlertDialogDescription asChild>
                         <div className="space-y-2 text-sm text-muted-foreground">
                           <p>
                             「{session.name}
-                            」をアクティブな国会会期に設定しますか？
+                            」をアクティブな会期に設定しますか？
                           </p>
                           <div className="mt-4 rounded-md border border-orange-200 bg-orange-50 p-3 text-orange-800">
                             <p className="font-semibold">
@@ -278,13 +274,13 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
                             </p>
                             <ul className="mt-2 list-disc list-inside text-sm">
                               <li>
-                                トップページに表示される法案が、この国会会期の法案に切り替わります
+                                トップページに表示される議案が、この会期の議案に切り替わります
                               </li>
                               <li>
-                                現在アクティブな国会会期は非アクティブになります
+                                現在アクティブな会期は非アクティブになります
                               </li>
                               <li>
-                                ユーザーがトップページで確認できる法案が変わります
+                                ユーザーがトップページで確認できる議案が変わります
                               </li>
                             </ul>
                           </div>
@@ -325,9 +321,9 @@ export function CouncilSessionItem({ session }: CouncilSessionItemProps) {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>国会会期の削除</AlertDialogTitle>
+                    <AlertDialogTitle>会期の削除</AlertDialogTitle>
                     <AlertDialogDescription>
-                      この国会会期を削除しますか？この操作は取り消せません。
+                      この会期を削除しますか？この操作は取り消せません。
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

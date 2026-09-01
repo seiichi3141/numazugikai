@@ -11,13 +11,13 @@ import { createCouncilSession } from "../../server/actions/create-council-sessio
 export function CouncilSessionForm() {
   const nameId = useId();
   const slugId = useId();
-  const shugiinUrlId = useId();
+  const sourceUrlId = useId();
   const startDateId = useId();
   const endDateId = useId();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [shugiinUrl, setShugiinUrl] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +26,7 @@ export function CouncilSessionForm() {
     e.preventDefault();
 
     if (!name.trim()) {
-      toast.error("国会名を入力してください");
+      toast.error("会期名を入力してください");
       return;
     }
 
@@ -46,7 +46,7 @@ export function CouncilSessionForm() {
       const result = await createCouncilSession({
         name,
         slug: slug || null,
-        source_url: shugiinUrl || null,
+        source_url: sourceUrl || null,
         start_date: startDate,
         end_date: endDate,
       });
@@ -54,16 +54,16 @@ export function CouncilSessionForm() {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("国会会期を作成しました");
+        toast.success("会期を作成しました");
         setName("");
         setSlug("");
-        setShugiinUrl("");
+        setSourceUrl("");
         setStartDate("");
         setEndDate("");
       }
     } catch (error) {
       console.error("Create council session error:", error);
-      toast.error("国会会期の作成に失敗しました");
+      toast.error("会期の作成に失敗しました");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,13 +73,13 @@ export function CouncilSessionForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
-          <Label htmlFor={nameId}>国会名</Label>
+          <Label htmlFor={nameId}>会期名</Label>
           <Input
             id={nameId}
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="例: 第219回国会（臨時会）"
+            placeholder="例: 令和8年2月定例会"
             disabled={isSubmitting}
           />
         </div>
@@ -90,7 +90,7 @@ export function CouncilSessionForm() {
             type="text"
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
-            placeholder="例: 219-rinji"
+            placeholder="例: 2026-02-teirei"
             disabled={isSubmitting}
           />
         </div>
@@ -116,13 +116,13 @@ export function CouncilSessionForm() {
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor={shugiinUrlId}>衆議院URL</Label>
+        <Label htmlFor={sourceUrlId}>市議会ページURL</Label>
         <Input
-          id={shugiinUrlId}
+          id={sourceUrlId}
           type="url"
-          value={shugiinUrl}
-          onChange={(e) => setShugiinUrl(e.target.value)}
-          placeholder="https://www.shugiin.go.jp/..."
+          value={sourceUrl}
+          onChange={(e) => setSourceUrl(e.target.value)}
+          placeholder="https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/..."
           disabled={isSubmitting}
         />
       </div>

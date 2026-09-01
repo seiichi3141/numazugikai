@@ -48,9 +48,9 @@ const makeBill = (
   bill_content: {
     id: "bc-1",
     bill_id: "bill-1",
-    title: "テスト法案タイトル",
-    summary: "テスト法案の要約です",
-    content: "テスト法案の内容",
+    title: "テスト議案タイトル",
+    summary: "テスト議案の要約です",
+    content: "テスト議案の内容",
     difficulty_level: "normal",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -62,7 +62,7 @@ const makeBill = (
 const sampleQuestions = [
   {
     id: "q1",
-    question: "この法案についてどう思いますか？",
+    question: "この議案についてどう思いますか？",
     follow_up_guide: "賛成・反対の理由を深掘りする",
   },
   {
@@ -75,7 +75,7 @@ const sampleQuestions = [
   {
     id: "q3",
     question: "専門家として技術的な観点で評価してください",
-    target_audience: "当該法案分野の専門家",
+    target_audience: "当該議案分野の専門家",
   },
 ];
 
@@ -90,13 +90,13 @@ const baseParams: InterviewPromptInput = {
 };
 
 describe("buildTargetedModeSystemPrompt", () => {
-  it("法案情報がプロンプトに含まれる", () => {
+  it("議案情報がプロンプトに含まれる", () => {
     const result = buildTargetedModeSystemPrompt(baseParams);
 
-    expect(result).toContain("テスト法案");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案の要約です");
-    expect(result).toContain("テスト法案の内容");
+    expect(result).toContain("テスト議案");
+    expect(result).toContain("テスト議案タイトル");
+    expect(result).toContain("テスト議案の要約です");
+    expect(result).toContain("テスト議案の内容");
   });
 
   it("bill=nullの場合は空文字にフォールバックする", () => {
@@ -105,9 +105,9 @@ describe("buildTargetedModeSystemPrompt", () => {
       bill: null,
     });
 
-    expect(result).toContain("- 法案名: \n");
-    expect(result).toContain("- 法案タイトル: \n");
-    expect(result).toContain("- 法案要約: \n");
+    expect(result).toContain("- 議案名: \n");
+    expect(result).toContain("- 議案タイトル: \n");
+    expect(result).toContain("- 議案要約: \n");
   });
 
   it("テーマがプロンプトに含まれる", () => {
@@ -144,7 +144,7 @@ describe("buildTargetedModeSystemPrompt", () => {
   it("質問リストがID付きで含まれる", () => {
     const result = buildTargetedModeSystemPrompt(baseParams);
 
-    expect(result).toContain("[ID: q1] この法案についてどう思いますか？");
+    expect(result).toContain("[ID: q1] この議案についてどう思いますか？");
     expect(result).toContain("[ID: q2] 業務への影響はありますか？");
     expect(result).toContain(
       "[ID: q3] 専門家として技術的な観点で評価してください"
@@ -155,7 +155,7 @@ describe("buildTargetedModeSystemPrompt", () => {
     const result = buildTargetedModeSystemPrompt(baseParams);
 
     expect(result).toContain("対象者: 業務で個人情報を扱う方");
-    expect(result).toContain("対象者: 当該法案分野の専門家");
+    expect(result).toContain("対象者: 当該議案分野の専門家");
   });
 
   it("対象者条件がない質問は「全員（条件なし）」と表示する", () => {

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface LegalPageLayoutProps {
   title: string;
-  /** Team Mirai デザインシステムの節見出しに使う英字ラベル（例: "Terms of Service"） */
+  /** 節見出しに使う英字ラベル（例: "Terms of Service"） */
   enLabel?: string;
   description?: string;
   className?: string;

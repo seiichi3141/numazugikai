@@ -18,7 +18,7 @@ export async function createCouncilSession(input: CreateCouncilSessionInput) {
 
     // バリデーション
     if (!input.name || input.name.trim().length === 0) {
-      return { error: "国会名を入力してください" };
+      return { error: "会期名を入力してください" };
     }
 
     if (!input.start_date) {
@@ -52,7 +52,7 @@ export async function createCouncilSession(input: CreateCouncilSessionInput) {
   } catch (error) {
     console.error("Create council session error:", error);
     return {
-      error: getErrorMessage(error, "国会会期の作成中にエラーが発生しました"),
+      error: getErrorMessage(error, "会期の作成中にエラーが発生しました"),
     };
   }
 }

@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { EXTERNAL_LINKS } from "@/config/external-links";
 import type { ComingSoonBill } from "@/features/bills/shared/types";
 import { Card, CardContent } from "../ui/card";
 
@@ -14,10 +15,10 @@ export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
       {/* ヘッダー */}
       <div className="flex flex-col gap-2">
         <h2 className="text-[22px] font-bold text-black leading-[1.48]">
-          これから掲載される法案
+          これから掲載される議案
         </h2>
         <p className="text-xs text-mirai-text-secondary">
-          みらい議会は、順次更新されていきます
+          みらい議会＠沼津市は、順次更新されていきます
         </p>
       </div>
 
@@ -36,16 +37,16 @@ export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
         </div>
       )}
 
-      {/* 国会議案情報へのリンク */}
+      {/* 沼津市議会の公式ページへのリンク */}
       <div className="text-right text-sm text-mirai-text-secondary">
         <Link
-          href="https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/menu.htm"
+          href={EXTERNAL_LINKS.NUMAZU_COUNCIL as Route}
           target="_blank"
           rel="noopener noreferrer"
           className="hover:opacity-80 inline-flex items-center gap-1"
         >
-          国会に提出されているすべての法案は{" "}
-          <span className="underline">国会議案情報へ</span>
+          沼津市議会に提出されているすべての議案は{" "}
+          <span className="underline">沼津市議会の公式ページへ</span>
           <ExternalLink className="h-3 w-3" />
         </Link>
       </div>

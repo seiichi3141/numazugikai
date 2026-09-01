@@ -4,7 +4,7 @@ import type { CouncilSession } from "../../shared/types";
 import { findCouncilSessionBySlug } from "../repositories/council-session-repository";
 
 /**
- * slugで国会会期を取得
+ * slugで会期を取得
  */
 export async function getCouncilSessionBySlug(
   slug: string

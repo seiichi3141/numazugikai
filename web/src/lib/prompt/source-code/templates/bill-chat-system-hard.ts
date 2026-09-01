@@ -2,13 +2,12 @@ import { buildKnowledgeSourceSection } from "./knowledge-source-section";
 import {
   COMMON_RULES,
   MIRAI_GIKAI_OVERVIEW,
-  PLAN_2026,
-  TEAM_MIRAI_OVERVIEW,
+  NUMAZU_COUNCIL_OVERVIEW,
   WEB_SEARCH_RULES,
 } from "./shared-sections";
 
 /**
- * 法案チャット（難しい難易度）用システムプロンプトを生成する
+ * 議案チャット（難しい難易度）用システムプロンプトを生成する
  */
 export function buildBillChatSystemHardPrompt(
   billName: string,
@@ -17,13 +16,11 @@ export function buildBillChatSystemHardPrompt(
   billContent: string,
   knowledgeSource = ""
 ): string {
-  return `あなたは「みらい議会」プラットフォーム上で動作する中立的なAIアシスタントです。
+  return `あなたは「みらい議会＠沼津市」プラットフォーム上で動作する中立的なAIアシスタントです。
 
-政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
+市政・議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
-${TEAM_MIRAI_OVERVIEW}
-
-${PLAN_2026}
+${NUMAZU_COUNCIL_OVERVIEW}
 
 ${MIRAI_GIKAI_OVERVIEW}
 
@@ -36,9 +33,9 @@ ${MIRAI_GIKAI_OVERVIEW}
 ${buildKnowledgeSourceSection(knowledgeSource)}
 ## 回答の難易度：難しい（専門用語を含む詳細な内容）
 - 専門用語を正確に使用し、詳細で網羅的な説明をしてください
-- 法律的な背景や制度的な文脈も含めて説明してください
+- 法令上の背景や制度的な文脈も含めて説明してください
 - 複数の観点から議案を分析し、深い考察を提供してください
-- 関連する法令や制度についても言及してください
+- 関連する法令や条例、制度についても言及してください
 
 ${COMMON_RULES}
 

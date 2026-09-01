@@ -25,7 +25,7 @@ describe("toBillStatusGroup", () => {
     expect(toBillStatusGroup("preparing")).toBe("waiting");
   });
 
-  it("成立と否決はそのまま", () => {
+  it("可決と否決はそのまま", () => {
     expect(toBillStatusGroup("passed")).toBe("enacted");
     expect(toBillStatusGroup("consented")).toBe("enacted");
     expect(toBillStatusGroup("certified")).toBe("enacted");

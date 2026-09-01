@@ -18,10 +18,10 @@ describe("BillSearchCard", () => {
     );
   });
 
-  // 一覧では何の法案かが読めないと選べないので、タイトルは省略しない。
+  // 一覧では何の議案かが読めないと選べないので、タイトルは省略しない。
   it("長いタイトルも省略せずに出す", () => {
     const title =
-      "地方公共団体の議会の議員及び長の選挙に係る公職選挙法の特例に関する法律の一部を改正する法律案";
+      "沼津市立学校の設置及び管理に関する条例及び沼津市立学校給食共同調理場条例の一部を改正する条例";
     render(
       <BillSearchCard
         bill={createMockBill({
@@ -37,7 +37,7 @@ describe("BillSearchCard", () => {
     render(
       <BillSearchCard
         bill={createMockBill({
-          name: "学校給食法の一部を改正する法律案",
+          name: "沼津市立学校給食共同調理場条例の一部を改正する条例",
           bill_content: undefined,
           is_review_completed: false,
         })}
@@ -45,7 +45,9 @@ describe("BillSearchCard", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: "学校給食法の一部を改正する法律案" })
+      screen.getByRole("heading", {
+        name: "沼津市立学校給食共同調理場条例の一部を改正する条例",
+      })
     ).toBeInTheDocument();
   });
 
@@ -147,6 +149,17 @@ describe("BillSearchCard", () => {
       <BillSearchCard bill={createMockBill({ publicReportCount: 12 })} />
     );
     expect(screen.getByText(/12人がAIインタビューに回答/)).toBeInTheDocument();
+  });
+
+  // 議案番号は公式資料と突き合わせるための手がかり。取り込めていない議案もある。
+  it("議案番号があるときだけ番号を出す", () => {
+    const { rerender } = render(
+      <BillSearchCard bill={createMockBill({ bill_number: "議第58号" })} />
+    );
+    expect(screen.getByText("議第58号")).toBeInTheDocument();
+
+    rerender(<BillSearchCard bill={createMockBill({ bill_number: null })} />);
+    expect(screen.queryByText("議第58号")).not.toBeInTheDocument();
   });
 
   it("レビュー完了のときだけ完了バッジを添える", () => {

@@ -8,7 +8,7 @@ import { findFeaturedTags } from "../repositories/bill-repository";
 /**
  * 絞り込みに出すタグ。featured_priority を持つタグを優先度順に返す。
  *
- * 法案側には運用途中のタグ（省庁名・委員会名など）も付いているため、法案から
+ * 議案側には運用途中のタグ（部署名・委員会名など）も付いているため、議案から
  * タグを集めると選べるカテゴリが数十件に膨らむ。出すのは featured だけにする。
  */
 export async function getFeaturedTags(): Promise<BillTag[]> {

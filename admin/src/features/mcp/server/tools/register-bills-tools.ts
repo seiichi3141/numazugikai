@@ -32,7 +32,7 @@ export function registerBillsTools(server: McpServer): void {
     {
       title: "議案一覧を取得",
       description:
-        "mirai議会adminに登録されている議案を返す。各議案にcouncil_session名も含む。publish_status / status でフィルタ可能。",
+        "みらい議会＠沼津市のadminに登録されている議案を返す。各議案にcouncil_session名も含む。publish_status / status でフィルタ可能。",
       inputSchema: {
         publish_status: z
           .enum(["draft", "published", "coming_soon"])
@@ -120,7 +120,7 @@ export function registerBillsTools(server: McpServer): void {
     {
       title: "議案を更新",
       description:
-        "指定IDの議案のメタ情報（name, status, originating_house 等）を部分更新する。指定したフィールドのみが更新され、省略したフィールドは変更されない。",
+        "指定IDの議案のメタ情報（name, status, bill_number, category, submitter 等）を部分更新する。指定したフィールドのみが更新され、省略したフィールドは変更されない。",
       inputSchema: {
         billId: z.string().uuid(),
         ...billUpdateSchema.partial().shape,

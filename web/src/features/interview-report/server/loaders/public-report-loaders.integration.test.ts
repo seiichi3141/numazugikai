@@ -25,8 +25,8 @@ describe("公開レポート loader 統合テスト", () => {
     context = null;
   });
 
-  // 件数による下限は撤去した。1件でも法案詳細に出す。
-  it("公開が1件でも法案詳細用レポートを返す", async () => {
+  // 件数による下限は撤去した。1件でも議案詳細に出す。
+  it("公開が1件でも議案詳細用レポートを返す", async () => {
     context = await createPublicReportLoaderContext();
     await createPublicReports(context, 1);
 
@@ -36,7 +36,7 @@ describe("公開レポート loader 統合テスト", () => {
     expect(result.reports).toHaveLength(1);
   });
 
-  it("法案詳細用は最大3件と総件数を返す", async () => {
+  it("議案詳細用は最大3件と総件数を返す", async () => {
     context = await createPublicReportLoaderContext();
     await createPublicReports(context, 20);
 
