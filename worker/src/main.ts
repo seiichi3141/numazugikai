@@ -6,6 +6,7 @@ import {
 import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { resolveBackfillParams } from "@mirai-gikai/topic-analysis-core/backfill-params";
 import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
+import { runExplain } from "@mirai-gikai/bill-explainer/explain";
 import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
 
 /**
@@ -31,6 +32,12 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=ingest --target=bills                      # 当年の定例会の議案
  *   tsx src/main.ts --mode=ingest --target=minutes                    # 議会中継の会議録から議案説明・討論
  *   tsx src/main.ts --mode=ingest --target=amivoice                   # 会議記録検索システムから議案説明・委員会審査・討論
+ *
+ *   議案解説の生成（OpenAI API を直接利用。Gateway は経由しない）:
+ *   tsx src/main.ts --mode=explain --session=2026-13                  # 指定会期の議案を解説
+ *   tsx src/main.ts --mode=explain --session=2026-13 --limit=3        # 件数を絞って試す
+ *   tsx src/main.ts --mode=explain --difficulty=normal                # やさしい版だけ
+ *   tsx src/main.ts --mode=explain --force                            # 既存の解説を作り直す
  *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
  *   tsx src/main.ts --mode=ingest --target=bills --force              # 内容が同じでも取り込み直す
  *
@@ -38,7 +45,13 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   （ingest 以外のモードでは AI_GATEWAY_API_KEY も必要）
  */
 
-type Mode = "analyze" | "analyze-all" | "backfill" | "tag-backfill" | "ingest";
+type Mode =
+  | "analyze"
+  | "analyze-all"
+  | "backfill"
+  | "tag-backfill"
+  | "ingest"
+  | "explain";
 
 const INGEST_TARGETS = [
   "sessions",
@@ -107,9 +120,33 @@ async function main(): Promise<void> {
   // 接続情報が無ければ即座に失敗させる（部分実行を避ける）。
   requireEnv("SUPABASE_URL");
   requireEnv("SUPABASE_SECRET_KEY");
-  // 取り込みはLLMを使わないため、AIのキーは他のモードでのみ要求する。
-  if (mode !== "ingest") {
+  // 取り込みはLLMを使わないためAIのキーは不要。
+  // 議案解説は OpenAI API を直接叩くため、Gateway ではなく OPENAI_API_KEY を要求する。
+  if (mode === "explain") {
+    requireEnv("OPENAI_API_KEY");
+  } else if (mode !== "ingest") {
     requireEnv("AI_GATEWAY_API_KEY");
+  }
+
+  if (mode === "explain") {
+    const difficulty = args.difficulty;
+    if (difficulty !== undefined && difficulty !== "normal" && difficulty !== "hard") {
+      throw new Error(
+        `Invalid --difficulty=${difficulty} (expected "normal" or "hard")`
+      );
+    }
+    const results = await runExplain({
+      sessionSlug: args.session,
+      force: args.force !== undefined && args.force !== "false",
+      limit: parseNumber(args.limit, "limit"),
+      difficulties: difficulty ? [difficulty] : undefined,
+    });
+    const generated = results.filter((r) => r.generated.length > 0).length;
+    const failed = results.filter((r) => r.failures.length > 0).length;
+    console.log(
+      `議案解説の生成完了: 対象${results.length}件 / 生成${generated}件 / 一部失敗${failed}件`
+    );
+    return;
   }
 
   if (mode === "ingest") {
@@ -172,7 +209,7 @@ async function main(): Promise<void> {
   }
 
   throw new Error(
-    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "ingest")`
+    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "ingest" / "explain")`
   );
 }
 
