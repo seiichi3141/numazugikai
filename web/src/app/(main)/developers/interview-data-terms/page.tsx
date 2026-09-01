@@ -6,35 +6,42 @@ import {
   LegalParagraph,
   LegalSectionTitle,
 } from "@/components/layouts/legal-page-layout";
+import { env } from "@/lib/env";
+import { routes } from "@/lib/routes";
+
+const TERMS_TITLE = "みらい議会＠沼津市 AIインタビューデータ利用規約";
 
 export const metadata: Metadata = {
-  title: "みらい議会AIインタビューデータ利用規約 | みらい議会",
+  title: `${TERMS_TITLE} | みらい議会＠沼津市`,
   description:
-    "みらい議会のAIインタビューデータをオープンデータとして利用するにあたっての条件を定めています。",
+    "みらい議会＠沼津市のAIインタビューデータをオープンデータとして利用するにあたっての条件を定めています。",
 };
 
 const CC_BY_LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/deed.ja";
+// 出典表示に載せるURLはデプロイ先で変わるため、環境変数から組み立てる
+const SITE_URL = env.webUrl.replace(/\/$/, "");
+const TERMS_URL = `${SITE_URL}${routes.interviewDataTerms()}`;
 
 export default function InterviewDataTermsPage() {
   return (
     <LegalPageLayout
-      title="みらい議会AIインタビューデータ利用規約"
+      title={TERMS_TITLE}
       enLabel="Data Terms"
       className="pt-24 md:pt-12"
     >
       <Container className="space-y-10">
         <LegalParagraph className="text-right">
-          最終更新日：2026年7月29日
+          最終更新日：2026年9月1日
         </LegalParagraph>
 
         <LegalParagraph>
-          本規約は、政治団体「チームみらい」（以下「当組織」といいます。）が運営する「みらい議会」のAIインタビュー機能（以下「みらい議会AIインタビュー機能」といいます。）を通じて取得した回答内容に基づき、当組織がオープンデータとして公開するデータセット（以下「本データ」といいます。）を、第三者（以下「利用者」といいます。）が利用するにあたっての条件を定めるものです。利用者は、本データをダウンロードまたは利用することにより、本規約に同意したものとみなされます。
+          本規約は、「みらい議会＠沼津市」（以下「本サービス」といいます。）の運営者（以下「当運営者」といいます。）が、本サービスのAIインタビュー機能（以下「AIインタビュー機能」といいます。）を通じて取得した回答内容に基づきオープンデータとして公開するデータセット（以下「本データ」といいます。）を、第三者（以下「利用者」といいます。）が利用するにあたっての条件を定めるものです。利用者は、本データをダウンロードまたは利用することにより、本規約に同意したものとみなされます。
         </LegalParagraph>
 
         <section className="space-y-4">
           <LegalSectionTitle>第1条（本データの内容）</LegalSectionTitle>
           <LegalParagraph>
-            利用者が利用することのできる本データは、みらい議会AIインタビュー機能を通じて取得した回答ログおよびサマリーのうち、回答者本人が公開に同意したものから、氏名、住所、連絡先その他特定の個人を識別できる情報を除去したものに限られます。
+            利用者が利用することのできる本データは、AIインタビュー機能を通じて取得した回答ログおよびサマリーのうち、回答者本人が公開に同意したものから、氏名、住所、連絡先その他特定の個人を識別できる情報を除去したものに限られます。
           </LegalParagraph>
         </section>
 
@@ -89,9 +96,9 @@ export default function InterviewDataTermsPage() {
           </LegalParagraph>
           <LegalList
             items={[
-              "データ出典：「みらい議会AIインタビュー（チームみらい）」",
-              "データ提供元URL：https://gikai.team-mir.ai/",
-              "本規約のURL：https://gikai.team-mir.ai/developers/interview-data-terms",
+              "データ出典：「みらい議会＠沼津市 AIインタビュー」",
+              `データ提供元URL：${SITE_URL}`,
+              `本規約のURL：${TERMS_URL}`,
               {
                 id: "license",
                 content: (
@@ -115,54 +122,53 @@ export default function InterviewDataTermsPage() {
         <section className="space-y-4">
           <LegalSectionTitle>第5条（利用停止）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、利用者が本規約に違反したと判断した場合、事前に通知することなく、本データの利用停止、ダウンロードの制限、当該成果物の公開停止の要請、その他当組織が必要と判断する措置を講じることができるものとします。本条の措置は、損害賠償その他の請求を妨げるものではありません。
+            当運営者は、利用者が本規約に違反したと判断した場合、事前に通知することなく、本データの利用停止、ダウンロードの制限、当該成果物の公開停止の要請、その他当運営者が必要と判断する措置を講じることができるものとします。本条の措置は、損害賠償その他の請求を妨げるものではありません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第6条（本データに関する権利）</LegalSectionTitle>
           <LegalParagraph>
-            本データに関する一切の権利は、当組織または正当な権利者に帰属します。本規約は、第2条に定める範囲を超えて、利用者にいかなる権利の譲渡またはライセンスを行うものではありません。
+            本データに関する一切の権利は、当運営者または正当な権利者に帰属します。本規約は、第2条に定める範囲を超えて、利用者にいかなる権利の譲渡またはライセンスを行うものではありません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第7条（無保証および免責）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、本データの正確性、完全性、最新性、有用性、特定目的への適合性等について、いかなる保証も行いません。本データは、AIによる対話を通じて取得された回答内容を基にしたものであり、誤った情報、偏った見解、不適切な表現等を含む可能性があることを利用者は理解した上で利用するものとします。
+            当運営者は、本データの正確性、完全性、最新性、有用性、特定目的への適合性等について、いかなる保証も行いません。本データは、AIによる対話を通じて取得された回答内容を基にしたものであり、誤った情報、偏った見解、不適切な表現等を含む可能性があることを利用者は理解した上で利用するものとします。
           </LegalParagraph>
           <LegalParagraph>
-            当組織は、本データの利用または利用不能に起因または関連して利用者または第三者に生じた一切の損害について、責任を負わないものとします。
+            当運営者は、本データの利用または利用不能に起因または関連して利用者または第三者に生じた一切の損害について、責任を負わないものとします。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第8条（本データの提供停止）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、利用者への事前通知なく、本データの提供内容の変更、提供範囲の縮小、または提供の停止を行うことができるものとし、それにより生じた損害について一切の責任を負いません。
+            当運営者は、利用者への事前通知なく、本データの提供内容の変更、提供範囲の縮小、または提供の停止を行うことができるものとし、それにより生じた損害について一切の責任を負いません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第9条（規約の変更）</LegalSectionTitle>
           <LegalParagraph>
-            当組織は、必要に応じて本規約を変更することができ、変更後に利用者が本データを利用した場合、当該変更に同意したものとみなします。
+            当運営者は、必要に応じて本規約を変更することができ、変更後に利用者が本データを利用した場合、当該変更に同意したものとみなします。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第10条（準拠法・管轄）</LegalSectionTitle>
           <LegalParagraph>
-            本規約は日本法に準拠し、本データの利用に関連して生じる一切の紛争については、東京地方裁判所を第一審の専属的合意管轄裁判所とします。
+            本規約は日本法に準拠し、本データの利用に関連して生じる一切の紛争については、静岡地方裁判所沼津支部を第一審の専属的合意管轄裁判所とします。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
           <LegalSectionTitle>第11条（お問い合わせ）</LegalSectionTitle>
           <LegalParagraph>
-            本規約および本データに関するお問い合わせは、下記までご連絡ください。
+            本規約および本データに関するお問い合わせは、本サービスのGitHubリポジトリのIssueよりご連絡ください。
           </LegalParagraph>
-          <LegalParagraph>support@team-mir.ai</LegalParagraph>
         </section>
       </Container>
     </LegalPageLayout>

@@ -9,20 +9,32 @@ const makeBill = (
   overrides: Partial<BillWithContent> = {}
 ): BillWithContent => ({
   id: "bill-1",
-  name: "テスト法案",
+  name: "沼津市印鑑条例の一部改正",
   is_featured: false,
   is_review_completed: true,
-  originating_house: "HR",
-  shugiin_url: null,
+  source_url: null,
   slug: null,
-  diet_session_id: null,
+  council_session_id: null,
+  bill_number: null,
+  bill_number_kind: null,
+  bill_number_value: null,
+  category: null,
+  submitter: null,
+  committee_id: null,
+  committee_result: null,
+  decided_on: null,
+  legal_basis: null,
+  explanation_source: null,
+  committee_qa_count: null,
+  committee_minutes_url: null,
+  document_url: null,
   publish_status: "published",
   published_at: null,
   submitted_date: null,
   share_thumbnail_url: null,
-  status: "introduced",
+  status: "submitted",
   status_note: null,
-  status_order: BILL_STATUS_ORDER.introduced,
+  status_order: BILL_STATUS_ORDER.submitted,
   publish_status_order: 2,
   thumbnail_url: null,
   knowledge_source: null,
@@ -32,9 +44,9 @@ const makeBill = (
   bill_content: {
     id: "bc-1",
     bill_id: "bill-1",
-    title: "テスト法案タイトル",
-    summary: "テスト法案の要約です",
-    content: "テスト法案の内容",
+    title: "テスト議案タイトル",
+    summary: "テスト議案の要約です",
+    content: "テスト議案の内容",
     difficulty_level: "normal",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -54,9 +66,9 @@ describe("buildSummarySystemPrompt", () => {
       ],
     });
 
-    expect(result).toContain("テスト法案");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案の要約です");
+    expect(result).toContain("テスト議案");
+    expect(result).toContain("テスト議案タイトル");
+    expect(result).toContain("テスト議案の要約です");
     expect(result).toContain("- 医療");
     expect(result).toContain("- 教育");
     expect(result).toContain("assistant: こんにちは");
@@ -70,9 +82,9 @@ describe("buildSummarySystemPrompt", () => {
       messages: [{ role: "user", content: "テスト" }],
     });
 
-    expect(result).toContain("- 法案名: \n");
-    expect(result).toContain("- 法案タイトル: \n");
-    expect(result).toContain("- 法案要約: \n");
+    expect(result).toContain("- 議案名: \n");
+    expect(result).toContain("- 議案タイトル: \n");
+    expect(result).toContain("- 議案要約: \n");
   });
 
   it("テーマ未設定の場合「（テーマ未設定）」が含まれる", () => {

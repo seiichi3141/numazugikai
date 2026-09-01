@@ -11,19 +11,31 @@ const baseBill: Bill = {
   name: "テスト議案",
   created_at: "2025-01-01T00:00:00Z",
   updated_at: "2025-01-02T00:00:00Z",
-  diet_session_id: "session-001",
+  council_session_id: "session-001",
+  bill_number: "議第58号",
+  bill_number_kind: "gi",
+  bill_number_value: 58,
+  category: "ordinance",
+  submitter: "mayor",
+  committee_id: null,
+  committee_result: null,
+  decided_on: null,
+  legal_basis: null,
+  explanation_source: null,
+  committee_qa_count: null,
+  committee_minutes_url: null,
+  document_url: null,
   is_featured: true,
   is_review_completed: true,
-  originating_house: "HR",
   publish_status: "published",
   published_at: null,
   submitted_date: null,
   share_thumbnail_url: null,
-  shugiin_url: null,
+  source_url: null,
   slug: null,
-  status: "introduced",
+  status: "submitted",
   status_note: null,
-  status_order: BILL_STATUS_ORDER.introduced,
+  status_order: BILL_STATUS_ORDER.submitted,
   publish_status_order: 2,
   thumbnail_url: null,
   knowledge_source: null,
@@ -61,9 +73,9 @@ describe("prepareBillForDuplication", () => {
 
   it("その他のフィールドを保持する", () => {
     const result = prepareBillForDuplication(baseBill);
-    expect(result.diet_session_id).toBe("session-001");
+    expect(result.council_session_id).toBe("session-001");
     expect(result.is_featured).toBe(true);
-    expect(result.originating_house).toBe("HR");
+    expect(result.bill_number).toBe("議第58号");
   });
 });
 

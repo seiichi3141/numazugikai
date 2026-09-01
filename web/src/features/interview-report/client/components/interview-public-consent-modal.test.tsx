@@ -27,7 +27,7 @@ describe("InterviewPublicConsentModal", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", {
-        name: "みらい議会AIインタビューデータ利用規約",
+        name: "みらい議会＠沼津市 AIインタビューデータ利用規約",
       })
     ).toBeInTheDocument();
   });

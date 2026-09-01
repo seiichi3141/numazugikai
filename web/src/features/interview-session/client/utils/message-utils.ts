@@ -2,8 +2,8 @@ import {
   normalizeReasoningTypes,
   type ReasoningType,
 } from "@mirai-gikai/shared/interview-report/opinion-tags";
-import type { InterviewReportViewData } from "../../shared/schemas";
 import { isValidReport, parseMessageContent } from "../../shared/message-utils";
+import type { InterviewReportViewData } from "../../shared/schemas";
 
 // Re-export from shared for backwards compatibility
 export { isValidReport, parseMessageContent };

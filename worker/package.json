@@ -5,12 +5,16 @@
   "type": "module",
   "scripts": {
     "start": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ingest": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts --mode=ingest",
+    "explain": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts --mode=explain"
   },
   "dependencies": {
     "@mirai-gikai/topic-analysis-core": "workspace:*",
     "ai": "^6.0.3",
-    "tsx": "^4.19.1"
+    "tsx": "^4.19.1",
+    "@mirai-gikai/numazu-ingest": "workspace:*",
+    "@mirai-gikai/bill-explainer": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.5.5",

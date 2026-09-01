@@ -9,21 +9,26 @@ const bill = (name: string, title?: string) =>
 
 describe("chatBillName", () => {
   it("タイトルと正式名称を併記する", () => {
-    expect(chatBillName(bill("揮発油税等の…法律案", "ガソリン税の法案"))).toBe(
-      "ガソリン税の法案（揮発油税等の…法律案）"
-    );
+    expect(
+      chatBillName(
+        bill(
+          "沼津市国民健康保険税条例の…改正する条例",
+          "保険料の負担を軽くする"
+        )
+      )
+    ).toBe("保険料の負担を軽くする（沼津市国民健康保険税条例の…改正する条例）");
   });
 
   // テンプレート文字列に直接埋めると "undefined（…）" が LLM の文脈に入る。
   it("bill_content が無ければ正式名称だけにする", () => {
-    expect(chatBillName(bill("揮発油税等の…法律案"))).toBe(
-      "揮発油税等の…法律案"
+    expect(chatBillName(bill("沼津市国民健康保険税条例の…改正する条例"))).toBe(
+      "沼津市国民健康保険税条例の…改正する条例"
     );
   });
 
   it("タイトルが空文字なら正式名称だけにする", () => {
-    expect(chatBillName(bill("揮発油税等の…法律案", ""))).toBe(
-      "揮発油税等の…法律案"
-    );
+    expect(
+      chatBillName(bill("沼津市国民健康保険税条例の…改正する条例", ""))
+    ).toBe("沼津市国民健康保険税条例の…改正する条例");
   });
 });

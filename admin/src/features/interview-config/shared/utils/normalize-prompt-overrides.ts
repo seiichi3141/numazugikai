@@ -1,9 +1,9 @@
 import { getDefaultPromptSections } from "@mirai-gikai/shared/interview-prompts/default-sections";
 import {
   EDITABLE_PROMPT_SECTION_KEYS,
-  parsePromptOverridesByMode,
   type PromptOverridesByMode,
   type PromptSectionOverrides,
+  parsePromptOverridesByMode,
 } from "@mirai-gikai/shared/interview-prompts/sections";
 import type { InterviewMode } from "@mirai-gikai/shared/interview-prompts/types";
 

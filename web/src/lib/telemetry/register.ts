@@ -1,5 +1,5 @@
-import { LangfuseExporter } from "langfuse-vercel";
 import { NodeSDK } from "@opentelemetry/sdk-node";
+import { LangfuseExporter } from "langfuse-vercel";
 import { env } from "@/lib/env";
 
 let isInitialized = false;

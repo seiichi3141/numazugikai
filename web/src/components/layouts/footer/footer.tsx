@@ -4,6 +4,7 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { EXTERNAL_LINKS } from "@/config/external-links";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
 import { policyLinks, primaryLinks } from "./footer.config";
@@ -21,6 +22,7 @@ export function Footer() {
         <FooterLogoSection />
         <FooterPrimaryLinks />
         <FooterPolicies />
+        <FooterDisclaimer />
         <FooterCopyright />
       </div>
     </footer>
@@ -30,10 +32,10 @@ export function Footer() {
 function FooterLogoSection() {
   return (
     <div className="flex flex-col items-center text-center mb-9">
-      <Link href={routes.home()} aria-label="みらい議会 トップページ">
+      <Link href={routes.home()} aria-label="みらい議会＠沼津市 トップページ">
         <Image
           src="/img/logo.svg"
-          alt="みらい議会"
+          alt="みらい議会＠沼津市"
           width={150}
           height={128}
           className="h-auto"
@@ -91,10 +93,36 @@ function FooterPolicies() {
   );
 }
 
+/**
+ * fork 元との関係を明示する免責。
+ *
+ * 本家「みらい議会」の FORK_GUIDELINES（AGPL-3.0 第7条に基づく追加条件）が
+ * 掲示を必須としている文言なので、消さないこと。
+ */
+function FooterDisclaimer() {
+  return (
+    <div className="mb-5 max-w-[420px] text-center text-[12px] leading-relaxed text-slate-700">
+      <p>これは政党チームみらいが運営しているものではありません。</p>
+      <p className="mt-1">
+        本サービスは
+        <Link
+          href={EXTERNAL_LINKS.UPSTREAM_SERVICE as Route}
+          target="_blank"
+          rel="noreferrer"
+          className="underline transition-colors hover:text-slate-900"
+        >
+          みらい議会
+        </Link>
+        を沼津市議会向けに改変した、有志による非公式サービスです。
+      </p>
+    </div>
+  );
+}
+
 function FooterCopyright() {
   return (
     <div className="text-center text-sm font-medium text-slate-800">
-      © 2025 Team Mirai All rights Reserved
+      © 2026 みらい議会＠沼津市
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import type { Langfuse } from "langfuse";
+import { env } from "@/lib/env";
 import type { PromptProvider } from "../interface/prompt-provider";
 import type { CompiledPrompt, PromptVariables } from "../interface/types";
 import { compilePrompt } from "../shared/compile-prompt";
-import { env } from "@/lib/env";
 
 const FALLBACK_LABEL = "production";
 

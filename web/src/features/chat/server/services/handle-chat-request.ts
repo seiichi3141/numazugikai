@@ -1,33 +1,39 @@
 import { openai } from "@ai-sdk/openai";
+import { estimateCostUsd } from "@mirai-gikai/shared/ai/model-pricing";
+import {
+  resolveOpenAiModel,
+  toDisplayModelName,
+} from "@mirai-gikai/shared/ai/resolve-model";
 import type { Database } from "@mirai-gikai/supabase";
 import {
   convertToModelMessages,
+  type LanguageModel,
   streamText,
   tool,
-  type LanguageModel,
   type UIMessage,
 } from "ai";
 import { z } from "zod";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import {
+  findBillContentByDifficulty,
+  findPublishedBillById,
+} from "@/features/bills/server/repositories/bill-repository";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import {
   SUGGEST_INTERVIEW_TOOL_NAME,
   SUGGEST_INTERVIEW_TOOL_TYPE,
 } from "@/features/chat/shared/constants";
-import {
-  findBillContentByDifficulty,
-  findPublishedBillById,
-} from "@/features/bills/server/repositories/bill-repository";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
+import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
+import { requireOpenAiApiKey } from "@/lib/ai/openai-key";
 import { env } from "@/lib/env";
 import {
   type CompiledPrompt,
   createPromptProvider,
   type PromptProvider,
 } from "@/lib/prompt";
-import { AI_MODELS } from "@/lib/ai/models";
 import { isWithinDailyCostLimit, recordChatUsage } from "./cost-tracker";
 import {
   checkSystemDailyCostLimit,
@@ -100,9 +106,17 @@ export async function handleChatRequest({
     promptProvider
   );
   // Model configuration
-  const model = deps?.model ?? AI_MODELS.gpt5_4_mini_fast;
+  // モデル名は AI_MODELS の Gateway 形式（openai/...）で持つが、
+  // 実際の呼び出しは OpenAI API を直接行う（Gateway は経由しない）。
+  const configuredModel = deps?.model ?? DEFAULT_CHAT_MODEL;
   const modelName =
-    typeof model === "string" ? model : (model.modelId ?? "unknown");
+    typeof configuredModel === "string"
+      ? toDisplayModelName(configuredModel)
+      : (configuredModel.modelId ?? "unknown");
+  const model =
+    typeof configuredModel === "string"
+      ? resolveOpenAiModel(configuredModel, { apiKey: requireOpenAiApiKey() })
+      : configuredModel;
 
   // Determine if interview suggestion should be enabled
   const shouldSuggestInterview = await determineShouldSuggestInterview(
@@ -131,7 +145,15 @@ export async function handleChatRequest({
       tools,
       onFinish: async (event) => {
         try {
-          const providerCost = extractGatewayCost(event);
+          // Gateway を経由しないため providerMetadata に費用が入らない。
+          // トークン数と単価から自前で算出する（コスト上限の判定に使う）。
+          const providerCost =
+            extractGatewayCost(event) ??
+            estimateCostUsd({
+              modelName,
+              inputTokens: event.totalUsage?.inputTokens,
+              outputTokens: event.totalUsage?.outputTokens,
+            });
           await recordChatUsage({
             userId,
             sessionId: context.sessionId || undefined,
@@ -293,29 +315,29 @@ function extractGatewayCost(event: {
 const INTERVIEW_AWARENESS_BASE = `
 
 ## AIインタビュー機能について
-みらい議会には「AIインタビュー」機能があります。これは法案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で法案に対する意見や知見を共有できる仕組みです。インタビュー結果は分析・レポート化され、政策議論に活用されます。
+みらい議会＠沼津市には「AIインタビュー」機能があります。これは議案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で議案に対する意見や暮らしの実感を共有できる仕組みです。インタビュー結果は分析・レポート化され、議案の論点整理に活用されます。
 `;
 
 const INTERVIEW_AWARENESS_PROMPT_BILL = `${INTERVIEW_AWARENESS_BASE}
-この法案のインタビュー機能が現在利用可能かどうかは状況によって異なります。インタビューについて質問された場合は、この機能の存在を説明した上で、法案詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
+この議案のインタビュー機能が現在利用可能かどうかは状況によって異なります。インタビューについて質問された場合は、この機能の存在を説明した上で、議案詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
 `;
 
 const INTERVIEW_AWARENESS_PROMPT_HOME = `${INTERVIEW_AWARENESS_BASE}
-インタビューについて質問された場合は、この機能の存在を説明した上で、利用可否は法案ごとに異なるため、興味のある法案の詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
+インタビューについて質問された場合は、この機能の存在を説明した上で、利用可否は議案ごとに異なるため、興味のある議案の詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
 `;
 
 const INTERVIEW_SUGGESTION_PROMPT = `
 
 ## AIインタビュー提案について
-この法案にはAIインタビュー機能があります。以下の条件に該当する場合、通常のテキスト応答と併せて suggest_interview ツールを呼び出してください。
+この議案にはAIインタビュー機能があります。以下の条件に該当する場合、通常のテキスト応答と併せて suggest_interview ツールを呼び出してください。
 ただし、1つの会話の中で suggest_interview ツールを呼び出すのは1回のみとしてください。
 
 ### suggest_interview を呼び出す条件:
-- ユーザーがこの法案の当事者や関係者であることがわかった場合
-- ユーザーがこの法案について専門的な知識を持っていると判断できる場合
-- ユーザーがこの法案に対して具体的な提言や意見を述べた場合
+- ユーザーがこの議案の対象となる施設・地域・サービスと日常的な関わりを持つことがわかった場合
+- ユーザーがこの議案について専門的な知識や実務経験を持っていると判断できる場合
+- ユーザーがこの議案に対して具体的な提言や意見を述べた場合
 - ユーザーがインタビューや意見提出について質問した場合
-- ユーザーが自分の意見を共有したい、政策に反映してほしいと表明した場合
+- ユーザーが自分の意見を共有したい、市議会の議論に反映してほしいと表明した場合
 
 ### 重要:
 - suggest_interview ツールの呼び出しは、通常のテキスト応答と同時に行ってください。ツールだけを呼び出してテキスト応答を省略しないでください。
@@ -326,7 +348,7 @@ const INTERVIEW_SUGGESTION_PROMPT = `
  * インタビュー提案を有効にすべきか判定
  *
  * 以下のすべてを満たす場合にtrueを返す:
- * - 法案ページである
+ * - 議案ページである
  * - サーバー側でインタビュー設定が公開状態であることを確認
  * - 会話中にまだsuggest_interviewツールが呼び出されていない
  *
@@ -400,7 +422,7 @@ function buildTools(shouldSuggestInterview: boolean) {
   if (shouldSuggestInterview) {
     tools[SUGGEST_INTERVIEW_TOOL_NAME] = tool({
       description:
-        "ユーザーが法案の当事者・有識者であると判断された場合、またはインタビューについて聞かれた場合に呼び出す。通常のテキスト応答と同時に呼び出すこと。",
+        "ユーザーが議案に関わりのある当事者・有識者であると判断された場合、またはインタビューについて聞かれた場合に呼び出す。通常のテキスト応答と同時に呼び出すこと。",
       inputSchema: z.object({}),
       execute: async () => ({ suggested: true }),
     });

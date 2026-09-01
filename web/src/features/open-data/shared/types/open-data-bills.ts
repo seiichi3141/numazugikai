@@ -1,6 +1,7 @@
 import type {
+  BillCategoryEnum,
   BillStatusEnum,
-  HouseEnum,
+  BillSubmitterEnum,
   StanceTypeEnum,
 } from "@/features/bills/shared/types";
 
@@ -27,16 +28,35 @@ export type OpenDataBillItem = {
   /** 議案の概要（難易度別コンテンツ由来） */
   summary: string;
   status: BillStatusEnum;
-  /** 審議状況の日本語ラベル（衆議院審議中 / 成立 など） */
+  /** 審議状況の日本語ラベル（委員会で審査中 / 可決 など） */
   statusLabel: string;
   statusNote: string | null;
-  originatingHouse: HouseEnum;
-  /** 提出元議院の日本語ラベル（衆議院 / 参議院） */
-  originatingHouseLabel: string;
+  /** 議案番号（例: 議第58号）。取り込み前の議案では null */
+  billNumber: string | null;
+  /** 議案の分類（条例 / 予算 など）。未設定は null */
+  category: BillCategoryEnum | null;
+  /** 議案分類の日本語ラベル。未設定は null */
+  categoryLabel: string | null;
+  /** 提出者（市長 / 議員 など）。未設定は null */
+  submitter: BillSubmitterEnum | null;
+  /** 提出者の日本語ラベル。未設定は null */
+  submitterLabel: string | null;
+  /** 付託委員会の略称（例: 総務経済）。付託がなければ null */
+  committee: string | null;
   submittedDate: string | null;
+  /** 本会議での議決日。未議決は null */
+  decidedOn: string | null;
+  /** 議案本文PDFのURL（沼津市議会サイト）。無い場合は null */
+  documentUrl: string | null;
   publishedAt: string | null;
   tags: OpenDataBillTag[];
-  /** チームみらいの賛否。未表明の場合は null */
+  /**
+   * 賛否スタンス。未表明の場合は null。
+   *
+   * 廃止予定。フォーク元「みらい議会」で特定政党の賛否を表していたフィールド。
+   * 沼津市議会には該当する所属議員がおらず運用していないため通常は null。
+   * 互換性のために残している。
+   */
   miraiStance: OpenDataMiraiStance | null;
   createdAt: string;
 };

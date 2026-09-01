@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { InterviewRatingWidget } from "@/features/interview-session/client/components/interview-rating-widget";
 import { Button } from "@/components/ui/button";
+import { InterviewRatingWidget } from "@/features/interview-session/client/components/interview-rating-widget";
 import { ComponentShowcase } from "../../../_components/component-showcase";
 import { PreviewSection } from "../../../_components/preview-section";
 

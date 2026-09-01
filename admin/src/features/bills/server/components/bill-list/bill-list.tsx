@@ -1,9 +1,15 @@
+import {
+  FileText,
+  MessageCircleQuestion,
+  MessageSquareWarning,
+  Plus,
+} from "lucide-react";
 import type { Route } from "next";
-import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { routes } from "@/lib/routes";
+import { PaginationNav } from "@/components/ui/pagination-nav";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import {
   Table,
   TableBody,
@@ -12,45 +18,135 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { routes } from "@/lib/routes";
 import { BillActionsMenu } from "../../../client/components/bill-actions-menu/bill-actions-menu";
 import { PreviewButton } from "../../../client/components/bill-list/preview-button";
 import { PublishStatusBadge } from "../../../client/components/bill-list/publish-status-badge";
-import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import { ViewButton } from "../../../client/components/bill-list/view-button";
 import { BILL_STATUS_CONFIG } from "../../../shared/constants/bill-config";
 import type {
   BillSortConfig,
   BillStatus,
-  BillWithDietSession,
+  BillWithCouncilSession,
 } from "../../../shared/types";
-import { getBillStatusLabel } from "../../../shared/types";
-import { getBills } from "../../loaders/get-bills";
+import { countDebateStances, getBillStatusLabel } from "../../../shared/types";
+import { getBillsPage } from "../../loaders/get-bills";
 
-function StatusBadge({
-  status,
-  originatingHouse,
+/**
+ * 討論があった議案であることを示すバッジ。
+ *
+ * 市長提出議案はほとんどが可決されるため、議決結果だけでは
+ * 議論のあった議案が埋もれてしまう。反対討論の有無を前に出す。
+ */
+function DebateBadge({
+  debates,
 }: {
-  status: BillStatus;
-  originatingHouse: BillWithDietSession["originating_house"];
+  debates: BillWithCouncilSession["bill_debates"];
 }) {
+  const counts = countDebateStances(debates ?? []);
+  if (counts.total === 0) return null;
+
+  const label =
+    counts.against > 0
+      ? `反対討論 ${counts.against}件`
+      : `賛成討論 ${counts.for}件`;
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
+        counts.against > 0
+          ? "text-red-700 bg-red-50"
+          : "text-blue-700 bg-blue-50"
+      }`}
+    >
+      <MessageSquareWarning className="h-3.5 w-3.5" />
+      {label}
+    </span>
+  );
+}
+
+/**
+ * 委員会での質疑の回数。会議記録へのリンクを兼ねる。
+ *
+ * ほぼ全議案が可決される市議会では、質疑の多寡が議案の注目度を示す
+ * 数少ない事実になる（一般会計予算は198回、質疑なしで通る議案は0回）。
+ */
+function CommitteeQaBadge({
+  qaCount,
+  minutesUrl,
+}: {
+  qaCount: number | null;
+  minutesUrl: string | null;
+}) {
+  if (qaCount === null) return null;
+
+  const badge = (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
+        qaCount > 0 ? "text-amber-700 bg-amber-50" : "text-gray-400 bg-gray-50"
+      }`}
+    >
+      <MessageCircleQuestion className="h-3.5 w-3.5" />
+      {qaCount > 0 ? `委員会質疑 ${qaCount}回` : "質疑なし"}
+    </span>
+  );
+
+  if (!minutesUrl) return badge;
+  return (
+    <a
+      href={minutesUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:opacity-70"
+      title="会議記録検索システムで会議記録を開く"
+    >
+      {badge}
+    </a>
+  );
+}
+
+/** 会議記録から議案説明を取り込めているかどうか（AI解説の材料の有無） */
+function ExplanationBadge({ hasExplanation }: { hasExplanation: boolean }) {
+  if (!hasExplanation) return null;
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold text-emerald-700 bg-emerald-50">
+      <FileText className="h-3.5 w-3.5" />
+      説明あり
+    </span>
+  );
+}
+
+function StatusBadge({ status }: { status: BillStatus }) {
   const config = BILL_STATUS_CONFIG[status];
   const Icon = config.icon;
 
   return (
     <div className="inline-flex items-center gap-1.5 py-1 rounded-full text-sm font-bold">
       <Icon className="h-4 w-4" />
-      <span>{getBillStatusLabel(status, originatingHouse)}</span>
+      <span>{getBillStatusLabel(status)}</span>
     </div>
   );
 }
 
-export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
-  const bills = await getBills(sortConfig);
+export async function BillList({
+  sortConfig,
+  currentPage,
+  buildHref,
+}: {
+  sortConfig: BillSortConfig;
+  currentPage: number;
+  /** ページ番号からリンク先を作る。並び替えの状態を落とさないため。 */
+  buildHref: (page: number) => Route;
+}) {
+  const { bills, total, page, totalPages } = await getBillsPage(
+    sortConfig,
+    currentPage
+  );
 
   return (
     <div>
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="text-sm text-gray-600">{bills.length}件の議案</div>
+        <div className="text-sm text-gray-600">{total}件の議案</div>
         <Link href={routes.billNew()}>
           <Button>
             <Plus className="h-4 w-4 mr-1" />
@@ -64,7 +160,7 @@ export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
           <TableHeader>
             <TableRow>
               <TableHead>議案名</TableHead>
-              <TableHead>国会会期</TableHead>
+              <TableHead>会期</TableHead>
               <SortableTableHead
                 field="publish_status_order"
                 currentField={sortConfig.field}
@@ -84,7 +180,7 @@ export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
                 currentField={sortConfig.field}
                 currentOrder={sortConfig.order}
               >
-                法案提出日
+                議案提出日
               </SortableTableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
@@ -96,11 +192,17 @@ export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
           </TableBody>
         </Table>
       </div>
+
+      <PaginationNav
+        totalPages={totalPages}
+        currentPage={page}
+        buildHref={buildHref}
+      />
     </div>
   );
 }
 
-function BillRow({ bill }: { bill: BillWithDietSession }) {
+function BillRow({ bill }: { bill: BillWithCouncilSession }) {
   return (
     <TableRow>
       <TableCell className="max-w-[400px]">
@@ -112,7 +214,7 @@ function BillRow({ bill }: { bill: BillWithDietSession }) {
         </Link>
       </TableCell>
       <TableCell className="text-gray-600">
-        {bill.diet_sessions?.name ?? "-"}
+        {bill.council_sessions?.name ?? "-"}
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
@@ -130,10 +232,15 @@ function BillRow({ bill }: { bill: BillWithDietSession }) {
         </div>
       </TableCell>
       <TableCell>
-        <StatusBadge
-          status={bill.status}
-          originatingHouse={bill.originating_house}
-        />
+        <div className="flex flex-col items-start gap-1">
+          <StatusBadge status={bill.status} />
+          <DebateBadge debates={bill.bill_debates} />
+          <CommitteeQaBadge
+            qaCount={bill.committee_qa_count}
+            minutesUrl={bill.committee_minutes_url}
+          />
+          <ExplanationBadge hasExplanation={bill.explanation_source !== null} />
+        </div>
       </TableCell>
       <TableCell className="text-gray-600">
         {bill.submitted_date

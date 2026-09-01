@@ -65,9 +65,9 @@ export function BillSearchOverlay({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex cursor-pointer items-center gap-1 text-[13px] font-bold text-mirai-brand-teal-hover hover:underline">
+      <DialogTrigger className="inline-flex cursor-pointer items-center gap-1 text-[13px] font-bold text-primary hover:underline">
         <Search className="h-4 w-4" aria-hidden />
-        法案を検索する
+        議案を検索する
         <ChevronRight className="h-4 w-4" aria-hidden />
       </DialogTrigger>
 
@@ -84,9 +84,9 @@ export function BillSearchOverlay({
         className="grid-cols-[minmax(0,1fr)] gap-0 p-0 sm:max-w-3xl"
         showCloseButton={false}
       >
-        <DialogTitle className="sr-only">法案を検索</DialogTitle>
+        <DialogTitle className="sr-only">議案を検索</DialogTitle>
         <DialogDescription className="sr-only">
-          キーワードやテーマから法案を探せます。
+          キーワードやテーマから議案を探せます。
         </DialogDescription>
 
         <div className="flex justify-end px-2 pt-2">
@@ -115,10 +115,10 @@ export function BillSearchOverlay({
               autoFocus
               type="search"
               name="q"
-              aria-label="法案を検索"
+              aria-label="議案を検索"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="法案名やキーワードで探す"
+              placeholder="議案名やキーワードで探す"
               className="w-full min-w-0 bg-transparent text-sm outline-none"
             />
             <Button
@@ -135,11 +135,27 @@ export function BillSearchOverlay({
           変化として扱われず、最初の候補が読み上げられないことがある。
         */}
           <div className="flex min-w-0 flex-col gap-1.5">
+            {/*
+              件数と「候補なし」を同じ領域で入れ替える。領域そのものを
+              後から差し込むと変化として扱われず読み上げられないので、
+              入力前から空のまま置いておく。
+            */}
+            <div aria-live="polite" aria-atomic="true">
+              {trimmed && matches.length > 0 && (
+                <p className="text-xs font-bold text-mirai-text-secondary">
+                  議案 {matches.length}件
+                </p>
+              )}
+              {trimmed && matches.length === 0 && (
+                // JSX は行をまたぐテキストを半角スペースで繋ぐので、日本語の
+                // 途中で改行すると空白が混ざる。テンプレート文字列で渡す。
+                <p className="py-2 text-sm text-mirai-text-muted">
+                  {`「${trimmed}」に一致する候補はありません。検索すると要約も対象になります`}
+                </p>
+              )}
+            </div>
             {trimmed && matches.length > 0 && (
               <>
-                <p className="text-xs font-bold text-mirai-text-secondary">
-                  法案 {matches.length}件
-                </p>
                 <ul className="flex min-w-0 flex-col">
                   {matches.map((bill) => (
                     <li
@@ -155,16 +171,6 @@ export function BillSearchOverlay({
                   ))}
                 </ul>
               </>
-            )}
-            {trimmed && matches.length === 0 && (
-              // JSX は行をまたぐテキストを半角スペースで繋ぐので、日本語の
-              // 途中で改行すると空白が混ざる。テンプレート文字列で渡す。
-              <p
-                className="py-2 text-sm text-mirai-text-muted"
-                aria-live="polite"
-              >
-                {`「${trimmed}」に一致する候補はありません。検索すると要約も対象になります`}
-              </p>
             )}
           </div>
 
@@ -182,7 +188,7 @@ export function BillSearchOverlay({
                   label={tag.label}
                   count={tag.count}
                   onNavigate={() => setOpen(false)}
-                  className="hover:bg-mirai-brand-mint"
+                  className="hover:bg-mirai-surface-accent"
                 />
               ))}
             </div>

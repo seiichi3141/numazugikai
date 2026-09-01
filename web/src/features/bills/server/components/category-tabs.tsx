@@ -16,7 +16,7 @@ import {
 /**
  * トップページのカテゴリタブ。
  *
- * トップに全法案は載せられないので、カテゴリから一覧へ入る導線を先頭に置く。
+ * トップに全議案は載せられないので、カテゴリから一覧へ入る導線を先頭に置く。
  * 各タブは `/bills` をタグで絞った状態にリンクする。
  *
  * 件数はそのタグが持つ議案数。`/bills` 側は全会期の公開議案を数えるため、
@@ -77,7 +77,7 @@ function FeaturedAnchorChip({ anchor }: { anchor: string }) {
   return (
     <a
       href={`#${anchor}`}
-      className="flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border border-black bg-mirai-brand-teal px-4 text-[13px] font-bold text-white"
+      className="flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border border-black bg-primary px-4 text-[13px] font-bold text-white"
     >
       注目
     </a>

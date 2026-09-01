@@ -1,7 +1,9 @@
+import { pageCount } from "@mirai-gikai/shared/pagination/page-math";
 import { Clock, MessageCircle } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { PaginationNav } from "@/components/ui/pagination-nav";
 import { routes } from "@/lib/routes";
 import type {
   MessageSearchFilterConfig,
@@ -13,7 +15,6 @@ import { appendMessageSearchFilterParams } from "../../shared/utils/parse-messag
 import type { MessageSearchResult } from "../loaders/search-user-messages";
 import { SEARCH_SESSIONS_PER_PAGE } from "../loaders/search-user-messages";
 import { HighlightedText } from "./highlighted-text";
-import { PaginationNav } from "./pagination-nav";
 import { StanceBadge } from "./stance-badge";
 import { VisibilityBadge } from "./visibility-badge";
 
@@ -133,7 +134,7 @@ export function MessageSearchResults({
 }: MessageSearchResultsProps) {
   const { sessions, totalSessionCount, matchedMessageCount, isTruncated } =
     result;
-  const totalPages = Math.ceil(totalSessionCount / SEARCH_SESSIONS_PER_PAGE);
+  const totalPages = pageCount(totalSessionCount, SEARCH_SESSIONS_PER_PAGE);
 
   if (totalSessionCount === 0) {
     return (

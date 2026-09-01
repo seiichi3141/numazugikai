@@ -22,7 +22,7 @@ export const opinionSchema = z
       .enum(["期待", "懸念"])
       .nullable()
       .describe(
-        "この意見が法案に対して示す期待か懸念か。どちらでもなければ null"
+        "この意見が議案に対して示す期待か懸念か。どちらでもなければ null"
       ),
     // 意見単位の情報充実度（トピックカードで充実した引用を優先表示するため）
     richness: z
@@ -49,7 +49,7 @@ export const interviewReportSchema = z
       .enum(["for", "against", "neutral"])
       .nullable()
       .describe(
-        "法案に対するユーザーのスタンス。for=賛成、against=反対、neutral=期待と懸念の両方がある"
+        "議案に対するユーザーのスタンス。for=賛成、against=反対、neutral=期待と懸念の両方がある"
       ),
     role: z
       .enum([
@@ -60,7 +60,7 @@ export const interviewReportSchema = z
       ])
       .nullable()
       .describe(
-        "インタビュイーの立場タイプ（subject_expert:専門的な有識者, work_related:業務に関係, daily_life_affected:暮らしに影響, general_citizen:一般的な関心）。ログ内に根拠のある立場のみを用い（発言にない立場を推測で付与しない）、過去の経歴と現在の立場は区別する"
+        "インタビュイーの立場タイプ（subject_expert:その分野に詳しい有識者・実務経験者, work_related:仕事や業務を通じて関わる, daily_life_affected:暮らしのなかで影響を受ける, general_citizen:市民として関心がある）。ログ内に根拠のある立場のみを用い（発言にない立場を推測で付与しない）、過去の経歴と現在の立場は区別する"
       ),
     role_description: z
       .string()

@@ -89,8 +89,9 @@ export async function BillDetailHeader({
           </div>
         )}
 
+        {/* 議案番号と正式名称。沼津市議会の公式資料と突き合わせるための行。 */}
         <p className="text-sm text-muted-foreground font-medium mb-4">
-          {bill.name}
+          {bill.bill_number ? `${bill.bill_number} ${bill.name}` : bill.name}
         </p>
         {!bill.is_review_completed && (
           <div className="mb-4">

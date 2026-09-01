@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ChatError, ChatErrorCode } from "../../shared/types/errors";
 import { chatErrorToResponse } from "./chat-error-response";
 

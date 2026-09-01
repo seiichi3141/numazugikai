@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useAnonymousSupabaseUser } from "@/features/chat/client/hooks/use-anonymous-supabase-user";
 import { Lightbulb, Upload } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useAnonymousSupabaseUser } from "@/features/chat/client/hooks/use-anonymous-supabase-user";
 import type { ReportReactionData } from "../../shared/types";
 import { useReactionToggle } from "../hooks/use-reaction-toggle";
 import { ReportShareModal } from "./report-share-modal";

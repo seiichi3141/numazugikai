@@ -10,8 +10,8 @@ const roleLabels: Record<string, string> = {
 
 describe("formatRoleLabel", () => {
   it("roleとroleTitleの両方がある場合は中黒で結合する", () => {
-    expect(formatRoleLabel("subject_expert", "物流業者", roleLabels)).toBe(
-      "専門的な有識者・物流業者"
+    expect(formatRoleLabel("subject_expert", "介護職", roleLabels)).toBe(
+      "専門的な有識者・介護職"
     );
   });
 

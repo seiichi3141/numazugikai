@@ -1,4 +1,6 @@
+import { parsePageParam } from "@mirai-gikai/shared/pagination/page-math";
 import type { Route } from "next";
+import { isUuid } from "@/features/open-data/shared/utils/uuid";
 import { routes } from "@/lib/routes";
 import { type BillStatusGroup, isBillStatusGroup } from "./bill-status-group";
 import {
@@ -16,7 +18,12 @@ export type BillsListParams = {
   sort: BillSortKey;
   /** AIインタビュー受付中のみに絞るか。 */
   interviewOnly: boolean;
+  /** 1始まりのページ番号。 */
+  page: number;
 };
+
+/** 1ページに出す議案の数。 */
+export const BILLS_PER_PAGE = 30;
 
 /** ページ・コンポーネント間で共有する searchParams の形。 */
 export type BillsListSearchParams = {
@@ -25,6 +32,7 @@ export type BillsListSearchParams = {
   tag?: string | string[];
   sort?: string | string[];
   interview?: string | string[];
+  page?: string | string[];
 };
 
 function firstValue(value: string | string[] | undefined): string | undefined {
@@ -38,6 +46,7 @@ export const DEFAULT_BILLS_LIST_PARAMS: Readonly<BillsListParams> = {
   tagId: null,
   sort: DEFAULT_BILL_SORT,
   interviewOnly: false,
+  page: 1,
 };
 
 /**
@@ -54,9 +63,12 @@ export function parseBillsListParams(
   return {
     query: firstValue(searchParams.q)?.trim() ?? "",
     status: isBillStatusGroup(status) ? status : "all",
-    tagId: tag || null,
+    // uuid でない値は DB 側の絞り込みで型変換に失敗し一覧が 500 になる。
+    // 「該当なし」ではなく「絞り込みなし」に倒す。
+    tagId: tag && isUuid(tag) ? tag : null,
     sort: isBillSortKey(sort) ? sort : DEFAULT_BILL_SORT,
     interviewOnly: firstValue(searchParams.interview) === "1",
+    page: parsePageParam(firstValue(searchParams.page)),
   };
 }
 
@@ -68,7 +80,15 @@ export function buildBillsListQuery(
   current: BillsListParams,
   patch: Partial<BillsListParams> = {}
 ): string {
-  const next = { ...current, ...patch };
+  // 絞り込みを変えたら1ページ目に戻す。3ページ目でタグを切り替えたときに、
+  // 該当が3ページ分ないと空のページに飛んでしまう。
+  // ページ送り自身（page だけを渡す呼び出し）は現在地を動かす側なので除く。
+  const changesFilter = Object.keys(patch).some((key) => key !== "page");
+  const next = {
+    ...current,
+    ...(changesFilter ? { page: 1 } : {}),
+    ...patch,
+  };
   const params = new URLSearchParams();
 
   if (next.query) params.set("q", next.query);
@@ -76,6 +96,7 @@ export function buildBillsListQuery(
   if (next.tagId) params.set("tag", next.tagId);
   if (next.sort !== DEFAULT_BILL_SORT) params.set("sort", next.sort);
   if (next.interviewOnly) params.set("interview", "1");
+  if (next.page > 1) params.set("page", String(next.page));
 
   const queryString = params.toString();
   return queryString ? `?${queryString}` : "";

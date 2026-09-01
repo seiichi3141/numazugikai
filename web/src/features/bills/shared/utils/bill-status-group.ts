@@ -1,11 +1,11 @@
 import type { BillStatusEnum } from "../types";
 
 /**
- * 法案一覧のステータス絞り込みで使うグループ。
+ * 議案一覧のステータス絞り込みで使うグループ。
  *
- * DB の status は6値（preparing / introduced / in_originating_house /
- * in_receiving_house / enacted / rejected）だが、一覧のタブはデザイン上4つに束ねる。
- * 審議の場所（衆・参）は絞り込みの軸としては細かすぎるため、まとめて「審議中」にする。
+ * DB の status は市議会の議決の種類まで持つ（可決・同意・承認・認定・採択…）が、
+ * 一覧のタブはデザイン上4つに束ねる。議決の種類は絞り込みの軸としては
+ * 細かすぎるため、まとめて「可決」にする。
  */
 export const BILL_STATUS_GROUPS = [
   "all",
@@ -20,31 +20,35 @@ export type BillStatusGroup = (typeof BILL_STATUS_GROUPS)[number];
 export const BILL_STATUS_GROUP_LABELS: Record<BillStatusGroup, string> = {
   all: "すべて",
   deliberating: "審議中",
-  waiting: "審議待ち",
-  enacted: "成立",
+  waiting: "その他",
+  enacted: "可決",
   rejected: "否決",
 };
 
 /**
  * status をタブのグループに畳む。
  *
- * 既存の `getCardStatusLabel` と同じ畳み方にする。あちらは `introduced` を
- * 「国会審議中」に含めるので、ここで「審議待ち」に落とすと、カードに
- * 「国会審議中」と出ている法案が「審議中」タブに現れない。
+ * 既存の `getCardStatusLabel` と同じ畳み方にする。カードに「審議中」と
+ * 出ている議案が「審議中」タブに現れない、という食い違いを作らない。
  *
- * 結果として「審議待ち」に残るのは `preparing`（提出前）だけになる。
+ * 「その他」に残るのは提出前（preparing）と、議決を伴わない撤回・報告。
  */
 export function toBillStatusGroup(
   status: BillStatusEnum
 ): Exclude<BillStatusGroup, "all"> {
   switch (status) {
-    case "introduced":
-    case "in_originating_house":
-    case "in_receiving_house":
+    case "submitted":
+    case "in_committee":
+    case "continued":
       return "deliberating";
-    case "enacted":
+    case "passed":
+    case "consented":
+    case "approved":
+    case "certified":
+    case "adopted":
       return "enacted";
     case "rejected":
+    case "not_adopted":
       return "rejected";
     default:
       return "waiting";

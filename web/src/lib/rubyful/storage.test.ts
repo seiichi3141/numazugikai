@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { getRubyEnabledFromStorage, setRubyEnabledToStorage } from "./storage";
 
 describe("storage", () => {

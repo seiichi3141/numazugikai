@@ -11,8 +11,8 @@ type FooterLinkItem = {
 
 const links: FooterLinkItem[] = [
   {
-    label: "チームみらいについて",
-    href: EXTERNAL_LINKS.TEAM_MIRAI_ABOUT,
+    label: "沼津市議会（市公式サイト）",
+    href: EXTERNAL_LINKS.NUMAZU_COUNCIL,
     external: true,
   },
   {
@@ -26,9 +26,9 @@ const links: FooterLinkItem[] = [
     external: false,
   },
   {
-    label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
+    label: "開発者向け",
+    href: routes.developers(),
+    external: false,
   },
   {
     label: "自主制作ガイドライン",
@@ -63,7 +63,7 @@ export function DesktopMenuLinks() {
           lineHeight: "1.48em",
         }}
       >
-        © 2025 Team Mirai
+        © 2026 みらい議会＠沼津市
       </p>
     </div>
   );

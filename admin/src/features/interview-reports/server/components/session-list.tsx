@@ -1,6 +1,8 @@
+import { pageCount } from "@mirai-gikai/shared/pagination/page-math";
 import { CheckCircle2, Clock, Lightbulb, XCircle } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { PaginationNav } from "@/components/ui/pagination-nav";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import {
   Table,
@@ -27,7 +29,6 @@ import {
 import { formatJstDateTime } from "../../shared/utils/format-jst-date-time";
 import { SESSIONS_PER_PAGE } from "../loaders/get-interview-sessions";
 import { ModerationBadge } from "./moderation-badge";
-import { PaginationNav } from "./pagination-nav";
 import { RatingStars } from "./rating-stars";
 import { SessionStatusBadge } from "./session-status-badge";
 import { StanceBadge } from "./stance-badge";
@@ -92,7 +93,7 @@ export function SessionList({
   sort = DEFAULT_SESSION_SORT,
   filters = DEFAULT_SESSION_FILTER,
 }: SessionListProps) {
-  const totalPages = Math.ceil(totalCount / SESSIONS_PER_PAGE);
+  const totalPages = pageCount(totalCount, SESSIONS_PER_PAGE);
   const startIndex = (currentPage - 1) * SESSIONS_PER_PAGE;
   const endIndex = Math.min(startIndex + sessions.length, totalCount);
 

@@ -1,5 +1,5 @@
-import type { Route } from "next";
 import { ArrowRight, BotMessageSquare, Check } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getInterviewLPLink } from "@/features/interview-config/shared/utils/interview-links";
@@ -22,7 +22,7 @@ export function InterviewSuggestionBanner({
         <div className="flex flex-col gap-2">
           <div className="flex">
             <span className="inline-flex items-center px-3 py-1 bg-mirai-surface-muted rounded-2xl text-xs font-medium text-black leading-none">
-              法案の当事者の方へ
+              この議案に関わりのある方へ
             </span>
           </div>
           <p className="text-base font-bold leading-[1.5] text-mirai-text">

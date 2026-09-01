@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { InterviewPublicConsentModal } from "@/features/interview-report/client/components/interview-public-consent-modal";
-import { MakePublicModal } from "@/features/interview-report/client/components/make-public-modal";
 import { MakePrivateModal } from "@/features/interview-report/client/components/make-private-modal";
+import { MakePublicModal } from "@/features/interview-report/client/components/make-public-modal";
 import { ComponentShowcase } from "../../../_components/component-showcase";
 import { PreviewSection } from "../../../_components/preview-section";
 

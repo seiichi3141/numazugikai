@@ -18,8 +18,7 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
-          status: "introduced" as const,
+          status: "submitted" as const,
           submitted_date: timestamp,
         })
         .select("id, submitted_date, published_at")
@@ -38,8 +37,7 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
-          status: "introduced" as const,
+          status: "submitted" as const,
           published_at: timestamp,
         })
         .select("id, submitted_date, published_at")
@@ -57,8 +55,7 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
-          status: "introduced" as const,
+          status: "submitted" as const,
         })
         .select("id, submitted_date, published_at")
         .single();
@@ -77,8 +74,7 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
-          status: "introduced" as const,
+          status: "submitted" as const,
         })
         .select("id")
         .single();
@@ -106,8 +102,7 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
-          status: "introduced" as const,
+          status: "submitted" as const,
         })
         .select("id")
         .single();
@@ -136,8 +131,7 @@ describe("sync_bills_published_submitted トリガー", () => {
         .from("bills")
         .insert({
           name: `テスト議案 ${Date.now()}`,
-          originating_house: "HR" as const,
-          status: "introduced" as const,
+          status: "submitted" as const,
           submitted_date: initialTimestamp,
         })
         .select("id")

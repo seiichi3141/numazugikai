@@ -49,7 +49,10 @@
       "web/src/**/*",
       "admin/src/**/*",
       "tests/**/*",
-      "!.claude/worktrees"
+      "packages/numazu-ingest/**/*",
+      "packages/bill-explainer/**/*",
+      "!.claude/worktrees",
+      "!packages/numazu-ingest/**/__fixtures__"
     ]
   }
 }

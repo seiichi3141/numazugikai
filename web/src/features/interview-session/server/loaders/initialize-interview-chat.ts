@@ -1,8 +1,8 @@
 import "server-only";
 
+import type { LanguageModel } from "ai";
 import { getChatSupabaseUser } from "@/features/chat/server/utils/supabase-server";
 import { generateInitialQuestion } from "@/features/interview-session/server/services/generate-initial-question";
-import type { LanguageModel } from "ai";
 import type { InterviewMessage, InterviewSession } from "../../shared/types";
 import {
   createInterviewSessionRecord,

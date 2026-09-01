@@ -1,3 +1,4 @@
+import { BarChart3, Sparkles } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -10,10 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { routes } from "@/lib/routes";
-import { BarChart3, Sparkles } from "lucide-react";
 import type { InterviewConfigWithBill } from "@/features/interview-config/server/repositories/interview-config-repository";
 import { getModeLabel } from "@/features/interview-config/shared/utils/get-mode-label";
+import { routes } from "@/lib/routes";
 
 interface AllInterviewConfigListProps {
   configs: InterviewConfigWithBill[];

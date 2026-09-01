@@ -33,7 +33,7 @@ export function OpenDataNoticeItem() {
         target="_blank"
         className="text-primary-accent underline"
       >
-        みらい議会AIインタビューデータ利用規約
+        みらい議会＠沼津市 AIインタビューデータ利用規約
       </Link>
       」に基づき、第三者にオープンデータとして提供されることがあります。公開をやめた場合、以後の提供は停止されますが、既に取得されたデータの利用停止までは保証できません。
     </ConsentCheckListItem>

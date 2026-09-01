@@ -129,7 +129,7 @@ describe("getDefaultPromptSections", () => {
 });
 
 const promptInput: InterviewPromptInput = {
-  bill: { name: "法案", bill_content: { title: "", summary: "", content: "" } },
+  bill: { name: "議案", bill_content: { title: "", summary: "", content: "" } },
   interviewConfig: { themes: [] },
   questions: [{ id: "q1", question: "質問" }],
   currentStage: "chat",

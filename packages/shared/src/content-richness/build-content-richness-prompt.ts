@@ -62,7 +62,7 @@ export function buildContentRichnessPrompt(
 
   const system = `あなたはAIインタビューで収集された市民意見の情報充実度を評価する専門家です。
 
-user メッセージで渡されるインタビューの会話ログおよびレポート内容を評価し、法案検討にどれだけ活かせる情報が得られたかを判定してください。
+user メッセージで渡されるインタビューの会話ログおよびレポート内容を評価し、議案の検討にどれだけ活かせる情報が得られたかを判定してください。
 
 ${buildUntrustedContentGuardInstructions(nonce)}
 

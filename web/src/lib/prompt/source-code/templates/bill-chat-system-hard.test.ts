@@ -4,16 +4,16 @@ import { buildBillChatSystemHardPrompt } from "./bill-chat-system-hard";
 describe("buildBillChatSystemHardPrompt", () => {
   it("4つのパラメータがプロンプトに埋め込まれる", () => {
     const result = buildBillChatSystemHardPrompt(
-      "テスト法案名",
-      "テスト法案タイトル",
-      "テスト法案要約",
-      "テスト法案詳細"
+      "テスト議案名",
+      "テスト議案タイトル",
+      "テスト議案要約",
+      "テスト議案詳細"
     );
 
-    expect(result).toContain("テスト法案名");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案要約");
-    expect(result).toContain("テスト法案詳細");
+    expect(result).toContain("テスト議案名");
+    expect(result).toContain("テスト議案タイトル");
+    expect(result).toContain("テスト議案要約");
+    expect(result).toContain("テスト議案詳細");
   });
 
   it("難易度「難しい」セクションが含まれる", () => {
@@ -23,11 +23,11 @@ describe("buildBillChatSystemHardPrompt", () => {
     expect(result).toContain("専門用語を正確に使用");
   });
 
-  it("みらい議会の説明が含まれる", () => {
+  it("沼津市議会とサービスの説明が含まれる", () => {
     const result = buildBillChatSystemHardPrompt("a", "b", "c", "d");
 
-    expect(result).toContain("みらい議会");
-    expect(result).toContain("チームみらい");
+    expect(result).toContain("みらい議会＠沼津市");
+    expect(result).toContain("沼津市議会");
   });
 
   it("knowledgeSource を渡すと <knowledge_source> セクションが含まれる", () => {

@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import type { ChatStatus, FileUIPart } from "ai";
 import {
   ImageIcon,
@@ -12,6 +11,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
+import type { ReactNode } from "react";
 import {
   type ChangeEventHandler,
   Children,

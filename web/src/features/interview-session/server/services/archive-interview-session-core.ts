@@ -2,8 +2,8 @@ import "server-only";
 
 import { updateInterviewSessionArchived } from "../repositories/interview-session-repository";
 import {
-  verifySessionOwnership,
   type LoaderDeps,
+  verifySessionOwnership,
 } from "../utils/verify-session-ownership";
 
 export interface ArchiveInterviewSessionResult {

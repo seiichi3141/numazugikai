@@ -26,22 +26,31 @@ const notoSerifJP = Noto_Serif_JP({
 
 const isDev = process.env.NODE_ENV === "development";
 const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-const siteTitle = "みらい議会｜チームみらい";
+const siteTitle = "みらい議会＠沼津市";
 const siteDescription =
-  "国会で今どんな法案が検討されているか、わかりやすく伝えるプラットフォーム";
-const siteName = "みらい議会";
+  "沼津市議会でいま何が決まっているかを、わかりやすく伝えるプラットフォーム";
+const siteName = "みらい議会＠沼津市";
 const ogImage = {
   url: "/ogp.jpg",
   width: 1200,
   height: 630,
-  alt: "みらい議会のOGPイメージ",
+  alt: "みらい議会＠沼津市のOGPイメージ",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.webUrl),
   title: siteTitle,
   description: siteDescription,
-  keywords: [siteName, "議案", "政治", "日本", "政策", "解説", "チームみらい"],
+  keywords: [
+    siteName,
+    "沼津市",
+    "沼津市議会",
+    "議案",
+    "市政",
+    "条例",
+    "予算",
+    "解説",
+  ],
   icons: {
     icon: isDev
       ? "/icons/pwa/icon_dev_192_v3.png"
@@ -82,7 +91,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#2aa693",
+  themeColor: "#1b6ca8",
 };
 
 export default function RootLayout({
@@ -95,7 +104,7 @@ export default function RootLayout({
       <body
         className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-mirai-surface-light`}
       >
-        <NextTopLoader showSpinner={false} color="#2aa693" />
+        <NextTopLoader showSpinner={false} color="#1b6ca8" />
         {children}
       </body>
     </html>

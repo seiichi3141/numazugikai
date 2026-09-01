@@ -9,13 +9,13 @@ describe("buildContentRichnessPrompt", () => {
       roleDescription: "IT企業経営者",
       messages: [
         { role: "assistant", content: "こんにちは" },
-        { role: "user", content: "法案に賛成です" },
+        { role: "user", content: "議案に賛成です" },
       ],
     });
 
     expect(user).toContain("会話ログ");
     expect(user).toContain("[assistant] こんにちは");
-    expect(user).toContain("[user] 法案に賛成です");
+    expect(user).toContain("[user] 議案に賛成です");
     expect(user).toContain("テスト要約");
     expect(user).toContain("意見1");
     expect(user).toContain("内容1");

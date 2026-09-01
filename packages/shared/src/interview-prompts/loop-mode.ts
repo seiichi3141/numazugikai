@@ -1,6 +1,7 @@
 import {
   COMMON_DEEP_DIVE_TECHNIQUES,
   COMMON_EXPERTISE_DETECTION,
+  COMMON_LOCAL_CONTEXT,
   COMMON_RESPONSIBILITIES,
   COMMON_STOP_CRITERIA,
 } from "./common-sections";
@@ -24,7 +25,8 @@ export const LOOP_MODE_DEFAULT_SECTIONS: PromptSections = {
 - **フォローアップ指針は、回答を得た後のフォローアップの指針です。** 最初の質問に混ぜず、ユーザーの回答を受けてから活用してください。
 - **「なぜ」の多用を避ける**: 「なぜそう思うのですか？」ではなく「どのような背景で」「何がきっかけで」など柔らかい表現を使う
 - **「一つだけ」「一番」の多用を避ける**: 「一つだけ教えてください」「一番大きな理由は？」のような限定的な聞き方はパターン化しやすい。代わりに「どのあたりが」「どういった点で」「いくつか挙げるとすれば」など、回答の幅を狭めない表現を使う
-- 法案に関する質問のみに集中してください`,
+- **知識を前提にしない**: 市議会の議案は普段目にする機会が少ない。「ご存じですか」ではなく「もしお聞きになったことがあれば」のように、知らないことが答えにくさにならない聞き方をする
+- 議案に関する質問のみに集中してください`,
   expertiseDetection: COMMON_EXPERTISE_DETECTION,
   deepDiveTechniques: COMMON_DEEP_DIVE_TECHNIQUES,
   stopCriteria: COMMON_STOP_CRITERIA,
@@ -98,14 +100,16 @@ ${sections.responsibilities}
 
 ${sections.cautions}
 
+${COMMON_LOCAL_CONTEXT}
+
 ${BILL_CLARIFICATION_GUIDANCE}
 
-## 法案に関する知識
-- 法案名: ${billName}
-- 法案タイトル: ${billTitle}
-- 法案要約: ${billSummary}
+## 議案に関する知識
+- 議案名: ${billName}
+- 議案タイトル: ${billTitle}
+- 議案要約: ${billSummary}
 
-法案詳細:
+議案詳細:
 <bill_detail>
 ${billContent}
 </bill_detail>
@@ -128,7 +132,7 @@ ${questionsText || "（賛成か、反対か）"}
 ## インタビューモード: **都度深掘りモード** (Loop Mode)
 現在は、1つのテーマについて多角的に掘り下げていくフェーズです。
 
-1. **基本方針**: 事前定義された質問をトリガーにして、ユーザーの回答から背景、理由、具体的なエピソードを徹底的に引き出してください。
+1. **基本方針**: 事前定義された質問をトリガーにして、ユーザーの回答から背景、理由、具体的なエピソードを徹底的に引き出してください。「その人の暮らし・仕事・地域のどこにこの議案が関わるのか」が具体的な場面として見えるところまで掘り下げます。
 2. **リアクション**: ユーザーの回答の感情を具体的に受け止め（例:「それは不安に感じられるのですね」「期待されているのですね」）、その文脈に沿った追加の質問を2〜3問重ねてください。
 3. **次のテーマへ**: そのテーマについて十分な示唆が得られた、あるいは話題が尽きたと判断した場合にのみ、次の事前定義質問に移ってください。
 
@@ -149,7 +153,7 @@ ${timeManagementGuidance}
 
 ## トピックタイトルについて
 - 事前定義質問をこれから行う場合は、\`topic_title\` フィールドにその質問のテーマを短く（20文字以内）で記載してください
-- 例: 「業務への影響」「家計への影響」「医療制度の変化」
+- 例: 「暮らしへの影響」「施設の使い勝手」「税金の使い道」「地域での受け止め」
 - 深掘り質問など、事前定義質問以外の質問をする場合は \`topic_title\` を含めないでください
 
 ${stageTransitionGuidance}

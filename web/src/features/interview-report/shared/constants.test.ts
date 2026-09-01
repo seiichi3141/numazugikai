@@ -15,8 +15,8 @@ describe("formatRoleLabel", () => {
   });
 
   it("returns combined label with nakaguro when both role and roleTitle are provided", () => {
-    expect(formatRoleLabel("subject_expert", "物流業者")).toBe(
-      "専門的な有識者・物流業者"
+    expect(formatRoleLabel("subject_expert", "介護職")).toBe(
+      "専門的な有識者・介護職"
     );
   });
 

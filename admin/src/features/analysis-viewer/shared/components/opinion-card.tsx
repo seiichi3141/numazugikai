@@ -43,9 +43,9 @@ export function OpinionCard({
           </span>
         )}
         {opinion.billSentiment && (
-          // タブの「懸念」（concern タグ）と紛れるので、法案への感触であることを明示する。
+          // タブの「懸念」（concern タグ）と紛れるので、議案への感触であることを明示する。
           <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700">
-            法案への感触: {opinion.billSentiment}
+            議案への感触: {opinion.billSentiment}
           </span>
         )}
         {opinion.reasoningTypes

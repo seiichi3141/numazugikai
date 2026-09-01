@@ -1,0 +1,40 @@
+{
+  "name": "@mirai-gikai/numazu-ingest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./ingest": {
+      "types": "./src/ingest.ts",
+      "default": "./src/ingest.ts"
+    },
+    "./parsers": {
+      "types": "./src/parsers/index.ts",
+      "default": "./src/parsers/index.ts"
+    },
+    "./types": {
+      "types": "./src/shared/types.ts",
+      "default": "./src/shared/types.ts"
+    },
+    "./constants": {
+      "types": "./src/shared/constants.ts",
+      "default": "./src/shared/constants.ts"
+    }
+  },
+  "dependencies": {
+    "@mirai-gikai/supabase": "workspace:*"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4",
+    "zod": "^4.1.12"
+  }
+}

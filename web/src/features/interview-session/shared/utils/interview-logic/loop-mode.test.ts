@@ -13,32 +13,44 @@ const makeBill = (
   overrides: Partial<BillWithContent> = {}
 ): BillWithContent => ({
   id: "bill-1",
-  name: "テスト法案",
+  name: "沼津市印鑑条例の一部改正",
   is_featured: false,
   is_review_completed: true,
-  originating_house: "HR",
-  shugiin_url: null,
+  source_url: null,
   slug: null,
-  diet_session_id: null,
+  council_session_id: null,
+  bill_number: null,
+  bill_number_kind: null,
+  bill_number_value: null,
+  category: null,
+  submitter: null,
+  committee_id: null,
+  committee_result: null,
+  decided_on: null,
+  legal_basis: null,
+  explanation_source: null,
+  committee_qa_count: null,
+  committee_minutes_url: null,
+  document_url: null,
   publish_status: "published",
   published_at: null,
   submitted_date: null,
   share_thumbnail_url: null,
-  status: "introduced",
+  status: "submitted",
   status_note: null,
-  status_order: BILL_STATUS_ORDER.introduced,
+  status_order: BILL_STATUS_ORDER.submitted,
   publish_status_order: 2,
   thumbnail_url: null,
-  knowledge_source: "厚生労働省の報告書",
+  knowledge_source: "沼津市の議案説明資料",
   use_knowledge_source_in_chat: false,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   bill_content: {
     id: "bc-1",
     bill_id: "bill-1",
-    title: "テスト法案タイトル",
-    summary: "テスト法案の要約です",
-    content: "テスト法案の内容",
+    title: "テスト議案タイトル",
+    summary: "テスト議案の要約です",
+    content: "テスト議案の内容",
     difficulty_level: "normal",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -50,7 +62,7 @@ const makeBill = (
 const sampleQuestions = [
   {
     id: "q1",
-    question: "この法案についてどう思いますか？",
+    question: "この議案についてどう思いますか？",
     follow_up_guide: "賛成・反対の理由を深掘りする",
   },
   {
@@ -73,13 +85,13 @@ const baseParams: InterviewPromptInput = {
 };
 
 describe("buildLoopModeSystemPrompt", () => {
-  it("法案情報がプロンプトに含まれる", () => {
+  it("議案情報がプロンプトに含まれる", () => {
     const result = buildLoopModeSystemPrompt(baseParams);
 
-    expect(result).toContain("テスト法案");
-    expect(result).toContain("テスト法案タイトル");
-    expect(result).toContain("テスト法案の要約です");
-    expect(result).toContain("テスト法案の内容");
+    expect(result).toContain("テスト議案");
+    expect(result).toContain("テスト議案タイトル");
+    expect(result).toContain("テスト議案の要約です");
+    expect(result).toContain("テスト議案の内容");
   });
 
   it("bill=nullの場合は空文字にフォールバックする", () => {
@@ -88,9 +100,9 @@ describe("buildLoopModeSystemPrompt", () => {
       bill: null,
     });
 
-    expect(result).toContain("- 法案名: \n");
-    expect(result).toContain("- 法案タイトル: \n");
-    expect(result).toContain("- 法案要約: \n");
+    expect(result).toContain("- 議案名: \n");
+    expect(result).toContain("- 議案タイトル: \n");
+    expect(result).toContain("- 議案要約: \n");
   });
 
   it("テーマがプロンプトに含まれる", () => {
@@ -112,7 +124,7 @@ describe("buildLoopModeSystemPrompt", () => {
   it("知識ソースがプロンプトに含まれる", () => {
     const result = buildLoopModeSystemPrompt(baseParams);
 
-    expect(result).toContain("厚生労働省の報告書");
+    expect(result).toContain("沼津市の議案説明資料");
   });
 
   it("知識ソース未設定の場合「（知識ソース未設定）」が含まれる", () => {
@@ -127,7 +139,7 @@ describe("buildLoopModeSystemPrompt", () => {
   it("質問リストがID付きで含まれる", () => {
     const result = buildLoopModeSystemPrompt(baseParams);
 
-    expect(result).toContain("[ID: q1] この法案についてどう思いますか？");
+    expect(result).toContain("[ID: q1] この議案についてどう思いますか？");
     expect(result).toContain("[ID: q2] 業務への影響はありますか？");
     expect(result).toContain("[ID: q3] 改善案はありますか？");
   });
@@ -173,10 +185,10 @@ describe("buildLoopModeSystemPrompt", () => {
     expect(result).toContain("（賛成か、反対か）");
   });
 
-  it("法案内容の誤認検知と補足ガイダンスが含まれる", () => {
+  it("議案内容の誤認検知と補足ガイダンスが含まれる", () => {
     const result = buildLoopModeSystemPrompt(baseParams);
 
-    expect(result).toContain("法案内容の誤認検知と補足");
+    expect(result).toContain("議案内容の誤認検知と補足");
     expect(result).toContain("誤認の兆候例");
     expect(result).toContain("補足の仕方");
     expect(result).toContain("補足しない場合");

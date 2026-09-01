@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  type OptimisticState,
   computeOptimisticState,
+  type OptimisticState,
 } from "./compute-optimistic-state";
 
 describe("computeOptimisticState", () => {

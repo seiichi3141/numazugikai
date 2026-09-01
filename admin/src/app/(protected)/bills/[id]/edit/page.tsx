@@ -1,15 +1,15 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { routes } from "@/lib/routes";
 import { BillEditForm } from "@/features/bills-edit/client/components/bill-edit-form";
 import { BillTagsForm } from "@/features/bills-edit/client/components/bill-tags-form";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { getBillTagIds } from "@/features/bills-edit/server/loaders/get-bill-tag-ids";
-import { loadDietSessions } from "@/features/diet-sessions/server/loaders/load-diet-sessions";
+import { loadCouncilSessions } from "@/features/council-sessions/server/loaders/load-council-sessions";
 import { StanceForm } from "@/features/mirai-stance/client/components/stance-form";
 import { getStanceByBillId } from "@/features/mirai-stance/server/loaders/get-stance-by-bill-id";
 import { loadTags } from "@/features/tags/server/loaders/load-tags";
+import { routes } from "@/lib/routes";
 
 interface BillEditPageProps {
   params: Promise<{
@@ -19,13 +19,13 @@ interface BillEditPageProps {
 
 export default async function BillEditPage({ params }: BillEditPageProps) {
   const { id } = await params;
-  const [bill, stance, allTags, selectedTagIds, dietSessions] =
+  const [bill, stance, allTags, selectedTagIds, councilSessions] =
     await Promise.all([
       getBillById(id),
       getStanceByBillId(id),
       loadTags(),
       getBillTagIds(id),
-      loadDietSessions(),
+      loadCouncilSessions(),
     ]);
 
   if (!bill) {
@@ -50,7 +50,7 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
       </div>
 
       <div className="space-y-6">
-        <BillEditForm bill={bill} dietSessions={dietSessions} />
+        <BillEditForm bill={bill} councilSessions={councilSessions} />
         <StanceForm billId={bill.id} stance={stance} billStatus={bill.status} />
         <BillTagsForm
           billId={bill.id}

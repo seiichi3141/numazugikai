@@ -1,7 +1,7 @@
 import "server-only";
 
-import { createAdminClient } from "@mirai-gikai/supabase";
 import type { Database } from "@mirai-gikai/supabase";
+import { createAdminClient } from "@mirai-gikai/supabase";
 
 type TagUpdate = Database["public"]["Tables"]["tags"]["Update"];
 
