@@ -1,4 +1,9 @@
-import { MessageSquareWarning, Plus } from "lucide-react";
+import {
+  FileText,
+  MessageCircleQuestion,
+  MessageSquareWarning,
+  Plus,
+} from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 
@@ -55,6 +60,57 @@ function DebateBadge({
     >
       <MessageSquareWarning className="h-3.5 w-3.5" />
       {label}
+    </span>
+  );
+}
+
+/**
+ * 委員会での質疑の回数。会議記録へのリンクを兼ねる。
+ *
+ * ほぼ全議案が可決される市議会では、質疑の多寡が議案の注目度を示す
+ * 数少ない事実になる（一般会計予算は198回、質疑なしで通る議案は0回）。
+ */
+function CommitteeQaBadge({
+  qaCount,
+  minutesUrl,
+}: {
+  qaCount: number | null;
+  minutesUrl: string | null;
+}) {
+  if (qaCount === null) return null;
+
+  const badge = (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${
+        qaCount > 0 ? "text-amber-700 bg-amber-50" : "text-gray-400 bg-gray-50"
+      }`}
+    >
+      <MessageCircleQuestion className="h-3.5 w-3.5" />
+      {qaCount > 0 ? `委員会質疑 ${qaCount}回` : "質疑なし"}
+    </span>
+  );
+
+  if (!minutesUrl) return badge;
+  return (
+    <a
+      href={minutesUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:opacity-70"
+      title="会議記録検索システムで会議記録を開く"
+    >
+      {badge}
+    </a>
+  );
+}
+
+/** 会議記録から議案説明を取り込めているかどうか（AI解説の材料の有無） */
+function ExplanationBadge({ hasExplanation }: { hasExplanation: boolean }) {
+  if (!hasExplanation) return null;
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold text-emerald-700 bg-emerald-50">
+      <FileText className="h-3.5 w-3.5" />
+      説明あり
     </span>
   );
 }
@@ -160,6 +216,11 @@ function BillRow({ bill }: { bill: BillWithCouncilSession }) {
         <div className="flex flex-col items-start gap-1">
           <StatusBadge status={bill.status} />
           <DebateBadge debates={bill.bill_debates} />
+          <CommitteeQaBadge
+            qaCount={bill.committee_qa_count}
+            minutesUrl={bill.committee_minutes_url}
+          />
+          <ExplanationBadge hasExplanation={bill.explanation_source !== null} />
         </div>
       </TableCell>
       <TableCell className="text-gray-600">
