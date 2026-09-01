@@ -7,6 +7,7 @@ import {
 } from "../parsers/map-bill-status";
 import { parseBillDocumentLinks } from "../parsers/parse-bill-document-links";
 import { parseGianResultPdf } from "../parsers/parse-gian-result-pdf";
+import { parseTermIndex } from "../parsers/parse-term-index";
 import {
   ensureCouncilSession,
   findContentHash,
@@ -200,4 +201,59 @@ function latestDate(bills: readonly ParsedBill[]): string | null {
     .flatMap((bill) => [bill.submittedOn, bill.decidedOn])
     .filter(Boolean) as string[];
   return dates.length > 0 ? dates.sort()[dates.length - 1] : null;
+}
+
+export type IngestTermResult = {
+  term: number;
+  /** 期のページで見つかった議案審議結果PDFの数 */
+  found: number;
+  results: IngestBillsResult[];
+  /** 取り込めなかったPDFとその理由 */
+  failures: { path: string; reason: string }[];
+};
+
+/**
+ * 期（teirei_NN）に属する会期をまとめて取り込む。
+ *
+ * 会期の一覧は期のページから見つける。ファイル名は元号年2桁＋月2桁で
+ * 元号の区別が入っていない（平成16年6月も令和8年6月も末尾は同じ形）ため、
+ * URLから元号を推測せず、PDF本文の見出しに書かれた元号で会期を確定する。
+ *
+ * 1つのPDFが取り込めなくても期全体を止めない。過去の会期は形式が
+ * 少しずつ違うことがあり、1件の失敗で22年分が止まると使い物にならない。
+ */
+export async function ingestBillsForTerm(params: {
+  term: number;
+  force?: boolean;
+  client?: NumazuSiteClient;
+}): Promise<IngestTermResult> {
+  const client = params.client ?? new NumazuSiteClient();
+  const indexUrl = buildReportTermUrl(params.term);
+  const page = await client.fetchHtml(indexUrl);
+  const pdfs = parseTermIndex(page.text, params.term);
+
+  const results: IngestBillsResult[] = [];
+  const failures: { path: string; reason: string }[] = [];
+
+  for (const pdf of pdfs) {
+    try {
+      results.push(
+        await ingestBillsForSession({
+          term: params.term,
+          eraYear: pdf.eraYear,
+          month: pdf.month,
+          force: params.force,
+          client,
+        })
+      );
+    } catch (error) {
+      failures.push({
+        path: pdf.path,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      console.warn(`${pdf.path} を取り込めなかった: ${String(error)}`);
+    }
+  }
+
+  return { term: params.term, found: pdfs.length, results, failures };
 }

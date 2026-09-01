@@ -39,6 +39,8 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=explain --difficulty=normal                # やさしい版だけ
  *   tsx src/main.ts --mode=explain --force                            # 既存の解説を作り直す
  *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
+ *   tsx src/main.ts --mode=ingest --target=bills --term=24            # 第24期の全会期
+ *   tsx src/main.ts --mode=ingest --target=bills --all-terms          # 全期（平成16年〜）
  *   tsx src/main.ts --mode=ingest --target=bills --force              # 内容が同じでも取り込み直す
  *
  * 必須env: SUPABASE_URL, SUPABASE_SECRET_KEY
@@ -155,6 +157,7 @@ async function main(): Promise<void> {
       eraYear: parseNumber(args["era-year"], "era-year"),
       month: parseNumber(args.month, "month"),
       term: parseNumber(args.term, "term"),
+      allTerms: args["all-terms"] !== undefined && args["all-terms"] !== "false",
       force: args.force !== undefined && args.force !== "false",
     });
     return;

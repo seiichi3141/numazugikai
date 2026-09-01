@@ -1,18 +1,25 @@
 import { DiscussVisionClient } from "./fetchers/discussvision-client";
 import { NumazuSiteClient } from "./fetchers/numazu-site-client";
+import { allTerms } from "./parsers/parse-term-index";
 import {
   finishIngestionRun,
   startIngestionRun,
 } from "./repositories/ingest-repository";
 import { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
-import { ingestBillsForSession } from "./services/ingest-bills";
+import {
+  ingestBillsForSession,
+  ingestBillsForTerm,
+} from "./services/ingest-bills";
 import { ingestMembers } from "./services/ingest-members";
 import { ingestMinutes } from "./services/ingest-minutes";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
 import { CURRENT_TERM } from "./shared/constants-site";
 
 export { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
-export { ingestBillsForSession } from "./services/ingest-bills";
+export {
+  ingestBillsForSession,
+  ingestBillsForTerm,
+} from "./services/ingest-bills";
 export { ingestMembers } from "./services/ingest-members";
 export { ingestMinutes } from "./services/ingest-minutes";
 export { ingestSessionSchedule } from "./services/ingest-sessions";
@@ -33,6 +40,8 @@ export type IngestOptions = {
   month?: number;
   term?: number;
   force?: boolean;
+  /** 公開されているすべての期を取り込む */
+  allTerms?: boolean;
 };
 
 /** 定例会が開かれる月。臨時会はこの限りではない。 */
@@ -110,6 +119,22 @@ async function ingestBills(
   client: NumazuSiteClient
 ): Promise<unknown> {
   const term = options.term ?? CURRENT_TERM;
+
+  // --all-terms: 公開されている全期（第20期＝平成16年〜）をまとめて取り込む
+  if (options.allTerms) {
+    const results = [];
+    for (const t of allTerms()) {
+      results.push(
+        await ingestBillsForTerm({ term: t, force: options.force, client })
+      );
+    }
+    return results;
+  }
+
+  // --term だけ指定された場合は、その期の会期を期のページから見つけて全部取り込む
+  if (options.term !== undefined && options.month === undefined) {
+    return ingestBillsForTerm({ term, force: options.force, client });
+  }
 
   if (options.eraYear !== undefined && options.month !== undefined) {
     return ingestBillsForSession({
