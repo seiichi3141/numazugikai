@@ -755,6 +755,7 @@ export type Database = {
           id: string
           mode: Database["public"]["Enums"]["interview_mode_enum"]
           name: string
+          prompt_overrides: Json | null
           status: Database["public"]["Enums"]["interview_config_status_enum"]
           themes: string[] | null
           updated_at: string
@@ -768,6 +769,7 @@ export type Database = {
           id?: string
           mode?: Database["public"]["Enums"]["interview_mode_enum"]
           name: string
+          prompt_overrides?: Json | null
           status?: Database["public"]["Enums"]["interview_config_status_enum"]
           themes?: string[] | null
           updated_at?: string
@@ -781,6 +783,7 @@ export type Database = {
           id?: string
           mode?: Database["public"]["Enums"]["interview_mode_enum"]
           name?: string
+          prompt_overrides?: Json | null
           status?: Database["public"]["Enums"]["interview_config_status_enum"]
           themes?: string[] | null
           updated_at?: string
@@ -1536,6 +1539,13 @@ export type Database = {
           p_min_content_richness: number
         }
         Returns: number
+      }
+      count_public_reports_by_bill_ids: {
+        Args: { p_bill_ids: string[] }
+        Returns: {
+          bill_id: string
+          report_count: number
+        }[]
       }
       count_public_reports_by_stance: {
         Args: { p_bill_id: string }

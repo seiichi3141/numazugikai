@@ -37,7 +37,6 @@ export async function getReportPublicStatus(
   return isPublicReportVisible({
     isPublicByAdmin: data.is_public_by_admin,
     isPublicByUser: data.is_public_by_user,
-    publicReportCount,
   });
 }
 

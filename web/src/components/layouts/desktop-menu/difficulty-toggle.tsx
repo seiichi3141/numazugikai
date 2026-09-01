@@ -18,7 +18,6 @@ export async function DesktopMenuDifficultyToggle() {
       >
         <DifficultySelector
           currentLevel={currentLevel}
-          label="説明をもっと詳しく"
           labelStyle={{
             fontSize: "20px",
             marginRight: "44px",
