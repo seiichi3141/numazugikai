@@ -5,7 +5,10 @@ import {
   finishIngestionRun,
   startIngestionRun,
 } from "./repositories/ingest-repository";
-import { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
+import {
+  ingestAmivoiceArchive,
+  ingestAmivoiceMinutes,
+} from "./services/ingest-amivoice";
 import {
   ingestBillsForSession,
   ingestBillsForTerm,
@@ -15,7 +18,10 @@ import { ingestMinutes } from "./services/ingest-minutes";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
 import { CURRENT_TERM } from "./shared/constants-site";
 
-export { ingestAmivoiceMinutes } from "./services/ingest-amivoice";
+export {
+  ingestAmivoiceArchive,
+  ingestAmivoiceMinutes,
+} from "./services/ingest-amivoice";
 export {
   ingestBillsForSession,
   ingestBillsForTerm,
@@ -31,6 +37,7 @@ export type IngestMode =
   | "bills"
   | "minutes"
   | "amivoice"
+  | "amivoice-archive"
   | "all";
 
 export type IngestOptions = {
@@ -42,6 +49,8 @@ export type IngestOptions = {
   force?: boolean;
   /** 公開されているすべての期を取り込む */
   allTerms?: boolean;
+  /** amivoice-archive で取り込む年（西暦） */
+  year?: number;
 };
 
 /** 定例会が開かれる月。臨時会はこの限りではない。 */
@@ -88,6 +97,16 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
 
     case "amivoice":
       return ingestAmivoiceMinutes();
+
+    case "amivoice-archive": {
+      // 年の指定が無ければ、会議記録が収録されている2015年から当年まで
+      const until = new Date().getFullYear();
+      const years =
+        options.year !== undefined
+          ? [options.year]
+          : Array.from({ length: until - 2015 + 1 }, (_, i) => 2015 + i);
+      return ingestAmivoiceArchive({ years });
+    }
 
     case "all": {
       const sessions = await ingestSessionSchedule({

@@ -186,3 +186,91 @@ async function ingestCommittee(
     committeeReviewCount,
   };
 }
+
+export type IngestArchiveResult = {
+  year: number;
+  /** 検索で見つかった会議記録の数 */
+  found: number;
+  /** 会期と突合できて審査を保存できた議案の数 */
+  reviewCount: number;
+  /** 会期の期間に当てはまらず捨てた会議記録の数 */
+  outOfSession: number;
+};
+
+/**
+ * 会議記録検索から、過去の委員会記録を補完的に取り込む。
+ *
+ * トップページ（listSessions）は直近しか載せないため、古い年はこちらで拾う。
+ * ただし2015〜2025年に収録されているのは文教消防・文教産業委員会だけで、
+ * 他の常任委員会と本会議は検索経由では取れない（調査ノート参照）。
+ * 網羅は期待せず、取れるものを取る用途に使う。
+ */
+export async function ingestAmivoiceArchive(params: {
+  /** 取り込む年（西暦） */
+  years: readonly number[];
+  /** 検索語。既定は空（期間内の全件）。指定すると絞り込まれ取りこぼす */
+  word?: string;
+  client?: AmivoiceClient;
+}): Promise<IngestArchiveResult[]> {
+  const client = params.client ?? new AmivoiceClient();
+  const periods = await listCouncilSessionPeriods();
+  const results: IngestArchiveResult[] = [];
+
+  for (const year of params.years) {
+    const { hits } = await client.searchMinutes({
+      word: params.word,
+      range: { from: new Date(year, 0, 1), to: new Date(year, 11, 31) },
+    });
+
+    let reviewCount = 0;
+    let outOfSession = 0;
+
+    for (const hit of hits) {
+      // 会議記録の開催日を含む会期を探す。閉会中審査など会期外の記録は
+      // どの議案に紐づくか決められないので取り込まない
+      const matched = periods.filter(
+        (p) => hit.date >= p.startDate && hit.date <= p.endDate
+      );
+      if (matched.length === 0) {
+        outOfSession += 1;
+        continue;
+      }
+
+      const text = await client.getMinutesText(hit.vcsv);
+      if (!text) continue;
+
+      const billMaps: ReadonlyMap<string, string>[] = [];
+      for (const period of matched) {
+        billMaps.push(await findBillIdsBySession(period.id));
+      }
+      const minutesUrl = buildAmivoiceMinutesUrl(hit.vcsv);
+
+      for (const review of extractCommitteeBillReviews(text)) {
+        for (const billNumber of review.billNumbers) {
+          const billId = billMaps.map((m) => m.get(billNumber)).find(Boolean);
+          if (!billId) continue;
+          await updateBillCommitteeReview(billId, {
+            qaCount: review.questionCount,
+            minutesUrl,
+          });
+          if (review.explanation) {
+            await updateBillExplanationIfLonger(billId, review.explanation);
+          }
+          reviewCount += 1;
+        }
+      }
+    }
+
+    console.log(
+      `${year}年: 会議記録${hits.length}件 → 審査${reviewCount}件（会期外 ${outOfSession}件）`
+    );
+    results.push({
+      year,
+      found: hits.length,
+      reviewCount,
+      outOfSession,
+    });
+  }
+
+  return results;
+}

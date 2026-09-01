@@ -32,6 +32,8 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=ingest --target=bills                      # 当年の定例会の議案
  *   tsx src/main.ts --mode=ingest --target=minutes                    # 議会中継の会議録から議案説明・討論
  *   tsx src/main.ts --mode=ingest --target=amivoice                   # 会議記録検索システムから議案説明・委員会審査・討論
+ *   tsx src/main.ts --mode=ingest --target=amivoice-archive           # 過去の委員会記録（検索経由・2015年〜）
+ *   tsx src/main.ts --mode=ingest --target=amivoice-archive --year=2019
  *
  *   議案解説の生成（OpenAI API を直接利用。Gateway は経由しない）:
  *   tsx src/main.ts --mode=explain --session=2026-13                  # 指定会期の議案を解説
@@ -61,6 +63,7 @@ const INGEST_TARGETS = [
   "bills",
   "minutes",
   "amivoice",
+  "amivoice-archive",
   "all",
 ] as const;
 
@@ -157,6 +160,7 @@ async function main(): Promise<void> {
       eraYear: parseNumber(args["era-year"], "era-year"),
       month: parseNumber(args.month, "month"),
       term: parseNumber(args.term, "term"),
+      year: parseNumber(args.year, "year"),
       allTerms: args["all-terms"] !== undefined && args["all-terms"] !== "false",
       force: args.force !== undefined && args.force !== "false",
     });
