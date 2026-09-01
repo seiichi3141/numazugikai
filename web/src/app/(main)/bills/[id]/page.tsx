@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDetailLayout } from "@/features/bills/server/components/bill-detail/bill-detail-layout";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
+import { getBillOgVersion } from "@/features/bills/shared/utils/get-bill-og-version";
 import { env } from "@/lib/env";
+import { buildShareMetadata } from "@/lib/metadata/share-metadata";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
 import { routes } from "@/lib/routes";
 
 interface BillDetailPageProps {
@@ -24,41 +27,18 @@ export async function generateMetadata({
     };
   }
 
-  // bill_contentのsummaryがあればそれを使用、なければデフォルト値を使用
-  const description = bill.bill_content?.summary || "議案の詳細情報";
-  const defaultOgpUrl = new URL("/ogp.jpg", env.webUrl).toString();
-
-  // シェア用OGP画像（share_thumbnail_url > thumbnail_url > デフォルト）
-  // ページ表示用のthumbnail_urlとは別に、SNSシェア用の画像を優先
-  const shareImageUrl =
-    bill.share_thumbnail_url || bill.thumbnail_url || defaultOgpUrl;
-
-  return {
+  return buildShareMetadata({
     title: bill.name,
-    description: description,
-    alternates: {
-      canonical: routes.billDetail(bill.id),
-    },
-    openGraph: {
-      title: bill.name,
-      description: description,
-      type: "article",
-      publishedTime: bill.submitted_date ?? undefined,
-      modifiedTime: bill.updated_at,
-      images: [
-        {
-          url: shareImageUrl,
-          alt: `${bill.name} のOGPイメージ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: bill.name,
-      description: description,
-      images: [shareImageUrl],
-    },
-  };
+    // bill_contentのsummaryがあればそれを使用、なければデフォルト値を使用
+    description: bill.bill_content?.summary || "議案の詳細情報",
+    canonical: routes.billDetail(bill.id),
+    // 議案ごとに動的に描く。更新されたら URL が変わり SNS 側のキャッシュも切れる
+    image: ogImageUrls.bill(bill.id, env.webUrl, getBillOgVersion(bill)),
+    imageAlt: `${bill.name} のOGPイメージ`,
+    type: "article",
+    publishedTime: bill.submitted_date ?? undefined,
+    modifiedTime: bill.updated_at,
+  });
 }
 
 export default async function BillDetailPage({ params }: BillDetailPageProps) {

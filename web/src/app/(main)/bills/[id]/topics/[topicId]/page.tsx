@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
-import { resolveBillShareImageUrl } from "@/features/bills/shared/utils/bill-share-image";
+import { getBillOgVersion } from "@/features/bills/shared/utils/get-bill-og-version";
 import { TopicDetailPage } from "@/features/user-topic-analysis/server/components/topic-detail-page";
 import { getPublicTopicDetail } from "@/features/user-topic-analysis/server/loaders/get-public-topic-detail";
 import { parseTopicFilter } from "@/features/user-topic-analysis/shared/utils/filter-topics";
 import { env } from "@/lib/env";
+import { buildShareMetadata } from "@/lib/metadata/share-metadata";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
 import { routes } from "@/lib/routes";
 
 interface TopicDetailRouteProps {
@@ -31,32 +33,18 @@ export async function generateMetadata({
     : `トピック詳細 - ${billName}`;
   const description =
     topic?.description || `${billName}に寄せられた意見トピックの詳細`;
-  const shareImageUrl = resolveBillShareImageUrl(bill, env.webUrl);
-
-  return {
+  return buildShareMetadata({
     title,
     description,
-    alternates: {
-      canonical: routes.billTopicDetail(id, topicId),
-    },
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      images: [
-        {
-          url: shareImageUrl,
-          alt: `${title} のOGPイメージ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [shareImageUrl],
-    },
-  };
+    canonical: routes.billTopicDetail(id, topicId),
+    image: ogImageUrls.bill(
+      id,
+      env.webUrl,
+      bill ? getBillOgVersion(bill) : null
+    ),
+    imageAlt: `${title} のOGPイメージ`,
+    type: "article",
+  });
 }
 
 export default async function TopicDetailRoute({
