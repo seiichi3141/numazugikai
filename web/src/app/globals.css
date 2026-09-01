@@ -60,8 +60,9 @@
   /* Text */
   --color-mirai-text: #1f2937;
   --color-mirai-text-secondary: #404040;
-  --color-mirai-text-muted: #8e8e93;
-  --color-mirai-text-placeholder: #aeaeb2;
+  /* 4.5:1 を満たす最も明るい値。これ以上明るくすると読めなくなる */
+  --color-mirai-text-muted: #6f6f74;
+  --color-mirai-text-placeholder: #6f6f75;
   --color-mirai-text-note: #4c4c4c;
   --color-mirai-text-subtle: #666666;
   --color-mirai-text-close: #9f9b9b;
@@ -214,7 +215,7 @@
   }
 
   *:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--primary-accent);
     outline-offset: 2px;
   }
 
@@ -224,7 +225,7 @@
   }
 
   button:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--primary-accent);
     outline-offset: 2px;
   }
 
@@ -234,7 +235,7 @@
   }
 
   a:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--primary-accent);
     outline-offset: 2px;
   }
 
@@ -244,12 +245,22 @@
   }
 
   table:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--primary-accent);
     outline-offset: 2px;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  /*
+    ページ内アンカーの着地点が fixed ヘッダーに隠れないようにする。
+    個々のアンカーに scroll-mt を付けて回ると付け忘れる。
+  */
+  html {
+    scroll-padding-top: 6rem;
   }
 }
 

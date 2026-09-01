@@ -32,7 +32,16 @@ export function CurrentCouncilSession({
   return (
     <Container className="pt-24 md:pt-5">
       <div className="flex flex-col gap-6 rounded-2xl bg-mirai-light-gradient px-5 py-5">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+        {/*
+          トップページの主見出し。このカードが最上部で、以下は h2 から
+          始まる。h1 が無いと、スクリーンリーダーの見出しジャンプで
+          ページの頭を掴めない。
+
+          行ごと見出しにして「本日は会期中 令和8年6月定例会」とひとまとまりで
+          読ませる。「本日は」だけを見出しにしても意味を成さない。
+          見た目は元のまま。
+        */}
+        <h1 className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
           <span
             className={`h-2 w-2 shrink-0 rounded-full ${
               inSession ? "bg-primary" : "bg-mirai-border-light"
@@ -55,7 +64,7 @@ export function CurrentCouncilSession({
               {session.name}
             </span>
           )}
-        </div>
+        </h1>
 
         {inSession && <SessionProgressBar session={session} now={now} />}
         {!inSession && closedSession && (

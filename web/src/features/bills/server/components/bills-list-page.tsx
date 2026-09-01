@@ -20,6 +20,8 @@ import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
 import { BillsPagination } from "../../client/components/bill-list/bills-pagination";
 import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
+import { FilterChip } from "../../client/components/bill-list/filter-chip";
+import { InterviewOnlyToggle } from "../../client/components/bill-list/interview-only-toggle";
 import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import {
   BILL_STATUS_GROUP_LABELS,
@@ -131,7 +133,7 @@ export async function BillsListPage({
 
         <FilterGroup label="ステータス">
           {BILL_STATUS_GROUPS.map((group) => (
-            <Chip
+            <FilterChip
               key={group}
               href={href({ status: group })}
               active={params.status === group}
@@ -165,7 +167,7 @@ export async function BillsListPage({
                     className="flex items-center gap-1.5"
                   >
                     {row.map((chip) => (
-                      <Chip
+                      <FilterChip
                         key={chip.id}
                         href={href({ tagId: chip.tagId })}
                         active={params.tagId === chip.tagId}
@@ -180,38 +182,10 @@ export async function BillsListPage({
           </div>
         </section>
 
-        {/*
-        リンクで絞り込むのでフォーム部品ではないが、見た目はチェックボックスなので
-        状態が支援技術にも伝わるようにする。
-
-        inline-flex にすると行ボックスのベースライン計算に参加し、チェックの
-        アイコンが入った瞬間に行の高さが変わって下の一覧が数px動く。block に
-        してベースラインへの依存を切る。
-      */}
-        <Link
+        <InterviewOnlyToggle
           href={href({ interviewOnly: !params.interviewOnly })}
-          role="checkbox"
-          aria-checked={params.interviewOnly}
-          className="mb-4 flex w-fit items-center gap-2 text-[13px] font-bold"
-        >
-          {/*
-          枠線の有無で寸法が変わらないよう、選択時も border を残して色だけ
-          透明にする。太さが変わると行の高さが動いて一覧がずれる。
-        */}
-          <span
-            className={`flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border ${
-              params.interviewOnly
-                ? "border-transparent bg-mirai-gradient"
-                : "border-mirai-border-light bg-white"
-            }`}
-            aria-hidden
-          >
-            {params.interviewOnly && (
-              <Check className="h-3 w-3 text-black" strokeWidth={3.5} />
-            )}
-          </span>
-          AIインタビュー受付中のみ表示
-        </Link>
+          checked={params.interviewOnly}
+        />
 
         <div className="mb-3 flex items-center gap-3">
           <p className="text-[13px] font-bold text-mirai-text-secondary">
@@ -310,50 +284,3 @@ const STATUS_GROUP_ICONS: Record<BillStatusGroup, LucideIcon> = {
   enacted: Check,
   rejected: X,
 };
-
-/**
- * 絞り込みのチップ。
- *
- * ステータスとカテゴリで同じ描画にする。片方だけラベルに数字を混ぜると、
- * 数字のフォントや色が並びの中で食い違う。
- */
-function Chip({
-  href,
-  active,
-  label,
-  count,
-  icon: Icon,
-}: {
-  href: Route;
-  active: boolean;
-  label: string;
-  count: number;
-  icon?: LucideIcon;
-}) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "true" : undefined}
-      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13px] font-bold whitespace-nowrap ${
-        active
-          ? "border-transparent bg-mirai-gradient text-mirai-text"
-          : "border-mirai-border bg-white text-mirai-text"
-      }`}
-    >
-      {Icon && <Icon className="h-[15px] w-[15px] shrink-0" aria-hidden />}
-      {label}
-      {/*
-        選択中だけ濃くする。全部同じ濃さだとラベルと数字の区別が付かず、
-        どれが選ばれているのかも読み取りにくい。色はトップのタグチップ
-        （TagChipLink）に揃えている。
-      */}
-      <span
-        className={`font-lexend text-xs font-bold ${
-          active ? "text-mirai-text" : "text-mirai-text-muted"
-        }`}
-      >
-        {count}
-      </span>
-    </Link>
-  );
-}

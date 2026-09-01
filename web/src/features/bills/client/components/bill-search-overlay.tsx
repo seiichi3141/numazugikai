@@ -135,11 +135,27 @@ export function BillSearchOverlay({
           変化として扱われず、最初の候補が読み上げられないことがある。
         */}
           <div className="flex min-w-0 flex-col gap-1.5">
-            {trimmed && matches.length > 0 && (
-              <>
+            {/*
+              件数と「候補なし」を同じ領域で入れ替える。領域そのものを
+              後から差し込むと変化として扱われず読み上げられないので、
+              入力前から空のまま置いておく。
+            */}
+            <div aria-live="polite" aria-atomic="true">
+              {trimmed && matches.length > 0 && (
                 <p className="text-xs font-bold text-mirai-text-secondary">
                   議案 {matches.length}件
                 </p>
+              )}
+              {trimmed && matches.length === 0 && (
+                // JSX は行をまたぐテキストを半角スペースで繋ぐので、日本語の
+                // 途中で改行すると空白が混ざる。テンプレート文字列で渡す。
+                <p className="py-2 text-sm text-mirai-text-muted">
+                  {`「${trimmed}」に一致する候補はありません。検索すると要約も対象になります`}
+                </p>
+              )}
+            </div>
+            {trimmed && matches.length > 0 && (
+              <>
                 <ul className="flex min-w-0 flex-col">
                   {matches.map((bill) => (
                     <li
@@ -155,16 +171,6 @@ export function BillSearchOverlay({
                   ))}
                 </ul>
               </>
-            )}
-            {trimmed && matches.length === 0 && (
-              // JSX は行をまたぐテキストを半角スペースで繋ぐので、日本語の
-              // 途中で改行すると空白が混ざる。テンプレート文字列で渡す。
-              <p
-                className="py-2 text-sm text-mirai-text-muted"
-                aria-live="polite"
-              >
-                {`「${trimmed}」に一致する候補はありません。検索すると要約も対象になります`}
-              </p>
             )}
           </div>
 
