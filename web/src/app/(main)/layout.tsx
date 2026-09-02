@@ -16,7 +16,9 @@ export default function MainGroupLayout({
   return (
     <>
       <SpeedInsights />
-      <GoogleAnalytics gaId={env.analytics.gaTrackingId ?? ""} />
+      {env.analytics.gaTrackingId && (
+        <GoogleAnalytics gaId={env.analytics.gaTrackingId} />
+      )}
       <RubyfulInitializer />
       <AuthGate />
 

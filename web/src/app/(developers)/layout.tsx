@@ -17,7 +17,9 @@ export default function DevelopersGroupLayout({
 }>) {
   return (
     <>
-      <GoogleAnalytics gaId={env.analytics.gaTrackingId ?? ""} />
+      {env.analytics.gaTrackingId && (
+        <GoogleAnalytics gaId={env.analytics.gaTrackingId} />
+      )}
       <AuthGate />
       <Header />
       {/* サイト共通の配色に合わせ、白を基調のキャンバスにする */}

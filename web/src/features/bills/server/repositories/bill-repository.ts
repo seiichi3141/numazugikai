@@ -46,6 +46,31 @@ export async function findPublishedBillsWithContents(
   return data;
 }
 
+/** サイトマップ用に公開済み議案のURL生成に必要な列だけを取得する。 */
+export async function findPublishedBillSitemapEntries() {
+  const supabase = createAdminClient();
+  const entries: Array<{ id: string; updated_at: string }> = [];
+
+  for (let from = 0; ; from += SUPABASE_MAX_ROWS) {
+    const { data, error } = await supabase
+      .from("bills")
+      .select("id, updated_at")
+      .eq("publish_status", "published")
+      .order("updated_at", { ascending: false })
+      .order("id", { ascending: true })
+      .range(from, from + SUPABASE_MAX_ROWS - 1);
+
+    if (error) {
+      throw new Error(`Failed to fetch bill sitemap entries: ${error.message}`);
+    }
+
+    entries.push(...data);
+    if (data.length < SUPABASE_MAX_ROWS) break;
+  }
+
+  return entries;
+}
+
 /**
  * 検索候補用に、公開済み議案の名称・タイトル・タグだけを取得する。
  *
