@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { OG_COLORS } from "@/lib/og/og-colors";
+import { SiteOgContent } from "@/lib/og/site-og-content";
 import { GET } from "./route";
 
 const mocks = vi.hoisted(() => ({
@@ -20,7 +21,7 @@ describe("GET /api/og/site", () => {
     vi.unstubAllGlobals();
   });
 
-  it("サービス名と説明を載せた 1200x630 の画像を返す", async () => {
+  it("ロゴとプレビューを渡した 1200x630 の画像を返す", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(new Response("", { status: 500 }))
@@ -30,9 +31,17 @@ describe("GET /api/og/site", () => {
 
     expect(res.status).toBe(200);
     const [element, init] = mocks.imageResponse.mock.calls[0];
-    const json = JSON.stringify(element);
-    expect(json).toContain(SITE_NAME);
-    expect(json).toContain(SITE_DESCRIPTION);
+    expect(element.props).toMatchObject({
+      showBrandChrome: false,
+      contentBackgroundImage: OG_COLORS.siteBackgroundSea,
+    });
+    const content = (element as ReactElement<{ children: ReactElement }>).props
+      .children;
+    expect(content.type).toBe(SiteOgContent);
+    expect(content.props).toMatchObject({
+      logoDataUrl: expect.stringContaining("data:image/png;base64,"),
+      screenshotDataUrl: expect.stringContaining("data:image/png;base64,"),
+    });
     expect(init).toMatchObject({ width: 1200, height: 630 });
   });
 });

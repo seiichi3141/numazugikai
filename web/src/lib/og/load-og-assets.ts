@@ -46,18 +46,30 @@ export function cachedLoader<T>(load: () => Promise<T | null>) {
   };
 }
 
+async function loadLocalPng(relativePath: string): Promise<string | null> {
+  try {
+    const buf = await readFile(join(process.cwd(), relativePath));
+    return `data:image/png;base64,${buf.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * OGP に載せるサービスロゴを data URL で返す。
  * 画像の取得に失敗しても OGP 自体は返せるよう null で受ける。
  */
 export const loadOgLogo = cachedLoader<string>(async () => {
-  try {
-    const logoPath = join(process.cwd(), "public/img/ogp-logo.png");
-    const buf = await readFile(logoPath);
-    return `data:image/png;base64,${buf.toString("base64")}`;
-  } catch {
-    return null;
-  }
+  return loadLocalPng("public/img/ogp-logo.png");
+});
+
+/**
+ * サイト共通 OGP のスマートフォン画面に使う実サイトのスクリーンショット。
+ * ローカルの公開アセットを data URL にして、デプロイ先の URL やネットワークに
+ * 依存せず ImageResponse へ渡す。
+ */
+export const loadOgSiteScreenshot = cachedLoader<string>(async () => {
+  return loadLocalPng("public/img/og/site-mobile.png");
 });
 
 /**

@@ -15,15 +15,29 @@ const OG_HEIGHT = 630;
  */
 export async function renderOgImage(
   children: ReactNode,
-  { immutable = false }: { immutable?: boolean } = {}
+  {
+    immutable = false,
+    showBrandChrome = true,
+    contentBackgroundImage,
+  }: {
+    immutable?: boolean;
+    showBrandChrome?: boolean;
+    contentBackgroundImage?: string;
+  } = {}
 ): Promise<ImageResponse> {
   const [fontData, logoDataUrl] = await Promise.all([
     loadOgFont(),
-    loadOgLogo(),
+    showBrandChrome ? loadOgLogo() : Promise.resolve(null),
   ]);
 
   return new ImageResponse(
-    <OgFrame logoDataUrl={logoDataUrl}>{children}</OgFrame>,
+    <OgFrame
+      logoDataUrl={logoDataUrl}
+      showBrandChrome={showBrandChrome}
+      contentBackgroundImage={contentBackgroundImage}
+    >
+      {children}
+    </OgFrame>,
     {
       width: OG_WIDTH,
       height: OG_HEIGHT,
