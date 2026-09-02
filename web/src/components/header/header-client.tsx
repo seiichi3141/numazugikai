@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
@@ -11,8 +10,8 @@ import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-event
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
 import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
-import { RubyToggle } from "@/lib/rubyful";
 import { DesktopNavigation } from "./desktop-navigation";
+import { DisplaySettingsPopover } from "./display-settings";
 import { HamburgerMenu } from "./hamburger-menu";
 import { SiteTitle } from "./site-title";
 
@@ -54,7 +53,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
 
           <DesktopNavigation pathname={pathname} />
 
-          {/* Difficulty and interview controls */}
+          {/* Header controls */}
           <nav
             className="flex items-center space-x-2 xl:justify-self-end"
             aria-label="補助ナビゲーション"
@@ -63,12 +62,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               <DifficultySelector currentLevel={difficultyLevel} />
             )}
             {showInterviewActions && <InterviewHeaderActions />}
-            <div className="hidden xl:block">
-              <RubyToggle />
-            </div>
-            <div className="hidden xl:block">
-              <ThemeToggle />
-            </div>
+            <DisplaySettingsPopover />
             <HamburgerMenu />
           </nav>
         </div>

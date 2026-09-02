@@ -5,7 +5,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { HamburgerMenu } from "./hamburger-menu";
 
-vi.mock("@/lib/rubyful", () => ({ RubyToggle: () => null }));
+vi.mock("./display-settings", () => ({
+  DisplaySettingsControls: () => <div>表示コントロール</div>,
+}));
 
 describe("HamburgerMenu", () => {
   it("デスクトップ幅ではメニューボタンを非表示にする", () => {
@@ -31,6 +33,8 @@ describe("HamburgerMenu", () => {
       ["議案を検索する", "/bills"],
       ["定例会の一覧", "/gikai"],
     ]);
+    expect(screen.getByText("表示設定")).toBeInTheDocument();
+    expect(screen.getByText("表示コントロール")).toBeInTheDocument();
   });
 
   it("リンクを押すとメニューが閉じる", async () => {
