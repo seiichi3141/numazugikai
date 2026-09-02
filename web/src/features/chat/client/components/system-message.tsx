@@ -7,11 +7,17 @@ import {
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
 import { Response } from "@/components/ai-elements/response";
+import { CHAT_ORIGIN } from "@/features/chat/shared/chat-origin";
 import { SUGGEST_INTERVIEW_TOOL_TYPE } from "@/features/chat/shared/constants";
+import { normalizeChatMarkdown } from "@/features/chat/shared/utils/normalize-chat-markdown";
 import { redactExternalUrls } from "@/features/chat/shared/utils/redact-external-urls";
 import { InterviewSuggestionBanner } from "./interview-suggestion-banner";
 
 type RehypePlugins = ComponentProps<typeof Response>["rehypePlugins"];
+
+function sanitizeChatMarkdown(text: string) {
+  return normalizeChatMarkdown(redactExternalUrls(text, CHAT_ORIGIN));
+}
 
 interface SystemMessageProps {
   message: UIMessage;
@@ -42,7 +48,7 @@ export function SystemMessage({
                 className="break-words"
                 rehypePlugins={rehypePlugins}
               >
-                {redactExternalUrls(part.text)}
+                {sanitizeChatMarkdown(part.text)}
               </Response>
             );
           }
@@ -55,7 +61,7 @@ export function SystemMessage({
               >
                 <ReasoningTrigger />
                 <ReasoningContent>
-                  {redactExternalUrls(part.text)}
+                  {sanitizeChatMarkdown(part.text)}
                 </ReasoningContent>
               </Reasoning>
             );

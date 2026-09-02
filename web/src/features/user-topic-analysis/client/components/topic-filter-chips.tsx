@@ -70,7 +70,7 @@ export function TopicFilterChips({
           "focus-visible:border-mirai-text! focus-visible:ring-0 focus-visible:ring-offset-0",
           allActive
             ? "bg-mirai-gradient hover:opacity-90"
-            : "bg-white hover:bg-mirai-surface-gray"
+            : "bg-card hover:bg-mirai-surface-gray"
         )}
       >
         すべて
@@ -93,7 +93,7 @@ export function TopicFilterChips({
               "focus-visible:border-mirai-text! focus-visible:ring-0 focus-visible:ring-offset-0",
               isActive
                 ? "bg-mirai-gradient hover:opacity-90"
-                : "bg-white hover:bg-mirai-surface-gray"
+                : "bg-card hover:bg-mirai-surface-gray"
             )}
           >
             <Icon

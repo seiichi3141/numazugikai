@@ -37,7 +37,7 @@ export function BillsListSelect({
           const href = toHref(event.target.value);
           if (href) router.push(href);
         }}
-        className="h-9 max-w-full rounded-lg border border-mirai-border bg-white px-3 text-[13px] font-medium text-mirai-text"
+        className="h-9 max-w-full rounded-lg border border-mirai-border bg-card px-3 text-[13px] font-medium text-mirai-text"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

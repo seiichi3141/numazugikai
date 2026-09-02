@@ -25,7 +25,7 @@ export function DesktopMenuLogo() {
       {/* テキスト */}
       <div className="flex flex-col gap-1.5">
         <h1
-          className="font-extrabold text-black"
+          className="font-extrabold text-foreground"
           style={{
             fontSize: "30px",
             lineHeight: "1em",
@@ -35,7 +35,7 @@ export function DesktopMenuLogo() {
           みらい議会＠沼津市
         </h1>
         <p
-          className="font-bold text-black"
+          className="font-bold text-foreground"
           style={{
             fontSize: "16px",
             lineHeight: "2em",

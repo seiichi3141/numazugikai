@@ -104,7 +104,7 @@ export function BillSearchOverlay({
               event.preventDefault();
               submit();
             }}
-            className="flex min-w-0 items-center gap-2 rounded-full border border-mirai-border bg-mirai-surface px-4 py-1.5 focus-within:border-primary focus-within:bg-white"
+            className="flex min-w-0 items-center gap-2 rounded-full border border-mirai-border bg-mirai-surface px-4 py-1.5 focus-within:border-primary focus-within:bg-card"
           >
             <Search
               className="h-[18px] w-[18px] shrink-0 text-mirai-text-muted"
@@ -124,7 +124,7 @@ export function BillSearchOverlay({
             <Button
               type="submit"
               size="sm"
-              className="border-transparent bg-mirai-text px-4 text-white"
+              className="border-transparent bg-foreground px-4 text-background"
             >
               検索
             </Button>

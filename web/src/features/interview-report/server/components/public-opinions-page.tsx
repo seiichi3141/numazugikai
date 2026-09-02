@@ -65,7 +65,7 @@ export async function PublicOpinionsPage({
         {/* 議案タイトル（議案詳細へのリンク） */}
         <div className="py-6">
           <Link href={routes.billDetail(billId)}>
-            <h1 className="text-2xl font-bold leading-[1.5] text-black hover:underline">
+            <h1 className="text-2xl font-bold leading-[1.5] text-foreground hover:underline">
               {billTitle}
             </h1>
           </Link>

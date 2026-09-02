@@ -104,7 +104,7 @@ function SessionProgressBar({
       <Progress
         value={percentage}
         aria-label="会期の進行"
-        className="h-2.5 bg-white/75 [&>[data-slot=progress-indicator]]:bg-gradient-to-r [&>[data-slot=progress-indicator]]:from-primary-accent [&>[data-slot=progress-indicator]]:to-mirai-gradient-start"
+        className="h-2.5 bg-card/75 [&>[data-slot=progress-indicator]]:bg-gradient-to-r [&>[data-slot=progress-indicator]]:from-primary-accent [&>[data-slot=progress-indicator]]:to-mirai-gradient-start"
       />
 
       {/* パーセンテージ単独だと目標額のように読まれるので、日付を両端に置く。 */}

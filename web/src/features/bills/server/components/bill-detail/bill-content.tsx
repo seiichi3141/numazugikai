@@ -27,11 +27,11 @@ export async function BillContent({ bill }: BillContentProps) {
             [&_li]:mb-4
             [&_a]:!underline [&_a]:!underline-offset-[3px]
             [&_a:hover]:opacity-70
-            [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300
+            [&_blockquote]:border-l-4 [&_blockquote]:border-mirai-border
             [&_blockquote]:pl-4
-            [&_pre]:bg-gray-100 [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto
-            [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:rounded
-            [&_section]:bg-white [&_section]:px-4 [&_section]:py-8 [&_section]:rounded-md [&_section]:mb-9
+            [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto
+            [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded
+            [&_section]:bg-card [&_section]:px-4 [&_section]:py-8 [&_section]:rounded-md [&_section]:mb-9
             [&_section]:break-all
             [&_section>*:last-child]:mb-0
             [&_section:has(>iframe)]:p-0

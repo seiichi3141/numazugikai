@@ -49,7 +49,7 @@ export function ReportCard({ report, children, href }: ReportCardProps) {
   const summary = report.summary || "";
 
   return (
-    <article className="relative bg-white rounded-lg p-4 hover:bg-gray-50 transition-colors">
+    <article className="relative bg-card rounded-lg p-4 hover:bg-mirai-surface-gray transition-colors">
       <Link
         href={(href ?? getPublicReportLink(report.id)) as Route}
         prefetch={false}
@@ -102,7 +102,7 @@ export function ReportCard({ report, children, href }: ReportCardProps) {
             </div>
 
             {summary && (
-              <p className="text-sm leading-6 text-black">{summary}</p>
+              <p className="text-sm leading-6 text-foreground">{summary}</p>
             )}
           </div>
 

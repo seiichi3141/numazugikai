@@ -76,7 +76,7 @@ export function RespondentList({ respondents, nowMs }: RespondentListProps) {
             type="button"
             variant="outline"
             onClick={loadMore}
-            className="h-auto w-full gap-2.5 rounded-[100px] border-mirai-text bg-white px-6 py-3 text-[15px] font-medium text-mirai-text hover:bg-mirai-surface-gray"
+            className="h-auto w-full gap-2.5 rounded-[100px] border-mirai-text bg-card px-6 py-3 text-[15px] font-medium text-mirai-text hover:bg-mirai-surface-gray"
           >
             あと {remaining} 人のインタビュー回答を見る
             <ChevronDown className="size-[15px] shrink-0" />

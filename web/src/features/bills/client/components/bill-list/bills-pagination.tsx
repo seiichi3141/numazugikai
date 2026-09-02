@@ -78,7 +78,7 @@ function PageLink({
       className={`font-lexend flex h-9 min-w-9 items-center justify-center rounded-lg border px-2 text-sm font-bold ${
         active
           ? "border-transparent bg-mirai-gradient text-mirai-text"
-          : "border-mirai-border bg-white text-mirai-text hover:bg-muted/50"
+          : "border-mirai-border bg-card text-mirai-text hover:bg-muted/50"
       }`}
     >
       {page}
@@ -108,7 +108,7 @@ function Arrow({
     return (
       <span
         aria-hidden
-        className={`${shape} bg-white text-mirai-text-placeholder`}
+        className={`${shape} bg-card text-mirai-text-placeholder`}
       >
         <Icon className="h-4 w-4" />
       </span>
@@ -119,7 +119,7 @@ function Arrow({
     <Link
       href={href}
       aria-label={label}
-      className={`${shape} bg-white text-mirai-text hover:bg-muted/50`}
+      className={`${shape} bg-card text-mirai-text hover:bg-muted/50`}
     >
       <Icon className="h-4 w-4" aria-hidden />
     </Link>

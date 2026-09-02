@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Lexend_Giga, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { env } from "@/lib/env";
 import { ogImageUrls } from "@/lib/og/og-image-urls";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
@@ -92,8 +93,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  themeColor: "#1b6ca8",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1b6ca8" },
+    { media: "(prefers-color-scheme: dark)", color: "#101820" },
+  ],
 };
 
 export default function RootLayout({
@@ -102,12 +105,19 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body
         className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-mirai-surface-light`}
       >
-        <NextTopLoader showSpinner={false} color="#1b6ca8" />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NextTopLoader showSpinner={false} color="#1b6ca8" />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

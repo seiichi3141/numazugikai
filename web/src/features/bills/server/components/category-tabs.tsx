@@ -77,7 +77,7 @@ function FeaturedAnchorChip({ anchor }: { anchor: string }) {
   return (
     <a
       href={`#${anchor}`}
-      className="flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border border-black bg-primary px-4 text-[13px] font-bold text-white"
+      className="flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border border-foreground bg-primary px-4 text-[13px] font-bold text-primary-foreground"
     >
       注目
     </a>

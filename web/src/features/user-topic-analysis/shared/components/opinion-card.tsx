@@ -116,7 +116,7 @@ export function OpinionCard({
       )
     : routes.publicReport(opinion.interview_report_id);
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl bg-card p-4 shadow-sm">
       {/* アバター + 意見タイトル */}
       <div className="flex items-center gap-2.5">
         <PersonAvatar sentiment={opinion.bill_sentiment} />

@@ -50,7 +50,7 @@ export async function TopicListPage({ billId }: TopicListPageProps) {
             <Breadcrumb items={breadcrumbItems} />
             <Link
               href={routes.billDetail(billId) as Route}
-              className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-black"
+              className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-foreground"
             >
               <span className="underline">{billTitle}</span>
               <Undo2 className="size-4 shrink-0" />
@@ -72,7 +72,7 @@ export async function TopicListPage({ billId }: TopicListPageProps) {
             )}
 
             <div className="flex items-center gap-2.5 rounded-[10px] bg-topic-info-bg px-3 py-2.5">
-              <span className="flex size-5 shrink-0 items-center justify-center rounded-[10px] bg-white">
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-[10px] bg-card">
                 <Info className="size-3 text-primary-accent" />
               </span>
               <p className="text-[12px] leading-5 text-mirai-text">

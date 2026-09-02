@@ -40,7 +40,7 @@ export function InterviewActionButtons({
       <>
         <Button
           asChild
-          className="w-full bg-mirai-gradient text-black border border-black rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
+          className="w-full bg-mirai-gradient text-foreground border border-foreground rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
         >
           <Link href={chatLink as Route}>
             <Image
@@ -68,7 +68,7 @@ export function InterviewActionButtons({
     <>
       <Button
         onClick={() => setShowConsentModal(true)}
-        className="w-full bg-mirai-gradient text-black border border-black rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
+        className="w-full bg-mirai-gradient text-foreground border border-foreground rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
       >
         <Image
           src="/icons/messages-square-icon.svg"

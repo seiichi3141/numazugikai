@@ -49,11 +49,13 @@ export function InterviewOnlyToggle({
         className={`flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-accent ${
           checked
             ? "border-transparent bg-mirai-gradient"
-            : "border-mirai-border-light bg-white"
+            : "border-mirai-border-light bg-card"
         }`}
         aria-hidden
       >
-        {checked && <Check className="h-3 w-3 text-black" strokeWidth={3.5} />}
+        {checked && (
+          <Check className="h-3 w-3 text-foreground" strokeWidth={3.5} />
+        )}
       </span>
       AIインタビュー受付中のみ表示
     </label>

@@ -23,7 +23,7 @@ export default function DevelopersGroupLayout({
       <AuthGate />
       <Header />
       {/* サイト共通の配色に合わせ、白を基調のキャンバスにする */}
-      <main className="min-h-dvh bg-white pt-24">{children}</main>
+      <main className="min-h-dvh bg-card pt-24">{children}</main>
       <Footer />
     </>
   );

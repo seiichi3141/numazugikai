@@ -18,7 +18,7 @@ export function BillDebatesSection({ debates }: BillDebatesSectionProps) {
   return (
     <section
       aria-labelledby="bill-debates-heading"
-      className="rounded-2xl border border-mirai-border bg-white p-5"
+      className="rounded-2xl border border-mirai-border bg-card p-5"
     >
       <div className="space-y-2">
         <h2

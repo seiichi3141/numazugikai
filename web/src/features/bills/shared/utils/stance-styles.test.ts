@@ -21,7 +21,7 @@ describe("getStanceStyles", () => {
   it("isPreparing=true のとき議案提出前スタイルを返す", () => {
     const result = getStanceStyles(undefined, true);
     expect(result).toEqual({
-      bg: "bg-white",
+      bg: "bg-card",
       border: "border-mirai-text-muted",
       textColor: "text-mirai-text-muted",
       label: "議案提出前",
@@ -73,7 +73,7 @@ describe("getStanceStyles", () => {
     const result = getStanceStyles(makeStance("neutral"), false);
     expect(result).toEqual({
       bg: "bg-mirai-surface-muted",
-      textColor: "text-black",
+      textColor: "text-foreground",
       label: "中立",
     });
   });
@@ -82,7 +82,7 @@ describe("getStanceStyles", () => {
     const result = getStanceStyles(makeStance("considering"), false);
     expect(result).toEqual({
       bg: "bg-mirai-surface-muted",
-      textColor: "text-black",
+      textColor: "text-foreground",
       label: "検討中",
     });
   });
@@ -91,7 +91,7 @@ describe("getStanceStyles", () => {
     const result = getStanceStyles(makeStance("continued_deliberation"), false);
     expect(result).toEqual({
       bg: "bg-mirai-surface-muted",
-      textColor: "text-black",
+      textColor: "text-foreground",
       label: "継続審査中",
     });
   });
@@ -100,7 +100,7 @@ describe("getStanceStyles", () => {
     const result = getStanceStyles(makeStance("free_vote"), false);
     expect(result).toEqual({
       bg: "bg-mirai-surface-muted",
-      textColor: "text-black",
+      textColor: "text-foreground",
       label: "自由投票",
     });
   });
@@ -109,7 +109,7 @@ describe("getStanceStyles", () => {
     const result = getStanceStyles(undefined, false);
     expect(result).toEqual({
       bg: "bg-mirai-surface-muted",
-      textColor: "text-black",
+      textColor: "text-foreground",
       label: "中立",
     });
   });

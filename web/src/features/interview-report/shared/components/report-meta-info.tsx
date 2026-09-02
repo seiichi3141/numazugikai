@@ -44,7 +44,7 @@ export function ReportMetaInfo({
       </div>
 
       {/* 日時・時間・文字数 */}
-      <div className="text-black text-center">
+      <div className="text-foreground text-center">
         <p className="text-base font-medium mb-2">
           {formatDateTime(sessionStartedAt)}
         </p>

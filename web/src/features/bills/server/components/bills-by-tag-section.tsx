@@ -20,7 +20,7 @@ export function BillsByTagSection({ billsByTag }: BillsByTagSectionProps) {
         <section key={tag.id} className="flex flex-col gap-6">
           {/* タグヘッダー */}
           <div className="flex flex-col gap-1.5">
-            <h2 className="text-[22px] font-bold text-black leading-[1.48]">
+            <h2 className="text-[22px] font-bold text-foreground leading-[1.48]">
               {tag.label}
             </h2>
             {tag.description && (
