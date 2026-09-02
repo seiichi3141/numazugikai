@@ -36,8 +36,8 @@ function FooterLogoSection() {
         <Image
           src="/img/logo.svg"
           alt="みらい議会＠沼津市"
-          width={150}
-          height={128}
+          width={120}
+          height={132}
           className="h-auto"
         />
       </Link>
