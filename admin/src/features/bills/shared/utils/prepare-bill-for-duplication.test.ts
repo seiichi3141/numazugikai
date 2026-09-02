@@ -38,6 +38,7 @@ const baseBill: Bill = {
   status_order: BILL_STATUS_ORDER.submitted,
   publish_status_order: 2,
   thumbnail_url: null,
+  thumbnail_key: null,
   knowledge_source: null,
   use_knowledge_source_in_chat: false,
 };

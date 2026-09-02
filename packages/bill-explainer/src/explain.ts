@@ -8,6 +8,7 @@ import {
   generateBillExplanation,
 } from "./services/generate-bill-explanation";
 import { DIFFICULTY_LEVELS, type DifficultyLevel } from "./shared/constants";
+import { requireOpenAiApiKey } from "./shared/openai-api-key";
 import {
   toCategoryLabel,
   toDecisionLabel,
@@ -120,11 +121,7 @@ export async function runExplain(
 }
 
 function createDefaultGenerator(): GenerateExplanationFn {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error(
-      "OPENAI_API_KEY が設定されていない。議案解説の生成は OpenAI API を直接呼ぶ"
-    );
-  }
-  return createOpenAiGenerator({ apiKey });
+  return createOpenAiGenerator({
+    apiKey: requireOpenAiApiKey("議案解説の生成"),
+  });
 }

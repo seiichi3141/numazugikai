@@ -97,7 +97,7 @@ describe("BillSearchCard", () => {
     );
 
     expect(thumbnailSrc(container)).toContain(
-      "/img/bill-thumbnails/safety.webp"
+      "/img/bill-thumbnails/disaster.webp"
     );
   });
 

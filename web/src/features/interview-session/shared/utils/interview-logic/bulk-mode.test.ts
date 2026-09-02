@@ -41,6 +41,7 @@ const makeBill = (
   status_order: BILL_STATUS_ORDER.submitted,
   publish_status_order: 2,
   thumbnail_url: null,
+  thumbnail_key: null,
   knowledge_source: "沼津市の議案説明資料",
   use_knowledge_source_in_chat: false,
   created_at: new Date().toISOString(),

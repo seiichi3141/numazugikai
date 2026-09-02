@@ -1,38 +1,39 @@
+import {
+  type BillThumbnailSubjectKey,
+  DEFAULT_BILL_THUMBNAIL_SUBJECT,
+  isBillThumbnailSubjectKey,
+  TAG_DEFAULT_SUBJECTS,
+} from "@mirai-gikai/shared/bill-thumbnail/subjects";
+
 /**
  * 議案のサムネイル画像を決める。
  *
- * 管理画面から画像がアップロードされていればそれを使い、無ければ分野タグに
- * 応じた生成イラストを当てる。沼津版は議案ごとの写真を用意しない前提なので、
- * ほぼ全ての議案がこのフォールバックで表示される。
+ * 優先順は次のとおり。
+ * 1. 管理画面からアップロードした画像（thumbnail_url）
+ * 2. LLM が内容から決めた題材（thumbnail_key）
+ * 3. 分野タグごとの既定の題材（割り当て前の議案向け）
+ * 4. 汎用の題材
+ * 題材の画像は人物や実在の場所を描かない概念画像で、`public/img/bill-thumbnails/` に置く。
  */
 
 export type BillThumbnailSource = {
   thumbnail_url: string | null;
+  thumbnail_key: string | null;
   tags: { label: string }[];
 };
 
-/**
- * 分野タグごとのフォールバック画像。
- * 配列の並びがそのまま優先順位で、複数タグの議案は先に現れる方を使う。
- * タグは DB のラベルで突き合わせるため、タグ名を変えたらここも更新すること。
- */
-export const TAG_THUMBNAILS: ReadonlyArray<{ label: string; src: string }> = [
-  { label: "子育て・教育", src: "/img/bill-thumbnails/education.webp" },
-  { label: "医療・福祉", src: "/img/bill-thumbnails/welfare.webp" },
-  { label: "暮らし・まちづくり", src: "/img/bill-thumbnails/living.webp" },
-  { label: "防災・安全", src: "/img/bill-thumbnails/safety.webp" },
-  { label: "産業・観光", src: "/img/bill-thumbnails/industry.webp" },
-  { label: "行財政・人事", src: "/img/bill-thumbnails/governance.webp" },
-];
-
-/** どのタグにも当たらない議案（タグ未設定など）に使う画像。 */
-export const DEFAULT_BILL_THUMBNAIL = "/img/bill-thumbnails/general.webp";
+export function subjectThumbnailSrc(key: BillThumbnailSubjectKey): string {
+  return `/img/bill-thumbnails/${key}.webp`;
+}
 
 export function resolveBillThumbnail(bill: BillThumbnailSource): string {
   if (bill.thumbnail_url) {
     return bill.thumbnail_url;
   }
+  if (isBillThumbnailSubjectKey(bill.thumbnail_key)) {
+    return subjectThumbnailSrc(bill.thumbnail_key);
+  }
   const labels = new Set(bill.tags.map((tag) => tag.label));
-  const matched = TAG_THUMBNAILS.find(({ label }) => labels.has(label));
-  return matched?.src ?? DEFAULT_BILL_THUMBNAIL;
+  const matched = TAG_DEFAULT_SUBJECTS.find(({ label }) => labels.has(label));
+  return subjectThumbnailSrc(matched?.key ?? DEFAULT_BILL_THUMBNAIL_SUBJECT);
 }

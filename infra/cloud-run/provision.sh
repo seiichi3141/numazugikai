@@ -72,7 +72,8 @@ INVOKER_SA="${INVOKER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 DEPLOYER_SA="${DEPLOYER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 SCHEDULER_SA="${SCHEDULER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 # worker が読む環境変数名（固定）。実体の Secret 名は ${ENV_VAR}${SECRET_SUFFIX}。
-SECRET_ENV_VARS=(SUPABASE_URL SUPABASE_SECRET_KEY AI_GATEWAY_API_KEY)
+# OPENAI_API_KEY は議案解説の生成とサムネイル題材の割り当て（OpenAI API を直接呼ぶ）に使う
+SECRET_ENV_VARS=(SUPABASE_URL SUPABASE_SECRET_KEY AI_GATEWAY_API_KEY OPENAI_API_KEY)
 # この環境で作成・参照する実 Secret 名。
 SECRETS=()
 for ev in "${SECRET_ENV_VARS[@]}"; do
