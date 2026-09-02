@@ -22,8 +22,8 @@ declare global {
 export function RubyfulInitializer() {
   // レイアウトに常時マウントされるこのコンポーネントで、
   // 現在のふりがな表示設定をページ表示のたびにGAへ送る
-  // (RubyToggleはPopoverContent内にありポップオーバーを
-  //  開くまでマウントされないため、送信元には適さない)
+  // (RubyToggleはレスポンシブ表示やPopoverの開閉で存在が変わるため、
+  //  ページ単位の送信元には適さない)
   useOnPageView(() => {
     sendFuriganaStateEvent(rubyfulClient.getIsEnabledFromStorage());
   });

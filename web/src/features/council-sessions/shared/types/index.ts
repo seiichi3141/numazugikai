@@ -9,3 +9,8 @@ export type CouncilSession = {
   created_at: string;
   updated_at: string;
 };
+
+/** 一覧に出す会期。公開済みの議案数を持つ。 */
+export type CouncilSessionSummary = CouncilSession & {
+  publishedBillCount: number;
+};
