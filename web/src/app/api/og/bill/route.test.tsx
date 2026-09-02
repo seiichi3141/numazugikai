@@ -1,7 +1,8 @@
-import { Fragment, type ReactElement } from "react";
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getBillOgData } from "@/features/bills/server/loaders/get-bill-og-data";
-import { OgFrame } from "@/lib/og/og-frame";
+import { BillOgContent } from "@/lib/og/bill-og-content";
+import { OG_COLORS } from "@/lib/og/og-colors";
 import { GET } from "./route";
 
 const mocks = vi.hoisted(() => ({
@@ -54,7 +55,7 @@ describe("GET /api/og/bill", () => {
     expect(res.status).toBe(404);
   });
 
-  it("タイトル・要約・状態・番号・提出日・タグを共通の枠に描く", async () => {
+  it("トップページ OGP のブランド表現で議案情報を描く", async () => {
     vi.mocked(getBillOgData).mockResolvedValue(sample);
     stubFontFetchFailure();
 
@@ -72,13 +73,17 @@ describe("GET /api/og/bill", () => {
     ]) {
       expect(json).toContain(text);
     }
-    // サービス名バッジとロゴは共通の枠が持つ
-    expect(element.type).toBe(OgFrame);
-    // Satori はフラグメントを展開できない。枠の中身は1つの div にする
-    const body = (element as ReactElement<{ children: ReactElement }>).props
+    expect(element.props).toMatchObject({
+      showBrandChrome: false,
+      contentBackgroundImage: OG_COLORS.siteBackgroundSea,
+    });
+    const content = (element as ReactElement<{ children: ReactElement }>).props
       .children;
-    expect(body.type).not.toBe(Fragment);
-    expect(body.type).toBe("div");
+    expect(content.type).toBe(BillOgContent);
+    expect(content.props).toMatchObject({
+      logoDataUrl: expect.stringContaining("data:image/png;base64,"),
+      ...sample,
+    });
     expect(init).toMatchObject({ width: 1200, height: 630 });
   });
 
@@ -110,17 +115,5 @@ describe("GET /api/og/bill", () => {
     expect(res.status).toBe(200);
     const [, init] = mocks.imageResponse.mock.calls[0];
     expect(init).not.toHaveProperty("fonts");
-  });
-
-  it("文章ブロックに wordBreak を付けない", async () => {
-    // 見出しと要約の両方に break-all を付けると Satori の改行処理が無限ループし、
-    // サーバーごと応答しなくなる。style を走査して混入を防ぐ
-    vi.mocked(getBillOgData).mockResolvedValue(sample);
-    stubFontFetchFailure();
-
-    await GET(new Request("http://localhost/api/og/bill?id=bill-1"));
-
-    const [element] = mocks.imageResponse.mock.calls[0];
-    expect(JSON.stringify(element)).not.toContain('"wordBreak"');
   });
 });

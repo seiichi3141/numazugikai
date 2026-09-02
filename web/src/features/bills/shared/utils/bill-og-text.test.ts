@@ -33,8 +33,12 @@ describe("buildBillOgText", () => {
   it("長い見出しは切り詰める", () => {
     const long = "あ".repeat(100);
     const text = buildBillOgText({ ...base, name: long });
-    expect(text.title.length).toBeLessThan(long.length);
-    expect(text.title.endsWith("...")).toBe(true);
+    expect(text.title).toBe(`${"あ".repeat(41)}...`);
+  });
+
+  it("切り詰め上限と同じ41文字の見出しはそのまま返す", () => {
+    const title = "あ".repeat(41);
+    expect(buildBillOgText({ ...base, name: title }).title).toBe(title);
   });
 
   it("議案番号と提出日をメタ情報にする", () => {
@@ -57,12 +61,12 @@ describe("buildBillOgText", () => {
     );
   });
 
-  it("タグは3つまでに絞る", () => {
+  it("タグは2つまでに絞る", () => {
     const text = buildBillOgText({
       ...base,
       tags: [{ label: "a" }, { label: "b" }, { label: "c" }, { label: "d" }],
     });
-    expect(text.tags).toEqual(["a", "b", "c"]);
+    expect(text.tags).toEqual(["a", "b"]);
   });
 
   it("長いタグ名は切り詰める", () => {
@@ -71,8 +75,7 @@ describe("buildBillOgText", () => {
       ...base,
       tags: [{ label: "あ".repeat(40) }],
     });
-    expect(text.tags[0].length).toBeLessThan(40);
-    expect(text.tags[0].endsWith("...")).toBe(true);
+    expect(text.tags[0]).toBe(`${"あ".repeat(9)}...`);
   });
 
   describe("要約", () => {

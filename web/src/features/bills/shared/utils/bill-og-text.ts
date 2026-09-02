@@ -2,14 +2,14 @@ import { formatDateWithDots } from "@/lib/utils/date";
 import { truncateText } from "@/lib/utils/truncate-text";
 import { type BillStatusEnum, getBillStatusLabel } from "../types";
 
-/** 見出しは3行まで。1200px幅の画像で 42px なら 1行 22文字前後 */
-const TITLE_MAX_LENGTH = 66;
+/** 見出しは2行まで。省略記号3文字と合わせて最大44文字にする */
+const TITLE_MAX_LENGTH = 41;
 /** 要約は2行まで。28px なら 1行 30文字前後 */
 const SUMMARY_MAX_LENGTH = 70;
-/** タグは3つまで。それ以上は並べても読めない */
-const TAGS_MAX = 3;
+/** 新しいブランドレイアウトの下段に収まる2つまで */
+const TAGS_MAX = 2;
 /** タグ名は管理画面で自由に付けられる。長いものは切って行に収める */
-const TAG_LABEL_MAX_LENGTH = 12;
+const TAG_LABEL_MAX_LENGTH = 9;
 
 /** DB の行と同じ形で受ける。無い値は null */
 export type BillOgSource = {
