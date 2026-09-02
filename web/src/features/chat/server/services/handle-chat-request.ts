@@ -133,7 +133,7 @@ export async function handleChatRequest({
   );
 
   // Build tools configuration
-  const tools = buildTools(shouldSuggestInterview);
+  const tools = buildTools(shouldSuggestInterview, pageType !== "home");
 
   // Generate streaming response
   try {
@@ -420,11 +420,16 @@ function buildSystemPromptWithInterviewInstructions(
 /**
  * チャットで使用するツール一覧を構築
  */
-function buildTools(shouldSuggestInterview: boolean) {
+function buildTools(
+  shouldSuggestInterview: boolean,
+  webSearchEnabled: boolean
+) {
   // biome-ignore lint/suspicious/noExplicitAny: OpenAI web_search tool type incompatibility
-  const tools: Record<string, any> = {
-    web_search: openai.tools.webSearch(),
-  };
+  const tools: Record<string, any> = {};
+
+  if (webSearchEnabled) {
+    tools.web_search = openai.tools.webSearch();
+  }
 
   if (shouldSuggestInterview) {
     tools[SUGGEST_INTERVIEW_TOOL_NAME] = tool({

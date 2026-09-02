@@ -17,5 +17,8 @@ describe("buildTopChatSystemPrompt", () => {
     expect(result).toContain("Markdownリンク");
     expect(result).toContain("必ず添えてください");
     expect(result).toContain("URLを推測して作らないでください");
+    expect(result).toContain("外部サイトのURLやリンク");
+    expect(result).toContain("一切回答に含めないで");
+    expect(result).not.toContain("Web検索ツールの利用ルール");
   });
 });
