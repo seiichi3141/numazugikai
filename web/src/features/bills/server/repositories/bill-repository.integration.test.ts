@@ -1,4 +1,5 @@
 import {
+  adminClient,
   cleanupTestBill,
   cleanupTestCouncilSession,
   cleanupTestTag,
@@ -15,6 +16,7 @@ import {
   countPublishedBillsByCouncilSession,
   findBillById,
   findBillContentByDifficulty,
+  findBillDebatesByBillId,
   findComingSoonBills,
   findFeaturedBillsWithContents,
   findFeaturedTags,
@@ -121,6 +123,63 @@ describe("bill-repository 統合テスト", () => {
         updated_at: publishedBill.updated_at,
       });
       expect(result.some((bill) => bill.id === draftBill.id)).toBe(false);
+    });
+  });
+
+  // ============================================================
+  // findBillDebatesByBillId
+  // ============================================================
+
+  describe("findBillDebatesByBillId", () => {
+    it("指定した議案の討論と公式記録URLを立場・氏名順で取得する", async () => {
+      const bill = await createTestBill();
+      const otherBill = await createTestBill();
+      billIds.push(bill.id, otherBill.id);
+
+      const { error } = await adminClient.from("bill_debates").insert([
+        {
+          bill_id: bill.id,
+          speaker_name: "B議員",
+          seat_number: 7,
+          stance: "against",
+          source_url: "https://example.com/minutes#debate",
+        },
+        {
+          bill_id: bill.id,
+          speaker_name: "A議員",
+          stance: "against",
+          source_url: "https://example.com/minutes#against-a",
+        },
+        {
+          bill_id: bill.id,
+          speaker_name: "C議員",
+          stance: "for",
+          source_url: "https://example.com/minutes#for-c",
+        },
+        {
+          bill_id: otherBill.id,
+          speaker_name: "別議案 太郎",
+          stance: "for",
+          source_url: "https://example.com/minutes#other",
+        },
+      ]);
+      expect(error).toBeNull();
+
+      const result = await findBillDebatesByBillId(bill.id);
+
+      expect(
+        result.map(({ speaker_name, stance }) => [speaker_name, stance])
+      ).toEqual([
+        ["C議員", "for"],
+        ["A議員", "against"],
+        ["B議員", "against"],
+      ]);
+      expect(result[2]).toMatchObject({
+        speaker_name: "B議員",
+        seat_number: 7,
+        stance: "against",
+        source_url: "https://example.com/minutes#debate",
+      });
     });
   });
 

@@ -5,10 +5,12 @@ import { getInterviewConfig } from "@/features/interview-config/server/loaders/g
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
+import { BillDebatesSection } from "../../../client/components/bill-detail/bill-debates-section";
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
 import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disclaimer";
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import type { BillWithContent } from "../../../shared/types";
+import { getBillDebates } from "../../loaders/get-bill-debates";
 import { BillShareButtons } from "../share/bill-share-buttons";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
@@ -22,11 +24,12 @@ export async function BillDetailLayout({
   bill,
   currentDifficulty,
 }: BillDetailLayoutProps) {
-  const [interviewConfig, publicReportsResult, topicAnalysis] =
+  const [interviewConfig, publicReportsResult, topicAnalysis, debates] =
     await Promise.all([
       getInterviewConfig(bill.id),
       getPublicReportsByBillId(bill.id),
       getPublicTopicAnalysis(bill.id),
+      getBillDebates(bill.id),
     ]);
 
   return (
@@ -56,6 +59,12 @@ export async function BillDetailLayout({
               statusNote={bill.status_note}
             />
           </div>
+
+          {debates.length > 0 && (
+            <div className="my-8">
+              <BillDebatesSection debates={debates} />
+            </div>
+          )}
 
           <BillContent bill={bill} />
         </Container>
