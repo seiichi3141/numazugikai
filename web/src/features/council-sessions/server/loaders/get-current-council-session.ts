@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { toDateOnlyString } from "@/lib/utils/date";
 import type { CouncilSession } from "../../shared/types";
 import { findCurrentCouncilSession } from "../repositories/council-session-repository";
 
@@ -11,10 +12,7 @@ export async function getCurrentCouncilSession(
   date: Date
 ): Promise<CouncilSession | null> {
   // YYYY-MM-DD形式に変換
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const targetDate = `${year}-${month}-${day}`;
+  const targetDate = toDateOnlyString(date);
 
   return _getCachedCurrentCouncilSession(targetDate);
 }

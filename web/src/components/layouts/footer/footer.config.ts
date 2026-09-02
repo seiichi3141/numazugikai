@@ -19,6 +19,14 @@ export const primaryLinks: FooterLink[] = [
     href: routes.home(),
   },
   {
+    label: "議案を検索する",
+    href: routes.billsList(),
+  },
+  {
+    label: "定例会の一覧",
+    href: routes.gikaiSessions(),
+  },
+  {
     label: "沼津市議会（市公式サイト）",
     href: EXTERNAL_LINKS.NUMAZU_COUNCIL,
     external: true,
