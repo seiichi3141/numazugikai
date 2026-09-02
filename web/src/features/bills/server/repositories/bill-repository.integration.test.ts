@@ -22,6 +22,7 @@ import {
   findPreviewToken,
   findPreviousSessionBills,
   findPublishedBillById,
+  findPublishedBillSitemapEntries,
   findPublishedBillsByCouncilSession,
   findPublishedBillsByTag,
   findPublishedBillsForSuggest,
@@ -98,6 +99,28 @@ describe("bill-repository 統合テスト", () => {
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeUndefined();
+    });
+  });
+
+  // ============================================================
+  // findPublishedBillSitemapEntries
+  // ============================================================
+
+  describe("findPublishedBillSitemapEntries", () => {
+    it("公開済み議案のIDと更新日時だけを取得する", async () => {
+      const publishedBill = await createTestBill({
+        publish_status: "published",
+      });
+      const draftBill = await createTestBill({ publish_status: "draft" });
+      billIds.push(publishedBill.id, draftBill.id);
+
+      const result = await findPublishedBillSitemapEntries();
+
+      expect(result).toContainEqual({
+        id: publishedBill.id,
+        updated_at: publishedBill.updated_at,
+      });
+      expect(result.some((bill) => bill.id === draftBill.id)).toBe(false);
     });
   });
 
