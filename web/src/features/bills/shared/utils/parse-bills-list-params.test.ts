@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type BillsListParams,
   buildBillsListQuery,
+  DEFAULT_BILLS_LIST_PARAMS,
   parseBillsListParams,
 } from "./parse-bills-list-params";
 
@@ -9,6 +10,7 @@ const defaults: BillsListParams = {
   query: "",
   status: "all",
   tagId: null,
+  session: null,
   sort: "new",
   interviewOnly: false,
   page: 1,
@@ -25,6 +27,7 @@ describe("parseBillsListParams", () => {
         q: "ガソリン",
         status: "enacted",
         tag: "9f1c2b3a-4d5e-4f60-8a91-b2c3d4e5f607",
+        session: "2026-13",
         sort: "old",
         interview: "1",
         page: "3",
@@ -33,6 +36,7 @@ describe("parseBillsListParams", () => {
       query: "ガソリン",
       status: "enacted",
       tagId: "9f1c2b3a-4d5e-4f60-8a91-b2c3d4e5f607",
+      session: "2026-13",
       sort: "old",
       interviewOnly: true,
       page: 3,
@@ -40,6 +44,17 @@ describe("parseBillsListParams", () => {
   });
 
   // URL 直打ちでページを壊せないようにする。
+  it("会期の slug を読み、形が違えば「すべて」扱いにする", () => {
+    expect(parseBillsListParams({ session: "2026-13" }).session).toBe(
+      "2026-13"
+    );
+    expect(parseBillsListParams({ session: " 2026-13 " }).session).toBe(
+      "2026-13"
+    );
+    expect(parseBillsListParams({ session: "../etc" }).session).toBeNull();
+    expect(parseBillsListParams({ session: "" }).session).toBeNull();
+  });
+
   it("uuid でないタグ id は無視する", () => {
     // DB 側で絞り込むので、uuid でない値を通すと一覧が 500 になる
     expect(parseBillsListParams({ tag: "zeikin" }).tagId).toBeNull();
@@ -115,6 +130,12 @@ describe("buildBillsListQuery", () => {
     );
   });
 
+  it("会期は slug で載せ、外すと消える", () => {
+    const withSession = { ...DEFAULT_BILLS_LIST_PARAMS, session: "2026-13" };
+    expect(buildBillsListQuery(withSession)).toBe("?session=2026-13");
+    expect(buildBillsListQuery(withSession, { session: null })).toBe("");
+  });
+
   it("タグを外せる", () => {
     const current: BillsListParams = {
       ...defaults,
@@ -128,6 +149,7 @@ describe("buildBillsListQuery", () => {
       query: "ガソリン",
       status: "enacted",
       tagId: "9f1c2b3a-4d5e-4f60-8a91-b2c3d4e5f607",
+      session: null,
       sort: "old",
       interviewOnly: true,
       page: 3,
