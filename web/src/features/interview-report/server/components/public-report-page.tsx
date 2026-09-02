@@ -9,6 +9,7 @@ import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { ShareArticleButton } from "@/features/interview-report/client/components/share-article-button";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
 import { routes } from "@/lib/routes";
 import { getOrigin } from "@/lib/utils/url";
 import { BackToBillButton } from "../../shared/components/back-to-bill-button";
@@ -45,7 +46,7 @@ export async function PublicReportPage({
   const opinions = parseOpinions(data.opinions);
   const origin = await getOrigin();
   const shareUrl = `${origin}${routes.publicReport(reportId)}`;
-  const ogImageUrl = `${origin}/api/og/report?id=${reportId}`;
+  const ogImageUrl = ogImageUrls.report(reportId, origin);
 
   const breadcrumbItems: BreadcrumbItem[] = [
     { label: "議案詳細", href: routes.billDetail(data.bill_id) },

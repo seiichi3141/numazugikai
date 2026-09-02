@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
+import { getBillOgVersion } from "@/features/bills/shared/utils/get-bill-og-version";
 import { InterviewDisclosurePage } from "@/features/interview-config/server/components/interview-disclosure-page";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { loadDisclosureData } from "@/features/interview-config/server/loaders/load-disclosure-data";
+import { env } from "@/lib/env";
+import { buildShareMetadata } from "@/lib/metadata/share-metadata";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
+import { routes } from "@/lib/routes";
 
 interface DisclosurePageProps {
   params: Promise<{
@@ -25,10 +30,13 @@ export async function generateMetadata({
 
   const billName = bill.bill_content?.title ?? bill.name;
 
-  return {
+  return buildShareMetadata({
     title: `AIインタビューに関する情報開示 - ${billName}`,
     description: `${billName}のAIインタビューにおける透明性および技術仕様に関する開示事項`,
-  };
+    canonical: routes.interviewDisclosure(id),
+    image: ogImageUrls.bill(id, env.webUrl, getBillOgVersion(bill)),
+    imageAlt: `${billName} のOGPイメージ`,
+  });
 }
 
 export default async function DisclosurePage({ params }: DisclosurePageProps) {

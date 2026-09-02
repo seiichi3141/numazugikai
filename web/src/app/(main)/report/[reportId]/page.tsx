@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PublicReportPage } from "@/features/interview-report/server/components/public-report-page";
 import { getPublicReportById } from "@/features/interview-report/server/loaders/get-public-report-by-id";
 import { env } from "@/lib/env";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
 import { routes } from "@/lib/routes";
 
 interface PublicReportRouteProps {
@@ -36,10 +37,7 @@ export async function generateMetadata({
   const ogTitle =
     data.summary || `${stanceText} - ${billName} インタビューレポート`;
   const ogDescription = `${billName}に対するインタビューレポート`;
-  const shareImageUrl = new URL(
-    `/api/og/report?id=${reportId}`,
-    env.webUrl
-  ).toString();
+  const shareImageUrl = ogImageUrls.report(reportId, env.webUrl);
 
   return {
     title: ogTitle,

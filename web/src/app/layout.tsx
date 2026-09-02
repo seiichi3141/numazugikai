@@ -4,6 +4,8 @@ import { Lexend_Giga, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import { env } from "@/lib/env";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
@@ -26,12 +28,12 @@ const notoSerifJP = Noto_Serif_JP({
 
 const isDev = process.env.NODE_ENV === "development";
 const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-const siteTitle = "みらい議会＠沼津市";
-const siteDescription =
-  "沼津市議会でいま何が決まっているかを、わかりやすく伝えるプラットフォーム";
-const siteName = "みらい議会＠沼津市";
+const siteTitle = SITE_NAME;
+const siteDescription = SITE_DESCRIPTION;
+const siteName = SITE_NAME;
+// サービス名入りの画像を動的に描く。静的な1枚だと何のサイトか出ない
 const ogImage = {
-  url: "/ogp.jpg",
+  url: ogImageUrls.site(env.webUrl),
   width: 1200,
   height: 630,
   alt: "みらい議会＠沼津市のOGPイメージ",

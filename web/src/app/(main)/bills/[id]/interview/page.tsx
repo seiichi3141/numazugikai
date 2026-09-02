@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
+import { getBillOgVersion } from "@/features/bills/shared/utils/get-bill-og-version";
 import { InterviewLPPage } from "@/features/interview-config/client/components/interview-lp-page";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getUserReportsByInterviewConfig } from "@/features/interview-report/server/loaders/get-user-reports-by-interview-config";
 import { getLatestInterviewSession } from "@/features/interview-session/server/loaders/get-latest-interview-session";
 import { env } from "@/lib/env";
+import { buildShareMetadata } from "@/lib/metadata/share-metadata";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
+import { routes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 
@@ -28,35 +32,14 @@ export async function generateMetadata({
   }
 
   const billName = bill.bill_content?.title ?? bill.name;
-  const description = `議案についてのAIインタビュー - ${billName}`;
-  const defaultOgpUrl = new URL("/ogp.jpg", env.webUrl).toString();
-  const shareImageUrl =
-    bill.share_thumbnail_url || bill.thumbnail_url || defaultOgpUrl;
 
-  return {
+  return buildShareMetadata({
     title: `AIインタビュー - ${billName}`,
-    description: description,
-    alternates: {
-      canonical: `/bills/${bill.id}/interview`,
-    },
-    openGraph: {
-      title: `AIインタビュー - ${billName}`,
-      description: description,
-      type: "website",
-      images: [
-        {
-          url: shareImageUrl,
-          alt: `${billName} のAIインタビューページ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `AIインタビュー - ${billName}`,
-      description: description,
-      images: [shareImageUrl],
-    },
-  };
+    description: `議案についてのAIインタビュー - ${billName}`,
+    canonical: routes.interviewLP(bill.id),
+    image: ogImageUrls.bill(bill.id, env.webUrl, getBillOgVersion(bill)),
+    imageAlt: `${billName} のAIインタビューページ`,
+  });
 }
 
 export default async function InterviewPage({ params }: InterviewPageProps) {

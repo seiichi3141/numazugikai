@@ -13,10 +13,16 @@ import { getBillContentWithDifficulty } from "./helpers/get-bill-content";
 export async function getBillById(id: string): Promise<BillWithContent | null> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  return _getCachedBillById(id, difficultyLevel);
+  return getBillByIdWithDifficulty(id, difficultyLevel);
 }
 
-const _getCachedBillById = unstable_cache(
+/**
+ * 難易度を指定して議案を取る。
+ *
+ * cookie を持たない呼び出し（SNS のクローラー向け OGP 画像など）は
+ * 利用者の設定を読めないので、こちらを既定の難易度で呼ぶ。
+ */
+export const getBillByIdWithDifficulty = unstable_cache(
   async (
     id: string,
     difficultyLevel: DifficultyLevelEnum
