@@ -44,8 +44,8 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
               <Image
                 src="/img/logo.svg"
                 alt="みらい議会＠沼津市"
-                width={42}
-                height={36}
+                width={36}
+                height={40}
               />
               <SiteTitle />
             </Link>

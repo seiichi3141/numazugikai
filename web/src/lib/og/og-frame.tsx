@@ -85,7 +85,7 @@ export function OgFrame({
           <img
             alt={`${SITE_NAME}のロゴ`}
             src={logoDataUrl}
-            width={189}
+            width={160}
             height={160}
             style={{ position: "absolute", bottom: -24, right: -18 }}
           />
