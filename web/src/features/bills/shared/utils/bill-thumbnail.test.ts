@@ -32,6 +32,21 @@ describe("resolveBillThumbnail", () => {
     ).toBe("/img/bill-thumbnails/school-lunch.webp");
   });
 
+  it.each([
+    ["port", "/img/bill-thumbnails/port-numazu-v1.webp"],
+    ["river", "/img/bill-thumbnails/river-numazu-v1.webp"],
+    ["road", "/img/bill-thumbnails/road-numazu-v1.webp"],
+    ["tourism", "/img/bill-thumbnails/tourism-numazu-v1.webp"],
+  ])("地域写真ベースの %s はバージョン付き画像を返す", (key, expected) => {
+    expect(
+      resolveBillThumbnail({
+        thumbnail_url: null,
+        thumbnail_key: key,
+        tags: [],
+      })
+    ).toBe(expected);
+  });
+
   it("題材が一覧に無い値なら無視してタグから決める", () => {
     expect(
       resolveBillThumbnail({
