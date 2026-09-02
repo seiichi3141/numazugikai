@@ -19,6 +19,7 @@ import { HomeChatClient } from "@/features/chat/client/components/home-chat-clie
 import { CurrentCouncilSession } from "@/features/council-sessions/client/components/current-council-session";
 import { getCurrentCouncilSession } from "@/features/council-sessions/server/loaders/get-current-council-session";
 import { getLatestClosedCouncilSession } from "@/features/council-sessions/server/loaders/get-latest-closed-council-session";
+import { routes } from "@/lib/routes";
 import { getJapanTime } from "@/lib/utils/date";
 
 /** カテゴリタブの「注目」から飛ばす先。 */
@@ -65,6 +66,7 @@ export default async function Home() {
   const toBillChatContext = (bill: BillWithContent) => {
     return {
       name: chatBillName(bill),
+      url: routes.billDetail(bill.id),
       summary: bill.bill_content?.summary,
       tags: bill.tags?.map((tag) => tag.label) || [],
       isFeatured: featuredBills.some((b) => b.id === bill.id),

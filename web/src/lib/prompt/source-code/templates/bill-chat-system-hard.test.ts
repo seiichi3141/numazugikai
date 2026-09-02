@@ -28,6 +28,8 @@ describe("buildBillChatSystemHardPrompt", () => {
 
     expect(result).toContain("みらい議会＠沼津市");
     expect(result).toContain("沼津市議会");
+    expect(result).toContain("外部サイトのURLやリンク");
+    expect(result).toContain("一切回答に含めないでください");
   });
 
   it("knowledgeSource を渡すと <knowledge_source> セクションが含まれる", () => {

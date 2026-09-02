@@ -280,7 +280,12 @@ describe("handleChatRequest 統合テスト", () => {
       const messages = createTestMessages({
         pageContext: {
           type: "home",
-          bills: [{ id: "bill-1", name: "テスト議案" }],
+          bills: [
+            {
+              name: "テスト議案",
+              url: "/bills/bill-1",
+            },
+          ],
         },
       });
 

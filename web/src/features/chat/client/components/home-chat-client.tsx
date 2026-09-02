@@ -1,16 +1,12 @@
 "use client";
 
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import type { HomeChatBillContext } from "@/features/chat/shared/types/chat-page-context";
 import { ChatButton } from "./chat-button";
 
 interface HomeChatClientProps {
   currentDifficulty: DifficultyLevelEnum;
-  bills: Array<{
-    name: string;
-    summary?: string;
-    tags?: string[];
-    isFeatured?: boolean;
-  }>;
+  bills: HomeChatBillContext[];
 }
 
 /**

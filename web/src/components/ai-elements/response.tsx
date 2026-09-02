@@ -4,11 +4,12 @@ import { type ComponentProps, memo } from "react";
 import rehypeSanitize from "rehype-sanitize";
 import { Streamdown } from "streamdown";
 import { cn } from "@/lib/utils";
+import { InternalChatLink } from "./internal-chat-link";
 
 type ResponseProps = ComponentProps<typeof Streamdown>;
 
 export const Response = memo(
-  ({ className, rehypePlugins, ...props }: ResponseProps) => (
+  ({ className, components, rehypePlugins, ...props }: ResponseProps) => (
     <Streamdown
       defaultOrigin={
         typeof window !== "undefined" ? window.location.origin : undefined
@@ -17,6 +18,7 @@ export const Response = memo(
         "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
         className
       )}
+      components={{ ...components, a: InternalChatLink }}
       rehypePlugins={[rehypeSanitize, ...(rehypePlugins ?? [])]}
       {...props}
     />

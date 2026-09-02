@@ -275,6 +275,7 @@ export async function BillsListPage({
         currentDifficulty={currentDifficulty}
         bills={bills.map((bill) => ({
           name: chatBillName(bill),
+          url: routes.billDetail(bill.id),
           summary: bill.bill_content?.summary ?? undefined,
           tags: bill.tags?.map((tag) => tag.label) ?? [],
         }))}

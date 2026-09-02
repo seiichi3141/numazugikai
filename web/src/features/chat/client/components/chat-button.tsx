@@ -13,6 +13,7 @@ import {
 } from "react";
 import { Button } from "@/components/ui/button";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import type { ChatPageContext } from "@/features/chat/shared/types/chat-page-context";
 import { ChatWindow } from "./chat-window";
 
 // アニメーション定数
@@ -26,15 +27,7 @@ interface ChatButtonProps {
   billContext?: BillWithContent;
   hasInterviewConfig?: boolean;
   difficultyLevel: string;
-  pageContext?: {
-    type: "home" | "bill";
-    bills?: Array<{
-      name: string;
-      summary?: string;
-      tags?: string[];
-      isFeatured?: boolean;
-    }>;
-  };
+  pageContext?: ChatPageContext;
 }
 
 export interface ChatButtonRef {
