@@ -12,6 +12,10 @@ export type BillContentUpdate =
   Database["public"]["Tables"]["bill_contents"]["Update"];
 
 export type MiraiStance = Database["public"]["Tables"]["mirai_stances"]["Row"];
+export type BillDebate = Pick<
+  Database["public"]["Tables"]["bill_debates"]["Row"],
+  "id" | "seat_number" | "source_url" | "speaker_name" | "stance"
+>;
 
 // Enums
 export type BillStatusEnum = Database["public"]["Enums"]["bill_status_enum"];

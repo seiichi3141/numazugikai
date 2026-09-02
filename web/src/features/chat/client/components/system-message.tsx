@@ -8,6 +8,7 @@ import {
 } from "@/components/ai-elements/reasoning";
 import { Response } from "@/components/ai-elements/response";
 import { SUGGEST_INTERVIEW_TOOL_TYPE } from "@/features/chat/shared/constants";
+import { redactExternalUrls } from "@/features/chat/shared/utils/redact-external-urls";
 import { InterviewSuggestionBanner } from "./interview-suggestion-banner";
 
 type RehypePlugins = ComponentProps<typeof Response>["rehypePlugins"];
@@ -41,7 +42,7 @@ export function SystemMessage({
                 className="break-words"
                 rehypePlugins={rehypePlugins}
               >
-                {part.text}
+                {redactExternalUrls(part.text)}
               </Response>
             );
           }
@@ -53,7 +54,9 @@ export function SystemMessage({
                 isStreaming={isStreaming && i === message.parts.length - 1}
               >
                 <ReasoningTrigger />
-                <ReasoningContent>{part.text}</ReasoningContent>
+                <ReasoningContent>
+                  {redactExternalUrls(part.text)}
+                </ReasoningContent>
               </Reasoning>
             );
           }
