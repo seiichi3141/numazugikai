@@ -96,9 +96,7 @@ describe("CurrentCouncilSession", () => {
   });
 
   describe("見出し", () => {
-    it("ページの主見出しになる", () => {
-      // トップページはこのカードが最上部で、他に h1 が無い。
-      // 見出しが無いとスクリーンリーダーの見出しジャンプで頭を掴めない
+    it("会期状況セクションの見出しになる", () => {
       render(
         <CurrentCouncilSession
           session={session}
@@ -107,10 +105,10 @@ describe("CurrentCouncilSession", () => {
         />
       );
 
-      expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
     });
 
-    it("閉会中でも主見出しを出す", () => {
+    it("閉会中でもセクション見出しを出す", () => {
       render(
         <CurrentCouncilSession
           session={null}
@@ -119,7 +117,7 @@ describe("CurrentCouncilSession", () => {
         />
       );
 
-      expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
     });
   });
 });
