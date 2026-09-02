@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { formatDate, formatDateWithDots, getJapanTime } from "./date";
+import {
+  formatDate,
+  formatDateWithDots,
+  getJapanTime,
+  toDateOnlyString,
+} from "./date";
 
 describe("formatDate", () => {
   it("formats a date string in Japanese locale", () => {
@@ -63,5 +68,18 @@ describe("getJapanTime", () => {
     expect(result.getHours()).toBe(9);
 
     vi.useRealTimers();
+  });
+});
+
+describe("toDateOnlyString", () => {
+  it.each([
+    ["月日をゼロ埋めする", new Date(2026, 0, 5), "2026-01-05"],
+    [
+      "年末でも年が繰り上がらない",
+      new Date(2026, 11, 31, 23, 59),
+      "2026-12-31",
+    ],
+  ])("%s", (_, date, expected) => {
+    expect(toDateOnlyString(date)).toBe(expected);
   });
 });

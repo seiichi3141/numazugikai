@@ -1,6 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
-import type { CouncilSession } from "../../shared/types";
+import type { CouncilSession, CouncilSessionSummary } from "../../shared/types";
 
 /**
  * アクティブな会期を取得
@@ -120,4 +120,30 @@ export async function findLatestClosedCouncilSession(
     return null;
   }
   return data;
+}
+
+/**
+ * 会期の一覧を、公開済みの議案数つきで新しい順に返す。
+ *
+ * 一覧ページの本体なので、取れなければ null で誤魔化さず失敗させる。
+ */
+export async function findCouncilSessionsWithPublishedBillCounts(): Promise<
+  CouncilSessionSummary[]
+> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("council_sessions")
+    .select("*, bills(count)")
+    .eq("bills.publish_status", "published")
+    .order("start_date", { ascending: false });
+
+  if (error) {
+    throw new Error(`会期一覧の取得に失敗した: ${error.message}`);
+  }
+
+  return (data ?? []).map(({ bills, ...session }) => ({
+    ...session,
+    publishedBillCount: bills[0]?.count ?? 0,
+  }));
 }

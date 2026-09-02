@@ -2,6 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { toDateOnlyString } from "@/lib/utils/date";
 import type { CouncilSession } from "../../shared/types";
 import { findLatestClosedCouncilSession } from "../repositories/council-session-repository";
 
@@ -15,11 +16,7 @@ import { findLatestClosedCouncilSession } from "../repositories/council-session-
 export async function getLatestClosedCouncilSession(
   date: Date
 ): Promise<CouncilSession | null> {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return _getCachedLatestClosedCouncilSession(`${year}-${month}-${day}`);
+  return _getCachedLatestClosedCouncilSession(toDateOnlyString(date));
 }
 
 const _getCachedLatestClosedCouncilSession = unstable_cache(

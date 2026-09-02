@@ -33,3 +33,14 @@ export function getJapanTime(): Date {
     new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" })
   );
 }
+
+/**
+ * Date を DB の date 列と比べられる `YYYY-MM-DD` にする（ローカル時刻の年月日）。
+ * 会期の開会・閉会は日付で決まるので、時刻や UTC 変換で日がずれないようにする。
+ */
+export function toDateOnlyString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
