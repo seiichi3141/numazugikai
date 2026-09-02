@@ -43,7 +43,7 @@ export async function CouncilSessionsPage() {
 
         {years.map(({ year, sessions }) => (
           <section key={year} className="flex flex-col gap-3">
-            <h2 className="text-[22px] font-bold text-black leading-[1.48]">
+            <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
               {year}年
             </h2>
             <ul className="flex flex-col gap-3">
@@ -82,7 +82,7 @@ function SessionRow({
   const billsSlug = hasBills ? session.slug : null;
 
   const body = (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-black bg-white px-4 py-3 group-hover:bg-muted/50 transition-colors">
+    <div className="flex items-center justify-between gap-4 rounded-xl border border-mirai-text bg-card px-4 py-3 group-hover:bg-muted/50 transition-colors">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-[15px] leading-[1.6]">
           {session.name}
@@ -98,7 +98,7 @@ function SessionRow({
             <span>議案 {session.publishedBillCount}件</span>
             {billsSlug !== null && (
               <ChevronRight
-                className="h-5 w-5 text-gray-600"
+                className="h-5 w-5 text-mirai-text-muted"
                 aria-hidden="true"
               />
             )}

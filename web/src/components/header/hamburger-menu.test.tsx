@@ -2,10 +2,20 @@
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { HamburgerMenu } from "./hamburger-menu";
 
+vi.mock("@/lib/rubyful", () => ({ RubyToggle: () => null }));
+
 describe("HamburgerMenu", () => {
+  it("デスクトップ幅ではメニューボタンを非表示にする", () => {
+    render(<HamburgerMenu />);
+
+    expect(screen.getByRole("button", { name: "メニューを開く" })).toHaveClass(
+      "xl:hidden"
+    );
+  });
+
   it("開くと主要ページへのリンクが並ぶ", async () => {
     render(<HamburgerMenu />);
     await userEvent.click(

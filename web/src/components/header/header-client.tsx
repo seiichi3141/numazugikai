@@ -10,6 +10,8 @@ import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-event
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
 import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
+import { RubyToggle } from "@/lib/rubyful";
+import { DesktopNavigation } from "./desktop-navigation";
 import { HamburgerMenu } from "./hamburger-menu";
 import { SiteTitle } from "./site-title";
 
@@ -31,7 +33,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
   return (
     <header className="px-3 fixed top-4 left-0 right-0 z-40 max-w-[1440px] mx-auto">
       <div className="rounded-2xl bg-white shadow-sm mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex h-16 items-center justify-between xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
           {/* Logo / Site Title */}
           <div className="flex items-center">
             <Link
@@ -49,15 +51,20 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             </Link>
           </div>
 
-          {/* Navigation */}
+          <DesktopNavigation pathname={pathname} />
+
+          {/* Difficulty and interview controls */}
           <nav
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 xl:justify-self-end"
             aria-label="補助ナビゲーション"
           >
             {showDifficultySelector && (
               <DifficultySelector currentLevel={difficultyLevel} />
             )}
             {showInterviewActions && <InterviewHeaderActions />}
+            <div className="hidden xl:block">
+              <RubyToggle />
+            </div>
             <HamburgerMenu />
           </nav>
         </div>
