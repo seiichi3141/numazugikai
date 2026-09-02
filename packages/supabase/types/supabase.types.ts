@@ -1537,6 +1537,7 @@ export type Database = {
           bill_number: string
           content_summary: string
           content_title: string
+          council_session_id: string
           has_public_interview: boolean
           id: string
           is_review_completed: boolean
@@ -1563,6 +1564,7 @@ export type Database = {
           p_difficulty: Database["public"]["Enums"]["difficulty_level_enum"]
           p_interview_only?: boolean
           p_query?: string
+          p_session_id?: string
           p_status_group?: string
           p_tag_id?: string
         }
@@ -1808,6 +1810,7 @@ export type Database = {
           p_limit?: number
           p_offset?: number
           p_query?: string
+          p_session_id?: string
           p_sort?: string
           p_status_group?: string
           p_tag_id?: string

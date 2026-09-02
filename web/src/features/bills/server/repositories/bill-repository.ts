@@ -573,6 +573,8 @@ export type BillsListFilter = {
   tagId: string | null;
   statusGroup: BillStatusGroup;
   interviewOnly: boolean;
+  /** 会期 id。null は絞り込みなし。 */
+  sessionId: string | null;
 };
 
 /**
@@ -592,6 +594,7 @@ export async function searchBillsForList(
     p_tag_id: filter.tagId ?? undefined,
     p_status_group: filter.statusGroup,
     p_interview_only: filter.interviewOnly,
+    p_session_id: filter.sessionId ?? undefined,
     p_sort: sort,
     p_limit: limit,
     p_offset: offset,
@@ -613,6 +616,7 @@ export async function countBillsForListFacets(filter: BillsListFilter) {
     p_tag_id: filter.tagId ?? undefined,
     p_status_group: filter.statusGroup,
     p_interview_only: filter.interviewOnly,
+    p_session_id: filter.sessionId ?? undefined,
   });
 
   if (error) {

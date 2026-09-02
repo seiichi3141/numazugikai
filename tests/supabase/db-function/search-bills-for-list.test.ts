@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Database } from "../../../packages/supabase/types/supabase.types";
-import { adminClient, cleanupTestBill, createTestBill } from "../utils";
+import {
+  adminClient,
+  cleanupTestBill,
+  cleanupTestCouncilSession,
+  createTestBill,
+  createTestCouncilSession,
+} from "../utils";
 
 type SearchArgs =
   Database["public"]["Functions"]["search_bills_for_list"]["Args"];
@@ -239,6 +245,34 @@ describe("search_bills_for_list", () => {
 
     const rows = await search({ p_query: `${mark}題材付き` });
     expect(rows.map((r) => r.thumbnail_key)).toEqual(["budget"]);
+  });
+
+  it("会期 id で絞り込める", async () => {
+    const session = await createTestCouncilSession({
+      name: `${mark}会期`,
+      start_date: "2001-01-01",
+      end_date: "2001-01-20",
+    });
+    const inSession = await createListedBill({
+      name: `${mark}会期つきの議案`,
+    });
+    billIds.push(inSession.id);
+    try {
+      await adminClient
+        .from("bills")
+        .update({ council_session_id: session.id })
+        .eq("id", inSession.id);
+
+      const rows = await search({ p_query: mark, p_session_id: session.id });
+      expect(rows.map((r) => r.id)).toEqual([inSession.id]);
+    } finally {
+      // 会期は参照している議案を外してからでないと外部キーで消せない
+      await adminClient
+        .from("bills")
+        .update({ council_session_id: null })
+        .eq("id", inSession.id);
+      await cleanupTestCouncilSession(session.id);
+    }
   });
 
   it("タグが無い議案は空配列を返す（null にしない）", async () => {
