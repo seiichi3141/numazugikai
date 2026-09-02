@@ -5,10 +5,10 @@ import { NumazuHero } from "@/components/top/numazu-hero";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
 import { BillSearchOverlay } from "@/features/bills/client/components/bill-search-overlay";
+import { LatestRegularSessionHeading } from "@/features/bills/client/components/latest-regular-session-heading";
 import { BillsByTagSection } from "@/features/bills/server/components/bills-by-tag-section";
 import { CategoryTabs } from "@/features/bills/server/components/category-tabs";
 import { FeaturedBillSection } from "@/features/bills/server/components/featured-bill-section";
-import { PreviousSessionSection } from "@/features/bills/server/components/previous-session-section";
 import { getFeaturedTags } from "@/features/bills/server/loaders/get-featured-tags";
 import { getSuggestableBills } from "@/features/bills/server/loaders/get-suggestable-bills";
 import { loadHomeData } from "@/features/bills/server/loaders/load-home-data";
@@ -29,7 +29,7 @@ export default async function Home() {
   const japanTime = getJapanTime();
   // ゆくゆくタグ機能がマージされたらBFFに統合する
   const [
-    { billsByTag, featuredBills, comingSoonBills, previousSessionData },
+    { latestRegularSession, billsByTag, featuredBills, comingSoonBills },
     currentSession,
     latestClosedSession,
     currentDifficulty,
@@ -44,11 +44,12 @@ export default async function Home() {
     getFeaturedTags(),
   ]);
 
-  const inSession = currentSession !== null;
+  const isLatestRegularSessionActive =
+    currentSession?.id === latestRegularSession?.id;
 
   // 注目に出した議案はタグ別から外す。同じカードが2回並ぶのを避ける。
   const featuredIds = new Set(
-    inSession ? featuredBills.map((bill) => bill.id) : []
+    isLatestRegularSessionActive ? featuredBills.map((bill) => bill.id) : []
   );
   const pickedBillsByTag = billsByTag
     .map((group) => ({
@@ -85,10 +86,17 @@ export default async function Home() {
       />
 
       <Container>
+        {latestRegularSession && (
+          <div className="pt-6">
+            <LatestRegularSessionHeading session={latestRegularSession} />
+          </div>
+        )}
         <div className="pt-4">
           <CategoryTabs
             billsByTag={billsByTag}
-            featuredAnchor={inSession ? FEATURED_ANCHOR : undefined}
+            featuredAnchor={
+              isLatestRegularSessionActive ? FEATURED_ANCHOR : undefined
+            }
           />
         </div>
         {/* 検索の入口。キーワードとテーマの両方をモーダルに並べる */}
@@ -104,16 +112,15 @@ export default async function Home() {
             {/*
               注目の議案は会期中だけ出す。閉会中に「注目」を掲げても、審議が
               動いていない期間の情報を強調することになる。
-              なお getFeaturedBills はアクティブ会期が無いと全件スコープに
-              落ちるので、データ側だけでは空にならない。
+              最新の定例会が開催中の場合だけ、その会期の注目議案を出す。
             */}
-            {inSession && (
+            {isLatestRegularSessionActive && (
               <section id={FEATURED_ANCHOR}>
                 <FeaturedBillSection bills={featuredBills} />
               </section>
             )}
 
-            {/* タグ別議案一覧セクション（タグに紐づく議案を全件出す） */}
+            {/* 最新の定例会にある議案をタグ別に表示する */}
             <BillsByTagSection billsByTag={pickedBillsByTag} />
 
             {/* Coming soonセクション */}
@@ -121,19 +128,6 @@ export default async function Home() {
           </main>
         </div>
       </Container>
-
-      {/* 前回の会期セクション（Archive） */}
-      {previousSessionData && (
-        <div className="bg-mirai-surface-muted py-10">
-          <Container>
-            <PreviousSessionSection
-              session={previousSessionData.session}
-              bills={previousSessionData.bills}
-              totalBillCount={previousSessionData.totalBillCount}
-            />
-          </Container>
-        </div>
-      )}
 
       <Container>
         {/* みらい議会＠沼津市とは セクション */}
