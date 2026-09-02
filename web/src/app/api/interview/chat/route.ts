@@ -4,6 +4,10 @@ import {
 } from "@/features/chat/server/services/system-cost-guard";
 import { chatErrorToResponse } from "@/features/chat/server/utils/chat-error-response";
 import { getChatSupabaseUser } from "@/features/chat/server/utils/supabase-server";
+import {
+  INTERVIEW_COLLECTION_ENABLED,
+  INTERVIEW_UNAVAILABLE_MESSAGE,
+} from "@/features/interview-config/shared/constants";
 import { handleInterviewChatRequest } from "@/features/interview-session/server/services/handle-interview-chat-request";
 import { jsonResponse } from "@/lib/api/response";
 import { registerNodeTelemetry } from "@/lib/telemetry/register";
@@ -14,6 +18,10 @@ import { registerNodeTelemetry } from "@/lib/telemetry/register";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return jsonResponse({ error: INTERVIEW_UNAVAILABLE_MESSAGE }, 404);
+  }
+
   // Vercel node環境でinstrumentationが自動で起動しない問題対応
   // 明示的にtelemetryを初期化
   await registerNodeTelemetry();

@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { INTERVIEW_COLLECTION_ENABLED } from "@/features/interview-config/shared/constants";
 import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import type { BillSortKey } from "../../shared/utils/sort-bills";
 
@@ -568,6 +569,10 @@ export async function findPreviewToken(billId: string, token: string) {
 export async function findBillIdsWithPublicInterview(
   billIds: string[]
 ): Promise<Set<string>> {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return new Set();
+  }
+
   if (billIds.length === 0) {
     return new Set();
   }

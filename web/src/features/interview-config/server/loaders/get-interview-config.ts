@@ -1,6 +1,7 @@
 import type { Database } from "@mirai-gikai/supabase";
 import { unstable_cache } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { INTERVIEW_COLLECTION_ENABLED } from "../../shared/constants";
 import { findPublicInterviewConfigByBillId } from "../repositories/interview-config-repository";
 
 export type InterviewConfig =
@@ -9,6 +10,10 @@ export type InterviewConfig =
 export async function getInterviewConfig(
   billId: string
 ): Promise<InterviewConfig | null> {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return null;
+  }
+
   return _getCachedInterviewConfig(billId);
 }
 
