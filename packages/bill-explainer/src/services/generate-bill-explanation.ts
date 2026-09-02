@@ -1,15 +1,10 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { generateObject } from "ai";
-import {
-  BILL_EXPLAINER_MODEL,
-  BILL_EXPLAINER_TIMEOUT_MS,
-  type DifficultyLevel,
-} from "../shared/constants";
+import type { DifficultyLevel } from "../shared/constants";
 import { type BillExplanation, billExplanationSchema } from "../shared/schemas";
 import {
   type BillExplanationInput,
   buildExplanationPrompt,
 } from "../utils/build-explanation-prompt";
+import { createOpenAiObjectGenerator } from "./openai-object-generator";
 
 /** 生成の実行部。テストで Fake に差し替えられるよう切り出す。 */
 export type GenerateExplanationFn = (params: {
@@ -26,19 +21,10 @@ export function createOpenAiGenerator(options: {
   model?: string;
   timeoutMs?: number;
 }): GenerateExplanationFn {
-  const openai = createOpenAI({ apiKey: options.apiKey });
-  const model = options.model ?? BILL_EXPLAINER_MODEL;
-  const timeoutMs = options.timeoutMs ?? BILL_EXPLAINER_TIMEOUT_MS;
-
-  return async ({ prompt }) => {
-    const { object } = await generateObject({
-      model: openai(model),
-      schema: billExplanationSchema,
-      prompt,
-      abortSignal: AbortSignal.timeout(timeoutMs),
-    });
-    return object;
-  };
+  return createOpenAiObjectGenerator({
+    ...options,
+    schema: billExplanationSchema,
+  });
 }
 
 /**

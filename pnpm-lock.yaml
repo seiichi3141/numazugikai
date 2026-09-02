@@ -183,6 +183,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^3.0.1
         version: 3.0.1(zod@4.4.3)
+      '@mirai-gikai/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@mirai-gikai/supabase':
         specifier: workspace:*
         version: link:../supabase

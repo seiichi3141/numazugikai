@@ -127,6 +127,14 @@
     "./pagination/page-math": {
       "types": "./src/pagination/page-math.ts",
       "default": "./src/pagination/page-math.ts"
+    },
+    "./bill-thumbnail/subjects": {
+      "types": "./src/bill-thumbnail/subjects.ts",
+      "default": "./src/bill-thumbnail/subjects.ts"
+    },
+    "./concurrency/map-with-concurrency": {
+      "types": "./src/concurrency/map-with-concurrency.ts",
+      "default": "./src/concurrency/map-with-concurrency.ts"
     }
   },
   "dependencies": {

@@ -129,7 +129,7 @@ describe("CompactBillCard", () => {
     );
 
     expect(thumbnailSrc(container)).toContain(
-      "/img/bill-thumbnails/safety.webp"
+      "/img/bill-thumbnails/disaster.webp"
     );
     // 見出しが正式名称を読むので、画像には名前を付けない。
     expect(

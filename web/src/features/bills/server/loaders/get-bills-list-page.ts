@@ -95,6 +95,7 @@ function toBillListItem(row: SearchRow): BillListItem {
     status: row.status,
     submitted_date: row.submitted_date,
     thumbnail_url: row.thumbnail_url,
+    thumbnail_key: row.thumbnail_key,
     is_review_completed: row.is_review_completed,
     bill_content: { title: row.content_title, summary: row.content_summary },
     tags: (row.tags ?? []) as BillListItem["tags"],

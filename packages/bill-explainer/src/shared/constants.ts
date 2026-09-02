@@ -20,3 +20,6 @@ export type DifficultyLevel = (typeof DIFFICULTY_LEVELS)[number];
 
 /** モデルに渡す議案説明の最大文字数。委員会の詳細説明は長くなることがある。 */
 export const MAX_EXPLANATION_CHARS = 12_000;
+
+/** サムネイル題材の選択は短い出力なので、解説より短いタイムアウトで十分。 */
+export const THUMBNAIL_KEY_TIMEOUT_MS = 60_000;

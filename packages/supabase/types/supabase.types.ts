@@ -181,6 +181,7 @@ export type Database = {
           status_order: number | null
           submitted_date: string | null
           submitter: Database["public"]["Enums"]["bill_submitter_enum"] | null
+          thumbnail_key: string | null
           thumbnail_url: string | null
           updated_at: string
           use_knowledge_source_in_chat: boolean
@@ -218,6 +219,7 @@ export type Database = {
           status_order?: number | null
           submitted_date?: string | null
           submitter?: Database["public"]["Enums"]["bill_submitter_enum"] | null
+          thumbnail_key?: string | null
           thumbnail_url?: string | null
           updated_at?: string
           use_knowledge_source_in_chat?: boolean
@@ -255,6 +257,7 @@ export type Database = {
           status_order?: number | null
           submitted_date?: string | null
           submitter?: Database["public"]["Enums"]["bill_submitter_enum"] | null
+          thumbnail_key?: string | null
           thumbnail_url?: string | null
           updated_at?: string
           use_knowledge_source_in_chat?: boolean
@@ -1520,10 +1523,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      apply_admin_role_if_eligible: {
-        Args: { target_user_id: string }
-        Returns: boolean
-      }
       bill_status_group: {
         Args: { p_status: Database["public"]["Enums"]["bill_status_enum"] }
         Returns: string
@@ -1531,6 +1530,8 @@ export type Database = {
       bills_list_rows: {
         Args: {
           p_difficulty: Database["public"]["Enums"]["difficulty_level_enum"]
+          p_interview_only?: boolean
+          p_query?: string
         }
         Returns: {
           bill_number: string
@@ -1544,7 +1545,7 @@ export type Database = {
           status_note: string
           status_order: number
           submitted_date: string
-          tags: Json
+          thumbnail_key: string
           thumbnail_url: string
           updated_at: string
         }[]
@@ -1824,6 +1825,7 @@ export type Database = {
           status_note: string
           submitted_date: string
           tags: Json
+          thumbnail_key: string
           thumbnail_url: string
           total_count: number
           updated_at: string

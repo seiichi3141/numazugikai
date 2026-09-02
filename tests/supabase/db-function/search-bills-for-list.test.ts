@@ -227,6 +227,20 @@ describe("search_bills_for_list", () => {
     });
   });
 
+  it("サムネイルの題材キーをそのまま返す", async () => {
+    const bill = await createListedBill({
+      name: `${mark}題材付きの議案`,
+    });
+    billIds.push(bill.id);
+    await adminClient
+      .from("bills")
+      .update({ thumbnail_key: "budget" })
+      .eq("id", bill.id);
+
+    const rows = await search({ p_query: `${mark}題材付き` });
+    expect(rows.map((r) => r.thumbnail_key)).toEqual(["budget"]);
+  });
+
   it("タグが無い議案は空配列を返す（null にしない）", async () => {
     const rows = await search({ p_query: mark });
     expect(rows.every((r) => Array.isArray(r.tags))).toBe(true);
