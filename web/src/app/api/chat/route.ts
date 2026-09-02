@@ -8,6 +8,11 @@ import { getChatSupabaseUser } from "@/features/chat/server/utils/supabase-serve
 import { jsonResponse } from "@/lib/api/response";
 import { registerNodeTelemetry } from "@/lib/telemetry/register";
 
+// Vercel の関数実行時間。Hobby プランは既定 10 秒で、AI の返答（推論モデル）は
+// それを超える。60 秒は Hobby で Fluid compute 無しでも指定できる上限。
+// Fluid compute を有効にした場合は 300 秒まで上げられる（デプロイ手順書参照）。
+export const maxDuration = 60;
+
 async function _mockResponse(_req: Request) {
   const randomMessageId = Math.random().toString(36).substring(2, 10);
   return new Response(

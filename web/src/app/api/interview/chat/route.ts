@@ -8,6 +8,11 @@ import { handleInterviewChatRequest } from "@/features/interview-session/server/
 import { jsonResponse } from "@/lib/api/response";
 import { registerNodeTelemetry } from "@/lib/telemetry/register";
 
+// Vercel の関数実行時間。Hobby プランは既定 10 秒で、AI の返答（推論モデル）は
+// それを超える。60 秒は Hobby で Fluid compute 無しでも指定できる上限。
+// Fluid compute を有効にした場合は 300 秒まで上げられる（デプロイ手順書参照）。
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   // Vercel node環境でinstrumentationが自動で起動しない問題対応
   // 明示的にtelemetryを初期化
