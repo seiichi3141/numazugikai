@@ -121,7 +121,7 @@ export async function BillsListPage({
         <h1 className="mb-4 text-3xl font-bold">議案を検索する</h1>
 
         <form action={routes.billsList()} className="mb-5">
-          <div className="flex h-12 items-center gap-2.5 rounded-full border border-mirai-border bg-white pr-4 pl-5">
+          <div className="flex h-12 items-center gap-2.5 rounded-full border border-mirai-border bg-card pr-4 pl-5">
             <Search
               className="h-[18px] w-[18px] shrink-0 text-mirai-text-muted"
               aria-hidden
@@ -219,7 +219,7 @@ export async function BillsListPage({
         </div>
 
         {bills.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-mirai-border bg-white px-6 py-16 text-center">
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-mirai-border bg-card px-6 py-16 text-center">
             <Search
               className="h-10 w-10 text-mirai-text-placeholder"
               aria-hidden

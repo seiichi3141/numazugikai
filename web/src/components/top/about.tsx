@@ -25,7 +25,7 @@ export function About() {
               <br />
               できる限りわかりやすく
             </h3>
-            <p className="text-[15px] leading-[28px] text-black">
+            <p className="text-[15px] leading-[28px] text-foreground">
               みらい議会＠沼津市は、沼津市議会でいまどんな議案が審議されているかを、わかりやすく伝えるサービスです。市民の声が市政に届くことを目指して、継続的にアップデートしていきます。
             </p>
             <p className="text-[15px] leading-[28px] text-mirai-text-subtle">

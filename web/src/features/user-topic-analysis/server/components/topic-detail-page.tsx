@@ -123,7 +123,7 @@ export async function TopicDetailPage({
             <Breadcrumb items={breadcrumbItems} />
             <Link
               href={routes.billDetail(billId) as Route}
-              className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-black"
+              className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-foreground"
             >
               <span className="underline">{billTitle}</span>
               <Undo2 className="size-4 shrink-0" />
@@ -144,7 +144,7 @@ export async function TopicDetailPage({
           />
 
           {/* トピックヘッダー */}
-          <div className="flex flex-col gap-3 rounded-2xl bg-white px-4 py-5">
+          <div className="flex flex-col gap-3 rounded-2xl bg-card px-4 py-5">
             <h2 className="text-base font-bold leading-6 text-mirai-text">
               {topic.title}
               <span className="ml-1 text-[11px] font-medium text-topic-count">

@@ -50,13 +50,13 @@ export function PreviousSessionSection({
       {/* セクションヘッダー（リンク付き） */}
       <div className="flex flex-col gap-1.5">
         <Link href={sessionBillsUrl as Route} className="group">
-          <h3 className="text-[22px] font-bold text-black leading-[1.48] flex items-center gap-1.5">
+          <h3 className="text-[22px] font-bold text-foreground leading-[1.48] flex items-center gap-1.5">
             <span className="flex items-center gap-4">
               {new Date(session.start_date).getFullYear()}年 {session.name}
               の提出議案
               <span className="shrink-0">{totalBillCount}件</span>
             </span>
-            <ChevronRight className="h-6 w-6 text-gray-600 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="h-6 w-6 text-mirai-text-muted group-hover:translate-x-0.5 transition-transform" />
           </h3>
         </Link>
         <p className="text-xs font-medium text-mirai-text">
@@ -80,7 +80,7 @@ export function PreviousSessionSection({
                 variant="outline"
                 size="lg"
                 asChild
-                className="w-[214px] h-12 text-base font-bold border-mirai-text rounded-full hover:bg-gray-50 bg-white"
+                className="w-[214px] h-12 text-base font-bold border-mirai-text rounded-full hover:bg-mirai-surface-gray bg-card"
               >
                 <Link href={sessionBillsUrl as Route}>もっと読む</Link>
               </Button>

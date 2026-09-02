@@ -95,7 +95,7 @@ export function TopicCard({
   };
 
   return (
-    <div className="relative flex w-full flex-col gap-3 rounded-[14px] bg-white px-4 py-5 text-left transition-colors hover:bg-mirai-surface-gray">
+    <div className="relative flex w-full flex-col gap-3 rounded-[14px] bg-card px-4 py-5 text-left transition-colors hover:bg-mirai-surface-gray">
       {/* カード全体クリックでトピック詳細へ（引用リンクと入れ子にならないようオーバーレイ） */}
       <Link
         href={href as Route}

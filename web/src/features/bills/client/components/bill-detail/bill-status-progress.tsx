@@ -38,7 +38,7 @@ function StatusBadge({ message }: StatusBadgeProps) {
   return (
     <div className="w-full max-w-md relative">
       <div className="w-full text-center bg-mirai-gradient rounded-lg px-4 py-3.5">
-        <span className="text-base font-medium text-black">{message}</span>
+        <span className="text-base font-medium text-foreground">{message}</span>
       </div>
       {/* 下向き三角形 */}
       <div
@@ -68,7 +68,9 @@ function ProgressStep({
       {/* ドット */}
       <div
         className={`w-3 h-3 rounded-full border transition-all duration-300 ${
-          isActive ? "bg-primary border-primary" : "bg-gray-300 border-gray-300"
+          isActive
+            ? "bg-primary border-primary"
+            : "bg-mirai-surface-muted border-mirai-border"
         }`}
       >
         {/* 現在のステップを強調 */}
@@ -81,7 +83,9 @@ function ProgressStep({
       <div className="mt-2">
         <span
           className={`flex flex-col text-sm leading-6 whitespace-pre-line text-center ${
-            isActive && !isPreparing ? "text-black" : "text-gray-300"
+            isActive && !isPreparing
+              ? "text-foreground"
+              : "text-mirai-text-muted"
           } font-normal`}
         >
           {label}
@@ -104,7 +108,7 @@ export function BillStatusProgress({
   return (
     <>
       <h2 className="text-[22px] font-bold mb-4">👉 審議のステータス</h2>
-      <div className="bg-white rounded-lg border p-6">
+      <div className="bg-card rounded-lg border p-6">
         <div className="flex flex-col items-center gap-7">
           {/* ステータスメッセージバッジ */}
           <StatusBadge message={statusMessage} />
@@ -112,7 +116,7 @@ export function BillStatusProgress({
           {/* プログレスライン */}
           <div className="relative w-full max-w-md">
             {/* 背景ライン */}
-            <div className="absolute top-[5.5px] left-0 w-full h-[1px] bg-gray-300" />
+            <div className="absolute top-[5.5px] left-0 w-full h-[1px] bg-mirai-surface-muted" />
 
             {/* アクティブライン */}
             {!isPreparing && currentStep > 0 && (

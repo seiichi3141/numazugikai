@@ -62,7 +62,7 @@ export async function PublicReportPage({
             <Breadcrumb items={breadcrumbItems} />
             <Link
               href={routes.billDetail(data.bill_id) as Route}
-              className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-black"
+              className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-foreground"
             >
               <span className="underline">{billName}</span>
               <Undo2 className="size-4 shrink-0" />

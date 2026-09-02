@@ -21,7 +21,7 @@ export function ComponentShowcase({
           </p>
         )}
       </div>
-      <div className="border border-mirai-border rounded-lg p-6 bg-white">
+      <div className="border border-mirai-border rounded-lg p-6 bg-card">
         {children}
       </div>
     </div>

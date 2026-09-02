@@ -67,7 +67,9 @@ export default function PrivacyPage() {
                 id: "publish",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">公開：</span>
+                    <span className="font-semibold text-mirai-text-secondary">
+                      公開：
+                    </span>
                     ユーザーが回答時に公開に同意した場合に限り、本サービスや報告書等で公開されることがあります。本人が公開に同意しなかった回答内容は、第三者に公開または提供されることはありません。
                   </>
                 ),
@@ -76,7 +78,7 @@ export default function PrivacyPage() {
                 id: "open-data",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text-secondary">
                       第三者への提供（オープンデータ公開）：
                     </span>
                     インタビューデータを、別途定める「
@@ -94,7 +96,7 @@ export default function PrivacyPage() {
                 id: "statistics",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text-secondary">
                       統計的利用：
                     </span>
                     取得したデータは、個人を特定できない統計情報に加工した上で、第三者へ公表する場合があります。

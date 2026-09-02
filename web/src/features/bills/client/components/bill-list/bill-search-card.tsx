@@ -33,7 +33,7 @@ export function BillSearchCard({ bill }: { bill: BillListItem }) {
     bill.tags.length > 0 || bill.hasPublicInterview || reportCount > 0;
 
   return (
-    <Card className="overflow-hidden border border-black shadow-none transition-colors hover:bg-muted/50">
+    <Card className="overflow-hidden border border-foreground shadow-none transition-colors hover:bg-muted/50">
       <Link
         href={routes.billDetail(bill.id)}
         className="flex flex-col gap-2 p-4"

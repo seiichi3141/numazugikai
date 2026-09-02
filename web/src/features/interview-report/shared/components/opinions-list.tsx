@@ -27,8 +27,8 @@ export function OpinionsList({
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-xl font-bold text-gray-800">{title}</h2>
-      <div className="bg-white rounded-2xl p-6 flex flex-col gap-6">
+      <h2 className="text-xl font-bold text-mirai-text">{title}</h2>
+      <div className="bg-card rounded-2xl p-6 flex flex-col gap-6">
         {opinions.map((opinion, index) => (
           <div
             key={`opinion-${index}-${opinion.title.slice(0, 20)}`}
@@ -36,15 +36,15 @@ export function OpinionsList({
           >
             <div className="flex flex-col gap-1">
               <div className="inline-flex">
-                <span className="bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                <span className="bg-primary text-primary-foreground text-xs font-bold px-1.5 py-0.5 rounded">
                   意見{index + 1}
                 </span>
               </div>
-              <p className="text-base font-bold text-gray-800">
+              <p className="text-base font-bold text-mirai-text">
                 {opinion.title}
               </p>
             </div>
-            <p className="text-sm text-gray-600">{opinion.content}</p>
+            <p className="text-sm text-mirai-text-muted">{opinion.content}</p>
             {reportId && opinion.source_message_id && (
               <Link
                 href={

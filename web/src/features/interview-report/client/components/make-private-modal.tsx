@@ -74,7 +74,7 @@ export function MakePrivateModal({
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
-            className="w-full text-gray-500"
+            className="w-full text-mirai-text-muted"
           >
             公開のまま戻る
           </Button>

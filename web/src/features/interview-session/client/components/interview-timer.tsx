@@ -17,7 +17,7 @@ export function InterviewTimer({ remainingMinutes }: InterviewTimerProps) {
   const isOver = remainingMinutes <= 0;
 
   return (
-    <div className="flex items-center gap-1 text-sm text-gray-500">
+    <div className="flex items-center gap-1 text-sm text-mirai-text-muted">
       <Clock className="h-3.5 w-3.5" />
       {isOver ? (
         <span>目安時間超過</span>

@@ -55,7 +55,7 @@ const links = [
 // news-list パターン: 区切り線（neutral-200）で仕切った行 + 右端にシェブロン。
 // ホバーはリンク色をアクセント色へ寄せる（不透明度やスケールは使わない）
 const rowClassName =
-  "group flex items-center gap-4 border-b border-neutral-200 py-4 transition-colors duration-150";
+  "group flex items-center gap-4 border-b border-mirai-border py-4 transition-colors duration-150";
 
 function LinkRowBody({
   icon: Icon,
@@ -73,7 +73,7 @@ function LinkRowBody({
     <>
       <Icon className="size-5 shrink-0 text-primary-accent" />
       <div className="flex-1 space-y-0.5">
-        <p className="text-[15px] font-medium leading-relaxed tracking-wide text-black transition-colors duration-150 group-hover:text-primary-accent">
+        <p className="text-[15px] font-medium leading-relaxed tracking-wide text-foreground transition-colors duration-150 group-hover:text-primary-accent">
           {title}
         </p>
         <p className="text-[13px] leading-relaxed tracking-wide text-mirai-text-subtle">
@@ -87,7 +87,7 @@ function LinkRowBody({
 
 export default function DevelopersPage() {
   return (
-    <div className="min-h-dvh bg-white">
+    <div className="min-h-dvh bg-card">
       <section className="py-12 pt-24 md:pt-12">
         <Container className="space-y-10">
           {/* 節見出し: 英字ラベル + 日本語見出し */}
@@ -95,7 +95,7 @@ export default function DevelopersPage() {
             <p className="font-lexend text-sm font-semibold tracking-[0.14em] text-primary-accent">
               Developers
             </p>
-            <h1 className="text-2xl font-bold tracking-wider text-black sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-wider text-foreground sm:text-3xl">
               開発者向け
             </h1>
           </header>
@@ -104,7 +104,7 @@ export default function DevelopersPage() {
             みらい議会＠沼津市では、AIインタビューに寄せられた議案への意見を、誰でも分析・活用できるオープンデータとして公開しています。
           </p>
 
-          <div className="flex flex-col border-t border-neutral-200">
+          <div className="flex flex-col border-t border-mirai-border">
             {links.map(({ href, external, ...item }) =>
               external ? (
                 <a

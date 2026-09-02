@@ -2,17 +2,20 @@
 
 import { ApiReferenceReact } from "@scalar/api-reference-react";
 import "@scalar/api-reference-react/style.css";
+import { useTheme } from "next-themes";
 
 /**
  * オープンデータAPIのOpenAPI仕様書ビューア。
  * 仕様書本体は /openapi/open-data-api.json（public配下）で配信する。
  */
 export function OpenDataApiReference() {
+  const { resolvedTheme } = useTheme();
+
   return (
     <ApiReferenceReact
       configuration={{
         url: "/openapi/open-data-api.json",
-        darkMode: false,
+        darkMode: resolvedTheme === "dark",
         hideDarkModeToggle: true,
         hideClientButton: true,
         hideModels: true,
@@ -43,14 +46,14 @@ export function OpenDataApiReference() {
           shell: ["httpie", "wget"],
         },
         showDeveloperTools: "never",
-        // サイト共通の配色に合わせる: 白キャンバス + primary（駿河湾ブルー）
+        // サイト共通の配色に合わせる: card + primary（駿河湾ブルー）
         // アクセント。色の面積は絞り、パネル類はニュートラルのままにする
         customCss: `
           .scalar-api-reference {
-            --scalar-background-1: var(--color-white);
+            --scalar-background-1: var(--color-card);
             --scalar-background-2: var(--color-mirai-surface-gray);
             --scalar-background-3: var(--color-mirai-surface-tag);
-            --scalar-sidebar-background-1: var(--color-white);
+            --scalar-sidebar-background-1: var(--color-card);
             --scalar-color-accent: var(--color-primary-accent);
             /* サイト共通の浮動ヘッダーの下に潜り込まないよう、ヘッダー分の高さを
                Scalarに伝える（(developers) レイアウトの pt-24 = 6rem と揃える） */

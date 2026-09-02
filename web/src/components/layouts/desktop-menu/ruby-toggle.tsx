@@ -12,7 +12,7 @@ export function DesktopMenuRubyToggle() {
   return (
     <div className="fixed top-[108px] right-6 z-50">
       <div
-        className="bg-white flex items-center gap-6 font-bold text-black"
+        className="bg-card flex items-center gap-6 font-bold text-foreground"
         style={{
           borderRadius: "50px",
           padding: "20px 24px 20px 36px",

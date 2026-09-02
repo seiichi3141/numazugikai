@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
@@ -32,7 +33,7 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
 
   return (
     <header className="px-3 fixed top-4 left-0 right-0 z-40 max-w-[1440px] mx-auto">
-      <div className="rounded-2xl bg-white shadow-sm mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="rounded-2xl bg-card shadow-sm mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
           {/* Logo / Site Title */}
           <div className="flex items-center">
@@ -64,6 +65,9 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             {showInterviewActions && <InterviewHeaderActions />}
             <div className="hidden xl:block">
               <RubyToggle />
+            </div>
+            <div className="hidden xl:block">
+              <ThemeToggle />
             </div>
             <HamburgerMenu />
           </nav>

@@ -119,7 +119,7 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
               type="button"
               variant="ghost"
               onClick={() => setIsOpen(true)}
-              className={`relative bg-white rounded-[50px] hover:opacity-90 flex items-center w-full py-2 transition-all ease-in-out ${
+              className={`relative bg-card rounded-[50px] hover:opacity-90 flex items-center w-full py-2 transition-all ease-in-out ${
                 isCompact
                   ? "h-[35px] px-4 justify-center gap-2.5"
                   : "h-14 justify-end pr-4 pl-6 gap-2.5"

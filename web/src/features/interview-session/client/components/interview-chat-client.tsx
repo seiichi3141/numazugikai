@@ -161,7 +161,7 @@ export function InterviewChatClient({
 
   return (
     <div className="h-dvh md:h-[calc(100dvh-96px)] bg-mirai-surface-light">
-      <div className="flex flex-col h-full pt-23 md:pt-10 bg-white md:rounded-t-[36px] md:px-12">
+      <div className="flex flex-col h-full pt-23 md:pt-10 bg-card md:rounded-t-[36px] md:px-12">
         {showProgressBar && progress && (
           <div className="px-4 pb-1">
             <InterviewProgressBar
@@ -179,7 +179,7 @@ export function InterviewChatClient({
                 <p className="text-sm font-bold leading-[1.8] text-mirai-text">
                   議案についてのAIインタビューを開始します。
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-mirai-text-muted">
                   あなたの意見や経験をお聞かせください。
                 </p>
               </div>
@@ -239,7 +239,7 @@ export function InterviewChatClient({
 
             {/* ローディング表示 */}
             {isLoading && !object && (
-              <span className="text-sm text-gray-500">考え中...</span>
+              <span className="text-sm text-mirai-text-muted">考え中...</span>
             )}
 
             {/* エラー表示 */}

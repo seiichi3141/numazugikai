@@ -74,7 +74,7 @@ export function BillTopicsPreviewSection({
           variant="outline"
           size="lg"
           asChild
-          className="h-12 w-full gap-2.5 rounded-full border-mirai-text bg-white text-[15px] font-medium text-mirai-text hover:bg-mirai-surface-gray"
+          className="h-12 w-full gap-2.5 rounded-full border-mirai-text bg-card text-[15px] font-medium text-mirai-text hover:bg-mirai-surface-gray"
         >
           <Link href={routes.billTopics(billId) as Route}>
             トピック一覧をすべて見る
