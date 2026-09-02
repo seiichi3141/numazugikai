@@ -92,6 +92,7 @@ export async function createTestCouncilSession(
     end_date: string;
     slug: string;
     is_active: boolean;
+    kind: Database["public"]["Enums"]["council_session_kind_enum"];
   }> = {}
 ) {
   const defaults = {

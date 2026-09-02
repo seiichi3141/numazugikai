@@ -22,6 +22,26 @@ export async function findActiveCouncilSession(): Promise<CouncilSession | null>
   return data;
 }
 
+/** 議案を持つ定例会のうち、開始日が最も新しいものを取得する。 */
+export async function findLatestRegularCouncilSession(): Promise<CouncilSession | null> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("council_sessions")
+    .select("*, bills!inner(id)")
+    .eq("kind", "regular")
+    .in("bills.publish_status", ["published", "coming_soon"])
+    .order("start_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`最新の定例会の取得に失敗しました: ${error.message}`);
+  }
+
+  return data;
+}
+
 /**
  * 指定日時点で開催中の会期を取得
  */

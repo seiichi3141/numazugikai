@@ -1,7 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveCouncilSession } from "@/features/council-sessions/server/loaders/get-active-council-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
 import {
@@ -12,18 +11,18 @@ import {
 
 /**
  * Featured表示用の議案をタグごとにグループ化して取得
- * featured_priorityが設定されているタグを持つアクティブな会期の議案を優先度順に取得
- * アクティブな会期がない場合は全件取得
+ * featured_priorityが設定されているタグを持つ指定会期の議案を優先度順に取得
  */
-export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
+export async function getBillsByFeaturedTags(
+  councilSessionId: string
+): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveCouncilSession();
 
   try {
     return await _getCachedBillsByFeaturedTags(
       difficultyLevel,
-      activeSession?.id ?? null
+      councilSessionId
     );
   } catch (error) {
     // 取得失敗はキャッシュ関数の外で受ける。中で空配列に変換すると、失敗が
@@ -37,7 +36,7 @@ export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
 const _getCachedBillsByFeaturedTags = unstable_cache(
   async (
     difficultyLevel: DifficultyLevelEnum,
-    councilSessionId: string | null
+    councilSessionId: string
   ): Promise<BillsByTag[]> => {
     const featuredTags = await findFeaturedTags();
 
