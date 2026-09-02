@@ -23,6 +23,7 @@ import {
   SUGGEST_INTERVIEW_TOOL_NAME,
   SUGGEST_INTERVIEW_TOOL_TYPE,
 } from "@/features/chat/shared/constants";
+import type { ChatPageContext } from "@/features/chat/shared/types/chat-page-context";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
@@ -44,10 +45,7 @@ import {
 export type ChatMessageMetadata = {
   billContext?: BillWithContent;
   hasInterviewConfig?: boolean;
-  pageContext?: {
-    type: "home" | "bill";
-    bills?: Array<{ id: string; name: string; summary?: string }>;
-  };
+  pageContext?: ChatPageContext;
   difficultyLevel: DifficultyLevelEnum;
   sessionId: string;
 };

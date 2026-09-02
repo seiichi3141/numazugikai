@@ -20,6 +20,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import type { ChatPageContext } from "@/features/chat/shared/types/chat-page-context";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useViewportHeight } from "@/hooks/use-viewport-height";
@@ -37,15 +38,7 @@ interface ChatWindowProps {
   chatState: ReturnType<typeof import("@ai-sdk/react").useChat>;
   isOpen: boolean;
   onClose: () => void;
-  pageContext?: {
-    type: "home" | "bill";
-    bills?: Array<{
-      name: string;
-      summary?: string;
-      tags?: string[];
-      isFeatured?: boolean;
-    }>;
-  };
+  pageContext?: ChatPageContext;
   disableAutoFocus?: boolean;
   returnFocusRef: RefObject<HTMLElement | null>;
   sessionId: string;
