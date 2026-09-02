@@ -102,7 +102,7 @@ export default function TermsPage() {
                 id: "publish-consent",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text-secondary">
                       公開と同意：
                     </span>
                     AIインタビューを通じて取得した回答ログおよびサマリー（以下「インタビューデータ」といいます。）は、ユーザー本人が公開に同意した場合に限り、以下の各号の方法で公開または第三者に提供されることがあります。本人が公開に同意しなかったインタビューデータは、第三者に公開または提供されることはありません。
@@ -137,7 +137,7 @@ export default function TermsPage() {
                 id: "internal-analysis",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text-secondary">
                       内部分析利用：
                     </span>
                     本人が公開に同意しなかったインタビューデータについても、当運営者において、サービスの改善、不正対策その他本サービスの運営上必要な目的で利用するものとし、ユーザーはこれに同意するものとします。この場合でも、当該データが第三者に公開または提供されることはありません。ただし、法令に基づく場合、および個人を特定できない統計情報に加工して利用・公表する場合を除きます。
@@ -148,7 +148,7 @@ export default function TermsPage() {
                 id: "rights-attribution",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text-secondary">
                       権利の帰属：
                     </span>
                     本サービスを通じて生成された応答や対話ログに関する権利（著作権法第27条および第28条の権利を含みます。）は、当運営者に帰属すること、またはユーザーが当運営者に対して無償で利用（複製、加工、公表、および本人が公開に同意した範囲におけるオープンデータとしての第三者への利用許諾を含みます。）することを許諾したものとみなします。また、ユーザーは、当運営者および当運営者から利用を許諾された第三者に対し、著作者人格権を行使しないものとします。なお、公表については、本条第1項のとおりユーザー本人が公表に同意した場合のみ実施するものとします。

@@ -38,7 +38,7 @@ export async function BillDetailHeader({
   const { shareUrl, shareMessage, thumbnailUrl } = await getBillShareData(bill);
 
   return (
-    <div className="mb-8 bg-white rounded-b-4xl">
+    <div className="mb-8 bg-card rounded-b-4xl">
       <BillThumbnail
         bill={bill}
         className="w-full h-72 md:h-80"
@@ -116,7 +116,7 @@ export async function BillDetailHeader({
               variant="default"
               size="sm"
               asChild
-              className="bg-mirai-light-gradient text-[13px] font-bold text-gray-800 gap-1.5 py-1 px-3"
+              className="bg-mirai-light-gradient text-[13px] font-bold text-mirai-text gap-1.5 py-1 px-3"
             >
               <Link href={getInterviewLPLink(bill.id) as Route}>
                 <Image

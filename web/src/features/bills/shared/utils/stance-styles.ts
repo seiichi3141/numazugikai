@@ -17,7 +17,7 @@ export function getStanceStyles(
 ): StanceStyles {
   if (isPreparing) {
     return {
-      bg: "bg-white",
+      bg: "bg-card",
       border: "border-mirai-text-muted",
       textColor: "text-mirai-text-muted",
       label: "議案提出前",
@@ -42,7 +42,7 @@ export function getStanceStyles(
     default:
       return {
         bg: "bg-mirai-surface-muted",
-        textColor: "text-black",
+        textColor: "text-foreground",
         label: stance != null ? STANCE_LABELS[stance.type] : "中立",
       };
   }

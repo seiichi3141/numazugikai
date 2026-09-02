@@ -46,8 +46,8 @@ export function ReactionButtons({
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        <div className="max-w-[700px] mx-auto bg-white">
-          <div className="border-t border-gray-400" />
+        <div className="max-w-[700px] mx-auto bg-card">
+          <div className="border-t border-mirai-border" />
           <div className="flex items-stretch">
             {/* 参考になる */}
             {showReaction && (
@@ -55,19 +55,19 @@ export function ReactionButtons({
                 variant="ghost"
                 onClick={() => toggle("helpful")}
                 disabled={isPending}
-                className="flex-1 flex items-center justify-center gap-2 h-auto py-5 rounded-none hover:bg-transparent active:bg-gray-50"
+                className="flex-1 flex items-center justify-center gap-2 h-auto py-5 rounded-none hover:bg-transparent active:bg-mirai-surface-gray"
               >
                 <Lightbulb
                   size={20}
                   className={`transition-colors ${
                     isActive
                       ? "text-mirai-reaction-active fill-mirai-reaction-active"
-                      : "text-gray-800"
+                      : "text-mirai-text"
                   }`}
                 />
                 <span
                   className={`text-[15px] font-bold transition-colors ${
-                    isActive ? "text-mirai-reaction-active" : "text-gray-800"
+                    isActive ? "text-mirai-reaction-active" : "text-mirai-text"
                   }`}
                 >
                   参考になる
@@ -75,7 +75,9 @@ export function ReactionButtons({
                 {data.counts.helpful > 0 && (
                   <span
                     className={`text-[15px] font-bold transition-colors ${
-                      isActive ? "text-mirai-reaction-active" : "text-gray-800"
+                      isActive
+                        ? "text-mirai-reaction-active"
+                        : "text-mirai-text"
                     }`}
                   >
                     {data.counts.helpful}
@@ -88,17 +90,17 @@ export function ReactionButtons({
               <>
                 {/* セパレーター */}
                 {showReaction && (
-                  <div className="w-px self-center h-6 bg-gray-400 shrink-0" />
+                  <div className="w-px self-center h-6 bg-mirai-surface-muted shrink-0" />
                 )}
 
                 {/* 共有する */}
                 <Button
                   variant="ghost"
                   onClick={() => setIsShareModalOpen(true)}
-                  className="flex-1 flex items-center justify-center gap-2 h-auto py-5 rounded-none hover:bg-transparent active:bg-gray-50"
+                  className="flex-1 flex items-center justify-center gap-2 h-auto py-5 rounded-none hover:bg-transparent active:bg-mirai-surface-gray"
                 >
-                  <Upload size={20} className="text-gray-800" />
-                  <span className="text-[15px] font-bold text-gray-800">
+                  <Upload size={20} className="text-mirai-text" />
+                  <span className="text-[15px] font-bold text-mirai-text">
                     共有する
                   </span>
                 </Button>

@@ -71,7 +71,7 @@ export function InterviewSummaryInput({
             </>
           )}
           {completeError && (
-            <p className="text-sm text-red-500">{completeError}</p>
+            <p className="text-sm text-stance-against">{completeError}</p>
           )}
         </div>
       )}

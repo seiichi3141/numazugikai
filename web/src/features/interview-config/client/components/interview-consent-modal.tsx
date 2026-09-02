@@ -58,7 +58,7 @@ export function InterviewConsentModal({
         </DialogHeader>
 
         <div className="flex flex-col gap-6 mt-6">
-          <ul className="flex flex-col gap-3 list-disc pl-5 text-sm font-bold text-gray-800 leading-[22px]">
+          <ul className="flex flex-col gap-3 list-disc pl-5 text-sm font-bold text-mirai-text leading-[22px]">
             <li>回答データは議案の論点整理に利用します。</li>
             <li>個人情報や機密情報の記載はお控えください。</li>
             <li>
@@ -76,7 +76,7 @@ export function InterviewConsentModal({
             />
             <label
               htmlFor="consent-agree"
-              className="text-sm font-bold text-black"
+              className="text-sm font-bold text-foreground"
             >
               <Link
                 href={routes.terms()}

@@ -57,7 +57,7 @@ export async function ReportCompletePage({
   return (
     <div className="min-h-dvh bg-mirai-surface">
       {/* ヘッダーセクション */}
-      <div className="bg-white rounded-b-[32px] px-4 pt-30 md:pt-16 pb-8">
+      <div className="bg-card rounded-b-[32px] px-4 pt-30 md:pt-16 pb-8">
         <div className="flex flex-col items-center gap-4">
           {/* 完了イラスト */}
           <Image
@@ -68,14 +68,14 @@ export async function ReportCompletePage({
           />
 
           {/* 完了メッセージ */}
-          <h1 className="text-2xl font-bold text-center text-gray-800 leading-relaxed">
+          <h1 className="text-2xl font-bold text-center text-mirai-text leading-relaxed">
             提出が完了しました！
             <br />
             ご協力ありがとうございました
           </h1>
 
           {/* 活用メッセージ */}
-          <p className="text-sm text-gray-800">
+          <p className="text-sm text-mirai-text">
             いただいた声は政策検討に最大限活用します
           </p>
         </div>
@@ -86,12 +86,12 @@ export async function ReportCompletePage({
         <div className="flex flex-col gap-9">
           {/* セクションタイトルと公開ステータス */}
           <div className="flex flex-col items-center gap-4">
-            <h2 className="text-2xl font-bold text-black">
+            <h2 className="text-2xl font-bold text-foreground">
               インタビューレポート
             </h2>
             <Link
               href={getBillDetailLink(billId) as Route}
-              className="text-sm text-black underline"
+              className="text-sm text-foreground underline"
             >
               {billName}
             </Link>

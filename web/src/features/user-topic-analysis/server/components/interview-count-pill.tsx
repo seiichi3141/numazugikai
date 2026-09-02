@@ -24,7 +24,7 @@ export function InterviewCountPill({ count, href }: InterviewCountPillProps) {
     <Link
       href={href as Route}
       prefetch={false}
-      className="inline-flex items-center gap-2 self-start rounded-full bg-white px-2.5 py-1.5"
+      className="inline-flex items-center gap-2 self-start rounded-full bg-card px-2.5 py-1.5"
     >
       <span className="flex items-center">
         {AVATAR_CLASSES.map((cls, index) => (

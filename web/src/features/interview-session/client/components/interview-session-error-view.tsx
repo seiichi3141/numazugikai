@@ -25,21 +25,23 @@ export function InterviewSessionErrorView({
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
-          <AlertCircle className="w-10 h-10 text-red-500" />
+        <div className="w-16 h-16 bg-stance-against-bg rounded-full flex items-center justify-center">
+          <AlertCircle className="w-10 h-10 text-stance-against" />
         </div>
         <div className="flex flex-col items-center gap-2">
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-mirai-text">
             セッションを読み込めませんでした
           </h2>
-          <p className="text-gray-600 text-center max-w-sm">{message}</p>
+          <p className="text-mirai-text-muted text-center max-w-sm">
+            {message}
+          </p>
         </div>
       </div>
 
       <Link href={lpLink as Route}>
         <Button
           variant="outline"
-          className="flex items-center gap-2 border-black rounded-[100px] font-bold"
+          className="flex items-center gap-2 border-foreground rounded-[100px] font-bold"
         >
           <ArrowLeft className="w-4 h-4" />
           インタビュートップに戻る

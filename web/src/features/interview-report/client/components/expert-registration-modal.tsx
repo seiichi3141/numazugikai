@@ -99,7 +99,7 @@ export function ExpertRegistrationModal({
               登録ありがとうございました。
             </DialogTitle>
           </DialogHeader>
-          <p className="text-sm font-medium text-gray-800">
+          <p className="text-sm font-medium text-mirai-text">
             議案の論点整理のために、有識者として運営から連絡をする可能性があります。登録情報は公開されません。
           </p>
           <div className="mt-6">
@@ -121,7 +121,7 @@ export function ExpertRegistrationModal({
           </DialogTitle>
         </DialogHeader>
 
-        <p className="text-sm text-gray-800 mt-2 font-medium">
+        <p className="text-sm text-mirai-text mt-2 font-medium">
           議案の論点整理のために、有識者として運営から連絡をする可能性があります。登録情報は公開されません。
         </p>
 
@@ -129,7 +129,7 @@ export function ExpertRegistrationModal({
           <div className="flex flex-col gap-2">
             <label
               htmlFor="expert-name"
-              className="text-sm font-medium text-gray-800"
+              className="text-sm font-medium text-mirai-text"
             >
               お名前
             </label>
@@ -137,18 +137,18 @@ export function ExpertRegistrationModal({
               id="expert-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="bg-gray-100 h-[42px]"
+              className="bg-muted h-[42px]"
               aria-invalid={!!errors.name}
             />
             {errors.name && (
-              <p className="text-xs text-red-500">{errors.name}</p>
+              <p className="text-xs text-stance-against">{errors.name}</p>
             )}
           </div>
 
           <div className="flex flex-col gap-2">
             <label
               htmlFor="expert-affiliation"
-              className="text-sm font-medium text-gray-800"
+              className="text-sm font-medium text-mirai-text"
             >
               ご所属・肩書
             </label>
@@ -156,18 +156,20 @@ export function ExpertRegistrationModal({
               id="expert-affiliation"
               value={affiliation}
               onChange={(e) => setAffiliation(e.target.value)}
-              className="bg-gray-100 h-[42px]"
+              className="bg-muted h-[42px]"
               aria-invalid={!!errors.affiliation}
             />
             {errors.affiliation && (
-              <p className="text-xs text-red-500">{errors.affiliation}</p>
+              <p className="text-xs text-stance-against">
+                {errors.affiliation}
+              </p>
             )}
           </div>
 
           <div className="flex flex-col gap-2">
             <label
               htmlFor="expert-email"
-              className="text-sm font-medium text-gray-800"
+              className="text-sm font-medium text-mirai-text"
             >
               メールアドレス
             </label>
@@ -176,11 +178,11 @@ export function ExpertRegistrationModal({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-gray-100 h-[42px]"
+              className="bg-muted h-[42px]"
               aria-invalid={!!errors.email}
             />
             {errors.email && (
-              <p className="text-xs text-red-500">{errors.email}</p>
+              <p className="text-xs text-stance-against">{errors.email}</p>
             )}
           </div>
 
@@ -192,7 +194,7 @@ export function ExpertRegistrationModal({
               onChange={(e) => setPrivacyAgreed(e.target.checked)}
               className="size-5 rounded-full accent-primary"
             />
-            <label htmlFor="expert-privacy" className="text-xs text-gray-800">
+            <label htmlFor="expert-privacy" className="text-xs text-mirai-text">
               <Link
                 href={routes.privacy()}
                 target="_blank"
@@ -204,11 +206,15 @@ export function ExpertRegistrationModal({
             </label>
           </div>
           {errors.privacyAgreed && (
-            <p className="text-xs text-red-500">{errors.privacyAgreed}</p>
+            <p className="text-xs text-stance-against">
+              {errors.privacyAgreed}
+            </p>
           )}
 
           {errors.form && (
-            <p className="text-xs text-red-500 text-center">{errors.form}</p>
+            <p className="text-xs text-stance-against text-center">
+              {errors.form}
+            </p>
           )}
         </div>
 
@@ -225,7 +231,7 @@ export function ExpertRegistrationModal({
             variant="ghost"
             onClick={handleClose}
             disabled={isSubmitting}
-            className="w-full text-gray-500"
+            className="w-full text-mirai-text-muted"
           >
             キャンセルする
           </Button>

@@ -76,7 +76,7 @@ function _InterviewLPHero({
     <div className="flex flex-col items-center gap-6 px-4">
       <div className="flex flex-col items-center gap-3">
         <div className="inline-flex items-center justify-center gap-2 px-6 py-1 mb-3 bg-primary rounded-2xl">
-          <span className="text-[13px] font-medium text-white leading-tight">
+          <span className="text-[13px] font-medium text-primary-foreground leading-tight">
             当事者・有識者の方へ
           </span>
         </div>
@@ -84,8 +84,8 @@ function _InterviewLPHero({
           議案についてのAIインタビュー
         </h1>
         <Link href={billLink as Route}>
-          <div className="inline-flex items-center justify-center gap-2.5 px-4 py-2 bg-white rounded-xl hover:bg-gray-50 transition-opacity cursor-pointer">
-            <span className="text-[13px] font-medium text-black leading-[1.87]">
+          <div className="inline-flex items-center justify-center gap-2.5 px-4 py-2 bg-card rounded-xl hover:bg-mirai-surface-gray transition-opacity cursor-pointer">
+            <span className="text-[13px] font-medium text-foreground leading-[1.87]">
               {bill.bill_content?.title ?? bill.name}
             </span>
           </div>
@@ -96,7 +96,7 @@ function _InterviewLPHero({
       <div className="flex flex-col gap-4 w-full max-w-[334px] pl-4">
         {FEATURES.map((feature) => (
           <div key={feature.text} className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-[54px] h-[54px] bg-white rounded-[30px] flex items-center justify-center">
+            <div className="flex-shrink-0 w-[54px] h-[54px] bg-card rounded-[30px] flex items-center justify-center">
               <Image
                 src={feature.iconSrc}
                 alt=""
@@ -104,7 +104,7 @@ function _InterviewLPHero({
                 height={feature.iconSize.h}
               />
             </div>
-            <span className="text-[15px] font-medium text-black leading-[1.73] whitespace-pre-line">
+            <span className="text-[15px] font-medium text-foreground leading-[1.73] whitespace-pre-line">
               {feature.text}
             </span>
           </div>
@@ -136,11 +136,11 @@ function _InterviewOverviewSection({
   const billLink = getBillDetailLink(billId, previewToken);
 
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-4">
-      <h2 className="text-[22px] font-bold text-black leading-[1.64]">
+    <div className="w-full max-w-[560px] mx-auto bg-card rounded-2xl p-6 space-y-4">
+      <h2 className="text-[22px] font-bold text-foreground leading-[1.64]">
         インタビュー概要
       </h2>
-      <div className="space-y-4 text-[15px] font-normal text-black leading-[1.87]">
+      <div className="space-y-4 text-[15px] font-normal text-foreground leading-[1.87]">
         <p>
           沼津市議会で審議されている
           <Link
@@ -159,7 +159,7 @@ function _InterviewOverviewSection({
         <Link href={billLink as Route}>
           <Button
             variant="outline"
-            className="w-full border border-black rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
+            className="w-full border border-foreground rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
           >
             <span>議案詳細はこちら</span>
             <ArrowRight className="size-4" />
@@ -182,8 +182,8 @@ function _InterviewDurationSection({
   }
 
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-2">
-      <h2 className="text-[22px] font-bold text-black leading-[1.64]">
+    <div className="w-full max-w-[560px] mx-auto bg-card rounded-2xl p-6 space-y-2">
+      <h2 className="text-[22px] font-bold text-foreground leading-[1.64]">
         予定時間
       </h2>
       <p className="text-[22px] font-bold text-primary-accent leading-[1.64]">
@@ -203,8 +203,8 @@ function _InterviewThemesSection({
   }
 
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-4">
-      <h2 className="text-[22px] font-bold text-black leading-[1.64]">
+    <div className="w-full max-w-[560px] mx-auto bg-card rounded-2xl p-6 space-y-4">
+      <h2 className="text-[22px] font-bold text-foreground leading-[1.64]">
         質問テーマ
       </h2>
       <div className="flex flex-col gap-3">
@@ -219,7 +219,7 @@ function _InterviewThemesSection({
                 className="object-contain mt-2"
               />
             </div>
-            <span className="text-[15px] font-normal text-black leading-[1.87]">
+            <span className="text-[15px] font-normal text-foreground leading-[1.87]">
               {theme}
             </span>
           </div>
@@ -231,11 +231,11 @@ function _InterviewThemesSection({
 
 function _InterviewNoticeSection() {
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-4">
-      <h2 className="text-[22px] font-bold text-black leading-[1.64]">
+    <div className="w-full max-w-[560px] mx-auto bg-card rounded-2xl p-6 space-y-4">
+      <h2 className="text-[22px] font-bold text-foreground leading-[1.64]">
         注意事項
       </h2>
-      <div className="space-y-3 text-[13px] font-normal text-black leading-[1.69]">
+      <div className="space-y-3 text-[13px] font-normal text-foreground leading-[1.69]">
         <p>
           このインタビューはAIが対話形式で実施します。
           リラックスして、ご自身の考えや経験をお聞かせください。
@@ -261,7 +261,7 @@ function _InterviewDisclosureLink({
     <div className="w-full max-w-[560px] mx-auto">
       <Link
         href={disclosureLink as Route}
-        className="text-xs text-black leading-[1.83] underline underline-offset-2 hover:opacity-70 transition-opacity"
+        className="text-xs text-foreground leading-[1.83] underline underline-offset-2 hover:opacity-70 transition-opacity"
       >
         AIインタビューに関する情報開示
       </Link>

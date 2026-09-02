@@ -56,7 +56,7 @@ export function InterviewPublicConsentModal({
             </ConsentCheckListItem>
           </div>
 
-          <p className="text-sm text-black">
+          <p className="text-sm text-foreground">
             非公開で提出した場合でも、ご意見は議案の論点整理に活用させていただきます。
           </p>
         </div>
@@ -74,7 +74,7 @@ export function InterviewPublicConsentModal({
             variant="ghost"
             onClick={() => onSubmit(false)}
             disabled={isSubmitting}
-            className="w-full text-gray-500"
+            className="w-full text-mirai-text-muted"
           >
             非公開で提出する
           </Button>

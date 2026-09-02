@@ -38,7 +38,7 @@ export function RestartConfirmDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-6 mt-6">
-          <p className="text-sm font-bold text-gray-800 leading-[22px] text-center">
+          <p className="text-sm font-bold text-mirai-text leading-[22px] text-center">
             現在の回答内容は破棄されます。
           </p>
         </div>

@@ -64,7 +64,7 @@ export function ReportContent({
       {/* 要約カード */}
       <div className="flex flex-col items-center gap-12">
         <SpeechBubble className="px-7 py-5">
-          <p className="text-[18px] font-bold text-black leading-[28px] relative">
+          <p className="text-[18px] font-bold text-foreground leading-[28px] relative">
             {summary}
           </p>
         </SpeechBubble>

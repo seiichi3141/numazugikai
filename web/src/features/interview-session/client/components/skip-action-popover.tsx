@@ -52,7 +52,7 @@ export function SkipActionPopover({
         <Button
           variant="ghost"
           disabled={disabled}
-          className="h-auto gap-1 p-0 text-xs font-medium leading-[1.8] text-gray-400 hover:text-gray-600 hover:bg-transparent"
+          className="h-auto gap-1 p-0 text-xs font-medium leading-[1.8] text-mirai-text-muted hover:text-mirai-text-muted hover:bg-transparent"
         >
           スキップする
           <ChevronRight className="size-[18px]" />
@@ -62,7 +62,7 @@ export function SkipActionPopover({
         align="end"
         side="top"
         sideOffset={8}
-        className="w-auto rounded-2xl border border-gray-200 bg-white px-2 py-4 shadow-md"
+        className="w-auto rounded-2xl border border-mirai-border bg-card px-2 py-4 shadow-md"
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 px-4">
@@ -78,7 +78,7 @@ export function SkipActionPopover({
               </Button>
             ))}
           </div>
-          <div className="border-t border-gray-200" />
+          <div className="border-t border-mirai-border" />
           <div className="px-4">
             <Button
               variant="ghost"
