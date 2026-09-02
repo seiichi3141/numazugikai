@@ -10,13 +10,13 @@ import {
   Search,
   X,
 } from "lucide-react";
-import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { getCouncilSessionOptions } from "@/features/council-sessions/server/loaders/get-council-session-options";
+import { INTERVIEW_COLLECTION_ENABLED } from "@/features/interview-config/shared/constants";
 import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
 import { BillsPagination } from "../../client/components/bill-list/bills-pagination";
@@ -59,7 +59,11 @@ export async function BillsListPage({
 }: {
   searchParams: BillsListSearchParams;
 }) {
-  const requested = parseBillsListParams(searchParams);
+  const parsedParams = parseBillsListParams(searchParams);
+  const requested = {
+    ...parsedParams,
+    interviewOnly: INTERVIEW_COLLECTION_ENABLED && parsedParams.interviewOnly,
+  };
   // 絞り込み・並び替え・ページングはDBが行う。全件をアプリに持ってくると、
   // 議案が1000件を超えたあたりで絞り込みのクリックごとに待ち時間が出る。
   // 難易度は cookie なのでI/Oを伴わない。ここで一度だけ読み、一覧にも渡す。
@@ -200,10 +204,12 @@ export async function BillsListPage({
           <BillsSessionSelect params={params} options={sessionOptions} />
         </FilterGroup>
 
-        <InterviewOnlyToggle
-          href={href({ interviewOnly: !params.interviewOnly })}
-          checked={params.interviewOnly}
-        />
+        {INTERVIEW_COLLECTION_ENABLED && (
+          <InterviewOnlyToggle
+            href={href({ interviewOnly: !params.interviewOnly })}
+            checked={params.interviewOnly}
+          />
+        )}
 
         <div className="mb-3 flex items-center gap-3">
           <p className="text-[13px] font-bold text-mirai-text-secondary">
