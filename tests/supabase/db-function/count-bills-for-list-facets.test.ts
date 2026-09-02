@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Database } from "../../../packages/supabase/types/supabase.types";
-import { adminClient, cleanupTestBill, createTestBill } from "../utils";
+import {
+  adminClient,
+  cleanupTestBill,
+  cleanupTestCouncilSession,
+  createTestBill,
+  createTestCouncilSession,
+} from "../utils";
 
 type FacetArgs =
   Database["public"]["Functions"]["count_bills_for_list_facets"]["Args"];
@@ -144,6 +150,43 @@ describe("count_bills_for_list_facets", () => {
     const rows = await facets({ p_query: mark, p_tag_id: kurashi.id });
     expect(countOf(rows, "tag", kosodate.id)).toBe(1);
     expect(countOf(rows, "tag", kurashi.id)).toBe(3);
+  });
+
+  it("会期ごとに数え、会期の絞り込みは自分自身を無視する", async () => {
+    const session = await createTestCouncilSession({
+      name: `${mark}会期`,
+      start_date: "2001-01-01",
+      end_date: "2001-01-20",
+    });
+    try {
+      const [first] = billIds;
+      await adminClient
+        .from("bills")
+        .update({ council_session_id: session.id })
+        .eq("id", first);
+
+      const rows = await facets({ p_query: mark });
+      expect(countOf(rows, "session", session.id)).toBe(1);
+      expect(countOf(rows, "session", "all")).toBe(billIds.length);
+
+      // 会期で絞っても、会期の選択肢の件数は変わらない（他の会期に切り替えられる）
+      const filtered = await facets({
+        p_query: mark,
+        p_session_id: session.id,
+      });
+      expect(countOf(filtered, "session", "all")).toBe(billIds.length);
+      // ステータスとタグの件数には会期の絞り込みが効く
+      expect(countOf(filtered, "status", "all")).toBe(1);
+      expect(countOf(filtered, "tag", "all")).toBeLessThan(
+        countOf(rows, "tag", "all")
+      );
+    } finally {
+      await adminClient
+        .from("bills")
+        .update({ council_session_id: null })
+        .in("id", billIds);
+      await cleanupTestCouncilSession(session.id);
+    }
   });
 
   it("検索語で絞り込む", async () => {

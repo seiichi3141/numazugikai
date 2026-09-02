@@ -121,3 +121,36 @@ export async function findLatestClosedCouncilSession(
   }
   return data;
 }
+
+/** 絞り込みの選択肢に出す会期。slug の無い会期は URL に載せられないので除く。 */
+export type CouncilSessionOption = Pick<CouncilSession, "id" | "name"> & {
+  slug: string;
+};
+
+/**
+ * 絞り込みの選択肢に使う会期を新しい順に返す。
+ *
+ * 件数はファセット RPC が数えるので、ここでは名前と slug だけでよい。
+ * 取れなければ失敗させる。選択肢が黙って空になると、絞り込みが消えた
+ * のか会期が無いのか画面から区別できない。
+ */
+export async function findCouncilSessionOptions(): Promise<
+  CouncilSessionOption[]
+> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("council_sessions")
+    .select("id, name, slug")
+    .not("slug", "is", null)
+    .order("start_date", { ascending: false });
+
+  if (error) {
+    throw new Error(`会期の選択肢の取得に失敗した: ${error.message}`);
+  }
+
+  // 問い合わせで null を除いてあるが、型には現れないのでここで絞る
+  return (data ?? []).filter(
+    (session): session is CouncilSessionOption => session.slug !== null
+  );
+}

@@ -29,6 +29,8 @@ export type BillsListPageData = {
   page: number;
   totalPages: number;
   facets: BillsListFacets;
+  /** 実際に効いている会期の slug。存在しない slug は null（絞り込みなし）。 */
+  session: string | null;
 };
 
 /**
@@ -48,14 +50,23 @@ export type BillsListPageData = {
  */
 export async function getBillsListPage(
   params: BillsListParams,
-  difficultyLevel: DifficultyLevelEnum
+  difficultyLevel: DifficultyLevelEnum,
+  /** 絞り込みに使える会期。URL の slug をこの中から引き当てる。 */
+  sessions: readonly { id: string; slug: string }[] = []
 ): Promise<BillsListPageData> {
+  // URL には slug を載せる。RPC は id で絞るので、渡された選択肢から引き当てる。
+  // DB に問い合わせないのは、URL 直打ちの存在しない slug ごとにキャッシュを
+  // 作らせないため。無い slug は「絞り込みなし」に倒し、効いている slug を
+  // 返して呼び出し側のリンクからも消してもらう。残すと画面から外せなくなる。
+  const session =
+    sessions.find((candidate) => candidate.slug === params.session) ?? null;
   const filter: BillsListFilter = {
     difficultyLevel,
     query: params.query,
     tagId: params.tagId,
     statusGroup: params.status,
     interviewOnly: params.interviewOnly,
+    sessionId: session?.id ?? null,
   };
 
   const [firstRows, facetRows] = await Promise.all([
@@ -82,7 +93,14 @@ export async function getBillsListPage(
           offset: offsetFor(page, BILLS_PER_PAGE),
         });
 
-  return { bills: rows.map(toBillListItem), total, page, totalPages, facets };
+  return {
+    bills: rows.map(toBillListItem),
+    total,
+    page,
+    totalPages,
+    facets,
+    session: session?.slug ?? null,
+  };
 }
 
 type SearchRow = Awaited<ReturnType<typeof searchBillsForList>>[number];

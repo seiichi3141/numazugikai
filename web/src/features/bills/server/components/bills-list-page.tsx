@@ -16,9 +16,11 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
+import { getCouncilSessionOptions } from "@/features/council-sessions/server/loaders/get-council-session-options";
 import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
 import { BillsPagination } from "../../client/components/bill-list/bills-pagination";
+import { BillsSessionSelect } from "../../client/components/bill-list/bills-session-select";
 import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
 import { FilterChip } from "../../client/components/bill-list/filter-chip";
 import { InterviewOnlyToggle } from "../../client/components/bill-list/interview-only-toggle";
@@ -27,7 +29,7 @@ import {
   BILL_STATUS_GROUP_LABELS,
   BILL_STATUS_GROUPS,
 } from "../../shared/utils/bill-status-group";
-import { TAG_ALL } from "../../shared/utils/bills-list-facets";
+import { FACET_ALL } from "../../shared/utils/bills-list-facets";
 import { chatBillName } from "../../shared/utils/chat-bill-name";
 import {
   type BillsListParams,
@@ -35,6 +37,7 @@ import {
   billsListHref,
   parseBillsListParams,
 } from "../../shared/utils/parse-bills-list-params";
+import { toSessionFilterOptions } from "../../shared/utils/session-filter-options";
 import { splitIntoRows } from "../../shared/utils/split-into-rows";
 import { toTagChipItemsFromCounts } from "../../shared/utils/tag-chip-items";
 import { tagChipRowCount } from "../../shared/utils/tag-chip-row-count";
@@ -56,16 +59,27 @@ export async function BillsListPage({
 }: {
   searchParams: BillsListSearchParams;
 }) {
-  const params = parseBillsListParams(searchParams);
+  const requested = parseBillsListParams(searchParams);
   // 絞り込み・並び替え・ページングはDBが行う。全件をアプリに持ってくると、
   // 議案が1000件を超えたあたりで絞り込みのクリックごとに待ち時間が出る。
   // 難易度は cookie なのでI/Oを伴わない。ここで一度だけ読み、一覧にも渡す。
   const currentDifficulty = await getDifficultyLevel();
-  const [{ bills, total, page, totalPages, facets }, featuredTags] =
-    await Promise.all([
-      getBillsListPage(params, currentDifficulty),
-      getFeaturedTags(),
-    ]);
+  // 会期の選択肢は一覧の絞り込みにも使うので先に取る。
+  const sessions = await getCouncilSessionOptions();
+  const [
+    { bills, total, page, totalPages, facets, session: sessionSlug },
+    featuredTags,
+  ] = await Promise.all([
+    getBillsListPage(requested, currentDifficulty, sessions),
+    getFeaturedTags(),
+  ]);
+  // 存在しない会期の slug はここで落とす。以降のリンクに引き継がない。
+  const params = { ...requested, session: sessionSlug };
+  const sessionOptions = toSessionFilterOptions(
+    sessions,
+    facets.session,
+    params.session
+  );
 
   const statusCounts = facets.status;
   const tags = toTagChipItemsFromCounts(featuredTags, facets.tag, params.tagId);
@@ -74,7 +88,7 @@ export async function BillsListPage({
       id: "all",
       label: "すべて",
       tagId: null,
-      count: facets.tag.get(TAG_ALL) ?? 0,
+      count: facets.tag.get(FACET_ALL) ?? 0,
     },
     ...tags.map((tag) => ({
       id: tag.id,
@@ -181,6 +195,10 @@ export async function BillsListPage({
             </div>
           </div>
         </section>
+
+        <FilterGroup label="会期">
+          <BillsSessionSelect params={params} options={sessionOptions} />
+        </FilterGroup>
 
         <InterviewOnlyToggle
           href={href({ interviewOnly: !params.interviewOnly })}

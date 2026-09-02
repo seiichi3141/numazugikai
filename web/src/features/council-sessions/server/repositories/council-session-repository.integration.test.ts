@@ -1,4 +1,5 @@
 import {
+  adminClient,
   cleanupTestCouncilSession,
   createTestCouncilSession,
 } from "@test-utils/utils";
@@ -6,6 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   findActiveCouncilSession,
   findCouncilSessionBySlug,
+  findCouncilSessionOptions,
   findCurrentCouncilSession,
   findLatestClosedCouncilSession,
   findPreviousCouncilSession,
@@ -171,6 +173,37 @@ describe("council-session-repository 統合テスト", () => {
       const result = await findPreviousCouncilSession("1900-01-01");
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("findCouncilSessionOptions", () => {
+    it("slug のある会期だけを新しい順に返す", async () => {
+      const older = await createTestCouncilSession({
+        name: "テスト選択肢の古い会期",
+        start_date: "2001-03-01",
+        end_date: "2001-03-20",
+      });
+      const newer = await createTestCouncilSession({
+        name: "テスト選択肢の新しい会期",
+        start_date: "2001-09-01",
+        end_date: "2001-09-20",
+      });
+      const noSlug = await createTestCouncilSession({
+        name: "テスト選択肢のslugなし会期",
+        start_date: "2001-06-01",
+        end_date: "2001-06-20",
+      });
+      sessionIds.push(older.id, newer.id, noSlug.id);
+      await adminClient
+        .from("council_sessions")
+        .update({ slug: null })
+        .eq("id", noSlug.id);
+
+      const result = await findCouncilSessionOptions();
+      const ids = result.map((s) => s.id);
+
+      expect(ids).not.toContain(noSlug.id);
+      expect(ids.indexOf(newer.id)).toBeLessThan(ids.indexOf(older.id));
     });
   });
 });
