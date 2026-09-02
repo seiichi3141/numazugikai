@@ -6,6 +6,7 @@ import {
   pageCount,
 } from "@mirai-gikai/shared/pagination/page-math";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { INTERVIEW_COLLECTION_ENABLED } from "@/features/interview-config/shared/constants";
 import type { BillListItem } from "../../shared/types";
 import {
   type BillsListFacets,
@@ -117,7 +118,8 @@ function toBillListItem(row: SearchRow): BillListItem {
     is_review_completed: row.is_review_completed,
     bill_content: { title: row.content_title, summary: row.content_summary },
     tags: (row.tags ?? []) as BillListItem["tags"],
-    hasPublicInterview: row.has_public_interview,
+    hasPublicInterview:
+      INTERVIEW_COLLECTION_ENABLED && row.has_public_interview,
     publicReportCount: row.public_report_count,
   };
 }

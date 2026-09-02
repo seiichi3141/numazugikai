@@ -4,8 +4,7 @@ import type { BillsListSearchParams } from "@/features/bills/shared/utils/parse-
 
 export const metadata: Metadata = {
   title: "議案を検索する | みらい議会＠沼津市",
-  description:
-    "沼津市議会に提出された議案を、審議状況や分野から探せます。気になる議案にはAIインタビューで意見を届けられます。",
+  description: "沼津市議会に提出された議案を、審議状況や分野から探せます。",
 };
 
 type Props = {

@@ -10,46 +10,18 @@ function buildCompleteRequest(body: unknown): Request {
 }
 
 describe("POST /api/interview/complete", () => {
-  it("sessionId がない場合は400を返す", async () => {
-    const res = await POST(buildCompleteRequest({ isPublic: true }));
-
-    expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "Missing sessionId" });
-  });
-
-  it("isPublic が boolean 以外の場合は400を返す", async () => {
-    const res = await POST(
-      buildCompleteRequest({ sessionId: "session-1", isPublic: "true" })
-    );
-
-    expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "Invalid isPublic value" });
-  });
-
-  it("isDataReuseConsented が boolean 以外の場合は400を返す", async () => {
+  it("AIインタビューが無効な場合は404を返す", async () => {
     const res = await POST(
       buildCompleteRequest({
         sessionId: "session-1",
-        isPublic: true,
-        isDataReuseConsented: "yes",
-      })
-    );
-
-    expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({
-      error: "Invalid isDataReuseConsented value",
-    });
-  });
-
-  it("未認証の場合は403を返す", async () => {
-    const res = await POST(
-      buildCompleteRequest({
-        sessionId: "00000000-0000-0000-0000-000000000000",
         isPublic: true,
         isDataReuseConsented: true,
       })
     );
 
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({
+      error: "AI interview is not available on this site",
+    });
   });
 });

@@ -26,6 +26,7 @@ import {
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
+import { INTERVIEW_COLLECTION_ENABLED } from "@/features/interview-config/shared/constants";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import { requireOpenAiApiKey } from "@/lib/ai/openai-key";
 import { env } from "@/lib/env";
@@ -358,6 +359,10 @@ async function determineShouldSuggestInterview(
   context: ChatMessageMetadata,
   messages: UIMessage<ChatMessageMetadata>[]
 ): Promise<boolean> {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return false;
+  }
+
   if (!context.billContext) {
     return false;
   }
@@ -397,6 +402,10 @@ function buildSystemPromptWithInterviewInstructions(
   shouldSuggestInterview: boolean,
   pageType: "home" | "bill" | undefined
 ): string {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return basePrompt;
+  }
+
   if (pageType === "home") {
     return basePrompt + INTERVIEW_AWARENESS_PROMPT_HOME;
   }
