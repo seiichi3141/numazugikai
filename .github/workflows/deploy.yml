@@ -1,46 +1,63 @@
 name: Migrate DB then Deploy
 
+# main への push で本番へデプロイする。develop → main の昇格は /deploy で行う。
+#
+# 本家は Vercel の Deploy Hook を叩く方式だったが、Hook はプロジェクトを
+# GitHub に Git 連携しておく必要がある。ここでは Vercel CLI をトークンで動かし、
+# 初回の手動デプロイと同じ経路で Actions からもデプロイする。
+# マイグレーションは DB へ直接接続して流す。CLI のアクセストークン検証を
+# 通さないので、トークンの形式変更に左右されない。
+
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
-  migrate-and-deploy:
+  migrate:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    environment: production
     steps:
       - uses: actions/checkout@v5
-
-      # Supabase CLI セットアップ
       - uses: supabase/setup-cli@b60b5899c73b63a2d2d651b1e90db8d4c9392f51 # v1.6.0
         with:
-            version: latest
-
-      # Supabase プロジェクトへリンク（ノンインタラクティブ）
-      - name: Supabase link
-        run: |
-          supabase link --project-ref $SUPABASE_PROJECT_REF --password $SUPABASE_DB_PASSWORD
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-
-      # マイグレーション適用（idempotent）
-      # --yes: CI(非TTY)で確認プロンプト待ちハングを防ぐ（prod に未適用マイグレーションが
-      # あると supabase db push が [Y/n] を出して stdin 待ちで停止するため。実際に本番デプロイが
-      # db push で数時間ハングした）
+          version: latest
       - name: Supabase db push
-        run: |
-          supabase db push --include-all --yes
-          supabase config push --yes
+        run: supabase db push --db-url "$SUPABASE_DB_URL" --include-all --yes
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
-          SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET }}
-          ADMIN_AUTH_CALLBACK_URL: ${{ secrets.ADMIN_AUTH_CALLBACK_URL }}
+          # session pooler（5432）の接続文字列。IPv4 で繋がる
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
 
-      # 成功したら Vercel デプロイを開始
-      - name: Trigger Vercel Deploy Hook
-        run: |
-          curl -X POST "${{ secrets.WEB_VERCEL_DEPLOY_HOOK_URL }}"
-          curl -X POST "${{ secrets.ADMIN_VERCEL_DEPLOY_HOOK_URL }}"
+  deploy:
+    needs: migrate
+    runs-on: ubuntu-latest
+    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: web
+            project_id_secret: VERCEL_PROJECT_ID_WEB
+          - app: admin
+            project_id_secret: VERCEL_PROJECT_ID_ADMIN
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel
+      # ビルドは Vercel 側で行う。ローカルでビルドして --prebuilt で送る方式は
+      # Actions の実行時間を食ううえ、Vercel の環境変数を pull する手間が増える。
+      - name: Deploy ${{ matrix.app }} to production
+        run: vercel deploy --prod --yes --token "$VERCEL_TOKEN"
