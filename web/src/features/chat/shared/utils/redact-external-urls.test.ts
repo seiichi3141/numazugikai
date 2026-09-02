@@ -59,4 +59,20 @@ describe("redactExternalUrls", () => {
 
     expect(redactExternalUrls(text)).toBe(text);
   });
+
+  it.each([
+    "[テスト議案](https://mirai-numazu.com/bills/bill-123)",
+    "https://mirai-numazu.com/bills/bill-123",
+  ])("本サービスと同一オリジンの絶対URLは保持する: %s", (text) => {
+    expect(redactExternalUrls(text, "https://mirai-numazu.com")).toBe(text);
+  });
+
+  it("同一オリジンに似せた外部URLは除去する", () => {
+    expect(
+      redactExternalUrls(
+        "https://mirai-numazu.com.evil.example/bills/bill-123",
+        "https://mirai-numazu.com"
+      )
+    ).toBe("[外部リンクは表示できません]");
+  });
 });

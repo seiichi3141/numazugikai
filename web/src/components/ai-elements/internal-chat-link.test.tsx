@@ -20,9 +20,20 @@ describe("InternalChatLink", () => {
     );
   });
 
+  it("本サービスと同一オリジンの絶対リンクを相対リンクとして表示する", () => {
+    const href = "http://localhost:3000/bills/bill-123?preview=1#summary";
+
+    render(<InternalChatLink href={href}>内部ページ</InternalChatLink>);
+
+    expect(screen.getByRole("link", { name: "内部ページ" })).toHaveAttribute(
+      "href",
+      "/bills/bill-123?preview=1#summary"
+    );
+  });
+
   it.each([
     "https://example.com/path",
-    "https://mirai-gikai.example/bills/bill-123",
+    "http://localhost:3000.evil.example/bills/bill-123",
     "//example.com/path",
     "mailto:contact@example.com",
     "javascript:alert(1)",
