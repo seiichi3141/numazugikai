@@ -27,4 +27,11 @@ export const OG_COLORS = {
   /** 画像全体の地。淡い空色から --background（#f7f4ee）へ。globals.css に対応トークンは無い */
   pageBackground:
     "linear-gradient(177deg, rgb(232, 242, 250) 0%, rgb(247, 244, 240) 100%)",
+  /** サイト OGP: 駿河湾を思わせる淡い青緑と砂色 */
+  siteBackgroundSea:
+    "linear-gradient(135deg, rgb(218, 239, 237) 0%, rgb(237, 246, 242) 48%, rgb(246, 235, 218) 100%)",
+  /** MITライセンスの liquidframe を参考にした端末フレーム */
+  phoneFrame: "rgb(25, 28, 33)",
+  phoneFrameHighlight: "rgb(88, 96, 108)",
+  phoneFrameShadow: "rgba(31, 41, 55, 0.22)",
 } as const;

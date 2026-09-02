@@ -16,9 +16,15 @@ import { OG_COLORS } from "./og-colors";
 export function OgFrame({
   logoDataUrl,
   children,
+  showBrandChrome = true,
+  contentBackgroundImage,
 }: {
   logoDataUrl: string | null;
   children: ReactNode;
+  /** サイト OGP は本文全体がブランド表現になるため、角のバッジとロゴを隠す */
+  showBrandChrome?: boolean;
+  /** サイト OGP の背景。未指定時は既存カード色を使う */
+  contentBackgroundImage?: string;
 }) {
   return (
     <div
@@ -51,6 +57,7 @@ export function OgFrame({
             width: "100%",
             height: "100%",
             backgroundColor: OG_COLORS.card,
+            backgroundImage: contentBackgroundImage,
             borderRadius: 24,
             padding: "48px 56px",
           }}
@@ -58,34 +65,36 @@ export function OgFrame({
           {children}
         </div>
 
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingLeft: 20,
-            paddingRight: 18,
-            paddingTop: 10,
-            paddingBottom: 10,
-            borderBottomLeftRadius: 30,
-            borderTopRightRadius: 30,
-            backgroundImage: OG_COLORS.gradient,
-          }}
-        >
-          <span style={{ fontSize: 28, letterSpacing: "0.03em" }}>
-            {SITE_NAME}
-          </span>
-        </div>
+        {showBrandChrome && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              paddingLeft: 20,
+              paddingRight: 18,
+              paddingTop: 10,
+              paddingBottom: 10,
+              borderBottomLeftRadius: 30,
+              borderTopRightRadius: 30,
+              backgroundImage: OG_COLORS.gradient,
+            }}
+          >
+            <span style={{ fontSize: 28, letterSpacing: "0.03em" }}>
+              {SITE_NAME}
+            </span>
+          </div>
+        )}
 
-        {logoDataUrl && (
+        {showBrandChrome && logoDataUrl && (
           // biome-ignore lint/performance/noImgElement: next/og は img 要素しか描画できない
           <img
             alt={`${SITE_NAME}のロゴ`}
             src={logoDataUrl}
-            width={189}
+            width={160}
             height={160}
             style={{ position: "absolute", bottom: -24, right: -18 }}
           />

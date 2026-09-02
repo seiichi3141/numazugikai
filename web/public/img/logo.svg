@@ -1,19 +1,7 @@
-<svg width="42" height="36" viewBox="0 0 42 36" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="みらい議会＠沼津市">
+<svg width="40" height="44" viewBox="4 5 40 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="みらい議会＠沼津市">
   <title>みらい議会＠沼津市</title>
-  <!-- 富士山と駿河湾。沼津市のシンボルをモチーフにした独自ロゴ -->
-  <defs>
-    <linearGradient id="numazuSky" x1="21" y1="2" x2="21" y2="24" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#1b6ca8"/>
-      <stop offset="1" stop-color="#14507c"/>
-    </linearGradient>
-  </defs>
-  <!-- 山体 -->
-  <path d="M21 3.2 L33.4 24.2 H8.6 Z" fill="url(#numazuSky)"/>
-  <!-- 冠雪 -->
-  <path d="M21 3.2 L26.2 12.0 L23.6 10.4 L21.6 12.2 L19.2 9.9 L16.6 12.4 L15.8 12.0 Z" fill="#ffffff"/>
-  <!-- 駿河湾の波 -->
-  <path d="M3 27.4c3.2 0 3.2 2.6 6.4 2.6s3.2-2.6 6.4-2.6 3.2 2.6 6.4 2.6 3.2-2.6 6.4-2.6 3.2 2.6 6.4 2.6 3.2-2.6 6.4-2.6"
-        stroke="#1b6ca8" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-  <path d="M3 32.4c3.2 0 3.2 2.2 6.4 2.2s3.2-2.2 6.4-2.2 3.2 2.2 6.4 2.2 3.2-2.2 6.4-2.2 3.2 2.2 6.4 2.2 3.2-2.2 6.4-2.2"
-        stroke="#7fb2d4" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <!-- 富士山（平らな山頂と冠雪）を上辺にした吹き出し。中に駿河湾の波。沼津市議会の議論を伝えるサービスの独自ロゴ。scripts/generate-logo-assets.mjs で生成 -->
+  <path d="M8 24 L20 8 H28 L40 24 V33 a5 5 0 0 1 -5 5 H23 L12 46 V38 a4 4 0 0 1 -4 -5 Z" fill="#1b6ca8"/>
+  <path d="M20 8 H28 L32.9 14.5 L30.3 13.6 L27.2 16.8 L24 13.6 L20.8 16.8 L17.7 13.6 L15.1 14.5 Z" fill="#7fb2d4"/>
+  <path d="M14 28c2.5 0 2.5 2.4 5 2.4s2.5-2.4 5-2.4 2.5 2.4 5 2.4 2.5-2.4 5-2.4" stroke="#7fb2d4" stroke-width="2.4" stroke-linecap="round" fill="none"/>
 </svg>

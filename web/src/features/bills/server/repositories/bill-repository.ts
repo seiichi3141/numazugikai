@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { INTERVIEW_COLLECTION_ENABLED } from "@/features/interview-config/shared/constants";
 import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import type { BillSortKey } from "../../shared/utils/sort-bills";
 
@@ -44,6 +45,31 @@ export async function findPublishedBillsWithContents(
   }
 
   return data;
+}
+
+/** サイトマップ用に公開済み議案のURL生成に必要な列だけを取得する。 */
+export async function findPublishedBillSitemapEntries() {
+  const supabase = createAdminClient();
+  const entries: Array<{ id: string; updated_at: string }> = [];
+
+  for (let from = 0; ; from += SUPABASE_MAX_ROWS) {
+    const { data, error } = await supabase
+      .from("bills")
+      .select("id, updated_at")
+      .eq("publish_status", "published")
+      .order("updated_at", { ascending: false })
+      .order("id", { ascending: true })
+      .range(from, from + SUPABASE_MAX_ROWS - 1);
+
+    if (error) {
+      throw new Error(`Failed to fetch bill sitemap entries: ${error.message}`);
+    }
+
+    entries.push(...data);
+    if (data.length < SUPABASE_MAX_ROWS) break;
+  }
+
+  return entries;
 }
 
 /**
@@ -543,6 +569,10 @@ export async function findPreviewToken(billId: string, token: string) {
 export async function findBillIdsWithPublicInterview(
   billIds: string[]
 ): Promise<Set<string>> {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return new Set();
+  }
+
   if (billIds.length === 0) {
     return new Set();
   }

@@ -1,13 +1,16 @@
 import type { MetadataRoute } from "next";
-import { getBills } from "@/features/bills/server/loaders/get-bills";
+import { getPublishedBillSitemapEntries } from "@/features/bills/server/loaders/get-published-bill-sitemap-entries";
+import { env } from "@/lib/env";
+import { getPublicBaseUrl } from "@/lib/metadata/utils/get-public-base-url";
 import { routes } from "@/lib/routes";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+export const dynamic = "force-dynamic";
 
-  const bills = await getBills();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = getPublicBaseUrl(env.webUrl);
+
+  const bills = await getPublishedBillSitemapEntries();
+  const now = new Date();
 
   const billUrls = bills.map((bill) => ({
     url: `${baseUrl}${routes.billDetail(bill.id)}`,
@@ -19,16 +22,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily" as const,
       priority: 1,
     },
     {
       url: `${baseUrl}${routes.billsList()}`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.9,
     },
+    ...[
+      routes.gikaiSessions(),
+      routes.developers(),
+      routes.developersOpenDataApi(),
+      routes.interviewDataTerms(),
+      routes.privacy(),
+      routes.terms(),
+    ].map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
     ...billUrls,
   ];
 }
