@@ -1,0 +1,42 @@
+import path from "node:path";
+import { defineConfig } from "vitest/config";
+
+const testsDir = path.resolve(__dirname);
+
+export default defineConfig({
+  test: {
+    globals: true,
+    root: testsDir,
+    include: ["**/*.test.ts"],
+    // テスト間のデータ干渉を防ぐためシーケンシャル実行
+    pool: "forks",
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
+    globalSetup: [path.resolve(testsDir, "setup.ts")],
+    testTimeout: 30000,
+  },
+  resolve: {
+    alias: {
+      "@mirai-gikai/supabase": path.resolve(
+        __dirname,
+        "../../packages/supabase/src"
+      ),
+      "@mirai-gikai/topic-analysis-core/repository": path.resolve(
+        __dirname,
+        "../../packages/topic-analysis-core/src/repositories/repository.ts"
+      ),
+      "@mirai-gikai/topic-analysis-core/tag-backfill-service": path.resolve(
+        __dirname,
+        "../../packages/topic-analysis-core/src/services/extract-opinion-tags.ts"
+      ),
+      "@mirai-gikai/topic-analysis-core/public-server": path.resolve(
+        __dirname,
+        "../../packages/topic-analysis-core/src/public/public-server.ts"
+      ),
+      "server-only": path.resolve(__dirname, "server-only-stub.ts"),
+    },
+  },
+});

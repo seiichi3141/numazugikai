@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja"> <!--VOXT_MINUTESWRITER-493_会議記録検索システム_管理者サイトにおけるEdge/Chrome対応 2021.10.29 h.hatanaka edit-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- キャッシュを無効にする -->
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="60">
+<!-- キャッシュを無効にする ここまで -->
+<!--VOXT_MINUTESWRITER-493_会議記録検索システム_管理者サイトにおけるEdge/Chrome対応 2021.10.29 h.hatanaka add start-->
+<meta http-equiv="content-language" content="ja">
+<meta name="google" content="notranslate">
+<!--VOXT_MINUTESWRITER-493_会議記録検索システム_管理者サイトにおけるEdge/Chrome対応 2021.10.29 h.hatanaka add end-->
+<title>会議記録検索システム</title>
+<link rel="stylesheet" type="text/css"  href="css/search.css">
+<script type="text/javascript" src="js/search.js"></script>
+</head>
+<body>
+<!--タイトルイメージ部-->
+<div class="title"><img src="images/title.jpg" alt="沼津市議会議事録検索・閲覧システム"></div>
+<!--ナビゲーション部-->
+<table border="0" cellpadding="0" cellspacing="0" width="800">
+  <tr>
+   <td colspan="8"><img name="navi_top" src="images/navi_top.gif" width="800" height="6" border="0"></td>
+   <td><img src="images/spacer.gif" width="1" height="6" border="0"></td>
+  </tr>
+  <tr>
+   <td><img src="images/navi_menu.gif" width="63" height="32" border="0" alt="menu"></td>
+   <td><a href="search.exe?process=list_vcsm" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_itiran','','images/navi_itiran2.gif',1);" target="_top"><img name="navi_itiran" src="images/navi_itiran.gif" width="100" height="32" border="0"  alt="会議一覧"></a></td>
+
+   <td><a href="search.exe?process=sc_top" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_kani','','images/navi_kani2.gif',1);" ><img name="navi_kani" src="images/navi_kani.gif" width="98" height="32" border="0" alt="簡易検索"></a></td>
+<!--   <td><a href="sc_top.html" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_kani','','images/navi_kani2.gif',1);" ><img name="navi_kani" src="images/navi_kani.gif" width="98" height="32" border="0" alt="簡易検索"></a></td> -->
+
+   <td><a href="search.exe?process=detail" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_shosai','','images/navi_shosai2.gif',1);" ><img name="navi_shosai" src="images/navi_shosai.gif" width="98" height="32" border="0" alt="詳細検索"></a></td>
+<!--   <td><a href="sc_making.html" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_kaigi','','images/navi_kaigi2.gif',1);" ><img name="navi_kaigi" src="images/navi_kaigi.gif" width="118" height="32" border="0"alt="会議で検索"></a></td>
+   <td><a href="sc_making.html" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_hatugen','','images/navi_hatugen2.gif',1);" ><img name="navi_hatugen" src="images/navi_hatugen.gif" width="124" height="32" border="0"alt="発言者で検索"></a></td>-->
+<!-- 映像配信タブを隠蔽する 2018.06.01 h.hatanaka delete start
+   <td><a href="search.exe?process=live" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_live','','images/navi_live2.gif',1);" ><img name="navi_live" src="images/navi_live.gif" width="98" height="32" border="0" alt="映像配信"></a></td>
+映像配信タブを隠蔽する 2018.06.01 h.hatanaka delete end -->
+   <td><a href="help.html" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_help','','images/navi_help2.gif',1);" ><img name="navi_help" src="images/navi_help.gif" width="88" height="32" border="0" alt="ヘルプ"></a></td>
+   <td background="images/navi_back_1pix.gif" width="242"><br></td>
+   <td background="images/navi_base.gif" width="111">
+   <a href="http://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/index.htm" onMouseOut="MM_swapImgRestore();"  onMouseOver="MM_swapImage('navi_gikai_top','','images/navi_gikai_top2.gif',1);" ><img name="navi_gikai_top" src="images/navi_gikai_top.gif" width="87" height="27" border="0" alt="議会HPトップ"></a>
+   </td>
+   <td><img src="images/spacer.gif" width="1" height="32" border="0"></td>
+  </tr>
+</table>
+
+<!-- 画面のタイトル部分（メニュー下のコンテンツタイトルバー） -->
+<img src="images/title_bar_itiran.gif" width="600" height="44" border="0" class="page_title">
+
+<!--会議記録一覧にジャンプする用のフォーム-->
+<form method="POST" name="myForm" action="search.exe">
+	<input type="hidden" name="process" value="">
+</form>
+
+<!--画面のメイン部分(広告スペースの為にテーブルで3分割)-->
+<!-- VOXT_MINUTESWRITER-298_沼津市議会_委員会の会議録を公開するその２ 2021.04.28 h.hatanaka edit start -->
+<table width="800" cellpadding="0" cellspacing="0" border="0"><tr>
+<td width="100" valign="top">
+<!-- VOXT_MINUTESWRITER-298_沼津市議会_委員会の会議録を公開するその２ 2021.04.28 h.hatanaka edit end -->
+	<!--左側広告スペース-->
+	<!-- 現在表示中ページの説明分を表示 -->
+	<div id="topic_orange">
+	  <h3><span>現在のページ説明</span></h3>	<!-- ヘッダー表示用（実際にはこの文字は表示されません） -->
+	  <p>	<!-- 表示文章（＜ｐ＞タグ内に表示文章を記載） -->
+	  ■会議記録の一覧を表示しています。
+	  </p>
+	  <h4><span>*ページ説明終了*</span></h4>	<!-- フッター表示用（実際にはこの文字は表示されません） -->
+	</div>
+	<p></p>
+	<!-- 映像配信サービスの使用環境を表示 -->
+<!-- 映像配信サービスの使用環境を隠蔽する 2018.06.01 h.hatanaka delete start
+	<div id="topic_blue">
+	  <h3><span>映像配信サービスの使用環境</span></h3>
+	  <p>映像配信サービスの使用環境<br><br>
+		◆対応OSはWindows8/Windows7/Vistaです。<br>
+		◆ブラウザはInternet Explorer 7.0以上をご利用ください。<br>
+		◆WindowsMediaPlayer ver.11以上をご利用ください。<br>
+		<br>
+		　<A href="http://www.microsoft.com/japan/windows/windowsmedia/download/" target="_new"><IMG src="images/GetWinMPblue.gif" border="0"></A>
+	  </p>
+	  <h4><span>*映像配信サービスの使用環境*</span></h4>
+	</div>
+映像配信サービスの使用環境を隠蔽する 2018.06.01 h.hatanaka delete end -->
+</td>
+
+<!-- VOXT_MINUTESWRITER-298_沼津市議会_委員会の会議録を公開するその２ 2021.04.28 h.hatanaka add start -->
+<td width="20" valign="top" />
+<td width="480" valign="top">
+<!-- VOXT_MINUTESWRITER-298_沼津市議会_委員会の会議録を公開するその２ 2021.04.28 h.hatanaka add end -->
+
+	<!-- 会期基本情報 -->
+	
+	<table cellpadding="0" cellspacing="0" width="400">
+		<tr height="14"><td background="images/sc_up_back.gif"><img src="images/spacer.gif" height="14" width="14"></td></tr>
+		<tr><td background="images/sc_mid_back.gif">
+			<center>令和8年第13回定例会</center>
+			<center>沼 津 市 議 会 会 議 録</center>
+			<center>沼 津 市 議 会</center>
+			<center>令和8年6月5日 ～ 令和8年6月29日</center>
+			<center style="font-size:14px; padding:5px 5px 0px 5px "></center>
+			</td></tr>
+		<tr height="14"><td background="images/sc_down_back.gif"><img src="images/spacer.gif" height="14" width="14"></td></tr>
+	</table>
+	<br>
+	<!-- 会期情報リンク -->
+	<div align="center"><a href="search.exe?process=vm_kaiki&vcsm=m20260513_01.vcsm">○会期日程</a></div>
+	<div align="center"><a href="search.exe?process=vm_fugi&vcsm=m20260513_01.vcsm">○付議事件</a></div>
+	<br>
+	
+
+<!-- 会議記録一覧表示 -->
+<!-- VOXT_MINUTESWRITER-298_沼津市議会_委員会の会議録を公開するその２ 2021.04.28 h.hatanaka edit start -->
+	<img src="images/orange_bar_top.gif" width="404">
+	<form method="POST" action="search.exe" style="margin:0px; ">
+		<input type="hidden" name="vcsm" value="m20260513_01.vcsm">
+		<!-- 会議記録一覧抽出 -->
+		<table width="400" style="font-size:13pt;">
+			<tr bgcolor="#c8ff99"><th width="96" align="center">開催年</th><th width="304">会議記録名</th></tr>
+				<tr class="lightgreen">
+	<td>2026/06/05　</td>
+	<td><a href="#" onClick="DataSubmit4('search.exe?vcsv=v20260513_02.vcsv&process=disp_base');">令和8年第13回定例会（第1日）</a><span class="icon_hidden"><!-- 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete start<img src="images/icon_movie.gif"> 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete end --> </span></td>
+</tr><tr class="lightgreen">
+	<td>2026/06/15　</td>
+	<td><a href="#" onClick="DataSubmit4('search.exe?vcsv=v20260513_03.vcsv&process=disp_base');">令和8年第13回定例会（第2日）</a><span class="icon_hidden"><!-- 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete start<img src="images/icon_movie.gif"> 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete end --> </span></td>
+</tr><tr class="lightgreen">
+	<td>2026/06/16　</td>
+	<td><a href="#" onClick="DataSubmit4('search.exe?vcsv=v20260513_04.vcsv&process=disp_base');">令和8年第13回定例会（第3日）</a><span class="icon_hidden"><!-- 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete start<img src="images/icon_movie.gif"> 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete end --> </span></td>
+</tr><tr class="lightgreen">
+	<td>2026/06/17　</td>
+	<td><a href="#" onClick="DataSubmit4('search.exe?vcsv=v20260513_05.vcsv&process=disp_base');">令和8年第13回定例会（第4日）</a><span class="icon_hidden"><!-- 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete start<img src="images/icon_movie.gif"> 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete end --> </span></td>
+</tr><tr class="lightgreen">
+	<td>2026/06/29　</td>
+	<td><a href="#" onClick="DataSubmit4('search.exe?vcsv=v20260513_06.vcsv&process=disp_base');">令和8年第13回定例会（第5日）</a><span class="icon_hidden"><!-- 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete start<img src="images/icon_movie.gif"> 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete end --> </span></td>
+</tr>
+
+
+
+		</table>
+		<img src="images/orange_bar_bottom.gif" width="404">
+<!-- VOXT_MINUTESWRITER-298_沼津市議会_委員会の会議録を公開するその２ 2021.04.28 h.hatanaka edit end -->
+
+		<!-- preview/nextボタン -->
+		<table width="400" align="center">
+			<tr>
+			 <td width="200" align="left">
+				
+			</td>
+			<td width="200" align="right">
+				
+			</td>
+			</tr>
+		</table>
+	</form>
+<!-- 会議記録一覧表示　終了 -->
+</td>
+
+<td width="200" valign="top">
+	<!--右側広告スペース-->
+	
+	<!-- 簡易ヘルプ文を表示 -->
+	<div id="topic_green">
+	  <h3><span>簡易ヘルプ</span></h3>	<!-- ヘッダー表示用（実際にはこの文字は表示されません） -->
+	  <p>	<!-- 表示文章（＜ｐ＞タグ内に表示文章を記載） -->
+・会議記録の一覧が10件ずつ表示されています。『次の10件』ボタンをクリックすると次ページが、『前の10件』ボタンをクリックすると前ページが表示されます。<br><br>
+・会議記録名をクリックすると、会議記録が表示されます。<br><br>
+<!-- 映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete start
+・動画アイコン（<img src="images/icon_movie.gif">）が表示されている会議記録は、録画中継を視聴することができます。
+映像再生ボタンを隠蔽する 2018.06.01 h.hatanaka delete end -->
+		</p>
+	  <h4><span>*簡易ヘルプ終了*</span></h4>	<!-- フッター表示用（実際にはこの文字は表示されません） -->
+	</div>
+</td>
+</tr></table>
+
+</BODY>
+</HTML>

@@ -1,10 +1,31 @@
+import type { LucideIcon } from "lucide-react";
+import { Briefcase, GraduationCap, Home, User } from "lucide-react";
+
 /**
  * スタンスのラベルマッピング
  */
 export const stanceLabels: Record<string, string> = {
   for: "期待",
   against: "懸念",
-  neutral: "期待と懸念両方がある",
+  neutral: "期待＆懸念",
+};
+
+/**
+ * スタンスのテキストカラーマッピング（Tailwind CSS クラス）
+ */
+export const stanceTextColors: Record<string, string> = {
+  for: "text-primary-accent",
+  against: "text-stance-against-light",
+  neutral: "text-stance-neutral",
+};
+
+/**
+ * スタンスバッジの背景スタイルマッピング
+ */
+export const stanceBadgeBgStyles: Record<string, string> = {
+  for: "bg-linear-to-b from-stance-for-badge-start to-stance-for-badge-end",
+  against: "bg-stance-against-badge-bg",
+  neutral: "bg-stance-neutral-badge-bg",
 };
 
 /**
@@ -26,12 +47,22 @@ export const roleLabels: Record<InterviewReportRole, string> = {
   subject_expert: "専門的な有識者",
   work_related: "業務に関係",
   daily_life_affected: "暮らしに影響",
-  general_citizen: "一市民として関心",
+  general_citizen: "一般的な関心",
+};
+
+/**
+ * 役割のアイコンマッピング
+ */
+export const roleIcons: Record<InterviewReportRole, LucideIcon> = {
+  subject_expert: GraduationCap,
+  work_related: Briefcase,
+  daily_life_affected: Home,
+  general_citizen: User,
 };
 
 /**
  * 役割ラベルとrole_titleを中黒で結合して表示用文字列を生成
- * 例：「専門家・物流業者」
+ * 例：「専門家・介護職」
  */
 export function formatRoleLabel(
   role?: string | null,

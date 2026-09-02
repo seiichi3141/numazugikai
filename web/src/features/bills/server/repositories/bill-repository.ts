@@ -1,0 +1,623 @@
+import "server-only";
+import { createAdminClient } from "@mirai-gikai/supabase";
+import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
+import type { BillSortKey } from "../../shared/utils/sort-bills";
+
+// ============================================================
+// Bills
+// ============================================================
+
+/**
+ * 公開済み議案を難易度コンテンツ付きで取得
+ */
+
+/** Supabase が1リクエストで返す行数の上限（既定値）。 */
+const SUPABASE_MAX_ROWS = 1000;
+export async function findPublishedBillsWithContents(
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      `
+      *,
+      bill_contents!inner (
+        id,
+        bill_id,
+        title,
+        summary,
+        content,
+        difficulty_level,
+        created_at,
+        updated_at
+      )
+    `
+    )
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("submitted_date", { ascending: false, nullsFirst: false });
+
+  if (error) {
+    throw new Error(`Failed to fetch bills: ${error.message}`);
+  }
+
+  return data;
+}
+
+/**
+ * 検索候補用に、公開済み議案の名称・タイトル・タグだけを取得する。
+ *
+ * `findPublishedBillsWithContents` は解説本文（数KB／件）まで引くため、候補の
+ * 絞り込みに使うには重すぎる。ここは候補行に出す最小限だけを選ぶ。
+ */
+export async function findPublishedBillsForSuggest(
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      `
+      id,
+      name,
+      bill_contents!inner (title),
+      bills_tags (tags (id, label))
+    `
+    )
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    // 提出日は null と同日の重複があるので、id を第2キーにして順序を固定する。
+    // 候補は上位数件で打ち切るため、並びが揺れると出る候補そのものが変わる。
+    .order("submitted_date", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: true });
+
+  if (error) {
+    // 候補は検索の補助なので、落とさずに空で返して検索自体は使える状態にする。
+    console.error("Failed to fetch bills for suggest:", error);
+    return [];
+  }
+
+  const rows = data ?? [];
+  // Supabase は max_rows を超えた行を返さない。到達したら古い議案が候補から
+  // 静かに落ちるので、気づけるようにログを残す。
+  if (rows.length >= SUPABASE_MAX_ROWS) {
+    console.warn(
+      `findPublishedBillsForSuggest hit the row limit (${SUPABASE_MAX_ROWS}). ` +
+        "候補から漏れる議案が出ているため、サーバー側検索への移行を検討する。"
+    );
+  }
+
+  return rows;
+}
+
+/**
+ * 公開済み議案を1件取得
+ */
+export async function findPublishedBillById(id: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select("*")
+    .eq("id", id)
+    .eq("publish_status", "published")
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * 管理者用: ステータス問わず議案を1件取得
+ */
+export async function findBillById(id: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * 議案のmirai_stanceを取得
+ */
+export async function findMiraiStanceByBillId(billId: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("mirai_stances")
+    .select("*")
+    .eq("bill_id", billId)
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * 議案のタグを取得
+ */
+export async function findTagsByBillId(billId: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills_tags")
+    .select("tags(id, label)")
+    .eq("bill_id", billId);
+
+  if (error) {
+    return null;
+  }
+
+  return data;
+}
+
+// ============================================================
+// Bill Contents
+// ============================================================
+
+/**
+ * 指定された難易度の議案コンテンツを取得
+ */
+export async function findBillContentByDifficulty(
+  billId: string,
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bill_contents")
+    .select("*")
+    .eq("bill_id", billId)
+    .eq("difficulty_level", difficultyLevel)
+    .single();
+
+  if (error) {
+    console.error(`Failed to fetch bill content: ${error.message}`);
+    return null;
+  }
+
+  return data;
+}
+
+// ============================================================
+// Tags (bulk)
+// ============================================================
+
+import { groupTagsByBillId } from "../../shared/utils/group-tags";
+
+/**
+ * 複数のbill_idに紐づくタグを一括取得し、bill_idごとにグループ化して返す
+ */
+export async function findTagsByBillIds(
+  billIds: string[]
+): Promise<Map<string, Array<{ id: string; label: string }>>> {
+  if (billIds.length === 0) {
+    return new Map();
+  }
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills_tags")
+    .select("bill_id, tags(id, label)")
+    .in("bill_id", billIds);
+
+  if (error) {
+    throw new Error(`Failed to fetch tags: ${error.message}`);
+  }
+
+  return groupTagsByBillId(data ?? []);
+}
+
+// ============================================================
+// Diet Session Bills
+// ============================================================
+
+/**
+ * 会期IDに紐づく公開済み議案を取得
+ */
+export async function findPublishedBillsByCouncilSession(
+  councilSessionId: string,
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      `
+      *,
+      bill_contents!inner (
+        id,
+        bill_id,
+        title,
+        summary,
+        content,
+        difficulty_level,
+        created_at,
+        updated_at
+      )
+    `
+    )
+    .eq("council_session_id", councilSessionId)
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("status_order", { ascending: true })
+    .order("submitted_date", { ascending: false, nullsFirst: false });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch bills by council session: ${error.message}`
+    );
+  }
+
+  return data;
+}
+
+/**
+ * 前回の会期の公開済み議案を取得（可決した議案を優先、件数制限あり）
+ */
+export async function findPreviousSessionBills(
+  councilSessionId: string,
+  difficultyLevel: DifficultyLevelEnum,
+  limit: number
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      `
+      *,
+      bill_contents!inner (
+        id,
+        bill_id,
+        title,
+        summary,
+        content,
+        difficulty_level,
+        created_at,
+        updated_at
+      )
+    `
+    )
+    .eq("council_session_id", councilSessionId)
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("status_order", { ascending: true })
+    .order("submitted_date", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch previous session bills:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+/**
+ * 前回の会期の公開済み議案数を取得
+ */
+export async function countPublishedBillsByCouncilSession(
+  councilSessionId: string,
+  difficultyLevel: DifficultyLevelEnum
+): Promise<number> {
+  const supabase = createAdminClient();
+  const { count, error } = await supabase
+    .from("bills")
+    .select("*, bill_contents!inner(difficulty_level)", {
+      count: "exact",
+      head: true,
+    })
+    .eq("council_session_id", councilSessionId)
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel);
+
+  if (error) {
+    console.error("Failed to count previous session bills:", error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
+// ============================================================
+// Featured
+// ============================================================
+
+/**
+ * featured_priorityが設定されているタグを取得
+ */
+/**
+ * featured なタグを優先度順に取得する。
+ *
+ * 取得に失敗したときは `null` を返す。0件と区別できないと、呼び出し側が
+ * 「タグが無い」としてキャッシュに載せてしまい、一時的なエラーで絞り込みが
+ * 消えたまま固定される。
+ */
+export async function findFeaturedTags() {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, label, description, featured_priority")
+    .not("featured_priority", "is", null)
+    // 同じ優先度のタグは label で並べる。指定しないと順序が不定で、
+    // カテゴリタブの並びがデプロイごとに入れ替わりうる。
+    .order("featured_priority", { ascending: true })
+    .order("label", { ascending: true });
+
+  if (error) {
+    console.error("Failed to fetch featured tags:", error);
+    return null;
+  }
+
+  return data ?? [];
+}
+
+/**
+ * 特定タグに紐づく公開済み議案を取得（bill_contents + タグ付き）
+ */
+export async function findPublishedBillsByTag(
+  tagId: string,
+  difficultyLevel: DifficultyLevelEnum,
+  councilSessionId: string | null
+) {
+  const supabase = createAdminClient();
+  let query = supabase
+    .from("bills_tags")
+    .select(
+      `
+      bill_id,
+      bills!inner (
+        *,
+        bill_contents!inner (
+          id,
+          bill_id,
+          title,
+          summary,
+          content,
+          difficulty_level,
+          created_at,
+          updated_at
+        ),
+        bills_tags!inner (
+          tags (
+            id,
+            label
+          )
+        )
+      )
+    `
+    )
+    .eq("tag_id", tagId)
+    .eq("bills.publish_status", "published")
+    .eq("bills.bill_contents.difficulty_level", difficultyLevel);
+
+  if (councilSessionId) {
+    query = query.eq("bills.council_session_id", councilSessionId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(`Failed to fetch bills for tag:`, error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * 注目の議案を取得（is_featured = true）
+ */
+export async function findFeaturedBillsWithContents(
+  difficultyLevel: DifficultyLevelEnum,
+  councilSessionId: string | null
+) {
+  const supabase = createAdminClient();
+  let query = supabase
+    .from("bills")
+    .select(
+      `
+      *,
+      bill_contents!inner (
+        id,
+        bill_id,
+        title,
+        summary,
+        content,
+        difficulty_level,
+        created_at,
+        updated_at
+      ),
+      tags:bills_tags(
+        tag:tags(
+          id,
+          label
+        )
+      )
+    `
+    )
+    .eq("is_featured", true)
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("submitted_date", { ascending: false, nullsFirst: false });
+
+  if (councilSessionId) {
+    query = query.eq("council_session_id", councilSessionId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Failed to fetch featured bills:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+// ============================================================
+// Coming Soon
+// ============================================================
+
+/**
+ * Coming Soon議案を取得
+ */
+export async function findComingSoonBills(councilSessionId: string | null) {
+  const supabase = createAdminClient();
+  let query = supabase
+    .from("bills")
+    .select(
+      `
+      id,
+      name,
+      bill_number,
+      source_url,
+      bill_contents (
+        title,
+        difficulty_level
+      )
+    `
+    )
+    .eq("publish_status", "coming_soon")
+    .order("created_at", { ascending: false });
+
+  if (councilSessionId) {
+    query = query.eq("council_session_id", councilSessionId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Failed to fetch coming soon bills:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+// ============================================================
+// Preview Tokens
+// ============================================================
+
+/**
+ * プレビュートークンを検証
+ */
+export async function findPreviewToken(billId: string, token: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("preview_tokens")
+    .select("expires_at")
+    .eq("bill_id", billId)
+    .eq("token", token)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data;
+}
+
+// ============================================================
+// Interview Status
+// ============================================================
+
+/**
+ * 複数のbill_idに対して、公開中のインタビュー設定があるかを一括判定
+ *
+ * status="public" のみで判定する。論理削除（deleted_at）された設定は
+ * 削除時に status="closed" へ変更されるため、ここで自然に除外される
+ * （softDeleteInterviewConfigRecord 参照）。
+ */
+export async function findBillIdsWithPublicInterview(
+  billIds: string[]
+): Promise<Set<string>> {
+  if (billIds.length === 0) {
+    return new Set();
+  }
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("interview_configs")
+    .select("bill_id")
+    .in("bill_id", billIds)
+    .eq("status", "public");
+
+  if (error) {
+    console.error("Failed to fetch interview configs:", error);
+    return new Set();
+  }
+
+  return new Set(data.map((row) => row.bill_id));
+}
+
+// ============================================================
+// 一覧の検索（DB側で絞り込み・並び替え・ページング）
+// ============================================================
+
+/** 一覧の絞り込み条件。RPC の引数と1対1で対応させる。 */
+export type BillsListFilter = {
+  difficultyLevel: DifficultyLevelEnum;
+  query: string;
+  tagId: string | null;
+  statusGroup: BillStatusGroup;
+  interviewOnly: boolean;
+};
+
+/**
+ * 一覧の1ページ分を検索する。
+ *
+ * 全件読んでアプリ側で絞ると、議案が1000件を超えたところで
+ * Supabase の返却上限（SUPABASE_MAX_ROWS）にも当たる。
+ */
+export async function searchBillsForList(
+  filter: BillsListFilter,
+  { sort, limit, offset }: { sort: BillSortKey; limit: number; offset: number }
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("search_bills_for_list", {
+    p_difficulty: filter.difficultyLevel,
+    p_query: filter.query,
+    p_tag_id: filter.tagId ?? undefined,
+    p_status_group: filter.statusGroup,
+    p_interview_only: filter.interviewOnly,
+    p_sort: sort,
+    p_limit: limit,
+    p_offset: offset,
+  });
+
+  if (error) {
+    throw new Error(`Failed to search bills: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+/** 一覧のチップに出す件数（ステータス別・タグ別）。 */
+export async function countBillsForListFacets(filter: BillsListFilter) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("count_bills_for_list_facets", {
+    p_difficulty: filter.difficultyLevel,
+    p_query: filter.query,
+    p_tag_id: filter.tagId ?? undefined,
+    p_status_group: filter.statusGroup,
+    p_interview_only: filter.interviewOnly,
+  });
+
+  if (error) {
+    throw new Error(`Failed to count bills facets: ${error.message}`);
+  }
+
+  return data ?? [];
+}

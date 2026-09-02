@@ -1,0 +1,166 @@
+import { describe, expect, it } from "vitest";
+import {
+  BILL_STATUS_ORDER,
+  type BillWithContent,
+} from "@/features/bills/shared/types";
+import { buildSummarySystemPrompt } from "./build-summary-system-prompt";
+
+const makeBill = (
+  overrides: Partial<BillWithContent> = {}
+): BillWithContent => ({
+  id: "bill-1",
+  name: "沼津市印鑑条例の一部改正",
+  is_featured: false,
+  is_review_completed: true,
+  source_url: null,
+  slug: null,
+  council_session_id: null,
+  bill_number: null,
+  bill_number_kind: null,
+  bill_number_value: null,
+  category: null,
+  submitter: null,
+  committee_id: null,
+  committee_result: null,
+  decided_on: null,
+  legal_basis: null,
+  explanation_source: null,
+  committee_qa_count: null,
+  committee_minutes_url: null,
+  document_url: null,
+  publish_status: "published",
+  published_at: null,
+  submitted_date: null,
+  share_thumbnail_url: null,
+  status: "submitted",
+  status_note: null,
+  status_order: BILL_STATUS_ORDER.submitted,
+  publish_status_order: 2,
+  thumbnail_url: null,
+  knowledge_source: null,
+  use_knowledge_source_in_chat: false,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  bill_content: {
+    id: "bc-1",
+    bill_id: "bill-1",
+    title: "テスト議案タイトル",
+    summary: "テスト議案の要約です",
+    content: "テスト議案の内容",
+    difficulty_level: "normal",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  tags: [],
+  ...overrides,
+});
+
+describe("buildSummarySystemPrompt", () => {
+  it("正常なbill情報・テーマ・メッセージでプロンプトに全情報が含まれる", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: { themes: ["医療", "教育"] },
+      messages: [
+        { role: "assistant", content: "こんにちは" },
+        { role: "user", content: "賛成です" },
+      ],
+    });
+
+    expect(result).toContain("テスト議案");
+    expect(result).toContain("テスト議案タイトル");
+    expect(result).toContain("テスト議案の要約です");
+    expect(result).toContain("- 医療");
+    expect(result).toContain("- 教育");
+    expect(result).toContain("assistant: こんにちは");
+    expect(result).toContain("user: 賛成です");
+  });
+
+  it("bill=nullの場合のフォールバック（空文字）", () => {
+    const result = buildSummarySystemPrompt({
+      bill: null,
+      interviewConfig: { themes: ["テーマ1"] },
+      messages: [{ role: "user", content: "テスト" }],
+    });
+
+    expect(result).toContain("- 議案名: \n");
+    expect(result).toContain("- 議案タイトル: \n");
+    expect(result).toContain("- 議案要約: \n");
+  });
+
+  it("テーマ未設定の場合「（テーマ未設定）」が含まれる", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: null,
+      messages: [{ role: "user", content: "テスト" }],
+    });
+
+    expect(result).toContain("（テーマ未設定）");
+  });
+
+  it("テーマが複数ある場合、全テーマが「- テーマ名」形式で含まれる", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: { themes: ["経済", "環境", "安全保障"] },
+      messages: [],
+    });
+
+    expect(result).toContain("- 経済");
+    expect(result).toContain("- 環境");
+    expect(result).toContain("- 安全保障");
+  });
+
+  it("メッセージ空配列の場合エラーなく動く", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: { themes: ["テーマ1"] },
+      messages: [],
+    });
+
+    expect(result).toContain("## 会話履歴\n\n");
+  });
+
+  it("会話履歴が 'role: content' フォーマットで含まれる", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: { themes: [] },
+      messages: [
+        { role: "assistant", content: "質問1" },
+        { role: "user", content: "回答1" },
+        { role: "assistant", content: "質問2" },
+        { role: "user", content: "回答2" },
+      ],
+    });
+
+    expect(result).toContain(
+      "assistant: 質問1\nuser: 回答1\nassistant: 質問2\nuser: 回答2"
+    );
+  });
+
+  it("IDつきのuserメッセージが msg_id 付きフォーマットで含まれる", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: { themes: [] },
+      messages: [
+        { role: "assistant", content: "質問1" },
+        { role: "user", content: "回答1", id: "msg-uuid-1" },
+        { role: "assistant", content: "質問2" },
+        { role: "user", content: "回答2", id: "msg-uuid-2" },
+      ],
+    });
+
+    expect(result).toContain("user [msg_id:msg-uuid-1]: 回答1");
+    expect(result).toContain("user [msg_id:msg-uuid-2]: 回答2");
+    expect(result).toContain("assistant: 質問1");
+    expect(result).toContain("assistant: 質問2");
+  });
+
+  it("source_message_idの指示がプロンプトに含まれる", () => {
+    const result = buildSummarySystemPrompt({
+      bill: makeBill(),
+      interviewConfig: { themes: [] },
+      messages: [],
+    });
+
+    expect(result).toContain("source_message_id");
+  });
+});

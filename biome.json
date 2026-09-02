@@ -45,6 +45,14 @@
     }
   },
   "files": {
-    "includes": ["web/src/**/*", "admin/src/**/*"]
+    "includes": [
+      "web/src/**/*",
+      "admin/src/**/*",
+      "tests/**/*",
+      "packages/numazu-ingest/**/*",
+      "packages/bill-explainer/**/*",
+      "!.claude/worktrees",
+      "!packages/numazu-ingest/**/__fixtures__"
+    ]
   }
 }

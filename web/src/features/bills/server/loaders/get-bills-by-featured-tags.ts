@@ -1,94 +1,64 @@
-import { createAdminClient } from "@mirai-gikai/supabase";
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveDietSession } from "@/features/diet-sessions/server/loaders/get-active-diet-session";
+import { getActiveCouncilSession } from "@/features/council-sessions/server/loaders/get-active-council-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
+import {
+  findBillIdsWithPublicInterview,
+  findFeaturedTags,
+  findPublishedBillsByTag,
+} from "../repositories/bill-repository";
 
 /**
  * Featured表示用の議案をタグごとにグループ化して取得
- * featured_priorityが設定されているタグを持つアクティブな国会会期の議案を優先度順に取得
- * アクティブな国会会期がない場合は全件取得
+ * featured_priorityが設定されているタグを持つアクティブな会期の議案を優先度順に取得
+ * アクティブな会期がない場合は全件取得
  */
 export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveDietSession();
+  const activeSession = await getActiveCouncilSession();
 
-  return _getCachedBillsByFeaturedTags(
-    difficultyLevel,
-    activeSession?.id ?? null
-  );
+  try {
+    return await _getCachedBillsByFeaturedTags(
+      difficultyLevel,
+      activeSession?.id ?? null
+    );
+  } catch (error) {
+    // 取得失敗はキャッシュ関数の外で受ける。中で空配列に変換すると、失敗が
+    // 正常な結果として10分キャッシュされてしまう。トップは他のセクションが
+    // 出れば成り立つので、ここで空に縮退させる。
+    console.error("Failed to fetch bills by featured tags:", error);
+    return [];
+  }
 }
 
 const _getCachedBillsByFeaturedTags = unstable_cache(
   async (
     difficultyLevel: DifficultyLevelEnum,
-    dietSessionId: string | null
+    councilSessionId: string | null
   ): Promise<BillsByTag[]> => {
-    const supabase = createAdminClient();
+    const featuredTags = await findFeaturedTags();
 
-    // featured_priorityが設定されているタグを取得
-    const { data: featuredTags, error: tagsError } = await supabase
-      .from("tags")
-      .select("id, label, description, featured_priority")
-      .not("featured_priority", "is", null)
-      .order("featured_priority", { ascending: true });
-
-    if (tagsError) {
-      console.error("Failed to fetch featured tags:", tagsError);
-      return [];
+    // 取得失敗はキャッシュに載せない。空配列を返すと0件と区別できず、一時的な
+    // DBエラー1回でタグ別セクションが10分消えたままになる。
+    if (featuredTags === null) {
+      throw new Error("Failed to fetch featured tags");
     }
 
-    if (!featuredTags || featuredTags.length === 0) {
+    if (featuredTags.length === 0) {
       return [];
     }
 
     // 各タグの議案を並列で取得
     const results = await Promise.all(
       featuredTags.map(async (tag) => {
-        let query = supabase
-          .from("bills_tags")
-          .select(
-            `
-            bill_id,
-            bills!inner (
-              *,
-              bill_contents!inner (
-                id,
-                bill_id,
-                title,
-                summary,
-                content,
-                difficulty_level,
-                created_at,
-                updated_at
-              ),
-              bills_tags!inner (
-                tags (
-                  id,
-                  label
-                )
-              )
-            )
-            `
-          )
-          .eq("tag_id", tag.id)
-          .eq("bills.publish_status", "published")
-          .eq("bills.bill_contents.difficulty_level", difficultyLevel);
-
-        // アクティブな国会会期がある場合のみフィルタリング
-        if (dietSessionId) {
-          query = query.eq("bills.diet_session_id", dietSessionId);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error(`Failed to fetch bills for tag ${tag.label}:`, error);
-          return null;
-        }
+        const data = await findPublishedBillsByTag(
+          tag.id,
+          difficultyLevel,
+          councilSessionId
+        );
 
         if (!data || data.length === 0) {
           return null;
@@ -136,14 +106,27 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
       })
     );
 
-    // nullを除外して返す
-    return results.filter(
+    // nullを除外
+    const filteredResults = results.filter(
       (result): result is NonNullable<typeof result> => result !== null
     );
+
+    // 全議案のIDを収集してインタビュー状態を一括取得
+    const allBillIds = filteredResults.flatMap((r) => r.bills.map((b) => b.id));
+    const interviewBillIds = await findBillIdsWithPublicInterview(allBillIds);
+
+    // インタビュー状態を付与
+    return filteredResults.map((result) => ({
+      ...result,
+      bills: result.bills.map((bill) => ({
+        ...bill,
+        hasPublicInterview: interviewBillIds.has(bill.id),
+      })),
+    }));
   },
   ["featured-bills-list"],
   {
     revalidate: 600, // 10分（600秒）
-    tags: [CACHE_TAGS.BILLS],
+    tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],
   }
 );

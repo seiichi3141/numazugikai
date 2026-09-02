@@ -1,7 +1,10 @@
 import type { Langfuse } from "langfuse";
+import { env } from "@/lib/env";
 import type { PromptProvider } from "../interface/prompt-provider";
 import type { CompiledPrompt, PromptVariables } from "../interface/types";
-import { env } from "@/lib/env";
+import { compilePrompt } from "../shared/compile-prompt";
+
+const FALLBACK_LABEL = "production";
 
 export class LangfusePromptProvider implements PromptProvider {
   constructor(private client: Langfuse) {}
@@ -10,24 +13,28 @@ export class LangfusePromptProvider implements PromptProvider {
     name: string,
     variables?: PromptVariables
   ): Promise<CompiledPrompt> {
+    const fetchedPrompt = await this.fetchPromptWithFallback(name);
+    return compilePrompt(fetchedPrompt, variables);
+  }
+
+  private async fetchPromptWithFallback(name: string) {
+    const primaryLabel = env.langfuse.promptLabel;
+
     try {
-      const fetchedPrompt = await this.client.getPrompt(name, undefined, {
-        label: env.langfuse.promptLabel,
+      return await this.client.getPrompt(name, undefined, {
+        label: primaryLabel,
       });
-
-      const content = fetchedPrompt.compile(variables || {});
-
-      // Langfuse prompt linkingのためのJSON形式データ
-      const metadata = fetchedPrompt.toJSON();
-
-      return {
-        content,
-        metadata,
-      };
     } catch (error) {
-      throw new Error(
-        `Failed to fetch prompt "${name}" from Langfuse: ${error instanceof Error ? error.message : String(error)}`
+      if (primaryLabel === FALLBACK_LABEL) {
+        throw error;
+      }
+
+      console.warn(
+        `[Langfuse] Prompt "${name}" not found with label "${primaryLabel}", falling back to "${FALLBACK_LABEL}": ${error instanceof Error ? error.message : String(error)}`
       );
+      return await this.client.getPrompt(name, undefined, {
+        label: FALLBACK_LABEL,
+      });
     }
   }
 }

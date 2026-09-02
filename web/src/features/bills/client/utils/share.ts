@@ -1,5 +1,7 @@
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { getBillOgVersion } from "@/features/bills/shared/utils/get-bill-og-version";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
 import { getOrigin } from "@/lib/utils/url";
 import type { BillWithContent } from "../../shared/types";
 
@@ -19,7 +21,7 @@ export function createBillShareUrl(
  */
 export function createShareMessage(bill: BillWithContent): string {
   const displayTitle = bill.bill_content?.title ?? bill.name;
-  return `${displayTitle} #みらい議会`;
+  return `${displayTitle} #みらい議会沼津市`;
 }
 
 /**
@@ -46,7 +48,8 @@ export async function getBillShareData(bill: BillWithContent) {
   return {
     shareUrl: createBillShareUrl(origin, bill.id, difficulty),
     shareMessage: createShareMessage(bill),
-    // シェア用OGP画像を優先的に使用、なければ通常のサムネイル
-    thumbnailUrl: bill.share_thumbnail_url || bill.thumbnail_url,
+    // プレビューは SNS に出るカードと同じ画像にする。相対パスなら next/image に
+    // そのまま渡せる（同一オリジンでも絶対 URL だと remotePatterns が要る）
+    thumbnailUrl: ogImageUrls.billPath(bill.id, getBillOgVersion(bill)),
   };
 }

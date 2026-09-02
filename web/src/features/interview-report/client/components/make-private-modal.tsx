@@ -1,8 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { ArrowRight, Lock } from "lucide-react";
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,7 +26,7 @@ function CheckListItem({ children }: { children: ReactNode }) {
         alt=""
         width={20}
         height={20}
-        className="flex-shrink-0 mt-0.5"
+        className="flex-shrink-0 mt-1"
       />
       <p className="text-sm font-medium leading-relaxed">{children}</p>
     </div>
@@ -41,7 +41,7 @@ export function MakePrivateModal({
 }: MakePrivateModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm py-9">
+      <DialogContent className="py-9">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-primary-accent text-center leading-relaxed">
             インタビュー内容を
@@ -52,10 +52,10 @@ export function MakePrivateModal({
 
         <div className="space-y-4 mt-6">
           <CheckListItem>
-            非公開にした場合、あなたのご意見が世の中に公開されることはありません
+            非公開にした場合、あなたのご意見が世の中に公開されることはありません。
           </CheckListItem>
           <CheckListItem>
-            チームみらい党内での政策検討に最大限活用させていただきます。
+            いただいたご意見は、議案の論点整理に最大限活用させていただきます。
           </CheckListItem>
         </div>
 

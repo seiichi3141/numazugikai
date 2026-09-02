@@ -3,17 +3,38 @@ import {
   DIFFICULTY_COOKIE_NAME,
   DIFFICULTY_COOKIE_OPTIONS,
   type DifficultyLevelEnum,
-  VALID_DIFFICULTY_LEVELS,
 } from "./features/bill-difficulty/shared/types";
+import { isDifficultyLevel } from "./features/bill-difficulty/shared/utils/is-difficulty-level";
 import {
   createUnauthorizedResponse,
   getBasicAuthConfig,
-  isPageSpeedInsights,
   validateBasicAuth,
 } from "./lib/basic-auth";
+import { updateSupabaseSession } from "./lib/supabase/middleware";
 
-export function middleware(request: NextRequest) {
-  const response = _handleDifficultyCookie(request);
+/**
+ * 開発用プレビュー（/dev 配下）のルートか判定する。
+ * 単純な startsWith("/dev") だと /developers 等の通常ページまで
+ * 巻き込むため、完全一致か "/dev/" 配下のみを対象にする。
+ */
+export function isDevRoute(pathname: string): boolean {
+  return pathname === "/dev" || pathname.startsWith("/dev/");
+}
+
+export async function middleware(request: NextRequest) {
+  // /dev routes: 本番では404、開発ではauthスキップ
+  if (isDevRoute(request.nextUrl.pathname)) {
+    if (process.env.NODE_ENV !== "development") {
+      return NextResponse.rewrite(new URL("/not-found", request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Supabaseセッションをリフレッシュ（トークン期限切れ時に自動更新）
+  const response = await updateSupabaseSession(request);
+
+  // URLパラメータからdifficulty Cookieをセット
+  _applyDifficultyCookie(request, response);
 
   const authConfig = getBasicAuthConfig();
 
@@ -24,11 +45,6 @@ export function middleware(request: NextRequest) {
 
   // HTML ナビゲーションだけ認証（画像やJSON, css/js, fetch等は通す）
   if (!_isHtmlRequest(request)) return response;
-
-  // PageSpeed Insightsからのアクセスは認証をスキップ
-  if (isPageSpeedInsights(request)) {
-    return response;
-  }
 
   // Basic認証の検証
   if (validateBasicAuth(request, authConfig)) {
@@ -41,35 +57,57 @@ export function middleware(request: NextRequest) {
 /**
  * 有効な難易度レベルかチェック
  */
-function _isValidDifficultyLevel(
+export function isValidDifficultyLevel(
   value: string | null
 ): value is DifficultyLevelEnum {
-  if (!value) return false;
-  return VALID_DIFFICULTY_LEVELS.includes(value as DifficultyLevelEnum);
+  return isDifficultyLevel(value);
 }
 
 /**
- * URLパラメータからdifficultyを取得し、Cookieにセット
+ * difficulty Cookie の付与対象パスか判定する。
+ * オープンデータAPI等も difficulty クエリを受け取るため、APIレスポンスに
+ * Set-Cookie が乗ってUIの表示設定を書き換えてしまわないよう除外する
  */
-function _handleDifficultyCookie(request: NextRequest): NextResponse {
+export function shouldApplyDifficultyCookie(pathname: string): boolean {
+  return !pathname.startsWith("/api/");
+}
+
+/**
+ * URLパラメータからdifficultyを取得し、レスポンスのCookieにセット
+ */
+function _applyDifficultyCookie(
+  request: NextRequest,
+  response: NextResponse
+): void {
+  if (!shouldApplyDifficultyCookie(request.nextUrl.pathname)) return;
+
   const { searchParams } = new URL(request.url);
   const difficulty = searchParams.get("difficulty");
 
-  const response = NextResponse.next();
-
-  // 有効なdifficulty値の場合、Cookieにセット
-  if (_isValidDifficultyLevel(difficulty)) {
+  if (isValidDifficultyLevel(difficulty)) {
     response.cookies.set(
       DIFFICULTY_COOKIE_NAME,
       difficulty,
       DIFFICULTY_COOKIE_OPTIONS
     );
   }
+}
 
-  return response;
+export function isHtmlAcceptHeader(accept: string): boolean {
+  return accept.includes("text/html");
 }
 
 function _isHtmlRequest(request: NextRequest) {
   const accept = request.headers.get("accept") || "";
-  return accept.includes("text/html");
+  return isHtmlAcceptHeader(accept);
 }
+
+export const config = {
+  matcher: [
+    /*
+     * _next/static, _next/image, favicon.ico, 画像ファイル等の
+     * 静的アセットを除外し、ページリクエストのみでミドルウェアを実行する
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
+};

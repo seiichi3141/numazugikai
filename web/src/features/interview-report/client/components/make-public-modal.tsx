@@ -1,8 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { ArrowRight, LockOpen } from "lucide-react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,27 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  ConsentCheckListItem,
+  OpenDataNoticeItem,
+} from "./consent-check-list-item";
 
 interface MakePublicModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
   isSubmitting: boolean;
-}
-
-function CheckListItem({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex items-start gap-3">
-      <Image
-        src="/icons/check-circle.svg"
-        alt=""
-        width={20}
-        height={20}
-        className="flex-shrink-0 mt-0.5"
-      />
-      <p className="text-sm font-medium leading-relaxed">{children}</p>
-    </div>
-  );
 }
 
 export function MakePublicModal({
@@ -41,7 +28,7 @@ export function MakePublicModal({
 }: MakePublicModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md py-9">
+      <DialogContent className="py-9">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-primary-accent text-center leading-relaxed">
             インタビュー内容を
@@ -51,14 +38,15 @@ export function MakePublicModal({
         </DialogHeader>
 
         <div className="space-y-4 mt-6">
-          <CheckListItem>
-            公開を許可した場合、今後みらい議会にあなたのご意見が匿名で掲載されることがあります。
-          </CheckListItem>
-          <CheckListItem>
-            さまざまな当事者の意見が公開されることで、より深い法案議論が実現できます。
-          </CheckListItem>
+          <ConsentCheckListItem>
+            公開を許可した場合、今後みらい議会＠沼津市にあなたのご意見の要約とインタビュー原文が匿名で掲載されることがあります。
+          </ConsentCheckListItem>
+          <OpenDataNoticeItem />
+          <ConsentCheckListItem>
+            さまざまな意見が公開されることで、より深い議論につながります。
+          </ConsentCheckListItem>
           <p className="text-sm text-black">
-            非公開で提出した場合でも、ご意見は党内での政策検討に活用させていただきます。
+            非公開で提出した場合でも、ご意見は議案の論点整理に活用させていただきます。
           </p>
         </div>
 

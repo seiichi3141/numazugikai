@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { stanceLabels } from "../constants";
+import { stanceLabels, stanceTextColors } from "../constants";
 
 interface StanceDisplayProps {
   stance: string;
@@ -8,11 +8,11 @@ interface StanceDisplayProps {
 }
 
 export function StanceDisplay({ stance, size = "md" }: StanceDisplayProps) {
-  const iconSize = size === "sm" ? 32 : 48;
+  const iconSize = size === "sm" ? 32 : 50;
   const textSize = size === "sm" ? "text-base" : "text-lg";
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2.5">
       <Image
         src={`/icons/stance-${stance}.png`}
         alt={stanceLabels[stance] || stance}
@@ -23,10 +23,8 @@ export function StanceDisplay({ stance, size = "md" }: StanceDisplayProps) {
       <p
         className={cn(
           textSize,
-          "font-bold",
-          stance === "for" && "text-primary-accent",
-          stance === "against" && "text-[#D23C3F]",
-          stance === "neutral" && "text-[#805F34]"
+          "font-bold tracking-[0.18px]",
+          stanceTextColors[stance]
         )}
       >
         {stanceLabels[stance] || stance}

@@ -1,3 +1,5 @@
+import { routes } from "@/lib/routes";
+
 /**
  * 議案詳細ページへのリンクを取得
  */
@@ -6,9 +8,9 @@ export function getBillDetailLink(
   previewToken?: string
 ): string {
   if (previewToken) {
-    return `/preview/bills/${billId}?token=${previewToken}`;
+    return routes.previewBillDetail(billId, previewToken);
   }
-  return `/bills/${billId}`;
+  return routes.billDetail(billId);
 }
 
 /**
@@ -19,9 +21,22 @@ export function getInterviewLPLink(
   previewToken?: string
 ): string {
   if (previewToken) {
-    return `/preview/bills/${billId}/interview?token=${previewToken}`;
+    return routes.previewInterviewLP(billId, previewToken);
   }
-  return `/bills/${billId}/interview`;
+  return routes.interviewLP(billId);
+}
+
+/**
+ * インタビュー情報開示ページへのリンクを取得
+ */
+export function getInterviewDisclosureLink(
+  billId: string,
+  previewToken?: string
+): string {
+  if (previewToken) {
+    return routes.previewInterviewDisclosure(billId, previewToken);
+  }
+  return routes.interviewDisclosure(billId);
 }
 
 /**
@@ -32,21 +47,74 @@ export function getInterviewChatLink(
   previewToken?: string
 ): string {
   if (previewToken) {
-    return `/preview/bills/${billId}/interview/chat?token=${previewToken}`;
+    return routes.previewInterviewChat(billId, previewToken);
   }
-  return `/bills/${billId}/interview/chat`;
+  return routes.interviewChat(billId);
 }
 
 /**
  * インタビュー完了レポートページへのリンクを取得
  */
 export function getInterviewReportCompleteLink(reportId: string): string {
-  return `/report/${reportId}/complete`;
+  return routes.reportComplete(reportId);
 }
 
 /**
- * インタビュー会話ログページへのリンクを取得
+ * 公開レポートページへのリンクを取得
+ * @param from - 遷移元のコンテキスト。"opinions" の場合、戻るボタンがレポート一覧を指す
  */
-export function getInterviewChatLogLink(reportId: string): string {
-  return `/report/${reportId}/chat-log`;
+export function getPublicReportLink(
+  reportId: string,
+  from?: "opinions"
+): string {
+  const base = routes.publicReport(reportId);
+  if (from) {
+    return `${base}?from=${from}`;
+  }
+  return base;
+}
+
+function getReportLinkForChatLogContext(
+  reportId: string,
+  from?: "complete" | "opinions"
+): string {
+  if (from === "complete") {
+    return routes.reportComplete(reportId);
+  }
+  if (from === "opinions") {
+    return getPublicReportLink(reportId, "opinions");
+  }
+  return routes.publicReport(reportId);
+}
+
+/**
+ * インタビュー会話ログの表示先へのリンクを取得
+ * @param from - 遷移元のコンテキスト。"complete" の場合は完了ページ内、"opinions" の場合は公開レポート一覧からの戻り文脈を維持する
+ */
+export function getInterviewChatLogLink(
+  reportId: string,
+  from?: "complete" | "opinions"
+): string {
+  return `${getReportLinkForChatLogContext(reportId, from)}#chat-log`;
+}
+
+/**
+ * インタビュー会話ログ内の個別メッセージへのリンクを取得
+ * @param from - 遷移元のコンテキスト。"complete" の場合は完了ページ内、"opinions" の場合は公開レポート一覧からの戻り文脈を維持する
+ * @param quote - 引用文（逐語）。指定すると `?quote=` で渡し、レポート側で該当メッセージ内の該当部分を太字表示する。
+ *   このとき `?mid=`（メッセージID）も併せて渡し、ハイライト対象を該当メッセージ1件に限定する
+ *   （テキスト一致だけだと無関係なメッセージまで太字になるため）。
+ */
+export function getInterviewMessageLink(
+  reportId: string,
+  messageId: string,
+  from?: "complete" | "opinions",
+  quote?: string | null
+): string {
+  const base = getReportLinkForChatLogContext(reportId, from);
+  const sep = base.includes("?") ? "&" : "?";
+  const query = quote
+    ? `${sep}quote=${encodeURIComponent(quote)}&mid=${encodeURIComponent(messageId)}`
+    : "";
+  return `${base}${query}#message-${messageId}`;
 }

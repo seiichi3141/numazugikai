@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
+import type { ReactNode } from "react";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -16,14 +16,17 @@ const geistMono = Geist_Mono({
 });
 
 const isDev = process.env.NODE_ENV === "development";
+const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
 
 export const metadata: Metadata = {
-  title: "みらい議会 Admin",
-  description: "みらい議会の管理者向けダッシュボード",
+  title: "みらい議会＠沼津市 Admin",
+  description: "みらい議会＠沼津市の管理者向けダッシュボード",
   icons: {
     icon: isDev
       ? "/icons/pwa/icon_dev_192_v3.png"
-      : "/icons/pwa/icon_android_192.png",
+      : isStaging
+        ? "/icons/pwa/icon_staging_192.png"
+        : "/icons/pwa/icon_android_192.png",
   },
 };
 

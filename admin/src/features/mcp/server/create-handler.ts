@@ -1,0 +1,44 @@
+import "server-only";
+
+import {
+  createMcpHandler,
+  experimental_withMcpAuth as withMcpAuth,
+} from "mcp-handler";
+import { registerBillsTools } from "./tools/register-bills-tools";
+import { registerChatUsageTools } from "./tools/register-chat-usage-tools";
+import { registerCouncilSessionsTools } from "./tools/register-council-sessions-tools";
+import { registerInterviewMetricsTools } from "./tools/register-interview-metrics-tools";
+import { registerMiraiStanceTools } from "./tools/register-mirai-stance-tools";
+import { registerPreviewTools } from "./tools/register-preview-tools";
+import { registerTagsTools } from "./tools/register-tags-tools";
+import { registerTopicAnalysisTools } from "./tools/register-topic-analysis-tools";
+import { verifyMcpToken } from "./verify-token";
+
+export function createAdminMcpHandler() {
+  const baseHandler = createMcpHandler(
+    (server) => {
+      registerBillsTools(server);
+      registerChatUsageTools(server);
+      registerCouncilSessionsTools(server);
+      registerInterviewMetricsTools(server);
+      registerMiraiStanceTools(server);
+      registerPreviewTools(server);
+      registerTagsTools(server);
+      registerTopicAnalysisTools(server);
+    },
+    {
+      serverInfo: {
+        name: "mirai-gikai-admin-mcp",
+        version: "0.1.0",
+      },
+    },
+    {
+      basePath: "/api",
+      verboseLogs: process.env.NODE_ENV !== "production",
+    }
+  );
+
+  return withMcpAuth(baseHandler, verifyMcpToken, {
+    required: true,
+  });
+}

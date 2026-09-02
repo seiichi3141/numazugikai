@@ -1,0 +1,74 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
+import { getBillOgVersion } from "@/features/bills/shared/utils/get-bill-og-version";
+import { InterviewLPPage } from "@/features/interview-config/client/components/interview-lp-page";
+import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
+import { getUserReportsByInterviewConfig } from "@/features/interview-report/server/loaders/get-user-reports-by-interview-config";
+import { getLatestInterviewSession } from "@/features/interview-session/server/loaders/get-latest-interview-session";
+import { env } from "@/lib/env";
+import { buildShareMetadata } from "@/lib/metadata/share-metadata";
+import { ogImageUrls } from "@/lib/og/og-image-urls";
+import { routes } from "@/lib/routes";
+
+export const dynamic = "force-dynamic";
+
+interface InterviewPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function generateMetadata({
+  params,
+}: InterviewPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const bill = await getBillById(id);
+
+  if (!bill) {
+    return {
+      title: "議案が見つかりません",
+    };
+  }
+
+  const billName = bill.bill_content?.title ?? bill.name;
+
+  return buildShareMetadata({
+    title: `AIインタビュー - ${billName}`,
+    description: `議案についてのAIインタビュー - ${billName}`,
+    canonical: routes.interviewLP(bill.id),
+    image: ogImageUrls.bill(bill.id, env.webUrl, getBillOgVersion(bill)),
+    imageAlt: `${billName} のAIインタビューページ`,
+  });
+}
+
+export default async function InterviewPage({ params }: InterviewPageProps) {
+  const { id } = await params;
+  const [bill, interviewConfig] = await Promise.all([
+    getBillById(id),
+    getInterviewConfig(id),
+  ]);
+
+  if (!bill) {
+    notFound();
+  }
+
+  if (!interviewConfig) {
+    notFound();
+  }
+
+  // 最新のセッション情報とユーザーの過去レポートを取得
+  const [latestSession, userReports] = await Promise.all([
+    getLatestInterviewSession(interviewConfig.id),
+    getUserReportsByInterviewConfig(interviewConfig.id),
+  ]);
+
+  return (
+    <InterviewLPPage
+      bill={bill}
+      interviewConfig={interviewConfig}
+      sessionInfo={latestSession}
+      userReports={userReports}
+    />
+  );
+}

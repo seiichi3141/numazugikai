@@ -29,6 +29,37 @@ describe("calculateUsageCostUsd", () => {
     expect(calculateUsageCostUsd(AI_MODELS.gpt4o, usage)).toBeCloseTo(0.01125);
   });
 
+  it("calculates cost for new models", () => {
+    const usage: SanitizedUsage = {
+      inputTokens: 1_000_000,
+      outputTokens: 1_000_000,
+      totalTokens: 2_000_000,
+    };
+
+    // GPT-5.2: $1.75 input + $14.00 output = $15.75
+    expect(calculateUsageCostUsd(AI_MODELS.gpt5_2, usage)).toBeCloseTo(15.75);
+    // GPT-5.6 Sol: $5.00 input + $30.00 output = $35.00
+    expect(calculateUsageCostUsd(AI_MODELS.gpt5_6_sol, usage)).toBeCloseTo(35);
+    // GPT-5.6 Terra: $2.50 input + $15.00 output = $17.50
+    expect(calculateUsageCostUsd(AI_MODELS.gpt5_6_terra, usage)).toBeCloseTo(
+      17.5
+    );
+    // GPT-5.6 Luna: $1.00 input + $6.00 output = $7.00
+    expect(calculateUsageCostUsd(AI_MODELS.gpt5_6_luna, usage)).toBeCloseTo(7);
+    // Claude Sonnet 5: $3.00 input + $15.00 output = $18.00
+    expect(calculateUsageCostUsd(AI_MODELS.claude_sonnet_5, usage)).toBeCloseTo(
+      18
+    );
+    // Claude Sonnet 4.6: $3.00 input + $15.00 output = $18.00
+    expect(
+      calculateUsageCostUsd(AI_MODELS.claude_sonnet_4_6, usage)
+    ).toBeCloseTo(18);
+    // Gemini 3.1 Pro Preview: $2.00 input + $12.00 output = $14.00
+    expect(
+      calculateUsageCostUsd(AI_MODELS.gemini3_1_pro_preview, usage)
+    ).toBeCloseTo(14);
+  });
+
   it("throws for unknown model", () => {
     const usage: SanitizedUsage = {
       inputTokens: 1000,

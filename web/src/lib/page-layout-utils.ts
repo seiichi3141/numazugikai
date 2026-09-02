@@ -1,16 +1,18 @@
 /**
  * ページレイアウトに関するユーティリティ
  *
- * TOPページと法案詳細ページは「メインページ」として扱い、
+ * TOP・議案一覧・議案詳細を「メインページ」として扱い、
  * - DifficultySelectorを表示
  * - チャットサイドバー用のオフセットレイアウトを使用
  */
 
-/** メインページ（TOP、法案詳細）かどうかを判定 */
+/** メインページ（TOP、議案一覧、議案詳細）かどうかを判定 */
 export function isMainPage(pathname: string): boolean {
   // トップページ
   if (pathname === "/") return true;
-  // 法案詳細ページ（/bills/[id]）- サブパスは除外
+  // 議案一覧ページ
+  if (pathname === "/bills") return true;
+  // 議案詳細ページ（/bills/[id]）- サブパスは除外
   if (/\/bills\/[^/]+$/.test(pathname)) return true;
   return false;
 }
@@ -19,6 +21,12 @@ export function isMainPage(pathname: string): boolean {
 export function isInterviewPage(pathname: string): boolean {
   // /bills/[id]/interview/chat
   return /\/bills\/[^/]+\/interview\/chat$/.test(pathname);
+}
+
+/** インタビューセクション（LP・チャット含む）かどうかを判定 */
+export function isInterviewSection(pathname: string): boolean {
+  // /bills/[id]/interview 以下すべて
+  return /\/bills\/[^/]+\/interview(\/|$)/.test(pathname);
 }
 
 /** インタビューページからbillIdを抽出 */

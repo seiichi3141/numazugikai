@@ -3,6 +3,7 @@ import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillStatusBadge } from "./bill-status-badge";
 import { BillTag } from "./bill-tag";
 
@@ -15,14 +16,14 @@ export function BillCard({ bill }: BillCardProps) {
   const summary = bill.bill_content?.summary;
 
   return (
-    <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden">
+    <Card className="border border-black shadow-none hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
         {/* 注目バッジエリア */}
         {bill.is_featured && (
           <div
             className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-3 z-1`}
           >
-            <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-[#1F2937] bg-[#F4FF5F] rounded-[20px]">
+            <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px]">
               注目🔥
             </span>
           </div>
@@ -30,7 +31,7 @@ export function BillCard({ bill }: BillCardProps) {
 
         {/* サムネイル画像 */}
         {bill.thumbnail_url && (
-          <div className="relative w-full h-65">
+          <div className="relative w-full h-52 md:h-65">
             <Image
               src={bill.thumbnail_url}
               alt={bill.name}
@@ -47,12 +48,18 @@ export function BillCard({ bill }: BillCardProps) {
             <div className="flex flex-col gap-3">
               <CardTitle className="text-2xl/8 tracking-normal">
                 {displayTitle}
+                {bill.is_review_completed && (
+                  <>
+                    {" "}
+                    <ReviewCompleteBadge />
+                  </>
+                )}
               </CardTitle>
               <div className="flex flex-row gap-4">
                 <BillStatusBadge status={bill.status} className="w-fit" />
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  {bill.published_at && (
-                    <time>{formatDateWithDots(bill.published_at)} 提出</time>
+                  {bill.submitted_date && (
+                    <time>{formatDateWithDots(bill.submitted_date)} 提出</time>
                   )}
                 </div>
               </div>
@@ -63,11 +70,16 @@ export function BillCard({ bill }: BillCardProps) {
                 className="text-sm leading-relaxed"
               />
               {/* タグ表示 */}
-              {bill.tags && bill.tags.length > 0 && (
+              {(bill.tags.length > 0 || bill.hasPublicInterview) && (
                 <div className="flex flex-wrap gap-3">
                   {bill.tags.map((tag) => (
                     <BillTag key={tag.id} tag={tag} />
                   ))}
+                  {bill.hasPublicInterview && (
+                    <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-medium text-black bg-mirai-light-gradient rounded-full">
+                      AIインタビュー受付中
+                    </span>
+                  )}
                 </div>
               )}
             </div>

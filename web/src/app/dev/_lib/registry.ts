@@ -1,0 +1,63 @@
+type PreviewItem = {
+  path: string;
+  label: string;
+  description: string;
+};
+
+type PreviewGroup = {
+  name: string;
+  items: PreviewItem[];
+};
+
+export const previewRegistry: PreviewGroup[] = [
+  {
+    name: "UI Primitives",
+    items: [
+      {
+        path: "/dev/ui",
+        label: "UI Components",
+        description: "Button, Badge, Card, SpeechBubble",
+      },
+    ],
+  },
+  {
+    name: "Bills",
+    items: [
+      {
+        path: "/dev/features/bills/bill-card",
+        label: "BillCard",
+        description: "議案カードコンポーネント",
+      },
+      {
+        path: "/dev/features/bills/bill-status-badge",
+        label: "BillStatusBadge",
+        description: "議案ステータスバッジ全バリアント",
+      },
+    ],
+  },
+  {
+    name: "Interview",
+    items: [
+      {
+        path: "/dev/features/interview/consent-modal",
+        label: "ConsentModal",
+        description: "AIインタビュー同意モーダル",
+      },
+      {
+        path: "/dev/features/interview/public-consent-modal",
+        label: "PublicConsentModal",
+        description: "インタビュー公開設定モーダル",
+      },
+      {
+        path: "/dev/features/interview/rating-widget",
+        label: "InterviewRatingWidget",
+        description: "満足度評価ウィジェット（星評価＋フィードバック）",
+      },
+      {
+        path: "/dev/features/interview/summary-input",
+        label: "InterviewSummaryInput",
+        description: "要約フェーズの入力欄（レポート提出／未生成時の安全網）",
+      },
+    ],
+  },
+];

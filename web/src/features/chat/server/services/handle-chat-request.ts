@@ -1,20 +1,48 @@
 import { openai } from "@ai-sdk/openai";
+import { estimateCostUsd } from "@mirai-gikai/shared/ai/model-pricing";
+import {
+  resolveOpenAiModel,
+  toDisplayModelName,
+} from "@mirai-gikai/shared/ai/resolve-model";
 import type { Database } from "@mirai-gikai/supabase";
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  type LanguageModel,
+  streamText,
+  tool,
+  type UIMessage,
+} from "ai";
+import { z } from "zod";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import {
+  findBillContentByDifficulty,
+  findPublishedBillById,
+} from "@/features/bills/server/repositories/bill-repository";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import {
+  SUGGEST_INTERVIEW_TOOL_NAME,
+  SUGGEST_INTERVIEW_TOOL_TYPE,
+} from "@/features/chat/shared/constants";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
+import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
+import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
+import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
+import { requireOpenAiApiKey } from "@/lib/ai/openai-key";
 import { env } from "@/lib/env";
 import {
   type CompiledPrompt,
   createPromptProvider,
   type PromptProvider,
 } from "@/lib/prompt";
-import { AI_MODELS } from "@/lib/ai/models";
-import { getUsageCostUsd, recordChatUsage } from "./cost-tracker";
+import { isWithinDailyCostLimit, recordChatUsage } from "./cost-tracker";
+import {
+  checkSystemDailyCostLimit,
+  checkSystemMonthlyCostLimit,
+} from "./system-cost-guard";
 
 export type ChatMessageMetadata = {
   billContext?: BillWithContent;
+  hasInterviewConfig?: boolean;
   pageContext?: {
     type: "home" | "bill";
     bills?: Array<{ id: string; name: string; summary?: string }>;
@@ -26,6 +54,13 @@ export type ChatMessageMetadata = {
 type ChatRequestParams = {
   messages: UIMessage<ChatMessageMetadata>[];
   userId: string;
+  deps?: HandleChatDeps;
+};
+
+/** テスト時にモック注入するための外部依存 */
+export type HandleChatDeps = {
+  promptProvider?: PromptProvider;
+  model?: LanguageModel;
 };
 
 type ChatUsageMetadata =
@@ -37,18 +72,26 @@ type ChatUsageMetadata =
 export async function handleChatRequest({
   messages,
   userId,
+  deps,
 }: ChatRequestParams) {
-  const promptProvider = createPromptProvider();
+  const promptProvider = deps?.promptProvider ?? createPromptProvider();
 
   // Extract context from messages
   const context = extractChatContext(messages);
 
   try {
-    // Check cost limit before processing
-    const isWithinLimit = await isWithinCostLimit(userId);
+    // Check per-user cost limit before processing
+    const isWithinLimit = await isWithinDailyCostLimit(
+      userId,
+      env.chat.dailyUserCostLimitUsd
+    );
     if (!isWithinLimit) {
       throw new ChatError(ChatErrorCode.DAILY_COST_LIMIT_REACHED);
     }
+
+    // Check system-wide cost limits before processing
+    await checkSystemDailyCostLimit();
+    await checkSystemMonthlyCostLimit();
   } catch (error) {
     if (error instanceof ChatError) {
       throw error;
@@ -63,28 +106,59 @@ export async function handleChatRequest({
     promptProvider
   );
   // Model configuration
-  // "openai/gpt-4o" Context 128K Input Tokens $2.50/M Output Tokens $10.00/M
-  // "openai/gpt-4o-mini" Context 128K Input Tokens $0.15/M Output Tokens $0.60/M
-  const model = AI_MODELS.gpt4o;
+  // モデル名は AI_MODELS の Gateway 形式（openai/...）で持つが、
+  // 実際の呼び出しは OpenAI API を直接行う（Gateway は経由しない）。
+  const configuredModel = deps?.model ?? DEFAULT_CHAT_MODEL;
+  const modelName =
+    typeof configuredModel === "string"
+      ? toDisplayModelName(configuredModel)
+      : (configuredModel.modelId ?? "unknown");
+  const model =
+    typeof configuredModel === "string"
+      ? resolveOpenAiModel(configuredModel, { apiKey: requireOpenAiApiKey() })
+      : configuredModel;
+
+  // Determine if interview suggestion should be enabled
+  const shouldSuggestInterview = await determineShouldSuggestInterview(
+    context,
+    messages
+  );
+
+  // Build system prompt with interview suggestion instructions
+  const pageType =
+    context.pageContext?.type ?? (context.billContext ? "bill" : undefined);
+  const systemPrompt = buildSystemPromptWithInterviewInstructions(
+    promptResult.content,
+    shouldSuggestInterview,
+    pageType
+  );
+
+  // Build tools configuration
+  const tools = buildTools(shouldSuggestInterview);
 
   // Generate streaming response
   try {
     const result = streamText({
       model,
-      system: promptResult.content,
+      system: systemPrompt,
       messages: await convertToModelMessages(messages),
-      tools: {
-        // biome-ignore lint/suspicious/noExplicitAny: OpenAI web_search tool type incompatibility
-        web_search: openai.tools.webSearch() as any,
-      },
+      tools,
       onFinish: async (event) => {
         try {
-          const providerCost = extractGatewayCost(event);
+          // Gateway を経由しないため providerMetadata に費用が入らない。
+          // トークン数と単価から自前で算出する（コスト上限の判定に使う）。
+          const providerCost =
+            extractGatewayCost(event) ??
+            estimateCostUsd({
+              modelName,
+              inputTokens: event.totalUsage?.inputTokens,
+              outputTokens: event.totalUsage?.outputTokens,
+            });
           await recordChatUsage({
             userId,
             sessionId: context.sessionId || undefined,
             promptName,
-            model,
+            model: modelName,
             usage: event.totalUsage,
             costUsd: providerCost,
             metadata: buildUsageMetadata(context, event),
@@ -120,26 +194,12 @@ function extractChatContext(
 
   return {
     billContext: metadata?.billContext,
+    hasInterviewConfig: metadata?.hasInterviewConfig,
     pageContext: metadata?.pageContext,
     difficultyLevel: (metadata?.difficultyLevel ||
       "normal") as DifficultyLevelEnum,
     sessionId: metadata?.sessionId || "",
   };
-}
-
-/**
- * ユーザーがコストリミット内かどうかを判定
- */
-async function isWithinCostLimit(userId: string): Promise<boolean> {
-  const jstDayRange = getJstDayRange();
-  const usedCost = await getUsageCostUsd(
-    userId,
-    jstDayRange.from,
-    jstDayRange.to
-  );
-  const limitCost = env.chat.dailyCostLimitUsd;
-
-  return usedCost < limitCost;
 }
 
 /**
@@ -156,15 +216,30 @@ async function buildPrompt(
       : `bill-chat-system-${context.difficultyLevel}`;
 
   // Prepare prompt variables
-  const variables: Record<string, string> =
-    context.pageContext?.type === "home"
-      ? { billSummary: JSON.stringify(context.pageContext.bills ?? "") }
-      : {
-          billName: context.billContext?.name ?? "",
-          billTitle: context.billContext?.bill_content?.title ?? "",
-          billSummary: context.billContext?.bill_content?.summary ?? "",
-          billContent: context.billContext?.bill_content?.content ?? "",
-        };
+  // bill 関連の変数はクライアント側のメタデータを信頼せず、必ずサーバー側で再取得した
+  // 公開済みデータのみから組み立てる（管理画面トグルの強制と非公開ナレッジ流出防止）。
+  // 公開済み bill が引けない場合は bill コンテキスト自体を空にする。
+  let variables: Record<string, string>;
+  if (context.pageContext?.type === "home") {
+    variables = {
+      billSummary: JSON.stringify(context.pageContext.bills ?? ""),
+    };
+  } else {
+    const billId = context.billContext?.id;
+    const [serverBill, serverContent] = billId
+      ? await Promise.all([
+          findPublishedBillById(billId),
+          findBillContentByDifficulty(billId, context.difficultyLevel),
+        ])
+      : [null, null];
+    variables = {
+      billName: serverBill?.name ?? "",
+      billTitle: serverContent?.title ?? "",
+      billSummary: serverContent?.summary ?? "",
+      billContent: serverContent?.content ?? "",
+      knowledgeSource: pickChatKnowledgeSource(serverBill),
+    };
+  }
 
   // Fetch prompt from Langfuse
   try {
@@ -177,35 +252,6 @@ async function buildPrompt(
       error instanceof Error ? error.message : String(error)
     );
   }
-}
-
-/**
- * JST基準の1日の時間範囲を取得（UTC形式で返す）
- */
-function getJstDayRange(): { from: string; to: string } {
-  const now = new Date();
-  const jstOffsetMs = 9 * 60 * 60 * 1000;
-  const jstNow = new Date(now.getTime() + jstOffsetMs);
-
-  const startOfJstDay = new Date(
-    Date.UTC(
-      jstNow.getUTCFullYear(),
-      jstNow.getUTCMonth(),
-      jstNow.getUTCDate(),
-      0,
-      0,
-      0,
-      0
-    )
-  );
-
-  const startUtc = new Date(startOfJstDay.getTime() - jstOffsetMs);
-  const endUtc = new Date(startUtc.getTime() + 24 * 60 * 60 * 1000);
-
-  return {
-    from: startUtc.toISOString(),
-    to: endUtc.toISOString(),
-  };
 }
 
 /**
@@ -264,4 +310,123 @@ function extractGatewayCost(event: {
   const numericCost = Number(gatewayCost);
 
   return Number.isFinite(numericCost) ? numericCost : undefined;
+}
+
+const INTERVIEW_AWARENESS_BASE = `
+
+## AIインタビュー機能について
+みらい議会＠沼津市には「AIインタビュー」機能があります。これは議案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で議案に対する意見や暮らしの実感を共有できる仕組みです。インタビュー結果は分析・レポート化され、議案の論点整理に活用されます。
+`;
+
+const INTERVIEW_AWARENESS_PROMPT_BILL = `${INTERVIEW_AWARENESS_BASE}
+この議案のインタビュー機能が現在利用可能かどうかは状況によって異なります。インタビューについて質問された場合は、この機能の存在を説明した上で、議案詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
+`;
+
+const INTERVIEW_AWARENESS_PROMPT_HOME = `${INTERVIEW_AWARENESS_BASE}
+インタビューについて質問された場合は、この機能の存在を説明した上で、利用可否は議案ごとに異なるため、興味のある議案の詳細ページでインタビューへの案内が表示されているか確認するよう案内してください。
+`;
+
+const INTERVIEW_SUGGESTION_PROMPT = `
+
+## AIインタビュー提案について
+この議案にはAIインタビュー機能があります。以下の条件に該当する場合、通常のテキスト応答と併せて suggest_interview ツールを呼び出してください。
+ただし、1つの会話の中で suggest_interview ツールを呼び出すのは1回のみとしてください。
+
+### suggest_interview を呼び出す条件:
+- ユーザーがこの議案の対象となる施設・地域・サービスと日常的な関わりを持つことがわかった場合
+- ユーザーがこの議案について専門的な知識や実務経験を持っていると判断できる場合
+- ユーザーがこの議案に対して具体的な提言や意見を述べた場合
+- ユーザーがインタビューや意見提出について質問した場合
+- ユーザーが自分の意見を共有したい、市議会の議論に反映してほしいと表明した場合
+
+### 重要:
+- suggest_interview ツールの呼び出しは、通常のテキスト応答と同時に行ってください。ツールだけを呼び出してテキスト応答を省略しないでください。
+- ツールの呼び出しは会話全体で最大1回です。既に呼び出し済みの場合は再度呼び出さないでください。
+`;
+
+/**
+ * インタビュー提案を有効にすべきか判定
+ *
+ * 以下のすべてを満たす場合にtrueを返す:
+ * - 議案ページである
+ * - サーバー側でインタビュー設定が公開状態であることを確認
+ * - 会話中にまだsuggest_interviewツールが呼び出されていない
+ *
+ * NOTE: インタビュー回答済みでも導線を表示する（再回答の促進のため）
+ */
+async function determineShouldSuggestInterview(
+  context: ChatMessageMetadata,
+  messages: UIMessage<ChatMessageMetadata>[]
+): Promise<boolean> {
+  if (!context.billContext) {
+    return false;
+  }
+
+  if (hasExistingSuggestInterview(messages)) {
+    return false;
+  }
+
+  // サーバー側でインタビュー設定の存在を検証（クライアント側のメタデータを信頼しない）
+  const { data: interviewConfig } = await findPublicInterviewConfigByBillId(
+    context.billContext.id
+  );
+  return !!interviewConfig;
+}
+
+/**
+ * 会話履歴にsuggest_interviewツール呼び出しが既に存在するか判定
+ */
+function hasExistingSuggestInterview(
+  messages: UIMessage<ChatMessageMetadata>[]
+): boolean {
+  return messages.some(
+    (msg) =>
+      msg.role === "assistant" &&
+      msg.parts.some(
+        (part) =>
+          "toolCallId" in part && part.type === SUGGEST_INTERVIEW_TOOL_TYPE
+      )
+  );
+}
+
+/**
+ * インタビュー提案の指示をシステムプロンプトに追加
+ */
+function buildSystemPromptWithInterviewInstructions(
+  basePrompt: string,
+  shouldSuggestInterview: boolean,
+  pageType: "home" | "bill" | undefined
+): string {
+  if (pageType === "home") {
+    return basePrompt + INTERVIEW_AWARENESS_PROMPT_HOME;
+  }
+  if (pageType !== "bill") {
+    return basePrompt;
+  }
+  let prompt = basePrompt + INTERVIEW_AWARENESS_PROMPT_BILL;
+  if (shouldSuggestInterview) {
+    prompt += INTERVIEW_SUGGESTION_PROMPT;
+  }
+  return prompt;
+}
+
+/**
+ * チャットで使用するツール一覧を構築
+ */
+function buildTools(shouldSuggestInterview: boolean) {
+  // biome-ignore lint/suspicious/noExplicitAny: OpenAI web_search tool type incompatibility
+  const tools: Record<string, any> = {
+    web_search: openai.tools.webSearch(),
+  };
+
+  if (shouldSuggestInterview) {
+    tools[SUGGEST_INTERVIEW_TOOL_NAME] = tool({
+      description:
+        "ユーザーが議案に関わりのある当事者・有識者であると判断された場合、またはインタビューについて聞かれた場合に呼び出す。通常のテキスト応答と同時に呼び出すこと。",
+      inputSchema: z.object({}),
+      execute: async () => ({ suggested: true }),
+    });
+  }
+
+  return tools;
 }

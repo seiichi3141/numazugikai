@@ -1,0 +1,89 @@
+"use server";
+
+import { createAdminClient } from "@mirai-gikai/supabase";
+import { revalidateTag } from "next/cache";
+import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import {
+  invalidateWebCache,
+  WEB_CACHE_TAGS,
+} from "@/lib/utils/cache-invalidation";
+import { verifyConfigBelongsToBill } from "../services/verify-config-belongs-to-bill";
+
+interface BulkPublishParams {
+  configId: string;
+  billId: string;
+  maxModerationScore: number;
+  minContentRichness: number;
+}
+
+interface BulkPublishResult {
+  success: boolean;
+  updatedCount?: number;
+  error?: string;
+}
+
+export async function bulkPublishReportsAction(
+  params: BulkPublishParams
+): Promise<BulkPublishResult> {
+  await requireAdmin();
+
+  try {
+    await verifyConfigBelongsToBill(params.configId, params.billId);
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase.rpc("bulk_publish_reports", {
+      p_config_id: params.configId,
+      p_max_moderation_score: params.maxModerationScore,
+      p_min_content_richness: params.minContentRichness,
+    });
+
+    if (error) {
+      throw new Error(`Failed to bulk publish reports: ${error.message}`);
+    }
+
+    const updatedCount = data ?? 0;
+
+    revalidateTag("public-interview-reports");
+    // admin の revalidateTag は admin 内のキャッシュにしか効かない。
+    // web の一覧が持つ回答数キャッシュは HTTP 経由で無効化する。
+    await invalidateWebCache([WEB_CACHE_TAGS.PUBLIC_INTERVIEW_REPORTS]);
+
+    return { success: true, updatedCount };
+  } catch (error) {
+    console.error("Bulk publish failed:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "一括公開に失敗しました",
+    };
+  }
+}
+
+export async function countBulkPublishTargetsAction(
+  params: BulkPublishParams
+): Promise<{ success: boolean; count?: number; error?: string }> {
+  await requireAdmin();
+
+  try {
+    await verifyConfigBelongsToBill(params.configId, params.billId);
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase.rpc("count_bulk_publish_targets", {
+      p_config_id: params.configId,
+      p_max_moderation_score: params.maxModerationScore,
+      p_min_content_richness: params.minContentRichness,
+    });
+
+    if (error) {
+      throw new Error(`Failed to count target reports: ${error.message}`);
+    }
+
+    return { success: true, count: data ?? 0 };
+  } catch (error) {
+    console.error("Count bulk publish targets failed:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "対象件数の取得に失敗しました",
+    };
+  }
+}

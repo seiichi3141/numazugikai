@@ -1,0 +1,81 @@
+import type {
+  RepresentativeOpinion,
+  TopicAnalysisTopic,
+  TopicAnalysisVersion,
+} from "../types";
+
+export type TocEntry = { id: string; label: string };
+
+/**
+ * CommonMarkではCJK文字に隣接する**がemphasisデリミタとして認識されない。
+ * thin space(U+2009, Unicodeカテゴリ Zs)を挿入してフランキングルールを回避する。
+ * U+200B(ZWS)はCfカテゴリのためCommonMarkのwhitespace判定に該当せず効果がない。
+ */
+export function fixCjkBold(md: string): string {
+  return md.replace(/\*\*(.+?)\*\*/g, "\u2009**$1**\u2009");
+}
+
+export function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function buildToc(
+  hasSummary: boolean,
+  topics: Pick<TopicAnalysisTopic, "name">[]
+): TocEntry[] {
+  const entries: TocEntry[] = [];
+  if (hasSummary) {
+    entries.push({ id: toSlug("全体サマリ"), label: "全体サマリ" });
+  }
+  for (let i = 0; i < topics.length; i++) {
+    const label = `トピック${i + 1}. ${topics[i].name}`;
+    entries.push({ id: toSlug(label), label });
+  }
+  return entries;
+}
+
+export function buildReportMarkdown(
+  version: Pick<TopicAnalysisVersion, "summary_md">,
+  topics: TopicAnalysisTopic[]
+): string {
+  const sections: string[] = [];
+
+  // 全体サマリ
+  if (version.summary_md) {
+    sections.push(`# 全体サマリ\n\n${version.summary_md}`);
+  }
+
+  // トピック詳細
+  if (topics.length > 0) {
+    sections.push("---");
+
+    for (let i = 0; i < topics.length; i++) {
+      const topic = topics[i];
+      const representatives = (
+        Array.isArray(topic.representative_opinions)
+          ? topic.representative_opinions
+          : []
+      ) as RepresentativeOpinion[];
+
+      let topicSection = `## トピック${i + 1}. ${topic.name}`;
+      topicSection += `\n\n${topic.description_md}`;
+
+      if (representatives.length > 0) {
+        topicSection += "\n\n### 代表的な意見\n";
+        for (const op of representatives) {
+          const refLabel = op.ref_id ? ` [${op.ref_id}]` : "";
+          const raw = op.source_message_content || op.opinion_content;
+          const content = raw.replace(/\n/g, "\n> ");
+          topicSection += `\n> ${content}${refLabel}\n`;
+        }
+      }
+
+      sections.push(topicSection);
+    }
+  }
+
+  return sections.join("\n\n");
+}

@@ -1,4 +1,5 @@
 import { EXTERNAL_LINKS } from "@/config/external-links";
+import { routes } from "@/lib/routes";
 
 export type FooterLink = {
   label: string;
@@ -15,37 +16,31 @@ export type FooterPolicyLink = {
 export const primaryLinks: FooterLink[] = [
   {
     label: "TOP",
-    href: "/",
+    href: routes.home(),
   },
   {
-    label: "みらい議会とは",
-    href: EXTERNAL_LINKS.ABOUT_NOTE,
+    label: "沼津市議会（市公式サイト）",
+    href: EXTERNAL_LINKS.NUMAZU_COUNCIL,
     external: true,
   },
   {
-    label: "チームみらいについて",
-    href: EXTERNAL_LINKS.TEAM_MIRAI_ABOUT,
-    external: true,
-  },
-  {
-    label: "寄附で応援する",
-    href: EXTERNAL_LINKS.DONATION,
+    label: "自主制作ガイドライン",
+    href: EXTERNAL_LINKS.FORK_GUIDELINES_NOTE,
     external: true,
   },
 ];
 
 export const policyLinks: FooterPolicyLink[] = [
   {
-    label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
-  },
-  {
     label: "利用規約",
-    href: "/terms",
+    href: routes.terms(),
   },
   {
     label: "プライバシーポリシー",
-    href: "/privacy",
+    href: routes.privacy(),
+  },
+  {
+    label: "開発者向け",
+    href: routes.developers(),
   },
 ];

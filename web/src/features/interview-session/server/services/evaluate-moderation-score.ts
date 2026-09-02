@@ -1,0 +1,56 @@
+import "server-only";
+
+import { buildModerationPrompt } from "@mirai-gikai/shared/moderation/build-prompt";
+import { moderationResultSchema } from "@mirai-gikai/shared/moderation/schemas";
+import {
+  determineModerationStatus,
+  type ModerationStatus,
+} from "@mirai-gikai/shared/moderation/status";
+import { generateObject, type LanguageModel } from "ai";
+import { DEFAULT_MODERATION_MODEL } from "@/lib/ai/models";
+
+/** テスト時にモック注入するための外部依存 */
+export type ModerationDeps = {
+  model?: LanguageModel;
+};
+
+type ModerationInput = {
+  summary: string | null;
+  opinions: Array<{ title: string; content: string }> | null;
+  roleDescription: string | null;
+  messages: Array<{ role: string; content: string }>;
+};
+
+type ModerationOutput = {
+  score: number;
+  status: ModerationStatus;
+  reasoning: string;
+};
+
+/**
+ * レポート内容のモデレーションスコアを評価する
+ */
+export async function evaluateModerationScore(
+  input: ModerationInput,
+  deps?: ModerationDeps
+): Promise<ModerationOutput> {
+  const { system, user } = buildModerationPrompt(input);
+  const model = deps?.model ?? DEFAULT_MODERATION_MODEL;
+
+  const { object } = await generateObject({
+    model,
+    schema: moderationResultSchema,
+    system,
+    messages: [{ role: "user", content: user }],
+  });
+
+  const status = determineModerationStatus(object.score);
+
+  console.log(`Moderation result: score=${object.score}, status=${status}`);
+
+  return {
+    score: object.score,
+    status,
+    reasoning: object.reasoning,
+  };
+}

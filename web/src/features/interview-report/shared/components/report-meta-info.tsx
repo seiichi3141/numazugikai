@@ -1,59 +1,72 @@
+import type { Route } from "next";
+import Link from "next/link";
+import { getInterviewChatLogLink } from "@/features/interview-config/shared/utils/interview-links";
+import { ReactionButtonsInline } from "@/features/report-reaction/client/components/reaction-buttons-inline";
+import type { ReportReactionData } from "@/features/report-reaction/shared/types";
 import { formatDateTime } from "../utils/report-utils";
-import { StanceDisplay } from "./stance-display";
 import { RoleDisplay } from "./role-display";
+import { StanceDisplay } from "./stance-display";
 
 interface ReportMetaInfoProps {
+  reportId: string;
   stance?: string | null;
   role?: string | null;
+  roleTitle?: string | null;
   sessionStartedAt: string | null;
-  duration?: string;
   characterCount: number;
-  variant?: "default" | "chat-log";
+  reactionData?: ReportReactionData;
+  /** 遷移元のコンテキスト */
+  from?: "complete" | "opinions";
+  /** trueの場合、会話ログへのリンクにしない */
+  disableLink?: boolean;
 }
 
 export function ReportMetaInfo({
+  reportId,
   stance,
   role,
+  roleTitle,
   sessionStartedAt,
-  duration,
   characterCount,
-  variant = "default",
+  reactionData,
+  from,
+  disableLink,
 }: ReportMetaInfoProps) {
-  const isChatLog = variant === "chat-log";
-
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div
-        className={`flex flex-col items-center ${isChatLog ? "gap-1" : "gap-3"}`}
-      >
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-3">
         {/* スタンス */}
         {stance && <StanceDisplay stance={stance} />}
         {/* 役割 */}
-        {role && <RoleDisplay role={role} />}
+        {(role || roleTitle) && (
+          <RoleDisplay role={role} roleTitle={roleTitle} />
+        )}
       </div>
 
       {/* 日時・時間・文字数 */}
-      {isChatLog ? (
-        <div className="text-black text-center">
-          <p className="text-base font-medium">
-            {formatDateTime(sessionStartedAt)}
-          </p>
+      <div className="text-black text-center">
+        <p className="text-base font-medium mb-2">
+          {formatDateTime(sessionStartedAt)}
+        </p>
+        {disableLink ? (
           <p className="text-xs font-normal">
-            インタビューの分量{" "}
-            <span className="underline">{characterCount}文字</span>
+            インタビューの分量
+            <span className="ml-2">{characterCount}文字</span>
           </p>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-1 font-medium">
-          <p className="text-sm text-gray-800">
-            {formatDateTime(sessionStartedAt)}
-          </p>
-          <p className="text-sm text-gray-800">
-            {duration
-              ? `${duration} / ${characterCount} 文字`
-              : `${characterCount} 文字`}
-          </p>
-        </div>
+        ) : (
+          <Link
+            href={getInterviewChatLogLink(reportId, from) as Route}
+            className="text-xs font-normal"
+          >
+            インタビューの分量
+            <span className="underline ml-2">{characterCount}文字</span>
+          </Link>
+        )}
+      </div>
+
+      {/* 参考になるボタン */}
+      {reactionData && (
+        <ReactionButtonsInline reportId={reportId} initialData={reactionData} />
       )}
     </div>
   );

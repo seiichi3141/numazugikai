@@ -1,24 +1,28 @@
 import { ArrowRight, Check } from "lucide-react";
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { routes } from "@/lib/routes";
 
 interface InterviewLandingSectionProps {
   billId: string;
 }
 
-const CHECK_POINTS = [
-  "所要時間は約5分〜",
-  "AIがあなたのご意見を深掘り",
-  "チームみらいの政策検討に活用",
-] as const;
+function getCheckPoints(): string[] {
+  return [
+    "所要時間は約5分〜",
+    "AIがあなたのご意見を深掘り",
+    "議案の論点整理に活用",
+  ];
+}
 
 function _InterviewBadge() {
   return (
     <div className="flex">
-      <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-[#E8E8E8] rounded-2xl">
+      <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-mirai-surface-tag rounded-2xl">
         <span className="text-[11px] font-medium text-black leading-[1.09]">
-          法案の当事者の方へ
+          この議案に関わりのある方へ
         </span>
       </div>
     </div>
@@ -35,9 +39,10 @@ function _CheckPoint({ text }: { text: string }) {
 }
 
 function _CheckPointsList() {
+  const checkPoints = getCheckPoints();
   return (
     <div className="flex flex-col gap-2">
-      {CHECK_POINTS.map((text) => (
+      {checkPoints.map((text) => (
         <_CheckPoint key={text} text={text} />
       ))}
     </div>
@@ -46,8 +51,11 @@ function _CheckPointsList() {
 
 function _InterviewCTAButton({ billId }: { billId: string }) {
   return (
-    <Link href={`/bills/${billId}/interview`}>
-      <Button className="w-[224px] bg-mirai-gradient text-black border border-black rounded-3xl h-[42px] px-5 font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
+    <Link
+      href={routes.interviewLP(billId) as Route}
+      className="block w-full max-w-[224px]"
+    >
+      <Button className="w-full bg-mirai-gradient text-black border border-black rounded-3xl h-[42px] px-5 font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-1">
         <span>AIインタビューを受ける</span>
         <ArrowRight className="size-4" />
       </Button>
@@ -57,7 +65,7 @@ function _InterviewCTAButton({ billId }: { billId: string }) {
 
 function _InterviewIllustration() {
   return (
-    <div className="absolute right-6 bottom-[-32px] w-[113.6px] h-[177px] pointer-events-none">
+    <div className="absolute right-[-16px] sm:right-6 bottom-[-32px] w-[113.6px] h-[177px] pointer-events-none">
       <Image
         src="/illustrations/interview-illustration.png"
         alt=""
@@ -73,7 +81,7 @@ export function InterviewLandingSection({
   billId,
 }: InterviewLandingSectionProps) {
   return (
-    <div className="relative overflow-hidden rounded-xl bg-white p-6 mx-auto">
+    <div className="relative w-full overflow-hidden rounded-xl bg-white p-6">
       <_InterviewIllustration />
 
       <div className="relative z-1 flex flex-col gap-2">
@@ -81,15 +89,18 @@ export function InterviewLandingSection({
 
         <div className="space-y-2">
           <h2 className="text-lg font-bold leading-[1.67]">
-            本法案についてのご意見を
+            この議案についてのご意見を
             <br className="pc:hidden" />
             お聞かせください
           </h2>
 
-          <_CheckPointsList />
+          {/* 右下のイラストと重ならないよう、下部コンテンツに右余白を確保する */}
+          <div className="flex flex-col gap-2 pr-[100px] sm:pr-[140px]">
+            <_CheckPointsList />
 
-          <div className="pt-2">
-            <_InterviewCTAButton billId={billId} />
+            <div className="pt-2">
+              <_InterviewCTAButton billId={billId} />
+            </div>
           </div>
         </div>
       </div>

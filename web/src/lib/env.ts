@@ -7,19 +7,50 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   throw new Error("環境変数 NEXT_PUBLIC_SUPABASE_URL が設定されていません");
 }
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
   throw new Error(
-    "環境変数 NEXT_PUBLIC_SUPABASE_ANON_KEY が設定されていません"
+    "環境変数 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY が設定されていません"
   );
 }
 
-const chatDailyCostLimitUsdRaw = process.env.CHAT_DAILY_COST_LIMIT_USD || "0.5";
+const chatDailyUserCostLimitUsdRaw =
+  process.env.CHAT_DAILY_USER_COST_LIMIT_USD ||
+  process.env.CHAT_DAILY_COST_LIMIT_USD ||
+  "0.5";
 
-const chatDailyCostLimitUsd = Number(chatDailyCostLimitUsdRaw);
+const chatDailyUserCostLimitUsd = Number(chatDailyUserCostLimitUsdRaw);
 
-if (Number.isNaN(chatDailyCostLimitUsd) || chatDailyCostLimitUsd <= 0) {
+if (Number.isNaN(chatDailyUserCostLimitUsd) || chatDailyUserCostLimitUsd <= 0) {
   throw new Error(
-    "環境変数 CHAT_DAILY_COST_LIMIT_USD は正の数値で指定してください"
+    "環境変数 CHAT_DAILY_USER_COST_LIMIT_USD は正の数値で指定してください"
+  );
+}
+
+const chatDailyTotalCostLimitUsdRaw =
+  process.env.CHAT_DAILY_TOTAL_COST_LIMIT_USD || "50";
+
+const chatDailyTotalCostLimitUsd = Number(chatDailyTotalCostLimitUsdRaw);
+
+if (
+  Number.isNaN(chatDailyTotalCostLimitUsd) ||
+  chatDailyTotalCostLimitUsd <= 0
+) {
+  throw new Error(
+    "環境変数 CHAT_DAILY_TOTAL_COST_LIMIT_USD は正の数値で指定してください"
+  );
+}
+
+const chatMonthlyTotalCostLimitUsdRaw =
+  process.env.CHAT_MONTHLY_TOTAL_COST_LIMIT_USD || "1000";
+
+const chatMonthlyTotalCostLimitUsd = Number(chatMonthlyTotalCostLimitUsdRaw);
+
+if (
+  Number.isNaN(chatMonthlyTotalCostLimitUsd) ||
+  chatMonthlyTotalCostLimitUsd <= 0
+) {
+  throw new Error(
+    "環境変数 CHAT_MONTHLY_TOTAL_COST_LIMIT_USD は正の数値で指定してください"
   );
 }
 
@@ -27,7 +58,7 @@ export const env = {
   webUrl: process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000",
   adminUrl: process.env.ADMIN_URL || "http://localhost:3001",
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   revalidateSecret: process.env.REVALIDATE_SECRET,
   analytics: {
     gaTrackingId: process.env.NEXT_PUBLIC_GA_TRACKING_ID,
@@ -39,7 +70,9 @@ export const env = {
     promptLabel: process.env.LANGFUSE_PROMPT_LABEL || "production",
   },
   chat: {
-    dailyCostLimitUsd: chatDailyCostLimitUsd,
+    dailyUserCostLimitUsd: chatDailyUserCostLimitUsd,
+    dailyTotalCostLimitUsd: chatDailyTotalCostLimitUsd,
+    monthlyTotalCostLimitUsd: chatMonthlyTotalCostLimitUsd,
   },
 } as const;
 

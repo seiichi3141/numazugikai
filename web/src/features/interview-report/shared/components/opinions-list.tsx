@@ -1,22 +1,25 @@
+import type { Route } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
+import { getInterviewMessageLink } from "@/features/interview-config/shared/utils/interview-links";
+import type { ParsedOpinion as Opinion } from "../utils/format-utils";
 
-export interface Opinion {
-  title: string;
-  content: string;
-}
+export type { Opinion };
 
 interface OpinionsListProps {
   opinions: Opinion[];
   title?: string;
-  showBackground?: boolean;
   footer?: ReactNode;
+  reportId?: string;
+  chatLogFrom?: "complete" | "opinions";
 }
 
 export function OpinionsList({
   opinions,
   title = "💬意見の要約",
-  showBackground = true,
   footer,
+  reportId,
+  chatLogFrom,
 }: OpinionsListProps) {
   if (opinions.length === 0) {
     return null;
@@ -33,7 +36,7 @@ export function OpinionsList({
           >
             <div className="flex flex-col gap-1">
               <div className="inline-flex">
-                <span className="bg-[#2AA693] text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                <span className="bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded">
                   意見{index + 1}
                 </span>
               </div>
@@ -41,13 +44,20 @@ export function OpinionsList({
                 {opinion.title}
               </p>
             </div>
-            {showBackground ? (
-              <div className="flex flex-col gap-1">
-                <p className="text-sm font-bold text-gray-500">背景</p>
-                <p className="text-sm text-gray-800">{opinion.content}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-600">{opinion.content}</p>
+            <p className="text-sm text-gray-600">{opinion.content}</p>
+            {reportId && opinion.source_message_id && (
+              <Link
+                href={
+                  getInterviewMessageLink(
+                    reportId,
+                    opinion.source_message_id,
+                    chatLogFrom
+                  ) as Route
+                }
+                className="text-[15px] leading-6 text-mirai-text-muted underline"
+              >
+                元の回答を見る
+              </Link>
             )}
           </div>
         ))}

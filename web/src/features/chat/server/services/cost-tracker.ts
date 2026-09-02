@@ -1,19 +1,17 @@
 import "server-only";
 
-import type { Database } from "@mirai-gikai/supabase";
-import { createAdminClient } from "@mirai-gikai/supabase";
 import type { LanguageModelUsage } from "ai";
 
-import {
-  calculateUsageCostUsd,
-  roundCost,
-  type SanitizedUsage,
-  sanitizeUsage,
-} from "@/lib/ai/calculate-ai-cost";
+import { sanitizeUsage } from "@/lib/ai/calculate-ai-cost";
+import { parseCost, resolveCostUsd } from "../../shared/utils/cost-utils";
+import { getJstDayRange } from "../../shared/utils/jst-day-range";
 
-type ChatUsageInsert =
-  Database["public"]["Tables"]["chat_usage_events"]["Insert"];
-type ChatUsageRow = Database["public"]["Tables"]["chat_usage_events"]["Row"];
+import {
+  type ChatUsageInsert,
+  findChatUsageEvents,
+  insertChatUsageEvent,
+  sumChatUsageCost,
+} from "../repositories/chat-usage-repository";
 
 type RecordChatUsageParams = {
   userId: string;
@@ -36,8 +34,6 @@ export async function recordChatUsage({
   metadata,
   costUsd,
 }: RecordChatUsageParams) {
-  const supabase = createAdminClient();
-
   const sanitizedUsage = sanitizeUsage(usage ?? undefined);
   const costUsdNumber = resolveCostUsd(model, sanitizedUsage, costUsd);
   const payload: ChatUsageInsert = {
@@ -53,13 +49,7 @@ export async function recordChatUsage({
     metadata: metadata ?? null,
   };
 
-  const { error } = await supabase.from("chat_usage_events").insert(payload);
-
-  if (error) {
-    throw new Error(`Failed to record chat usage: ${error.message}`, {
-      cause: error,
-    });
-  }
+  await insertChatUsageEvent(payload);
 }
 
 export async function getUsageCostUsd(
@@ -67,45 +57,29 @@ export async function getUsageCostUsd(
   fromIso: string,
   toIso: string
 ): Promise<number> {
-  const supabase = createAdminClient();
-
-  const { data, error } = await supabase
-    .from("chat_usage_events")
-    .select("cost_usd, occurred_at")
-    .eq("user_id", userId)
-    .gte("occurred_at", fromIso)
-    .lt("occurred_at", toIso);
-
-  if (error) {
-    throw new Error(`Failed to fetch chat usage: ${error.message}`, {
-      cause: error,
-    });
-  }
-
-  return (data ?? []).reduce((acc, row) => acc + parseCost(row), 0);
+  const rows = await findChatUsageEvents(userId, fromIso, toIso);
+  return rows.reduce((acc, row) => acc + parseCost(row), 0);
 }
 
-function parseCost(row: Pick<ChatUsageRow, "cost_usd">): number {
-  const value = Number(row.cost_usd);
-  return Number.isFinite(value) ? value : 0;
+export async function getTotalUsageCostUsd(
+  fromIso: string,
+  toIso: string
+): Promise<number> {
+  return sumChatUsageCost(fromIso, toIso);
 }
 
-function resolveCostUsd(
-  model: string,
-  usage: SanitizedUsage,
-  costOverride?: number | null
-): number {
-  if (typeof costOverride === "number" && Number.isFinite(costOverride)) {
-    return roundCost(costOverride);
-  }
-
-  if (usage.inputTokens > 0 || usage.outputTokens > 0) {
-    try {
-      return calculateUsageCostUsd(model, usage);
-    } catch (error) {
-      console.error("Failed to calculate usage cost:", error);
-    }
-  }
-
-  return 0;
+/**
+ * ユーザーが日次コストリミット内かどうかを判定
+ */
+export async function isWithinDailyCostLimit(
+  userId: string,
+  dailyCostLimitUsd: number
+): Promise<boolean> {
+  const jstDayRange = getJstDayRange();
+  const usedCost = await getUsageCostUsd(
+    userId,
+    jstDayRange.from,
+    jstDayRange.to
+  );
+  return usedCost < dailyCostLimitUsd;
 }

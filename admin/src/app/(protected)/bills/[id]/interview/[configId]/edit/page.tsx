@@ -1,12 +1,14 @@
 import { ArrowLeft } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getBillById } from "@/features/bills-edit/loaders/get-bill-by-id";
-import { InterviewConfigForm } from "@/features/interview-config/components/interview-config-form";
-import { InterviewQuestionList } from "@/features/interview-config/components/interview-question-list";
-import { getInterviewConfigById } from "@/features/interview-config/loaders/get-interview-config";
-import { getInterviewQuestions } from "@/features/interview-config/loaders/get-interview-questions";
+import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
+import { InterviewConfigEditClient } from "@/features/interview-config/client/components/interview-config-edit-client";
+import { getInterviewConfigById } from "@/features/interview-config/server/loaders/get-interview-config";
+import { getInterviewQuestions } from "@/features/interview-config/server/loaders/get-interview-questions";
+import { getCompletedReportsForBill } from "@/features/interview-simulation/server/loaders/get-completed-reports-for-bill";
+import { routes } from "@/lib/routes";
 
 interface InterviewEditPageProps {
   params: Promise<{
@@ -28,13 +30,16 @@ export default async function InterviewEditPage({
     notFound();
   }
 
-  const questions = await getInterviewQuestions(config.id);
+  const [questions, completedReportsResult] = await Promise.all([
+    getInterviewQuestions(config.id),
+    getCompletedReportsForBill(bill.id),
+  ]);
 
   return (
     <div>
       <div className="mb-6">
         <Link
-          href={`/bills/${id}/interview`}
+          href={routes.billInterview(id) as Route}
           className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -47,17 +52,19 @@ export default async function InterviewEditPage({
           インタビュー設定編集
         </h1>
         <p className="text-gray-600 mt-1">
-          議案「{bill.name}」のインタビュー設定「{config.name}」を編集します
+          議案「{bill.name}」のインタビュー設定「{config.name}
+          」を編集します
         </p>
       </div>
 
-      <div className="space-y-6">
-        <InterviewConfigForm billId={bill.id} config={config} />
-        <InterviewQuestionList
-          interviewConfigId={config.id}
-          questions={questions}
-        />
-      </div>
+      <InterviewConfigEditClient
+        billId={bill.id}
+        config={config}
+        questions={questions}
+        completedReports={completedReportsResult.reports}
+        completedReportsTruncated={completedReportsResult.isTruncated}
+        completedReportsLimit={completedReportsResult.limit}
+      />
     </div>
   );
 }

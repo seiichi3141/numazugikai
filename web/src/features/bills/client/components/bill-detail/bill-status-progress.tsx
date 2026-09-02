@@ -1,8 +1,13 @@
-import type { BillStatusEnum, HouseEnum } from "../../../shared/types";
+import type { BillStatusEnum } from "../../../shared/types";
+import {
+  calculateProgressWidth,
+  getCurrentStep,
+  getStatusMessage,
+  getStepState,
+} from "../../../shared/utils/bill-progress";
 
 interface BillStatusProgressProps {
   status: BillStatusEnum;
-  originatingHouse: HouseEnum;
   statusNote?: string | null;
 }
 
@@ -18,26 +23,13 @@ interface ProgressStepProps {
   isPreparing: boolean;
 }
 
-// 基本ステップ定義
-const BASE_STEPS = [
-  { label: "法案\n提出" },
-  { label: "衆議院\n審議" },
-  { label: "参議院\n審議" },
-  { label: "法案\n成立" },
+// 市議会は一院制。委員会審査を経て本会議で議決する流れを表す
+const STEP_LABELS = [
+  "議案\n提出",
+  "委員会\n付託",
+  "委員会\n審査",
+  "本会議\n議決",
 ] as const;
-
-// ステップ番号マッピング
-const STATUS_TO_STEP: Record<BillStatusEnum, number> = {
-  preparing: 0,
-  introduced: 1,
-  in_originating_house: 2,
-  in_receiving_house: 3,
-  enacted: 4,
-  rejected: 4,
-} as const;
-
-// プログレス比率の計算
-const PROGRESS_RATIOS = [0, 1 / 8, 3 / 8, 5 / 8, 1] as const;
 
 // ステータスバッジコンポーネント
 function StatusBadge({ message }: StatusBadgeProps) {
@@ -54,7 +46,7 @@ function StatusBadge({ message }: StatusBadgeProps) {
         style={{
           borderLeft: "7.5px solid transparent",
           borderRight: "7.5px solid transparent",
-          borderTop: "7.5px solid #a9e89d",
+          borderTop: "7.5px solid var(--color-mirai-progress-fill)",
         }}
       />
     </div>
@@ -101,35 +93,13 @@ function ProgressStep({
 
 export function BillStatusProgress({
   status,
-  originatingHouse,
   statusNote,
 }: BillStatusProgressProps) {
   const isPreparing = status === "preparing";
-  const currentStep = STATUS_TO_STEP[status] ?? 0;
+  const currentStep = getCurrentStep(status);
+  const progressWidth = calculateProgressWidth(currentStep);
 
-  const getStatusMessage = (): string => {
-    if (isPreparing) return "法案提出前";
-    return statusNote || "";
-  };
-
-  const getStepState = (stepNumber: number): "active" | "inactive" => {
-    if (isPreparing) return "inactive";
-    return stepNumber <= currentStep ? "active" : "inactive";
-  };
-
-  // 発議院に応じてステップ順序を調整
-  const getOrderedSteps = () => {
-    const steps = [...BASE_STEPS];
-    if (originatingHouse === "HC") {
-      [steps[1], steps[2]] = [steps[2], steps[1]];
-    }
-    return steps;
-  };
-
-  const orderedSteps = getOrderedSteps();
-  const progressWidth = PROGRESS_RATIOS[currentStep] * 100;
-
-  const statusMessage = getStatusMessage();
+  const statusMessage = getStatusMessage(status, statusNote);
 
   return (
     <>
@@ -154,14 +124,16 @@ export function BillStatusProgress({
 
             {/* ステップドット */}
             <div className="relative flex justify-around">
-              {orderedSteps.map((step, index) => {
+              {STEP_LABELS.map((label, index) => {
                 const stepNumber = index + 1;
-                const isActive = getStepState(stepNumber) === "active";
+                const isActive =
+                  getStepState(stepNumber, currentStep, isPreparing) ===
+                  "active";
 
                 return (
                   <ProgressStep
                     key={stepNumber}
-                    label={step.label}
+                    label={label}
                     stepNumber={stepNumber}
                     currentStep={currentStep}
                     isActive={isActive}

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getBills } from "@/features/bills/server/loaders/get-bills";
+import { routes } from "@/lib/routes";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.VERCEL_URL
@@ -9,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const bills = await getBills();
 
   const billUrls = bills.map((bill) => ({
-    url: `${baseUrl}/bills/${bill.id}`,
+    url: `${baseUrl}${routes.billDetail(bill.id)}`,
     lastModified: new Date(bill.updated_at),
     changeFrequency: "weekly" as const,
     priority: 0.8,
@@ -21,6 +22,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily" as const,
       priority: 1,
+    },
+    {
+      url: `${baseUrl}${routes.billsList()}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.9,
     },
     ...billUrls,
   ];

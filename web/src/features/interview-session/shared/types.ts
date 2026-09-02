@@ -18,6 +18,11 @@ export type InterviewReport =
 export type InterviewReportInsert =
   Database["public"]["Tables"]["interview_report"]["Insert"];
 
+export type InterviewOpinion =
+  Database["public"]["Tables"]["interview_opinion"]["Row"];
+export type InterviewOpinionInsert =
+  Database["public"]["Tables"]["interview_opinion"]["Insert"];
+
 export type InterviewQuestion =
   Database["public"]["Tables"]["interview_questions"]["Row"];
 
@@ -28,10 +33,9 @@ export interface InterviewChatRequestParams {
   currentStage: "chat" | "summary" | "summary_complete";
   isRetry?: boolean;
   nextQuestionId?: string;
+  /**
+   * プレビュー用トークン。プレビュー画面からのリクエストのみが送る。
+   * サーバー側で検証が通った場合に限り、非公開の議案・設定を対象にできる。
+   */
+  previewToken?: string;
 }
-
-/** ファシリテーターAPI用のシンプルなメッセージ型 */
-export type SimpleMessage = {
-  role: "assistant" | "user";
-  content: string;
-};

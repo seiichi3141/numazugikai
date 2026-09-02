@@ -1,19 +1,27 @@
 import "server-only";
 
-import { createAdminClient } from "@mirai-gikai/supabase";
 import {
   getAuthenticatedUser,
   isSessionOwner,
 } from "@/features/interview-session/server/utils/verify-session-ownership";
 import type { InterviewMessage } from "@/features/interview-session/shared/types";
 import type { InterviewReport } from "../../shared/types";
+import {
+  canViewReportWithMessages,
+  selectPrimaryBillContent,
+} from "../../shared/utils/public-report-display";
+import {
+  countPublicReportsByBillId,
+  findBillWithContentById,
+  findMessagesBySessionId,
+  findReportWithSessionById,
+} from "../repositories/interview-report-repository";
 
 export type ReportWithMessages = {
   report: InterviewReport & {
     bill_id: string;
     session_started_at: string;
     session_completed_at: string | null;
-    is_public_by_user: boolean;
   };
   messages: InterviewMessage[];
   bill: {
@@ -36,19 +44,11 @@ export async function getReportWithMessages(
   const authResult = await getAuthenticatedUser();
   const userId = authResult.authenticated ? authResult.userId : null;
 
-  const supabase = createAdminClient();
-
-  // Fetch report with session and config info
-  const { data: report, error: reportError } = await supabase
-    .from("interview_report")
-    .select(
-      "*, interview_sessions(user_id, started_at, completed_at, is_public_by_user, interview_configs(bill_id))"
-    )
-    .eq("id", reportId)
-    .single();
-
-  if (reportError || !report) {
-    console.error("Failed to fetch interview report:", reportError);
+  let report: Awaited<ReturnType<typeof findReportWithSessionById>>;
+  try {
+    report = await findReportWithSessionById(reportId);
+  } catch (error) {
+    console.error("Failed to fetch interview report:", error);
     return null;
   }
 
@@ -56,7 +56,6 @@ export async function getReportWithMessages(
     user_id: string;
     started_at: string;
     completed_at: string | null;
-    is_public_by_user: boolean;
     interview_configs: { bill_id: string } | null;
   } | null;
 
@@ -67,34 +66,35 @@ export async function getReportWithMessages(
 
   // Authorization check: public OR owner
   const isOwner = userId ? isSessionOwner(session.user_id, userId) : false;
-  const isPublic = session.is_public_by_user;
+  const billId = session.interview_configs.bill_id;
 
-  if (!isPublic && !isOwner) {
-    console.error("Unauthorized access to interview report chat log");
-    return null;
+  if (!isOwner) {
+    const isPublic = canViewReportWithMessages({
+      isOwner,
+      isPublicByAdmin: report.is_public_by_admin,
+      isPublicByUser: report.is_public_by_user,
+    });
+
+    if (!isPublic) {
+      return null;
+    }
   }
 
   // Fetch messages
-  const { data: messages, error: messagesError } = await supabase
-    .from("interview_messages")
-    .select("*")
-    .eq("interview_session_id", report.interview_session_id)
-    .order("created_at", { ascending: true });
-
-  if (messagesError) {
-    console.error("Failed to fetch interview messages:", messagesError);
+  let messages: InterviewMessage[];
+  try {
+    messages = await findMessagesBySessionId(report.interview_session_id);
+  } catch (error) {
+    console.error("Failed to fetch interview messages:", error);
     return null;
   }
 
   // Fetch bill info
-  const { data: bill, error: billError } = await supabase
-    .from("bills")
-    .select("id, name, thumbnail_url, bill_contents(title)")
-    .eq("id", session.interview_configs.bill_id)
-    .single();
-
-  if (billError || !bill) {
-    console.error("Failed to fetch bill:", billError);
+  let bill: Awaited<ReturnType<typeof findBillWithContentById>>;
+  try {
+    bill = await findBillWithContentById(billId);
+  } catch (error) {
+    console.error("Failed to fetch bill:", error);
     return null;
   }
 
@@ -103,21 +103,16 @@ export async function getReportWithMessages(
   return {
     report: {
       ...reportData,
-      bill_id: session.interview_configs.bill_id,
+      bill_id: billId,
       session_started_at: session.started_at,
       session_completed_at: session.completed_at,
-      is_public_by_user: session.is_public_by_user,
     },
     messages: messages || [],
     bill: {
       id: bill.id,
       name: bill.name,
       thumbnail_url: bill.thumbnail_url,
-      bill_content: bill.bill_contents
-        ? Array.isArray(bill.bill_contents)
-          ? bill.bill_contents[0]
-          : bill.bill_contents
-        : null,
+      bill_content: selectPrimaryBillContent(bill.bill_contents),
     },
   };
 }

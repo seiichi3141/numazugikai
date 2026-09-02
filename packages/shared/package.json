@@ -1,0 +1,146 @@
+{
+  "name": "@mirai-gikai/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "exports": {
+    "./ai/models": {
+      "types": "./src/ai/models.ts",
+      "default": "./src/ai/models.ts"
+    },
+    "./stream/inject-json-fields": {
+      "types": "./src/stream/inject-json-fields.ts",
+      "default": "./src/stream/inject-json-fields.ts"
+    },
+    "./prompt-safety/untrusted-content": {
+      "types": "./src/prompt-safety/untrusted-content.ts",
+      "default": "./src/prompt-safety/untrusted-content.ts"
+    },
+    "./moderation/build-prompt": {
+      "types": "./src/moderation/build-moderation-prompt.ts",
+      "default": "./src/moderation/build-moderation-prompt.ts"
+    },
+    "./moderation/schemas": {
+      "types": "./src/moderation/schemas.ts",
+      "default": "./src/moderation/schemas.ts"
+    },
+    "./moderation/status": {
+      "types": "./src/moderation/moderation.ts",
+      "default": "./src/moderation/moderation.ts"
+    },
+    "./content-richness/build-prompt": {
+      "types": "./src/content-richness/build-content-richness-prompt.ts",
+      "default": "./src/content-richness/build-content-richness-prompt.ts"
+    },
+    "./content-richness/schemas": {
+      "types": "./src/content-richness/schemas.ts",
+      "default": "./src/content-richness/schemas.ts"
+    },
+    "./content-richness/instructions": {
+      "types": "./src/content-richness/content-richness-instructions.ts",
+      "default": "./src/content-richness/content-richness-instructions.ts"
+    },
+    "./report-publication/auto-publish": {
+      "types": "./src/report-publication/auto-publish.ts",
+      "default": "./src/report-publication/auto-publish.ts"
+    },
+    "./report-publication/count-public-reports": {
+      "types": "./src/report-publication/count-public-reports.ts",
+      "default": "./src/report-publication/count-public-reports.ts"
+    },
+    "./interview-prompts/types": {
+      "types": "./src/interview-prompts/types.ts",
+      "default": "./src/interview-prompts/types.ts"
+    },
+    "./interview-prompts/sections": {
+      "types": "./src/interview-prompts/sections.ts",
+      "default": "./src/interview-prompts/sections.ts"
+    },
+    "./interview-prompts/default-sections": {
+      "types": "./src/interview-prompts/default-sections.ts",
+      "default": "./src/interview-prompts/default-sections.ts"
+    },
+    "./interview-prompts/stage-transition-guidance": {
+      "types": "./src/interview-prompts/stage-transition-guidance.ts",
+      "default": "./src/interview-prompts/stage-transition-guidance.ts"
+    },
+    "./interview-prompts/loop-mode": {
+      "types": "./src/interview-prompts/loop-mode.ts",
+      "default": "./src/interview-prompts/loop-mode.ts"
+    },
+    "./interview-prompts/bulk-mode": {
+      "types": "./src/interview-prompts/bulk-mode.ts",
+      "default": "./src/interview-prompts/bulk-mode.ts"
+    },
+    "./interview-prompts/targeted-mode": {
+      "types": "./src/interview-prompts/targeted-mode.ts",
+      "default": "./src/interview-prompts/targeted-mode.ts"
+    },
+    "./interview-prompts/summary": {
+      "types": "./src/interview-prompts/summary.ts",
+      "default": "./src/interview-prompts/summary.ts"
+    },
+    "./interview-report/schema": {
+      "types": "./src/interview-report/schema.ts",
+      "default": "./src/interview-report/schema.ts"
+    },
+    "./interview-report/parse-assistant-message": {
+      "types": "./src/interview-report/parse-assistant-message.ts",
+      "default": "./src/interview-report/parse-assistant-message.ts"
+    },
+    "./interview-report/opinion-tags": {
+      "types": "./src/interview-report/opinion-tags.ts",
+      "default": "./src/interview-report/opinion-tags.ts"
+    },
+    "./interview-report/opinion-tags-schema": {
+      "types": "./src/interview-report/opinion-tags-schema.ts",
+      "default": "./src/interview-report/opinion-tags-schema.ts"
+    },
+    "./interview-report/build-opinion-rows": {
+      "types": "./src/interview-report/build-opinion-rows.ts",
+      "default": "./src/interview-report/build-opinion-rows.ts"
+    },
+    "./interview-report/enrich-opinions": {
+      "types": "./src/interview-report/enrich-opinions.ts",
+      "default": "./src/interview-report/enrich-opinions.ts"
+    },
+    "./interview-report/sync-opinions": {
+      "types": "./src/interview-report/sync-opinions.ts",
+      "default": "./src/interview-report/sync-opinions.ts"
+    },
+    "./ai/model-pricing": {
+      "types": "./src/ai/model-pricing.ts",
+      "default": "./src/ai/model-pricing.ts"
+    },
+    "./ai/resolve-model": {
+      "types": "./src/ai/resolve-model.ts",
+      "default": "./src/ai/resolve-model.ts"
+    },
+    "./pagination/items": {
+      "types": "./src/pagination/pagination-items.ts",
+      "default": "./src/pagination/pagination-items.ts"
+    },
+    "./pagination/page-math": {
+      "types": "./src/pagination/page-math.ts",
+      "default": "./src/pagination/page-math.ts"
+    }
+  },
+  "dependencies": {
+    "@mirai-gikai/supabase": "workspace:*",
+    "server-only": "^0.0.1",
+    "@ai-sdk/openai": "^3.0.1",
+    "ai": "^6.0.3"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4",
+    "zod": "^4.1.12"
+  }
+}
