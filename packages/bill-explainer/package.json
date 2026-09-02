@@ -20,10 +20,15 @@
     "./constants": {
       "types": "./src/shared/constants.ts",
       "default": "./src/shared/constants.ts"
+    },
+    "./assign-thumbnail-keys": {
+      "types": "./src/assign-thumbnail-keys.ts",
+      "default": "./src/assign-thumbnail-keys.ts"
     }
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.1",
+    "@mirai-gikai/shared": "workspace:*",
     "@mirai-gikai/supabase": "workspace:*",
     "ai": "^6.0.3"
   },

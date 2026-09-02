@@ -1,3 +1,5 @@
+export { mapWithConcurrency } from "@mirai-gikai/shared/concurrency/map-with-concurrency";
+
 /** 配列を size ごとのチャンクに分割する。size<=0 は不正なので例外にする（無限ループ防止）。 */
 export function chunk<T>(array: T[], size: number): T[][] {
   if (size <= 0) {
@@ -10,29 +12,6 @@ export function chunk<T>(array: T[], size: number): T[][] {
   return chunks;
 }
 
-/** items を最大 maxConcurrency 並列で処理し、入力順の結果配列を返す。 */
-export async function mapWithConcurrency<T, R>(
-  items: T[],
-  maxConcurrency: number,
-  fn: (item: T, index: number) => Promise<R>
-): Promise<R[]> {
-  if (items.length === 0) return [];
-  const results: R[] = new Array(items.length);
-  let next = 0;
-
-  async function worker() {
-    while (next < items.length) {
-      const index = next++;
-      results[index] = await fn(items[index], index);
-    }
-  }
-
-  // maxConcurrency<=0 でも最低1並列は確保する（worker 0個で永久に未完了になるのを防ぐ）。
-  const workerCount = Math.min(Math.max(1, maxConcurrency), items.length);
-  const workers = Array.from({ length: workerCount }, () => worker());
-  await Promise.all(workers);
-  return results;
-}
 
 function isRetryable(error: unknown): boolean {
   const status =

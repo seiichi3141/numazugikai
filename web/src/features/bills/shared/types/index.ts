@@ -65,6 +65,7 @@ export type BillListItem = Pick<
   | "status"
   | "submitted_date"
   | "thumbnail_url"
+  | "thumbnail_key"
   | "is_review_completed"
 > & {
   bill_content?: { title: string | null; summary: string | null };

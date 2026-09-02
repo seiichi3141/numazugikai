@@ -183,6 +183,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^3.0.1
         version: 3.0.1(zod@4.4.3)
+      '@mirai-gikai/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@mirai-gikai/supabase':
         specifier: workspace:*
         version: link:../supabase
@@ -454,6 +457,9 @@ importers:
         specifier: ^4.1.12
         version: 4.4.3
     devDependencies:
+      '@mirai-gikai/seed':
+        specifier: workspace:*
+        version: link:../packages/seed
       '@next/third-parties':
         specifier: ^15.5.5
         version: 15.5.5(next@15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.1.2(react@19.1.2))(react@19.1.2))(react@19.1.2)

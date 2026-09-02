@@ -3,17 +3,12 @@ import { ComponentShowcase } from "../../../_components/component-showcase";
 import { PreviewSection } from "../../../_components/preview-section";
 import { allBillStatuses, createMockBill } from "../../../_lib/mock-data";
 
-const SAMPLE_THUMBNAIL = "/img/sample-bill-thumbnail.webp";
-
 export default function BillCardPreview() {
-  const defaultBill = createMockBill({
-    thumbnail_url: SAMPLE_THUMBNAIL,
-  });
+  const defaultBill = createMockBill();
 
   const featuredBill = createMockBill({
     id: "mock-featured",
     is_featured: true,
-    thumbnail_url: SAMPLE_THUMBNAIL,
     bill_content: {
       id: "mock-content-featured",
       bill_id: "mock-featured",
@@ -34,7 +29,6 @@ export default function BillCardPreview() {
 
   const longTitleBill = createMockBill({
     id: "mock-long-title",
-    thumbnail_url: SAMPLE_THUMBNAIL,
     bill_content: {
       id: "mock-content-long-title",
       bill_id: "mock-long-title",
@@ -51,7 +45,6 @@ export default function BillCardPreview() {
 
   const longDescriptionBill = createMockBill({
     id: "mock-long-desc",
-    thumbnail_url: SAMPLE_THUMBNAIL,
     bill_content: {
       id: "mock-content-long-desc",
       bill_id: "mock-long-desc",
@@ -110,7 +103,6 @@ export default function BillCardPreview() {
                 bill={createMockBill({
                   id: `mock-${status}`,
                   status,
-                  thumbnail_url: SAMPLE_THUMBNAIL,
                 })}
               />
             </PreviewSection>

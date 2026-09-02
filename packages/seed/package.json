@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./main/data": "./main/data.ts"
+  },
   "scripts": {
     "seed": "tsx main/run.ts",
     "typecheck": "tsc --noEmit"

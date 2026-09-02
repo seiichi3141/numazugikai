@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillListItem } from "../../../shared/types";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
+import { BillThumbnail } from "../bill-thumbnail";
 import { BillNumberLabel } from "./bill-number-label";
 import { BillPill } from "./bill-pill";
 import { BillStatusBadge } from "./bill-status-badge";
@@ -70,17 +70,11 @@ export function BillSearchCard({ bill }: { bill: BillListItem }) {
             )}
           </div>
 
-          {bill.thumbnail_url && (
-            <div className="relative h-16 w-24 shrink-0 self-start overflow-hidden rounded-lg sm:h-[90px] sm:w-[120px]">
-              <Image
-                src={bill.thumbnail_url}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(min-width: 640px) 120px, 96px"
-              />
-            </div>
-          )}
+          <BillThumbnail
+            bill={bill}
+            className="h-16 w-24 shrink-0 self-start rounded-lg sm:h-[90px] sm:w-[120px]"
+            sizes="(min-width: 640px) 120px, 96px"
+          />
         </div>
 
         {hasBadges && (

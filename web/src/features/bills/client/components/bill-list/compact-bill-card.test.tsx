@@ -6,6 +6,7 @@ import {
   createMockBill,
   createMockBillContent,
 } from "@/app/dev/_lib/mock-data";
+import { thumbnailSrc } from "@/test-utils/thumbnail-src";
 import { CompactBillCard } from "./compact-bill-card";
 
 /** 日付の行だけを狙う。行全体に一致させて、ステータスバッジの文言と混ざらないようにする。 */
@@ -115,18 +116,22 @@ describe("CompactBillCard", () => {
     expect(screen.queryByText(DATE_LINE)).not.toBeInTheDocument();
   });
 
-  // staging で多くの議案がサムネイル未設定だった。無い側も崩れずに出る必要がある。
-  it("サムネイルが未設定なら画像を出さない", () => {
-    render(
+  // 沼津版は議案ごとの写真を用意しないので、ほぼ全件がこの経路で表示される。
+  it("サムネイルが未設定なら分野タグのイラストを装飾として出す", () => {
+    const { container } = render(
       <CompactBillCard
         bill={createMockBill({
           name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: null,
+          tags: [{ id: "tag-safety", label: "防災・安全" }],
         })}
       />
     );
 
-    // レビュー完了バッジも img なので、サムネイルの代替テキストで狙う。
+    expect(thumbnailSrc(container)).toContain(
+      "/img/bill-thumbnails/disaster.webp"
+    );
+    // 見出しが正式名称を読むので、画像には名前を付けない。
     expect(
       screen.queryByRole("img", {
         name: "沼津市国民健康保険税条例の一部を改正する条例",
@@ -134,20 +139,22 @@ describe("CompactBillCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("サムネイルがあれば正式名称を代替テキストにして出す", () => {
-    render(
+  it("アップロード済みのサムネイルはタグより優先し、同じく装飾として出す", () => {
+    const { container } = render(
       <CompactBillCard
         bill={createMockBill({
           name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: "https://example.com/thumb.png",
+          tags: [{ id: "tag-safety", label: "防災・安全" }],
         })}
       />
     );
 
+    expect(thumbnailSrc(container)).toContain("https://example.com/thumb.png");
     expect(
-      screen.getByRole("img", {
+      screen.queryByRole("img", {
         name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 });

@@ -6,6 +6,7 @@ import {
   createMockBill,
   createMockBillContent,
 } from "@/app/dev/_lib/mock-data";
+import { thumbnailSrc } from "@/test-utils/thumbnail-src";
 import { BillSearchCard } from "./bill-search-card";
 
 describe("BillSearchCard", () => {
@@ -71,7 +72,7 @@ describe("BillSearchCard", () => {
     サムネイルはリンクの中の飾りなので alt を空にしている。読み上げは見出しの
     タイトルが担う。同じ内容を二度読ませない。
   */
-  it("サムネイルは読み上げ対象にしない", () => {
+  it("アップロード済みのサムネイルも読み上げ対象にしない", () => {
     const { container } = render(
       <BillSearchCard
         bill={createMockBill({
@@ -84,13 +85,20 @@ describe("BillSearchCard", () => {
     expect(thumbnail).toBeInTheDocument();
   });
 
-  // staging で多くの議案がサムネイル未設定だった。無い側も崩れずに出る必要がある。
-  it("サムネイルが未設定なら画像を出さない", () => {
+  // 沼津版は議案ごとの写真を用意しないので、ほぼ全件がこの経路で表示される。
+  it("サムネイルが未設定なら分野タグのイラストを出す", () => {
     const { container } = render(
-      <BillSearchCard bill={createMockBill({ thumbnail_url: null })} />
+      <BillSearchCard
+        bill={createMockBill({
+          thumbnail_url: null,
+          tags: [{ id: "tag-safety", label: "防災・安全" }],
+        })}
+      />
     );
 
-    expect(container.querySelector('img[alt=""]')).not.toBeInTheDocument();
+    expect(thumbnailSrc(container)).toContain(
+      "/img/bill-thumbnails/disaster.webp"
+    );
   });
 
   it("提出日があるときだけ日付を出す", () => {

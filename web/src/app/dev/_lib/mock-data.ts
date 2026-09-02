@@ -38,6 +38,7 @@ const baseBill: BillWithContent = {
   is_featured: false,
   is_review_completed: true,
   thumbnail_url: null,
+  thumbnail_key: null,
   share_thumbnail_url: null,
   published_at: "2026-02-15",
   submitted_date: "2026-02-15",

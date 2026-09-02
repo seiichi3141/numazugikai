@@ -6,6 +6,7 @@ import {
 import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { resolveBackfillParams } from "@mirai-gikai/topic-analysis-core/backfill-params";
 import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
+import { runAssignThumbnailKeys } from "@mirai-gikai/bill-explainer/assign-thumbnail-keys";
 import { runExplain } from "@mirai-gikai/bill-explainer/explain";
 import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
 
@@ -40,6 +41,10 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=explain --session=2026-13 --limit=3        # 件数を絞って試す
  *   tsx src/main.ts --mode=explain --difficulty=normal                # やさしい版だけ
  *   tsx src/main.ts --mode=explain --force                            # 既存の解説を作り直す
+ *
+ *   サムネイルの題材の割り当て（explain の後にも自動で走る）:
+ *   tsx src/main.ts --mode=thumbnail-keys                             # 題材が未設定の議案すべて
+ *   tsx src/main.ts --mode=thumbnail-keys --session=2026-13 --force   # 指定会期を決め直す
  *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
  *   tsx src/main.ts --mode=ingest --target=bills --term=24            # 第24期の全会期
  *   tsx src/main.ts --mode=ingest --target=bills --all-terms          # 全期（平成16年〜）
@@ -55,7 +60,8 @@ type Mode =
   | "backfill"
   | "tag-backfill"
   | "ingest"
-  | "explain";
+  | "explain"
+  | "thumbnail-keys";
 
 const INGEST_TARGETS = [
   "sessions",
@@ -76,6 +82,11 @@ function parseIngestTarget(value: string | undefined): IngestMode {
   throw new Error(
     `Invalid --target=${value} (expected ${INGEST_TARGETS.join(" / ")})`
   );
+}
+
+/** `--force` / `--force=true` を真、未指定と `--force=false` を偽にする。 */
+function parseFlag(value: string | undefined): boolean {
+  return value !== undefined && value !== "false";
 }
 
 /** `--era-year=8` のような数値引数をパースする。 */
@@ -102,12 +113,29 @@ function parseStrategy(
   return fallback;
 }
 
-/** `--key=value` 形式の引数だけをパースする（Cloud Run の --args 渡しに合わせる）。 */
+/** サムネイル題材の割り当てを実行し、件数を出す。 */
+async function assignThumbnailKeys(options: {
+  sessionSlug?: string;
+  billIds?: string[];
+  force?: boolean;
+  limit?: number;
+}): Promise<void> {
+  const results = await runAssignThumbnailKeys(options);
+  const assigned = results.filter((r) => r.key !== null).length;
+  console.log(
+    `サムネイル題材の割り当て完了: 対象${results.length}件 / 決定${assigned}件 / 失敗${results.length - assigned}件`
+  );
+}
+
+/**
+ * `--key=value` 形式の引数をパースする（Cloud Run の --args 渡しに合わせる）。
+ * `--force` のように値が無いものは "true" として扱い、parseFlag で真になる。
+ */
 function parseArgs(argv: string[]): Record<string, string> {
   const out: Record<string, string> = {};
   for (const arg of argv) {
-    const match = arg.match(/^--([^=]+)=(.*)$/);
-    if (match) out[match[1]] = match[2];
+    const match = arg.match(/^--([^=]+)(?:=(.*))?$/);
+    if (match) out[match[1]] = match[2] ?? "true";
   }
   return out;
 }
@@ -126,8 +154,8 @@ async function main(): Promise<void> {
   requireEnv("SUPABASE_URL");
   requireEnv("SUPABASE_SECRET_KEY");
   // 取り込みはLLMを使わないためAIのキーは不要。
-  // 議案解説は OpenAI API を直接叩くため、Gateway ではなく OPENAI_API_KEY を要求する。
-  if (mode === "explain") {
+  // 議案解説とサムネイル題材の割り当ては OpenAI API を直接叩くため、Gateway ではなく OPENAI_API_KEY を要求する。
+  if (mode === "explain" || mode === "thumbnail-keys") {
     requireEnv("OPENAI_API_KEY");
   } else if (mode !== "ingest") {
     requireEnv("AI_GATEWAY_API_KEY");
@@ -142,7 +170,7 @@ async function main(): Promise<void> {
     }
     const results = await runExplain({
       sessionSlug: args.session,
-      force: args.force !== undefined && args.force !== "false",
+      force: parseFlag(args.force),
       limit: parseNumber(args.limit, "limit"),
       difficulties: difficulty ? [difficulty] : undefined,
     });
@@ -151,6 +179,22 @@ async function main(): Promise<void> {
     console.log(
       `議案解説の生成完了: 対象${results.length}件 / 生成${generated}件 / 一部失敗${failed}件`
     );
+    // 解説ができた議案は要約が変わっているので、その議案だけ題材を決め直す。
+    const explainedIds = results
+      .filter((r) => r.generated.length > 0)
+      .map((r) => r.billId);
+    if (explainedIds.length > 0) {
+      await assignThumbnailKeys({ billIds: explainedIds, force: true });
+    }
+    return;
+  }
+
+  if (mode === "thumbnail-keys") {
+    await assignThumbnailKeys({
+      sessionSlug: args.session,
+      force: parseFlag(args.force),
+      limit: parseNumber(args.limit, "limit"),
+    });
     return;
   }
 
@@ -161,8 +205,8 @@ async function main(): Promise<void> {
       month: parseNumber(args.month, "month"),
       term: parseNumber(args.term, "term"),
       year: parseNumber(args.year, "year"),
-      allTerms: args["all-terms"] !== undefined && args["all-terms"] !== "false",
-      force: args.force !== undefined && args.force !== "false",
+      allTerms: parseFlag(args["all-terms"]),
+      force: parseFlag(args.force),
     });
     return;
   }
