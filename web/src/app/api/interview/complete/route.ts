@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import {
+  INTERVIEW_COLLECTION_ENABLED,
+  INTERVIEW_UNAVAILABLE_MESSAGE,
+} from "@/features/interview-config/shared/constants";
 import { completeInterviewSession } from "@/features/interview-session/server/services/complete-interview-session";
 import { verifySessionOwnership } from "@/features/interview-session/server/utils/verify-session-ownership";
 import {
@@ -12,6 +16,13 @@ import {
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+  if (!INTERVIEW_COLLECTION_ENABLED) {
+    return NextResponse.json(
+      { error: INTERVIEW_UNAVAILABLE_MESSAGE },
+      { status: 404 }
+    );
+  }
+
   const { sessionId, isPublic, isDataReuseConsented } = await req.json();
   const isPublicByUser = parseOptionalBoolean(isPublic);
   const dataReuseConsented = parseOptionalBoolean(isDataReuseConsented);
