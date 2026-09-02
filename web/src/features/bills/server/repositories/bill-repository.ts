@@ -190,6 +190,23 @@ export async function findTagsByBillId(billId: string) {
   return data;
 }
 
+/** 議案に紐づく本会議の討論と公式記録への参照を取得する。 */
+export async function findBillDebatesByBillId(billId: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bill_debates")
+    .select("id, seat_number, source_url, speaker_name, stance")
+    .eq("bill_id", billId)
+    .order("stance", { ascending: true })
+    .order("speaker_name", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch bill debates: ${error.message}`);
+  }
+
+  return data;
+}
+
 // ============================================================
 // Bill Contents
 // ============================================================
