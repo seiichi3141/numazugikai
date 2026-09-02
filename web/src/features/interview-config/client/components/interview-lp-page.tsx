@@ -3,6 +3,7 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BillThumbnail } from "@/features/bills/client/components/bill-thumbnail";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { formatEstimatedDuration } from "@/features/interview-config/shared/utils/format-estimated-duration";
 import {
@@ -49,20 +50,12 @@ const FEATURES: {
 
 function _InterviewLPHeader({ bill }: { bill: BillWithContent }) {
   return (
-    <div className="relative w-full h-50 md:h-80">
-      {bill.thumbnail_url ? (
-        <Image
-          src={bill.thumbnail_url}
-          alt={bill.bill_content?.title ?? bill.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority
-        />
-      ) : (
-        <div className="w-full h-full bg-gray-100" />
-      )}
-    </div>
+    <BillThumbnail
+      bill={bill}
+      className="w-full h-50 md:h-80"
+      sizes="100vw"
+      priority
+    />
   );
 }
 

@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
     root: "../",
   },
   images: {
+    /*
+      最適化した画像を Vercel 側に長く残す。議案サムネイルは分野ごとの静的画像と
+      アップロード時刻入りのファイル名なので中身が変わらず、既定の 60 秒だと同じ
+      変換を繰り返して Hobby の変換枠を食いつぶす。差し替えるときはファイル名を変える。
+    */
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",
