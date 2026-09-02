@@ -1,9 +1,9 @@
 import "server-only";
 
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { BillThumbnail } from "@/features/bills/client/components/bill-thumbnail";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
@@ -54,16 +54,12 @@ export async function PublicOpinionsPage({
   return (
     <div className="min-h-dvh bg-mirai-surface">
       {/* ヒーロー画像 */}
-      {bill.thumbnail_url && (
-        <div className="relative w-full h-[200px] md:h-[320px]">
-          <Image
-            src={bill.thumbnail_url}
-            alt={billTitle}
-            fill
-            className="object-cover"
-          />
-        </div>
-      )}
+      <BillThumbnail
+        bill={bill}
+        className="w-full h-[200px] md:h-[320px]"
+        sizes="100vw"
+        priority
+      />
 
       <Container>
         {/* 議案タイトル（議案詳細へのリンク） */}

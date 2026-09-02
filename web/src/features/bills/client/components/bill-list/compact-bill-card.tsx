@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
+import { BillThumbnail } from "../bill-thumbnail";
 import { BillNumberLabel } from "./bill-number-label";
 import { BillStatusBadge } from "./bill-status-badge";
 
@@ -46,17 +46,11 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
         </div>
 
         {/* サムネイル画像 */}
-        {bill.thumbnail_url && (
-          <div className="relative w-24 h-16 flex-shrink-0 self-center mr-4 rounded-lg overflow-hidden">
-            <Image
-              src={bill.thumbnail_url}
-              alt={bill.name}
-              fill
-              className="object-cover"
-              sizes="96px"
-            />
-          </div>
-        )}
+        <BillThumbnail
+          bill={bill}
+          className="w-24 h-16 flex-shrink-0 self-center mr-4 rounded-lg"
+          sizes="96px"
+        />
       </div>
     </Card>
   );

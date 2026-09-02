@@ -6,6 +6,7 @@ import {
   createMockBill,
   createMockBillContent,
 } from "@/app/dev/_lib/mock-data";
+import { thumbnailSrc } from "@/test-utils/thumbnail-src";
 import { BillCard } from "./bill-card";
 
 describe("BillCard", () => {
@@ -37,18 +38,22 @@ describe("BillCard", () => {
     expect(screen.getByText(/注目/)).toBeInTheDocument();
   });
 
-  // staging で多くの議案がサムネイル未設定だった。無い側も崩れずに出る必要がある。
-  it("サムネイルが未設定なら画像を出さない", () => {
-    render(
+  // 沼津版は議案ごとの写真を用意しないので、ほぼ全件がこの経路で表示される。
+  it("サムネイルが未設定なら分野タグのイラストを装飾として出す", () => {
+    const { container } = render(
       <BillCard
         bill={createMockBill({
           name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: null,
+          tags: [{ id: "tag-safety", label: "防災・安全" }],
         })}
       />
     );
 
-    // レビュー完了バッジも img なので、サムネイルの代替テキストで狙う。
+    expect(thumbnailSrc(container)).toContain(
+      "/img/bill-thumbnails/safety.webp"
+    );
+    // 見出しが正式名称を読むので、画像には名前を付けない。
     expect(
       screen.queryByRole("img", {
         name: "沼津市国民健康保険税条例の一部を改正する条例",
@@ -56,33 +61,30 @@ describe("BillCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("サムネイルがあれば正式名称を代替テキストにして出す", () => {
-    render(
+  it("アップロード済みのサムネイルはタグより優先し、同じく装飾として出す", () => {
+    const { container } = render(
       <BillCard
         bill={createMockBill({
           name: "沼津市国民健康保険税条例の一部を改正する条例",
           thumbnail_url: "https://example.com/thumb.png",
+          tags: [{ id: "tag-safety", label: "防災・安全" }],
         })}
       />
     );
 
+    expect(thumbnailSrc(container)).toContain("https://example.com/thumb.png");
     expect(
-      screen.getByRole("img", {
+      screen.queryByRole("img", {
         name: "沼津市国民健康保険税条例の一部を改正する条例",
       })
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
-  /*
-    サムネイルの有無で注目バッジの配置が absolute と relative に切り替わる。
-    切り替え先はクラス名にしか現れないので、ここでは両方が同時に出ることだけを
-    見る。重なり方そのものは目で見て確かめる。
-  */
-  it("サムネイルがあっても注目バッジを出す", () => {
-    render(
+  // 注目バッジはサムネイルの上に重ねる。重なり方そのものは目で見て確かめる。
+  it("注目バッジとサムネイルを同時に出す", () => {
+    const { container } = render(
       <BillCard
         bill={createMockBill({
-          name: "沼津市国民健康保険税条例の一部を改正する条例",
           is_featured: true,
           thumbnail_url: "https://example.com/thumb.png",
         })}
@@ -90,11 +92,7 @@ describe("BillCard", () => {
     );
 
     expect(screen.getByText(/注目/)).toBeInTheDocument();
-    expect(
-      screen.getByRole("img", {
-        name: "沼津市国民健康保険税条例の一部を改正する条例",
-      })
-    ).toBeInTheDocument();
+    expect(thumbnailSrc(container)).toContain("https://example.com/thumb.png");
   });
 
   it("紐づくタグをすべて並べる", () => {
