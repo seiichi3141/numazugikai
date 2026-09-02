@@ -1,28 +1,27 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveCouncilSession } from "@/features/council-sessions/server/loaders/get-active-council-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { ComingSoonBill } from "../../shared/types";
 import { findComingSoonBills } from "../repositories/bill-repository";
 
 /**
  * Coming Soon議案を取得する
- * publish_status = 'coming_soon' でアクティブな定例会の議案を取得
- * アクティブな定例会がない場合は全件取得
+ * publish_status = 'coming_soon' で指定会期の議案を取得
  */
-export async function getComingSoonBills(): Promise<ComingSoonBill[]> {
+export async function getComingSoonBills(
+  councilSessionId: string
+): Promise<ComingSoonBill[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveCouncilSession();
 
-  return _getCachedComingSoonBills(difficultyLevel, activeSession?.id ?? null);
+  return _getCachedComingSoonBills(difficultyLevel, councilSessionId);
 }
 
 const _getCachedComingSoonBills = unstable_cache(
   async (
     difficultyLevel: DifficultyLevelEnum,
-    councilSessionId: string | null
+    councilSessionId: string
   ): Promise<ComingSoonBill[]> => {
     const data = await findComingSoonBills(councilSessionId);
 
