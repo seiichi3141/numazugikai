@@ -64,6 +64,7 @@ describe("テーマ変数の構造", () => {
 
 describe("文字色のコントラスト（WCAG 2.2 AA / 通常の文字は 4.5:1）", () => {
   it.each([
+    "muted-foreground",
     "color-mirai-text",
     "color-mirai-text-secondary",
     "color-mirai-text-muted",
@@ -150,6 +151,7 @@ describe("非テキストのコントラスト（WCAG 2.2 AA / 3:1）", () => {
 describe("ダークテーマのコントラスト", () => {
   it.each([
     "foreground",
+    "muted-foreground",
     "color-mirai-text",
     "color-mirai-text-secondary",
     "color-mirai-text-muted",
