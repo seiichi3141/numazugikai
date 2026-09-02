@@ -557,7 +557,10 @@ export const PromptInputError = ({
   }
 
   return (
-    <div className={cn("px-3 py-2 text-xs text-red-600", className)} {...props}>
+    <div
+      className={cn("px-3 py-2 text-xs text-stance-against", className)}
+      {...props}
+    >
       <div>{error.message}</div>
     </div>
   );
@@ -572,7 +575,7 @@ export const PromptInputHint = ({
 }: PromptInputHintProps) => {
   return (
     <div
-      className={cn("px-3 py-2 text-xs text-gray-400", className)}
+      className={cn("px-3 py-2 text-xs text-mirai-text-muted", className)}
       {...props}
     >
       {children ??

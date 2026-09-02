@@ -79,7 +79,7 @@ function FeedbackPhase({
             className={`h-auto rounded-full border px-4 py-1 text-sm font-medium ${
               selectedTags.has(tag)
                 ? "border-primary bg-gradient-to-r from-mirai-gradient-start to-mirai-gradient-end text-mirai-text"
-                : "border-primary bg-white text-primary-accent"
+                : "border-primary bg-card text-primary-accent"
             }`}
           >
             {FEEDBACK_TAG_LABELS[tag]}
@@ -189,7 +189,7 @@ export function InterviewRatingWidget({
   }, [phase, onDismiss]);
 
   return (
-    <div className="relative mx-4 rounded-xl bg-gray-100 px-6 py-4">
+    <div className="relative mx-4 rounded-xl bg-muted px-6 py-4">
       <div className="flex flex-col gap-2.5">
         {phase === "rating" && (
           <RatingPhase selectedRating={selectedRating} onRate={handleRate} />
@@ -207,7 +207,7 @@ export function InterviewRatingWidget({
         variant="ghost"
         size="icon"
         onClick={phase === "feedback" ? handleDismissToThankYou : onDismiss}
-        className="absolute right-2 top-2 h-[22px] w-[22px] p-0 text-mirai-text-close hover:bg-transparent hover:text-gray-500"
+        className="absolute right-2 top-2 h-[22px] w-[22px] p-0 text-mirai-text-close hover:bg-transparent hover:text-mirai-text-muted"
         aria-label="閉じる"
       >
         <X size={11} strokeWidth={2} />

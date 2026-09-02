@@ -44,7 +44,7 @@ function _FilterChip({
         "inline-flex items-center gap-1 px-3 py-1.5 rounded-[50px] h-[29px] text-sm font-bold transition-colors",
         isActive
           ? "bg-mirai-gradient text-mirai-text"
-          : "bg-white text-gray-300"
+          : "bg-card text-mirai-text-muted"
       )}
     >
       <span>{label}</span>

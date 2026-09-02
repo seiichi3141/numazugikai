@@ -16,7 +16,7 @@ export function BillCard({ bill }: BillCardProps) {
   const summary = bill.bill_content?.summary;
 
   return (
-    <Card className="border border-black shadow-none hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
+    <Card className="border border-foreground shadow-none hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
         {/* 注目バッジエリア */}
         {bill.is_featured && (
@@ -68,7 +68,7 @@ export function BillCard({ bill }: BillCardProps) {
                     <BillTag key={tag.id} tag={tag} />
                   ))}
                   {bill.hasPublicInterview && (
-                    <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-medium text-black bg-mirai-light-gradient rounded-full">
+                    <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-medium text-foreground bg-mirai-light-gradient rounded-full">
                       AIインタビュー受付中
                     </span>
                   )}

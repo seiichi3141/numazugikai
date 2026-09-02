@@ -28,7 +28,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   className={cn(
                     "block px-3 py-1.5 rounded text-sm transition-colors",
                     pathname === item.path
-                      ? "bg-primary text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "text-mirai-text hover:bg-mirai-surface"
                   )}
                 >
@@ -76,7 +76,7 @@ export function DevSidebar() {
           {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop overlay click-to-close */}
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: Escape handled via document listener */}
           <div className="absolute inset-0 bg-black/40" onClick={close} />
-          <nav className="absolute inset-y-0 left-0 w-64 bg-white p-4 overflow-y-auto shadow-lg">
+          <nav className="absolute inset-y-0 left-0 w-64 bg-card p-4 overflow-y-auto shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <Link href="/dev" onClick={close} className="text-lg font-bold">
                 Component Gallery
@@ -96,7 +96,7 @@ export function DevSidebar() {
       )}
 
       {/* Desktop: static sidebar */}
-      <nav className="hidden md:block w-64 shrink-0 border-r border-mirai-border bg-white p-4 sticky top-0 h-dvh overflow-y-auto">
+      <nav className="hidden md:block w-64 shrink-0 border-r border-mirai-border bg-card p-4 sticky top-0 h-dvh overflow-y-auto">
         <Link href="/dev" className="text-lg font-bold mb-6 block">
           Component Gallery
         </Link>

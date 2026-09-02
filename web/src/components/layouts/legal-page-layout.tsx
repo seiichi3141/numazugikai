@@ -19,16 +19,16 @@ export function LegalPageLayout({
   children,
 }: LegalPageLayoutProps) {
   return (
-    <div className="min-h-dvh bg-white">
+    <div className="min-h-dvh bg-card">
       <section className={cn("py-12", className)}>
         <Container className="space-y-10">
-          <header className="space-y-2 border-b border-neutral-200 pb-6">
+          <header className="space-y-2 border-b border-mirai-border pb-6">
             {enLabel ? (
               <p className="font-lexend text-sm font-semibold tracking-[0.14em] text-primary">
                 {enLabel}
               </p>
             ) : null}
-            <h1 className="text-2xl font-bold tracking-wider text-black sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-wider text-foreground sm:text-3xl">
               {title}
             </h1>
             {description ? (
@@ -57,7 +57,7 @@ export function LegalSectionTitle({
   return (
     <h2
       className={cn(
-        "text-lg font-bold tracking-[0.04em] text-black sm:text-xl",
+        "text-lg font-bold tracking-[0.04em] text-foreground sm:text-xl",
         className
       )}
     >

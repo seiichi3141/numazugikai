@@ -4,7 +4,7 @@ import { ManualRuby } from "@/lib/rubyful/manual-ruby";
 
 export function LongPressSection() {
   return (
-    <section className="relative bg-white rounded-2xl !px-3 !py-10 overflow-hidden">
+    <section className="relative bg-card rounded-2xl !px-3 !py-10 overflow-hidden">
       {/* コンテンツエリア */}
       <div className="relative h-full flex items-center justify-between px-3 gap-6">
         {/* 左側：テキストコンテンツ */}
@@ -24,7 +24,7 @@ export function LongPressSection() {
 
           {/* 3行目 */}
           <div className="flex items-start gap-2 pt-2">
-            <div className="inline-flex items-center gap-1 bg-white border border-mirai-border rounded-lg px-1.5 py-1 shadow-[0px_0px_4px_0px_rgba(0,0,0,0.2)]">
+            <div className="inline-flex items-center gap-1 bg-card border border-mirai-border rounded-lg px-1.5 py-1 shadow-[0px_0px_4px_0px_rgba(0,0,0,0.2)]">
               <MessageCircleQuestion className={`h-4 w-4`} />
               <span className="text-mirai-text text-sm font-medium leading-[1.43] font-noto-sans text-center">
                 AIに質問

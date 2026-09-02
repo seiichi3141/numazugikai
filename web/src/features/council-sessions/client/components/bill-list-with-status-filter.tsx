@@ -42,7 +42,7 @@ export function BillListWithStatusFilter({ bills }: Props) {
             onClick={() => setActiveFilter(group)}
             className={`h-[29px] px-4 py-1.5 rounded-full text-sm font-bold transition-colors ${
               activeFilter === group
-                ? "bg-mirai-gradient text-black hover:bg-mirai-gradient"
+                ? "bg-mirai-gradient text-foreground hover:bg-mirai-gradient"
                 : "bg-mirai-surface-grouped text-mirai-text-muted hover:bg-mirai-surface-muted"
             }`}
           >

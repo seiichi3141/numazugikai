@@ -25,7 +25,7 @@ export function ReportMainOpinions({
         {opinions.map((opinion, index) => (
           <div
             key={`${index}-${opinion.title.slice(0, 16)}`}
-            className="flex flex-col gap-3 rounded-2xl bg-white px-4 py-5"
+            className="flex flex-col gap-3 rounded-2xl bg-card px-4 py-5"
           >
             <h3 className="text-base font-bold leading-6 text-mirai-text">
               {opinion.title}

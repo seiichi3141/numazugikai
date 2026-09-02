@@ -17,10 +17,10 @@ interface PreviewBillPageProps {
 
 function PreviewBanner() {
   return (
-    <div className="sticky top-0 z-50 bg-yellow-50 border-b border-yellow-200">
+    <div className="sticky top-0 z-50 bg-mirai-warning-surface border-b border-mirai-warning-border">
       <div className="max-w-4xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-yellow-800">
+          <div className="flex items-center gap-2 text-mirai-warning-text">
             <AlertTriangle className="h-5 w-5" />
             <span className="font-medium">
               プレビューモード - この議案は一般公開されていません
@@ -29,7 +29,7 @@ function PreviewBanner() {
           <div className="flex items-center gap-4 text-sm">
             <a
               href={`${env.adminUrl}/bills`}
-              className="text-yellow-700 hover:text-yellow-900 underline"
+              className="text-mirai-warning-text hover:text-mirai-warning-text underline"
             >
               管理画面に戻る
             </a>

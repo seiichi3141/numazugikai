@@ -34,7 +34,7 @@ export function RespondentCard({ respondent, now }: RespondentCardProps) {
     <Link
       href={routes.publicReport(respondent.id) as Route}
       prefetch={false}
-      className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-sm transition-colors hover:bg-mirai-surface-gray"
+      className="flex items-start gap-3 rounded-2xl bg-card p-4 shadow-sm transition-colors hover:bg-mirai-surface-gray"
     >
       {/* アバター */}
       <PersonAvatar sentiment={respondent.bill_sentiment} />

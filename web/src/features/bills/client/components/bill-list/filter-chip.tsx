@@ -33,7 +33,7 @@ export function FilterChip({
       className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13px] font-bold whitespace-nowrap ${
         active
           ? "border-transparent bg-mirai-gradient text-mirai-text"
-          : "border-mirai-border bg-white text-mirai-text"
+          : "border-mirai-border bg-card text-mirai-text"
       }`}
     >
       {Icon && <Icon className="h-[15px] w-[15px] shrink-0" aria-hidden />}

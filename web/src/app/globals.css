@@ -8,7 +8,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
+@theme {
   --breakpoint-sm: 500px;
   --breakpoint-md: 700px;
   --breakpoint-pc: 1000px;
@@ -16,8 +16,6 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-noto-sans-jp);
-  --font-lexend: var(--font-lexend-giga);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -86,14 +84,14 @@
   --color-stance-for-badge-start: #e3eef7;
   --color-stance-for-badge-end: #f3f0e7;
   --color-stance-against: #c9272a;
-  --color-stance-against-light: #d23c3f;
+  --color-stance-against-light: #c9272a;
   --color-stance-against-bg: #fff1f1;
   --color-stance-against-badge-bg: #ffeaea;
   --color-stance-neutral: #805f34;
   --color-stance-neutral-badge-bg: #f7e8db;
 
   /* Reaction */
-  --color-mirai-reaction-active: #dd425f;
+  --color-mirai-reaction-active: #c52d4d;
   --color-mirai-reaction-inactive: var(--color-mirai-text-muted);
 
   /* Accent */
@@ -101,6 +99,12 @@
   --color-mirai-highlight: #f4ff5f;
   --color-mirai-badge-yellow: #fffd96;
   --color-mirai-info-blue: #b2d3e8;
+  --color-mirai-warning-text: #6b4f00;
+  --color-mirai-warning-surface: #fff9db;
+  --color-mirai-warning-border: #9a7200;
+  --color-mirai-success: #157a50;
+  --color-mirai-control-track: #767676;
+  --color-mirai-footer-text: #1f2937;
 
   /* Progress */
   --color-mirai-progress-track: #d9d9d9;
@@ -122,17 +126,22 @@
   --color-topic-info-bg: #e8f1f8;
   --color-topic-chip-bg: #f1f1f1;
   --color-topic-count: #6b7775;
-  --color-topic-label: #909090;
+  --color-topic-label: #6f6f74;
   --color-topic-affected: #c8642a;
   --color-topic-industry: #2563a8;
   --color-topic-expert: #14507c;
   --color-topic-citizen: #909090;
+}
 
-  /* 引用文の明朝体（Noto Serif JP） */
+/* Next.js font variables are defined on body and must resolve at use time. */
+@theme inline {
+  --font-sans: var(--font-noto-sans-jp);
+  --font-lexend: var(--font-lexend-giga);
   --font-mirai-serif: var(--font-noto-serif-jp);
 }
 
 :root {
+  color-scheme: light;
   --radius: 0.625rem;
   --background: #f7f4ee;
   --foreground: oklch(0.145 0 0);
@@ -147,7 +156,7 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.656 0 0);
+  --muted-foreground: #6f6f74;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -171,37 +180,94 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.608 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  color-scheme: dark;
+  --background: #101820;
+  --foreground: #f5f7fa;
+  --card: #1b2633;
+  --card-foreground: #f5f7fa;
+  --popover: #1b2633;
+  --popover-foreground: #f5f7fa;
+  --primary: #62b5e5;
+  --primary-accent: #8bcff2;
+  --primary-foreground: #102534;
+  --secondary: #263442;
+  --secondary-foreground: #f5f7fa;
+  --muted: #263442;
+  --muted-foreground: #bcc7d1;
+  --accent: #304354;
+  --accent-foreground: #f5f7fa;
+  --destructive: #a92e38;
+  --border: #607285;
+  --input: #607285;
+  --ring: #8bcff2;
+  --chart-1: #62b5e5;
+  --chart-2: #63c7a6;
+  --chart-3: #e3b75a;
+  --chart-4: #b99be8;
+  --chart-5: #ef879b;
+  --sidebar: #1b2633;
+  --sidebar-foreground: #f5f7fa;
+  --sidebar-primary: #62b5e5;
+  --sidebar-primary-foreground: #102534;
+  --sidebar-accent: #304354;
+  --sidebar-accent-foreground: #f5f7fa;
+  --sidebar-border: #607285;
+  --sidebar-ring: #8bcff2;
+
+  /* Mirai tokens: light values must never leak into the dark canvas. */
+  --color-gray-300: #768696;
+  --color-mirai-text: #f5f7fa;
+  --color-mirai-text-secondary: #e1e7ed;
+  --color-mirai-text-muted: #bcc7d1;
+  --color-mirai-text-placeholder: #aebbc7;
+  --color-mirai-text-note: #d5dde5;
+  --color-mirai-text-subtle: #c7d0da;
+  --color-mirai-text-close: #9ba9b7;
+  --color-mirai-surface: #151e27;
+  --color-mirai-surface-light: #101820;
+  --color-mirai-surface-grouped: #1d2935;
+  --color-mirai-surface-muted: #2b3947;
+  --color-mirai-surface-tag: #30404f;
+  --color-mirai-surface-warm: #2b2a27;
+  --color-mirai-surface-gray: #202c38;
+  --color-mirai-border: #607285;
+  --color-mirai-border-light: #6f7f8f;
+  --color-mirai-border-muted: #5d6c7b;
+  --color-stance-for-bg: #17344a;
+  --color-stance-for-badge-start: #1d425c;
+  --color-stance-for-badge-end: #3b382e;
+  --color-stance-against: #ff8b91;
+  --color-stance-against-light: #ff9ba0;
+  --color-stance-against-bg: #402125;
+  --color-stance-against-badge-bg: #4a262b;
+  --color-stance-neutral: #e0b478;
+  --color-stance-neutral-badge-bg: #453528;
+  --color-mirai-reaction-active: #ff7892;
+  --color-mirai-star: #ffb347;
+  --color-mirai-highlight: #5b641e;
+  --color-mirai-badge-yellow: #5a5620;
+  --color-mirai-info-blue: #254d68;
+  --color-mirai-warning-text: #ffd978;
+  --color-mirai-warning-surface: #3b3218;
+  --color-mirai-warning-border: #c5a543;
+  --color-mirai-success: #63c7a6;
+  --color-mirai-control-track: #607285;
+  --color-mirai-footer-text: #f5f7fa;
+  --color-mirai-progress-track: #43515f;
+  --color-mirai-progress-fill: #397298;
+  --color-mirai-gradient-start: #286a94;
+  --color-mirai-gradient-end: #365365;
+  --color-mirai-surface-accent: #1d3b50;
+  --color-mirai-light-gradient-start: #23465d;
+  --color-mirai-light-gradient-end: #3b392f;
+  --color-topic-info-bg: #1d3b50;
+  --color-topic-chip-bg: #2b3947;
+  --color-topic-count: #bac5cf;
+  --color-topic-label: #b2bdc8;
+  --color-topic-affected: #f29a66;
+  --color-topic-industry: #78b8ef;
+  --color-topic-expert: #8bcff2;
+  --color-topic-citizen: #b2bdc8;
 }
 
 @layer base {
@@ -284,15 +350,15 @@
   .bg-mirai-white-fade {
     background-image: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgb(255, 255, 255) 62%
+      color-mix(in srgb, var(--card) 30%, transparent) 0%,
+      var(--card) 62%
     );
   }
 
   .border-mirai-gradient {
     border: 2px solid transparent;
     background-image:
-      linear-gradient(white, white),
+      linear-gradient(var(--card), var(--card)),
       linear-gradient(
         -45deg,
         var(--color-mirai-gradient-end) 0%,

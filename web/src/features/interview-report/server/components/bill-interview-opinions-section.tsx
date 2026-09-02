@@ -65,7 +65,7 @@ export async function BillInterviewOpinionsSection({
                   variant="outline"
                   size="lg"
                   asChild
-                  className="w-[214px] h-12 text-base font-bold border-mirai-text rounded-full hover:bg-gray-50 bg-white"
+                  className="w-[214px] h-12 text-base font-bold border-mirai-text rounded-full hover:bg-mirai-surface-gray bg-card"
                 >
                   <Link href={routes.billOpinions(billId) as Route}>
                     もっと読む

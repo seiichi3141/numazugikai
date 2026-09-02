@@ -10,7 +10,7 @@ export async function DesktopMenuDifficultyToggle() {
   return (
     <div className="fixed top-6 right-6 z-50 w-83">
       <div
-        className="bg-white flex items-center gap-6 font-bold text-black"
+        className="bg-card flex items-center gap-6 font-bold text-foreground"
         style={{
           borderRadius: "50px",
           padding: "20px 24px 20px 36px",

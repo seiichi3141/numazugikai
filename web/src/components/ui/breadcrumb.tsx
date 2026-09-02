@@ -21,7 +21,7 @@ interface BreadcrumbProps {
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
     <nav aria-label="パンくずリスト">
-      <ol className="flex flex-wrap items-center gap-2 text-sm text-gray-800">
+      <ol className="flex flex-wrap items-center gap-2 text-sm text-mirai-text">
         {items.map((item, index) => (
           <li key={item.label} className="flex items-center gap-2">
             {/* 区切りは見た目だけの記号。読み上げると意味を成さない */}

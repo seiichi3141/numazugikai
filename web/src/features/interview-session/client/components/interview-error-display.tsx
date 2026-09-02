@@ -21,9 +21,9 @@ export function InterviewErrorDisplay({
   return (
     <div className="flex flex-col items-end gap-3">
       <div className="flex gap-1 items-center">
-        <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+        <AlertCircle className="w-5 h-5 text-stance-against mt-0.5 flex-shrink-0" />
         <div className="flex-1">
-          <p className="text-sm text-red-500">{error?.message}</p>
+          <p className="text-sm text-stance-against">{error?.message}</p>
         </div>
       </div>
 

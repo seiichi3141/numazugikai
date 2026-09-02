@@ -24,7 +24,7 @@ export function TagChipLink({
     <Link
       href={href}
       onClick={onNavigate}
-      className={`flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-mirai-border bg-white px-3.5 text-[13px] font-bold text-mirai-text ${className ?? ""}`}
+      className={`flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-mirai-border bg-card px-3.5 text-[13px] font-bold text-mirai-text ${className ?? ""}`}
     >
       {label}
       <span className="font-lexend text-xs font-bold text-mirai-text-muted">

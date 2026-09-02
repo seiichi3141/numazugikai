@@ -67,7 +67,7 @@ export function ReportIntervieweeCard({
   const category = mapRoleToCategory(role);
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl bg-white p-6">
+    <div className="flex flex-col gap-4 rounded-2xl bg-card p-6">
       {/* アバター + 立場 + 期待懸念/カテゴリ */}
       <div className="flex items-center gap-4">
         <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-mirai-light-gradient">

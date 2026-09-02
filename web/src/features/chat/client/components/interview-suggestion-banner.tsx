@@ -16,12 +16,12 @@ export function InterviewSuggestionBanner({
   return (
     <div className="flex gap-3 rounded-2xl bg-mirai-surface-light p-4">
       <div className="flex-shrink-0 size-10 rounded-lg bg-mirai-gradient flex items-center justify-center">
-        <BotMessageSquare className="size-8 text-black" />
+        <BotMessageSquare className="size-8 text-foreground" />
       </div>
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
           <div className="flex">
-            <span className="inline-flex items-center px-3 py-1 bg-mirai-surface-muted rounded-2xl text-xs font-medium text-black leading-none">
+            <span className="inline-flex items-center px-3 py-1 bg-mirai-surface-muted rounded-2xl text-xs font-medium text-foreground leading-none">
               この議案に関わりのある方へ
             </span>
           </div>
@@ -32,19 +32,19 @@ export function InterviewSuggestionBanner({
           </p>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-1">
-              <Check className="size-5 text-black flex-shrink-0" />
+              <Check className="size-5 text-foreground flex-shrink-0" />
               <span className="text-xs font-medium leading-[1.8] text-mirai-text">
                 所要時間は最短約5分〜
               </span>
             </div>
             <div className="flex items-center gap-1">
-              <Check className="size-5 text-black flex-shrink-0" />
+              <Check className="size-5 text-foreground flex-shrink-0" />
               <span className="text-xs font-medium leading-[1.8] text-mirai-text">
                 AIがあなたの意見を深掘り
               </span>
             </div>
             <div className="flex items-center gap-1">
-              <Check className="size-5 text-black flex-shrink-0" />
+              <Check className="size-5 text-foreground flex-shrink-0" />
               <span className="text-xs font-medium leading-[1.8] text-mirai-text">
                 ご意見は政策議論に活用します
               </span>
@@ -53,7 +53,7 @@ export function InterviewSuggestionBanner({
         </div>
         <Button
           asChild
-          className="bg-mirai-gradient text-black border border-black rounded-3xl h-9 px-4 font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2.5"
+          className="bg-mirai-gradient text-foreground border border-foreground rounded-3xl h-9 px-4 font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2.5"
         >
           <Link href={getInterviewLPLink(billId) as Route}>
             <span>AIインタビューを受ける</span>
