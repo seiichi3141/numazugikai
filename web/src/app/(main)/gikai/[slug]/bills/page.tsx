@@ -1,8 +1,7 @@
-import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getBillsByCouncilSession } from "@/features/bills/server/loaders/get-bills-by-council-session";
 import { CouncilSessionBillList } from "@/features/council-sessions/client/components/council-session-bill-list";
 import { getCouncilSessionBySlug } from "@/features/council-sessions/server/loaders/get-council-session-by-slug";
@@ -57,13 +56,13 @@ export default async function CouncilSessionBillsPage({ params }: Props) {
 
       {/* パンくずリスト */}
       <Container className="py-8">
-        <nav className="flex items-center gap-2 text-[15px]">
-          <Link href={routes.home()} className="text-black">
-            TOP
-          </Link>
-          <ChevronRight className="h-5 w-5 text-black" />
-          <span className="text-black">過去の議案</span>
-        </nav>
+        <Breadcrumb
+          items={[
+            { label: "トップ", href: routes.home() },
+            { label: "定例会の一覧", href: routes.gikaiSessions() },
+            { label: session.name },
+          ]}
+        />
       </Container>
     </div>
   );

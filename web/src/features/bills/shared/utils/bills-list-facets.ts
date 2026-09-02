@@ -9,12 +9,14 @@ export type FacetRow = {
 
 export type BillsListFacets = {
   status: Record<BillStatusGroup, number>;
-  /** タグ id ごとの件数。「すべて」は TAG_ALL キーに入る。 */
+  /** タグ id ごとの件数。「すべて」は FACET_ALL キーに入る。 */
   tag: Map<string, number>;
+  /** 会期 id ごとの件数。「すべて」は FACET_ALL キーに入る。 */
+  session: Map<string, number>;
 };
 
-/** タグを絞り込まないときの件数のキー。タグ id は uuid なので衝突しない。 */
-export const TAG_ALL = "all";
+/** 絞り込まないときの件数のキー。タグ・会期の id は uuid なので衝突しない。 */
+export const FACET_ALL = "all";
 
 /**
  * ファセットの行をチップが読む形に畳む。
@@ -28,6 +30,7 @@ export function toBillsListFacets(rows: readonly FacetRow[]): BillsListFacets {
     BILL_STATUS_GROUPS.map((group) => [group, 0])
   ) as Record<BillStatusGroup, number>;
   const tag = new Map<string, number>();
+  const session = new Map<string, number>();
 
   for (const row of rows) {
     if (row.key === null) continue;
@@ -35,10 +38,12 @@ export function toBillsListFacets(rows: readonly FacetRow[]): BillsListFacets {
       if (isStatusGroup(row.key)) status[row.key] = row.count;
     } else if (row.kind === "tag") {
       tag.set(row.key, row.count);
+    } else if (row.kind === "session") {
+      session.set(row.key, row.count);
     }
   }
 
-  return { status, tag };
+  return { status, tag, session };
 }
 
 function isStatusGroup(value: string): value is BillStatusGroup {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TAG_ALL, toBillsListFacets } from "./bills-list-facets";
+import { FACET_ALL, toBillsListFacets } from "./bills-list-facets";
 
 describe("toBillsListFacets", () => {
   it("ステータスの件数を読む", () => {
@@ -41,7 +41,16 @@ describe("toBillsListFacets", () => {
     ]);
     expect(facets.tag.get("tag-1")).toBe(5);
     expect(facets.tag.get("tag-2")).toBe(2);
-    expect(facets.tag.get(TAG_ALL)).toBe(7);
+    expect(facets.tag.get(FACET_ALL)).toBe(7);
+  });
+
+  it("会期の件数を id ごとに読む", () => {
+    const facets = toBillsListFacets([
+      { kind: "session", key: "all", count: 95 },
+      { kind: "session", key: "s-1", count: 30 },
+    ]);
+    expect(facets.session.get(FACET_ALL)).toBe(95);
+    expect(facets.session.get("s-1")).toBe(30);
   });
 
   it("知らない種別やキーは読み飛ばす", () => {

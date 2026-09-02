@@ -14,6 +14,8 @@ describe("footer.config", () => {
   it("内部リンクには external フラグが付かない", () => {
     const internalHrefs = new Set<string>([
       routes.home(),
+      routes.billsList(),
+      routes.gikaiSessions(),
       routes.terms(),
       routes.privacy(),
       routes.developers(),

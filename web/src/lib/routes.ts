@@ -48,5 +48,6 @@ export const routes = {
     `/report/${reportId}/chat-log` as const,
 
   // ── 会期 ──────────────────────────────────────────
+  gikaiSessions: () => "/gikai" as const,
   gikaiSessionBills: (slug: string) => `/gikai/${slug}/bills` as const,
 } as const;
