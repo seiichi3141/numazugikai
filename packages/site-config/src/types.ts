@@ -15,6 +15,10 @@ export type SiteJurisdiction = Readonly<{
   councilName: string;
 }>;
 
+export type SiteFeatures = Readonly<{
+  showComingSoonBills: boolean;
+}>;
+
 export type RuntimeExternalLinks = Readonly<{
   report: HttpsUrl;
   councilOfficial: HttpsUrl;
@@ -27,6 +31,7 @@ type SiteProfileBase = Readonly<{
   id: SiteId;
   branding: SiteBranding;
   jurisdiction: SiteJurisdiction;
+  features: SiteFeatures;
 }>;
 
 export type RuntimeReadySiteProfile = SiteProfileBase &

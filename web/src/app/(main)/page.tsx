@@ -20,6 +20,7 @@ import { CurrentCouncilSession } from "@/features/council-sessions/client/compon
 import { getCurrentCouncilSession } from "@/features/council-sessions/server/loaders/get-current-council-session";
 import { getLatestClosedCouncilSession } from "@/features/council-sessions/server/loaders/get-latest-closed-council-session";
 import { routes } from "@/lib/routes";
+import { SITE_PROFILE } from "@/lib/site";
 import { getJapanTime } from "@/lib/utils/date";
 
 /** カテゴリタブの「注目」から飛ばす先。 */
@@ -36,7 +37,9 @@ export default async function Home() {
     suggestableBills,
     featuredTags,
   ] = await Promise.all([
-    loadHomeData(),
+    loadHomeData({
+      includeComingSoon: SITE_PROFILE.features.showComingSoonBills,
+    }),
     getCurrentCouncilSession(japanTime),
     getLatestClosedCouncilSession(japanTime),
     getDifficultyLevel(),

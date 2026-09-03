@@ -18,6 +18,9 @@ export const shizuokaPrefProfile = {
     name: "静岡県",
     councilName: "静岡県議会",
   },
+  features: {
+    showComingSoonBills: true,
+  },
   externalLinks: {
     ...SHARED_EXTERNAL_LINKS,
     report: null,
