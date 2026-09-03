@@ -17,6 +17,7 @@ export type CouncilSessionUpsert = {
 
 export type BillUpsert = {
   councilSessionId: string;
+  sourceRecordKey: string | null;
   billNumber: string;
   numberKind: Database["public"]["Enums"]["bill_number_kind_enum"];
   numberValue: number;
@@ -113,6 +114,9 @@ export async function upsertBill(bill: BillUpsert): Promise<string> {
     .upsert(
       {
         council_session_id: bill.councilSessionId,
+        ...(bill.sourceRecordKey === null
+          ? {}
+          : { source_record_key: bill.sourceRecordKey }),
         bill_number: bill.billNumber,
         bill_number_kind: bill.numberKind,
         bill_number_value: bill.numberValue,
