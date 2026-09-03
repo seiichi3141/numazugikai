@@ -8,32 +8,53 @@
 変更作業は、**必ず git worktree を作成してから開始すること**。メインのリポジトリディレクトリでは直接変更を行わない。
 
 ```bash
-# 1. worktreeを作成（必ずdevelopから分岐すること）
-git worktree add ../mirai-gikai-<branch-name> -b <branch-name> develop
+# 1. 対象自治体の develop から worktree を作成
+git worktree add ../numazugikai-<worktree-name> \
+  -b <feature-branch> <base-branch>
 
 # 2. settings.local.jsonをコピー（権限設定のため必須）
-mkdir -p ../mirai-gikai-<branch-name>/.claude
-cp .claude/settings.local.json ../mirai-gikai-<branch-name>/.claude/
+mkdir -p ../numazugikai-<worktree-name>/.claude
+cp .claude/settings.local.json ../numazugikai-<worktree-name>/.claude/
 
-# 3. .envをコピー（環境変数の引き継ぎ）
-cp .env ../mirai-gikai-<branch-name>/
+# 3. 対象 branch の雛形から .env を作成
+cp ../numazugikai-<worktree-name>/.env.example \
+  ../numazugikai-<worktree-name>/.env
 
 # 4. 依存パッケージをインストール
-cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
+cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
 ```
 
-- **必ず `develop` から分岐する**: `git worktree add` の末尾に `develop` を指定すること。省略すると現在のブランチ（HEADが別ブランチを指している場合）から分岐し、無関係なコミットがPRに混入する原因になる。
+- **base branch を明示する**: 沼津市の既存開発は `develop`、自治体別開発は
+  `sites/<site>/develop` から分岐する。hotfix だけは対応する `main` から分岐する。
+  省略すると現在の HEAD から分岐し、別の自治体のコミットが PR に混入する原因になる。
+- **自治体間で `.env` をコピーしない**: 対象 branch の `.env.example` から作り、
+  必要な値だけを設定する。同じ自治体の既存 worktree から引き継ぐ場合も、接続先を
+  確認してから使う。
+- branch 名と PR の向き先は
+  [複数自治体ブランチ運用方針](docs/20260903_1906_複数自治体ブランチ運用方針.md)
+  に従う。
 
-- **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
-- **developに変更が残っている場合のリカバリ**: worktreeを作成する前に、developブランチの変更を必ずクリーンアップすること。作業途中の変更をdevelopに残したままworktreeを作成・作業することは禁止。
+- **目的**: 各 develop branch を常にクリーンに保ち、作業の分離と並列作業を容易にする
+- **base branch に変更が残っている場合のリカバリ**: worktreeを作成する前に、base branch の変更を必ずクリーンアップすること。作業途中の変更をbase branchに残したままworktreeを作成・作業することは禁止。
   ```bash
-  # 変更を退避してからworktreeを作成
+  # 変更を退避してから、base branch を明示して worktree を作成
   git stash --include-untracked
-  git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
+  git worktree add ../numazugikai-<worktree-name> \
+    -b <feature-branch> <base-branch>
   # worktreeに移動して退避した変更を適用
-  cd ../mirai-gikai-<branch-name>
+  cd ../numazugikai-<worktree-name>
   git stash pop
   ```
+
+### リモート操作の安全ルール
+
+- `origin` は必ず `seiichi3141/numazugikai` を指すこと。
+- `upstream` は `team-mirai/mirai-gikai` の参照専用 remote とし、push URL は
+  `DISABLED_DO_NOT_PUSH` を維持すること。
+- GitHub への書き込み操作は `--repo seiichi3141/numazugikai` を明示する。
+- PR 作成時は `--base` に通常開発では対象自治体の develop、hotfix では同じ
+  自治体の main を明示する。
+- upstream の更新は専用 branch で fetch し、自治体ごとに個別の PR で取り込む。
 
 ### 実装完了後は即PR作成
 実装完了後は「コミットしますか？」等の確認を挟まず、コミット → push → PR作成まで一気に進めること。ユーザーへの確認は不要。
@@ -113,6 +134,10 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 
 ## 沼津市議会向けの用語ルール（必須）
 
+この節は `develop` / `main` と、`sites/` で始まらない既存の沼津市向け
+feature branch に適用する。自治体別 branch では、その branch の `AGENTS.md` に
+記載された用語ルールを優先する。
+
 本リポジトリは本家「みらい議会」（国会向け）の fork で、**沼津市議会向け**に改修している。
 UI文言・コメント・プロンプトを書くときは次の語を使うこと。
 
@@ -178,7 +203,10 @@ UI文言・コメント・プロンプトを書くときは次の語を使うこ
 - コミットメッセージは既存履歴同様、短い命令形主体（日本語可）とし、課題連携は `(#id)` を付与します。
 - PR ではスコープ概要、実行テスト記録（例: `pnpm dev`, `pnpm --filter web test`）、UI 変更時のスクリーンショットや GIF を添付します。
 - スキーマ・シード・環境変数の変更は本文で明示し、レビューフィードバックへの対応状況を追跡コメントで共有して Ready for Review に切り替えます。
-- **イシュー連携**: 特定のイシューに対応する PR を作成する場合、PR 本文に `Resolves #123` の形式で記載してください。これにより PR マージ時にイシューが自動クローズされます。複数のイシューを閉じる場合は `Resolves #123, Resolves #456` のように列挙します。
+- **イシュー連携**: `develop`（GitHub の default branch）宛ての PR は、本文に
+  `Resolves #123` と記載してマージ時に自動クローズできる。自治体別 branch 宛ての
+  PR では closing keyword が自動適用されないため、Development 欄または本文で
+  issue をリンクし、マージ確認後に issue を別途クローズする。
 - **PR作成後の状態確認（必須）**: PR作成後、以下の4点を確認すること：
   1. **Conflict確認**: `gh pr view <番号> --json mergeable,mergeStateStatus` でマージ可能か確認。conflictがあれば解消してpushする。
   2. **CI確認**: `gh pr checks <番号>` でCIの状態を確認。失敗があれば原因を調査し修正してpushする。CIが実行中の場合は完了まで待つ。

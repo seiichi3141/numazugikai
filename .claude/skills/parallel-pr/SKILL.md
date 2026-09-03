@@ -19,9 +19,9 @@ description: 複数の独立PRをチーム×worktreeで並列作成する。タ�
 ユーザーの指示からPR一覧を整理する:
 
 ```
-| # | ブランチ名 | 作業内容 | 対象ファイル |
-|---|-----------|---------|-------------|
-| 1 | feat/xxx  | ...     | src/...     |
+| # | base | ブランチ名 | 作業内容 | 対象ファイル |
+|---|------|-------------|---------|-------------|
+| 1 | develop | feat/xxx | ... | src/... |
 ```
 
 PRの数に応じてエージェント数を決める（目安: 4-5が上限）。
@@ -34,15 +34,16 @@ PRの数に応じてエージェント数を決める（目安: 4-5が上限）�
 ```bash
 # {team} はチーム名の略称（例: test4, refactor2）
 # {x} はエージェント識別子（a, b, c, d...）
-git worktree add ../mirai-gikai-{team}-{x} -b {team}-{x}-base
-mkdir -p ../mirai-gikai-{team}-{x}/.claude
-cp .claude/settings.local.json ../mirai-gikai-{team}-{x}/.claude/
+git worktree add ../numazugikai-{team}-{x} -b {team}-{x}-base {base}
+mkdir -p ../numazugikai-{team}-{x}/.claude
+cp .claude/settings.local.json ../numazugikai-{team}-{x}/.claude/
+cp ../numazugikai-{team}-{x}/.env.example ../numazugikai-{team}-{x}/.env
 ```
 
 依存パッケージのインストール（全worktreeをバックグラウンドで並列実行）:
 
 ```bash
-cd ../mirai-gikai-{team}-{x} && pnpm install --frozen-lockfile
+cd ../numazugikai-{team}-{x} && pnpm install --frozen-lockfile
 ```
 
 ### Phase 3: チーム組成＆エージェント起動
@@ -81,7 +82,7 @@ Task(
 - ...
 
 ## 作業手順
-1. `git checkout -b {branch} develop` でブランチ作成
+1. `git checkout -b {branch} {base}` でブランチ作成
 2. 対象ファイルを読んで理解
 3. 実装・修正
 4. push前のローカル検証（CIと同じコマンドを全て実行し、全て通過すること）:
@@ -92,8 +93,8 @@ Task(
 5. エラーがあれば修正して再度ステップ4を実行
 6. コミット（Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>）
 7. `git push -u origin {branch}`
-8. `gh pr create --base develop --title "{title}" --body "..."`
-9. 次のPRがあれば `git checkout -b {next-branch} develop` で次へ
+8. `gh pr create --repo seiichi3141/numazugikai --base {base} --title "{title}" --body "..."`
+9. 次のPRがあれば `git checkout -b {next-branch} {next-base}` で次へ
 10. 全完了後、リーダーにメッセージで報告（PR番号・URL）
 ```
 
@@ -105,7 +106,7 @@ Task(
 # 全PRのCI状態を一括確認
 for pr in {PR番号リスト}; do
   echo "=== PR #$pr ==="
-  gh pr checks $pr
+  gh pr checks "$pr" --repo seiichi3141/numazugikai
 done
 ```
 
@@ -113,7 +114,7 @@ done
 # 全PRのコメントを確認（CodeRabbitやレビューアからのフィードバック）
 for pr in {PR番号リスト}; do
   echo "=== PR #$pr comments ==="
-  gh pr view $pr --comments
+  gh pr view "$pr" --repo seiichi3141/numazugikai --comments
 done
 ```
 
@@ -154,5 +155,5 @@ TeamDelete
 
 - エージェント数は4-5が実用的上限（APIレート制限、CI負荷）
 - CIのflaky testに注意 → 失敗時はログ確認してから再実行
-- worktreeパスは `../mirai-gikai-{name}` 形式
+- worktreeパスは `../numazugikai-{name}` 形式
 - `settings.local.json` のコピーは必須（権限設定のため）

@@ -13,16 +13,24 @@ concurrency:
   group: supabase-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   manage-preview-branch:
     runs-on: ubuntu-latest
-    # fork からの PR は secrets を参照できないため対象外。
+    # fork からの PR と、自治体別ブランチへの PR は対象外。自治体別環境を
+    # 沼津市用の Supabase / Vercel に接続しないため、sites/* は各自治体専用の
+    # workflow と secrets が整うまで完全に no-op とする。
     # また head が develop の PR（本番反映 PR 等）も対象外。develop は Supabase の
     # staging ブランチに紐付いており、同じ git ブランチへの preview ブランチ作成は
     # "Failed to provision branch project"（409/500）で失敗する。仮に成功しても
     # Vercel の develop 向け環境変数（= staging）を preview DB に向け替えてしまう
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.pull_request.base.ref == 'develop' ||
+      github.event.pull_request.base.ref == 'main') &&
       github.event.pull_request.head.ref != 'develop'
     environment: staging
     env:

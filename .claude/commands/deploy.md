@@ -1,10 +1,12 @@
 ---
-description: "developからmainへのデプロイPRを作成・マージする"
+description: "沼津市版のdevelopからmainへのデプロイPRを作成・マージする"
 ---
 
 ## タスク
 
-develop ブランチから main ブランチへのデプロイPRを作成し、確認後にマージします。
+沼津市版の `develop` から `main` へのデプロイPRを作成し、確認後にマージします。
+自治体別の `sites/*` には使用しません。自治体別の公開環境が整った後、専用の
+デプロイ手順を追加します。
 
 ### 1. 事前確認
 
@@ -38,7 +40,7 @@ git diff origin/main...origin/develop --stat
 PRタイトルは「本番デプロイ MM/DD HH:MM」の形式（現在日時を使用）。
 
 ```bash
-gh pr create \
+gh pr create --repo seiichi3141/numazugikai \
   --base main \
   --head develop \
   --title "本番デプロイ $(date '+%m/%d %H:%M')" \
@@ -60,7 +62,7 @@ PRのURLを表示。
 
 ```bash
 # 通常マージ（admin権限でマージコミット作成）
-gh pr merge --merge --admin
+gh pr merge --repo seiichi3141/numazugikai --merge --admin
 ```
 
 ### 5. 完了報告

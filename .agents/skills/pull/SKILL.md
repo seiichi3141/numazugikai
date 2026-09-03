@@ -1,7 +1,7 @@
 ---
 name: pull
 description:
-  最新の origin/main を現在のローカルブランチに pull し、マージコンフリクトを
+  最新の対象 base branch を現在のローカルブランチに pull し、マージコンフリクトを
   解決する（別名 update-branch）。Codex が feature ブランチを origin と同期し、
   rebase ではなく merge ベースの更新を行い、コンフリクト解決のベストプラクティス
   に従う必要があるときに使用する。
@@ -15,16 +15,35 @@ description:
 2. ローカルで rerere が有効になっていることを確認する:
    - `git config rerere.enabled true`
    - `git config rerere.autoupdate true`
-3. リモートとブランチを確認する:
+3. リモート、現在のブランチ、対象 base branch を確認する:
    - `origin` リモートが存在することを確認する。
    - 現在のブランチがマージを受け取るブランチであることを確認する。
+   - open PR があればその `baseRefName` を使う。
+   - PR がまだ無い場合、`sites/<site>/hotfix/...` は `sites/<site>/main`、
+     それ以外の `sites/<site>/...` は `sites/<site>/develop`、既存の沼津市向け
+     branch は `develop` を使う。推測できない branch では停止して確認する。
+   - 共通 resolver を使い、以降は `$target_base` を参照する:
+     ```sh
+     current_branch=$(git branch --show-current)
+     target_base=$(gh pr view --repo seiichi3141/numazugikai \
+       --json baseRefName --jq .baseRefName 2>/dev/null || true)
+     if [ -z "$target_base" ]; then
+       target_base=$(node scripts/resolve-branch-base.mjs "$current_branch")
+     fi
+     ```
 4. 最新の ref を fetch する:
    - `git fetch origin`
-5. まずリモートの feature ブランチを同期する:
-   - `git pull --ff-only origin $(git branch --show-current)`
-   - これは `origin/main` をマージする前に、リモートで行われたブランチ更新（例: GitHub の自動コミット）を取り込む。
+5. リモートに現在の feature branch が存在する場合だけ同期する:
+   ```sh
+   if git ls-remote --exit-code --heads origin "$current_branch" >/dev/null 2>&1; then
+     git pull --ff-only origin "$current_branch"
+   fi
+   ```
+   - これは対象 base branch をマージする前に、リモートで行われたブランチ更新
+     （例: GitHub の自動コミット）を取り込む。
 6. 順番にマージする:
-   - より明確なコンフリクトコンテキストを得るため `git -c merge.conflictstyle=zdiff3 merge origin/main` を優先する。
+   - より明確なコンフリクトコンテキストを得るため
+     `git -c merge.conflictstyle=zdiff3 merge "origin/$target_base"` を優先する。
 7. コンフリクトが現れたら解決し（下記のコンフリクトガイダンスを参照）、その後:
    - `git add <files>`
    - `git commit`（マージが一時停止している場合は `git merge --continue`）

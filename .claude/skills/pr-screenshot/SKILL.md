@@ -42,8 +42,11 @@ SCREENSHOT_DIR=/tmp/pr-screenshots
 
 ```bash
 git branch --show-current
-gh pr list --head "$(git branch --show-current)" --json number --jq '.[0].number'
-git diff --name-only develop...HEAD
+gh pr list --repo seiichi3141/numazugikai \
+  --head "$(git branch --show-current)" --json number --jq '.[0].number'
+BASE_BRANCH=$(gh pr view --repo seiichi3141/numazugikai \
+  --json baseRefName --jq .baseRefName)
+git diff --name-only "$BASE_BRANCH"...HEAD
 ```
 
 変更されたファイルパスから、影響を受けるUI画面を推定する:
@@ -187,7 +190,8 @@ ${R2_PUBLIC_URL}/pr-${PR_NUMBER}/screenshot-1.png
 
 ### Step 6: PR 本文にスクリーンショットを追加
 
-`gh pr edit` でPR本文を更新する。既存の本文を取得し、スクリーンショットセクションを追加/更新する。
+`gh pr edit --repo seiichi3141/numazugikai` でPR本文を更新する。既存の本文を取得し、
+スクリーンショットセクションを追加/更新する。
 
 スクリーンショットが3枚以下の場合はテーブルで横並び（33%幅）:
 

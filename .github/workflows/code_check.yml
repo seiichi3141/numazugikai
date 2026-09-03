@@ -2,9 +2,12 @@ name: Code Check
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, "sites/*/main", "sites/*/develop"]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, "sites/*/main", "sites/*/develop"]
+
+permissions:
+  contents: read
 
 jobs:
   lint-and-typecheck:
