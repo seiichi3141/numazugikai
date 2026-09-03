@@ -1614,6 +1614,14 @@ export type Database = {
           session_count: number
         }[]
       }
+      replace_bill_tags: {
+        Args: {
+          p_bill_id: string
+          p_managed_tag_ids: string[]
+          p_next_tag_ids: string[]
+        }
+        Returns: undefined
+      }
       extract_assistant_question_id: {
         Args: { content: string }
         Returns: string

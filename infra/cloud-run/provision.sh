@@ -321,7 +321,7 @@ ensure_scheduler \
   "$INGEST_DAILY_SCHEDULER_CRON" \
   "$INGEST_DAILY_SCHEDULER_TIMEZONE" \
   "$INGEST_DAILY_SCHEDULER_PAUSED" \
-  '{"overrides":{"containerOverrides":[{"args":["--mode=ingest","--target=daily"]}]}}'
+  '{"overrides":{"containerOverrides":[{"args":["--mode=maintain-bills"]}]}}'
 
 # ── 9. Cloud Monitoring（取り込み失敗・定期実行の成功なし）──
 # 取り込みモードごとの完了/失敗ログをカウンタ化する。Cloud Run Job は分析と共用のため、
