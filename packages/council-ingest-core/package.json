@@ -1,0 +1,42 @@
+{
+  "name": "@mirai-gikai/council-ingest-core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./types": {
+      "types": "./src/shared/types.ts",
+      "default": "./src/shared/types.ts"
+    },
+    "./source-record-key": {
+      "types": "./src/utils/build-source-record-key.ts",
+      "default": "./src/utils/build-source-record-key.ts"
+    },
+    "./source-observation-review": {
+      "types": "./src/utils/assess-source-observations.ts",
+      "default": "./src/utils/assess-source-observations.ts"
+    },
+    "./ingest-record-review": {
+      "types": "./src/utils/assess-ingest-record.ts",
+      "default": "./src/utils/assess-ingest-record.ts"
+    },
+    "./minutes-content-policy": {
+      "types": "./src/utils/is-minutes-content-operation-allowed.ts",
+      "default": "./src/utils/is-minutes-content-operation-allowed.ts"
+    },
+    "./testing/synthetic-fixtures": {
+      "types": "./src/testing/synthetic-fixtures.ts",
+      "default": "./src/testing/synthetic-fixtures.ts"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4"
+  }
+}
