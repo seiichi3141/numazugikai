@@ -85,7 +85,8 @@ describe("ingestCurrentSessionBills", () => {
     expect(fake.upserts[0]).toMatchObject({
       councilSessionId: "session-id",
       billNumber: "報第22号",
-      submittedOn: "2026-09-04",
+      submittedOn: null,
+      defaultSubmittedOn: "2026-09-04",
       sourceRecordKey: null,
       submitter: null,
     });
