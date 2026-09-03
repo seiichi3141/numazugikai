@@ -14,6 +14,7 @@ alter table bills
 
 -- 沼津公式の議案結果ページから取り込まれ、識別に必要な値が揃う既存行だけをbackfillする。
 -- number kindをnormalized numberへ残し、同じ数値の「議第」「認第」等を区別する。
+-- 写像変更時はbuild-numazu-bill-source-record-key.tsも同時に更新する。
 create function pg_temp.build_numazu_bill_source_record_key(
   input_session_slug text,
   input_number_kind bill_number_kind_enum,

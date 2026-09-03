@@ -109,37 +109,32 @@ export async function upsertCommittee(shortName: string): Promise<string> {
 /** 会期IDと議案番号で突合して議案を作成・更新する。 */
 export async function upsertBill(bill: BillUpsert): Promise<string> {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .upsert(
-      {
-        council_session_id: bill.councilSessionId,
-        ...(bill.sourceRecordKey === null
-          ? {}
-          : { source_record_key: bill.sourceRecordKey }),
-        bill_number: bill.billNumber,
-        bill_number_kind: bill.numberKind,
-        bill_number_value: bill.numberValue,
-        name: bill.name,
-        category: bill.category,
-        legal_basis: bill.legalBasis,
-        submitted_date: bill.submittedOn,
-        submitter: bill.submitter,
-        committee_id: bill.committeeId,
-        committee_result: bill.committeeResult,
-        decided_on: bill.decidedOn,
-        status: bill.status,
-        status_note: bill.statusNote,
-        source_url: bill.sourceUrl,
-        document_url: bill.documentUrl,
-      },
-      { onConflict: "council_session_id,bill_number" }
-    )
-    .select("id")
-    .single();
+  const { data, error } = await supabase.rpc("upsert_ingested_bill", {
+    p_bill_number: bill.billNumber,
+    p_category: bill.category,
+    p_council_session_id: bill.councilSessionId,
+    p_name: bill.name,
+    p_number_kind: bill.numberKind,
+    p_number_value: bill.numberValue,
+    p_source_url: bill.sourceUrl,
+    p_status: bill.status,
+    ...(bill.sourceRecordKey === null
+      ? {}
+      : { p_source_record_key: bill.sourceRecordKey }),
+    ...(bill.legalBasis === null ? {} : { p_legal_basis: bill.legalBasis }),
+    ...(bill.submittedOn === null ? {} : { p_submitted_on: bill.submittedOn }),
+    ...(bill.submitter === null ? {} : { p_submitter: bill.submitter }),
+    ...(bill.committeeId === null ? {} : { p_committee_id: bill.committeeId }),
+    ...(bill.committeeResult === null
+      ? {}
+      : { p_committee_result: bill.committeeResult }),
+    ...(bill.decidedOn === null ? {} : { p_decided_on: bill.decidedOn }),
+    ...(bill.statusNote === null ? {} : { p_status_note: bill.statusNote }),
+    ...(bill.documentUrl === null ? {} : { p_document_url: bill.documentUrl }),
+  });
 
   if (error) throw new Error(`議案の保存に失敗した: ${error.message}`);
-  return data.id;
+  return data;
 }
 
 /** 議案本文PDFのリンクだけを後から埋める。 */

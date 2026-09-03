@@ -42,15 +42,15 @@ describe("buildNumazuBillSourceRecordKey", () => {
     " 2026-13 ",
     "2026:13",
     "令和8-13",
-  ])("不安定な会期slug %jを拒否する", (sessionSlug) => {
-    expect(() =>
+  ])("不安定な会期slug %jにはkeyを割り当てない", (sessionSlug) => {
+    expect(
       buildNumazuBillSourceRecordKey({
         sessionSlug,
         numberKind: "gi",
         numberValue: 1,
         submitter: "mayor",
       })
-    ).toThrowError("sessionSlug must use the Numazu YYYY-sessionNumber format");
+    ).toBeNull();
   });
 
   it("同じ会期・数値でも番号種別が異なれば衝突しない", () => {
@@ -69,14 +69,14 @@ describe("buildNumazuBillSourceRecordKey", () => {
     -1,
     1.5,
     Number.MAX_SAFE_INTEGER + 1,
-  ])("不正な番号値%sを拒否する", (numberValue) => {
-    expect(() =>
+  ])("不正な番号値%sにはkeyを割り当てない", (numberValue) => {
+    expect(
       buildNumazuBillSourceRecordKey({
         sessionSlug: "2026-12",
         numberKind: "gi",
         numberValue,
         submitter: "mayor",
       })
-    ).toThrowError("numberValue must be a non-negative safe integer");
+    ).toBeNull();
   });
 });

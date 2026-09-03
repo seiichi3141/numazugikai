@@ -166,6 +166,49 @@ describe("bills.source_record_key", () => {
     expect(data?.source_record_key).toBe(sourceRecordKey);
   });
 
+  it("解析結果が別の非null値へ変わっても既存の永続keyを上書きしない", async () => {
+    const session = await createTestCouncilSession({
+      slug: `numazu-key-write-once-${Date.now()}`,
+    });
+    sessionIds.push(session.id);
+    const sourceRecordKey = `numazu-city:${session.slug}:executive_bill:mayor:numbered:gi-1`;
+    const first = await createTestBill({
+      council_session_id: session.id,
+      bill_number: "議第1号",
+      source_record_key: sourceRecordKey,
+    });
+    billIds.push(first.id);
+
+    const updatedId = await upsertBill({
+      councilSessionId: session.id,
+      sourceRecordKey: `numazu-city:${session.slug}:committee_bill:committee:numbered:gi-1`,
+      billNumber: "議第1号",
+      numberKind: "gi",
+      numberValue: 1,
+      name: "提出者解析が変わった再取り込み",
+      category: "other",
+      legalBasis: null,
+      submittedOn: null,
+      submitter: "committee",
+      committeeId: null,
+      committeeResult: null,
+      decidedOn: null,
+      status: "submitted",
+      statusNote: null,
+      sourceUrl:
+        "https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm",
+      documentUrl: null,
+    });
+
+    expect(updatedId).toBe(first.id);
+    const { data } = await adminClient
+      .from("bills")
+      .select("source_record_key")
+      .eq("id", first.id)
+      .single();
+    expect(data?.source_record_key).toBe(sourceRecordKey);
+  });
+
   it("移行中は既存の会期・議案番号一意制約も維持する", async () => {
     const session = await createTestCouncilSession({
       slug: `legacy-key-${Date.now()}`,

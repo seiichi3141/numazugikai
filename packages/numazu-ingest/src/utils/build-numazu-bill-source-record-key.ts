@@ -35,17 +35,18 @@ function resolveDocumentKind(
   return "executive_bill";
 }
 
-/** 既存Numazu議案を新しい自治体共通keyへ決定的に写像する。 */
+/**
+ * 既存Numazu議案を新しい自治体共通keyへ決定的に写像する。
+ * 写像はadd_bill_source_record_key migrationのbackfill関数と一致させる。
+ */
 export function buildNumazuBillSourceRecordKey(
   input: BuildNumazuBillSourceRecordKeyInput
 ): string | null {
   if (!/^\d{4}-\d+$/.test(input.sessionSlug)) {
-    throw new Error(
-      "sessionSlug must use the Numazu YYYY-sessionNumber format"
-    );
+    return null;
   }
   if (!Number.isSafeInteger(input.numberValue) || input.numberValue < 0) {
-    throw new Error("numberValue must be a non-negative safe integer");
+    return null;
   }
 
   const submitterKind = resolveSubmitterKind(input.numberKind, input.submitter);

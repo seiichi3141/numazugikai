@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import postgres from "postgres";
+import { buildNumazuBillSourceRecordKey } from "../../../packages/numazu-ingest/src/utils/build-numazu-bill-source-record-key";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -7,6 +8,13 @@ const databaseUrl =
 const migrationSql = readFileSync(
   new URL(
     "../../../supabase/migrations/20260904010000_add_bill_source_record_key.sql",
+    import.meta.url
+  ),
+  "utf8"
+);
+const functionMigrationSql = readFileSync(
+  new URL(
+    "../../../supabase/migrations/20260904011000_add_upsert_ingested_bill.sql",
     import.meta.url
   ),
   "utf8"
@@ -37,30 +45,43 @@ describe("add_bill_source_record_key migration", () => {
         create type bill_submitter_enum as enum (
           'mayor', 'member', 'committee', 'citizen'
         );
+        create type bill_category_enum as enum ('other');
+        create type bill_status_enum as enum ('submitted');
         create table council_sessions (
-          id integer primary key,
+          id uuid primary key,
           slug text
         );
         create table bills (
-          id integer primary key,
-          council_session_id integer references council_sessions(id),
+          id uuid primary key default gen_random_uuid(),
+          test_case integer,
+          council_session_id uuid references council_sessions(id),
           bill_number text,
           bill_number_kind bill_number_kind_enum,
           bill_number_value integer,
+          name text,
+          category bill_category_enum,
+          legal_basis text,
+          submitted_date date,
           submitter bill_submitter_enum,
+          committee_id uuid,
+          committee_result text,
+          decided_on date,
+          status bill_status_enum default 'submitted',
+          status_note text,
           source_url text,
+          document_url text,
           constraint bills_session_bill_number_key
             unique (council_session_id, bill_number)
         );
       `);
       await transaction.unsafe(`
         insert into council_sessions (id, slug) values
-          (1, '2026-13'),
-          (2, ' 2026-13 '),
-          (3, null);
+          ('00000000-0000-0000-0000-000000000001', '2026-13'),
+          ('00000000-0000-0000-0000-000000000002', ' 2026-13 '),
+          ('00000000-0000-0000-0000-000000000003', null);
 
         insert into bills (
-          id,
+          test_case,
           council_session_id,
           bill_number,
           bill_number_kind,
@@ -68,58 +89,120 @@ describe("add_bill_source_record_key migration", () => {
           submitter,
           source_url
         ) values
-          (1, 1, '議第58号', 'gi', 58, 'mayor',
+          (1, '00000000-0000-0000-0000-000000000001', '議第58号', 'gi', 58, 'mayor',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
-          (2, 1, '発議第1号', 'hatsugi', 1, null,
+          (2, '00000000-0000-0000-0000-000000000001', '発議第1号', 'hatsugi', 1, null,
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
-          (3, 1, '発議第2号', 'hatsugi', 2, 'committee',
+          (3, '00000000-0000-0000-0000-000000000001', '発議第2号', 'hatsugi', 2, 'committee',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
-          (4, 1, '議第1号', 'gi', 1, null,
+          (4, '00000000-0000-0000-0000-000000000001', '議第1号', 'gi', 1, null,
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
-          (5, 1, '報第14号', 'hou', 14, 'mayor',
+          (5, '00000000-0000-0000-0000-000000000001', '報第14号', 'hou', 14, 'mayor',
             'https://example.com/not-numazu-official'),
-          (6, 2, '議第2号', 'gi', 2, 'mayor',
+          (6, '00000000-0000-0000-0000-000000000002', '議第2号', 'gi', 2, 'mayor',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
-          (7, 3, '議第3号', 'gi', 3, 'mayor',
+          (7, '00000000-0000-0000-0000-000000000003', '議第3号', 'gi', 3, 'mayor',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
-          (8, 1, '請願第1号', 'seigan', 1, null,
+          (8, '00000000-0000-0000-0000-000000000001', '請願第1号', 'seigan', 1, null,
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (9, '00000000-0000-0000-0000-000000000001', '報第15号', 'hou', 15, 'mayor',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (10, '00000000-0000-0000-0000-000000000001', '議第59号', 'gi', 59, 'member',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (11, '00000000-0000-0000-0000-000000000001', '陳情第1号', 'chinjo', 1, null,
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (12, '00000000-0000-0000-0000-000000000001', '認第1号', 'nin', 1, 'mayor',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm');
       `);
 
       await transaction.unsafe(migrationSql);
+      await transaction.unsafe(functionMigrationSql);
 
       const rows = await transaction<
-        { id: number; source_record_key: string | null }[]
+        { test_case: number; source_record_key: string | null }[]
       >`
-        select id, source_record_key
+        select test_case, source_record_key
         from bills
-        order by id
+        where test_case is not null
+        order by test_case
       `;
 
       expect(rows).toEqual([
         {
-          id: 1,
-          source_record_key:
-            "numazu-city:2026-13:executive_bill:mayor:numbered:gi-58",
+          test_case: 1,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "gi",
+            numberValue: 58,
+            submitter: "mayor",
+          }),
         },
         {
-          id: 2,
-          source_record_key:
-            "numazu-city:2026-13:member_bill:member:numbered:hatsugi-1",
+          test_case: 2,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "hatsugi",
+            numberValue: 1,
+            submitter: null,
+          }),
         },
         {
-          id: 3,
-          source_record_key:
-            "numazu-city:2026-13:committee_bill:committee:numbered:hatsugi-2",
+          test_case: 3,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "hatsugi",
+            numberValue: 2,
+            submitter: "committee",
+          }),
         },
-        { id: 4, source_record_key: null },
-        { id: 5, source_record_key: null },
-        { id: 6, source_record_key: null },
-        { id: 7, source_record_key: null },
+        { test_case: 4, source_record_key: null },
+        { test_case: 5, source_record_key: null },
+        { test_case: 6, source_record_key: null },
+        { test_case: 7, source_record_key: null },
         {
-          id: 8,
-          source_record_key:
-            "numazu-city:2026-13:petition:citizen:numbered:seigan-1",
+          test_case: 8,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "seigan",
+            numberValue: 1,
+            submitter: null,
+          }),
+        },
+        {
+          test_case: 9,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "hou",
+            numberValue: 15,
+            submitter: "mayor",
+          }),
+        },
+        {
+          test_case: 10,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "gi",
+            numberValue: 59,
+            submitter: "member",
+          }),
+        },
+        {
+          test_case: 11,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "chinjo",
+            numberValue: 1,
+            submitter: null,
+          }),
+        },
+        {
+          test_case: 12,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "nin",
+            numberValue: 1,
+            submitter: "mayor",
+          }),
         },
       ]);
 
