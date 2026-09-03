@@ -19,12 +19,18 @@ export const DISCUSSVISION_BASE_URL = "https://smart.discussvision.net/dvsapi";
 export function buildCouncilWatchUrl(
   councilId: string,
   scheduleId: string,
-  playlistId: string
+  playlistId: string,
+  speakerId: string | null,
+  targetYear: string
 ): string {
   const params = new URLSearchParams({
     council_id: councilId,
     schedule_id: scheduleId,
     playlist_id: playlistId,
+    // DiscussVision は発言者が紐づかない項目でも文字列 "null" を要求する。
+    // 省略すると内部 API に speaker_id=undefined が渡り、エラー画面になる。
+    speaker_id: speakerId ?? "null",
+    target_year: targetYear,
   });
   return `https://smart.discussvision.net/smart/tenant/numazu/WebView/rd/speech.html?${params}`;
 }

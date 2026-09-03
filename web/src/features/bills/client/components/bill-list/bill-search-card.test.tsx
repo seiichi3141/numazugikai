@@ -115,19 +115,27 @@ describe("BillSearchCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("タグ・受付中・回答数が無ければ下の段ごと出さない", () => {
+  it("タグ・受付中・回答数・討論が無ければ下の段ごと出さない", () => {
     render(
       <BillSearchCard
         bill={createMockBill({
           tags: [],
           hasPublicInterview: false,
           publicReportCount: 0,
+          hasDebate: false,
         })}
       />
     );
 
     expect(screen.queryByText("AIインタビュー受付中")).not.toBeInTheDocument();
     expect(screen.queryByText(/回答/)).not.toBeInTheDocument();
+    expect(screen.queryByText("本会議討論あり")).not.toBeInTheDocument();
+  });
+
+  it("本会議討論の記録がある議案にマークを出す", () => {
+    render(<BillSearchCard bill={createMockBill({ hasDebate: true })} />);
+
+    expect(screen.getByText("本会議討論あり")).toBeInTheDocument();
   });
 
   it("タグと受付中を下の段に並べる", () => {

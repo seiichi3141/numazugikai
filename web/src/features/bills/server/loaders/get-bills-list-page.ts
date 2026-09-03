@@ -19,6 +19,7 @@ import {
 import {
   type BillsListFilter,
   countBillsForListFacets,
+  findBillIdsWithDebates,
   searchBillsForList,
 } from "../repositories/bill-repository";
 
@@ -94,8 +95,14 @@ export async function getBillsListPage(
           offset: offsetFor(page, BILLS_PER_PAGE),
         });
 
+  const billIdsWithDebates = await findBillIdsWithDebates(
+    rows.map(({ id }) => id)
+  );
+
   return {
-    bills: rows.map(toBillListItem),
+    bills: rows.map((row) =>
+      toBillListItem(row, billIdsWithDebates.has(row.id))
+    ),
     total,
     page,
     totalPages,
@@ -106,7 +113,7 @@ export async function getBillsListPage(
 
 type SearchRow = Awaited<ReturnType<typeof searchBillsForList>>[number];
 
-function toBillListItem(row: SearchRow): BillListItem {
+function toBillListItem(row: SearchRow, hasDebate: boolean): BillListItem {
   return {
     id: row.id,
     name: row.name,
@@ -121,5 +128,6 @@ function toBillListItem(row: SearchRow): BillListItem {
     hasPublicInterview:
       INTERVIEW_COLLECTION_ENABLED && row.has_public_interview,
     publicReportCount: row.public_report_count,
+    hasDebate,
   };
 }
