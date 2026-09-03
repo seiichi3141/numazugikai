@@ -65,6 +65,11 @@ pnpm --filter @mirai-gikai/topic-analysis-worker run ingest --target=amivoice
 
 取り込みには `.env` の環境変数が必要です。
 
+本番の日次ジョブは `--mode=maintain-bills` で会議録等を取り込んだ後、タグがない
+議案を既存のテーマ定義に基づいてAI分類します。既存議案を同じ基準で分類し直す場合は、
+Cloud Run Jobを `--mode=bill-tags --force` で一度だけ実行します（OpenAI APIの費用が
+発生します）。
+
 ## シードデータ
 
 `pnpm seed`（`pnpm db:reset` からも実行されます）が作るのは次の3つだけです。

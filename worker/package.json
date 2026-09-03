@@ -7,7 +7,8 @@
     "start": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts",
     "typecheck": "tsc --noEmit",
     "ingest": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts --mode=ingest",
-    "explain": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts --mode=explain"
+    "explain": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts --mode=explain",
+    "bill-tags": "NODE_OPTIONS=--conditions=react-server tsx src/main.ts --mode=bill-tags"
   },
   "dependencies": {
     "@mirai-gikai/topic-analysis-core": "workspace:*",

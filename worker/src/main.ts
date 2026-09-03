@@ -7,6 +7,7 @@ import { runBackfill } from "@mirai-gikai/topic-analysis-core/backfill";
 import { resolveBackfillParams } from "@mirai-gikai/topic-analysis-core/backfill-params";
 import { runTagBackfill } from "@mirai-gikai/topic-analysis-core/tag-backfill";
 import { runAssignThumbnailKeys } from "@mirai-gikai/bill-explainer/assign-thumbnail-keys";
+import { runAssignBillTags } from "@mirai-gikai/bill-explainer/assign-bill-tags";
 import { runExplain } from "@mirai-gikai/bill-explainer/explain";
 import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
 
@@ -48,6 +49,14 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   サムネイルの題材の割り当て（explain の後にも自動で走る）:
  *   tsx src/main.ts --mode=thumbnail-keys                             # 題材が未設定の議案すべて
  *   tsx src/main.ts --mode=thumbnail-keys --session=2026-13 --force   # 指定会期を決め直す
+ *
+ *   議案のテーマタグ付け（OpenAI API を直接利用）:
+ *   tsx src/main.ts --mode=bill-tags                                  # タグが無い議案だけ
+ *   tsx src/main.ts --mode=bill-tags --session=2026-14 --force        # 指定会期を再分類
+ *   tsx src/main.ts --mode=bill-tags --force                          # 既存議案をすべて再分類
+ *
+ *   日次保守（会議録等の取り込み → 未分類議案のタグ付け）:
+ *   tsx src/main.ts --mode=maintain-bills
  *   tsx src/main.ts --mode=ingest --target=bills --era-year=8 --month=6  # 令和8年6月定例会だけ
  *   tsx src/main.ts --mode=ingest --target=bills --term=24            # 第24期の全会期
  *   tsx src/main.ts --mode=ingest --target=bills --all-terms          # 全期（平成16年〜）
@@ -64,7 +73,9 @@ type Mode =
   | "tag-backfill"
   | "ingest"
   | "explain"
-  | "thumbnail-keys";
+  | "thumbnail-keys"
+  | "bill-tags"
+  | "maintain-bills";
 
 const INGEST_TARGETS = [
   "sessions",
@@ -133,6 +144,44 @@ async function assignThumbnailKeys(options: {
   );
 }
 
+async function assignBillTags(options: {
+  sessionSlug?: string;
+  billIds?: string[];
+  force?: boolean;
+  limit?: number;
+}): Promise<number> {
+  const results = await runAssignBillTags(options);
+  const failed = results.filter((result) => result.failure !== null).length;
+  console.log(
+    `議案タグ付け完了: 対象${results.length}件 / 成功${results.length - failed}件 / 失敗${failed}件`
+  );
+  return failed;
+}
+
+async function explainPendingBills(options: {
+  sessionSlug?: string;
+  limit?: number;
+  force?: boolean;
+  difficulties?: ("normal" | "hard")[];
+}): Promise<{ failed: number; generatedBillIds: string[] }> {
+  const results = await runExplain(options);
+  const generated = results.filter((result) => result.generated.length > 0);
+  const failed = results.filter((result) => result.failures.length > 0).length;
+  console.log(
+    `議案解説の生成完了: 対象${results.length}件 / 生成${generated.length}件 / 一部失敗${failed}件`
+  );
+  if (generated.length > 0) {
+    await assignThumbnailKeys({
+      billIds: generated.map((result) => result.billId),
+      force: true,
+    });
+  }
+  return {
+    failed,
+    generatedBillIds: generated.map((result) => result.billId),
+  };
+}
+
 /**
  * `--key=value` 形式の引数をパースする（Cloud Run の --args 渡しに合わせる）。
  * `--force` のように値が無いものは "true" として扱い、parseFlag で真になる。
@@ -161,7 +210,12 @@ async function main(): Promise<void> {
   requireEnv("SUPABASE_SECRET_KEY");
   // 取り込みはLLMを使わないためAIのキーは不要。
   // 議案解説とサムネイル題材の割り当ては OpenAI API を直接叩くため、Gateway ではなく OPENAI_API_KEY を要求する。
-  if (mode === "explain" || mode === "thumbnail-keys") {
+  if (
+    mode === "explain" ||
+    mode === "thumbnail-keys" ||
+    mode === "bill-tags" ||
+    mode === "maintain-bills"
+  ) {
     requireEnv("OPENAI_API_KEY");
   } else if (mode !== "ingest") {
     requireEnv("AI_GATEWAY_API_KEY");
@@ -174,24 +228,32 @@ async function main(): Promise<void> {
         `Invalid --difficulty=${difficulty} (expected "normal" or "hard")`
       );
     }
-    const results = await runExplain({
+    const { failed, generatedBillIds } = await explainPendingBills({
       sessionSlug: args.session,
       force: parseFlag(args.force),
       limit: parseNumber(args.limit, "limit"),
       difficulties: difficulty ? [difficulty] : undefined,
     });
-    const generated = results.filter((r) => r.generated.length > 0).length;
-    const failed = results.filter((r) => r.failures.length > 0).length;
-    console.log(
-      `議案解説の生成完了: 対象${results.length}件 / 生成${generated}件 / 一部失敗${failed}件`
-    );
-    // 解説ができた議案は要約が変わっているので、その議案だけ題材を決め直す。
-    const explainedIds = results
-      .filter((r) => r.generated.length > 0)
-      .map((r) => r.billId);
-    if (explainedIds.length > 0) {
-      await assignThumbnailKeys({ billIds: explainedIds, force: true });
-    }
+    const tagFailures = await assignBillTags({ billIds: generatedBillIds });
+    if (failed + tagFailures > 0) throw new Error("議案のAI処理に失敗がある");
+    return;
+  }
+
+  if (mode === "bill-tags") {
+    const failed = await assignBillTags({
+      sessionSlug: args.session,
+      force: parseFlag(args.force),
+      limit: parseNumber(args.limit, "limit"),
+    });
+    if (failed > 0) throw new Error(`議案タグ付けに${failed}件失敗した`);
+    return;
+  }
+
+  if (mode === "maintain-bills") {
+    await runIngest({ mode: "daily" });
+    const tagFailures = await assignBillTags({});
+    if (tagFailures > 0)
+      throw new Error(`日次AIタグ付けに${tagFailures}件失敗した`);
     return;
   }
 
@@ -266,7 +328,7 @@ async function main(): Promise<void> {
   }
 
   throw new Error(
-    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "ingest" / "explain")`
+    `Unknown --mode=${mode ?? "(none)"} (expected "analyze" / "analyze-all" / "backfill" / "tag-backfill" / "ingest" / "explain" / "thumbnail-keys" / "bill-tags" / "maintain-bills")`
   );
 }
 
