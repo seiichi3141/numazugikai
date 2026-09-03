@@ -8,32 +8,90 @@
 変更作業は、**必ず git worktree を作成してから開始すること**。メインのリポジトリディレクトリでは直接変更を行わない。
 
 ```bash
-# 1. worktreeを作成（必ずdevelopから分岐すること）
-git worktree add ../mirai-gikai-<branch-name> -b <branch-name> develop
+# 1. 共通 trunk の最新 develop から worktree を作成
+git fetch origin develop
+git worktree add ../numazugikai-<worktree-name> \
+  -b <feature-branch> origin/develop
 
-# 2. settings.local.jsonをコピー（権限設定のため必須）
-mkdir -p ../mirai-gikai-<branch-name>/.claude
-cp .claude/settings.local.json ../mirai-gikai-<branch-name>/.claude/
+# 2. ローカル権限設定が必要な場合だけ settings.local.json をコピー
+if [ -f .claude/settings.local.json ]; then
+  mkdir -p ../numazugikai-<worktree-name>/.claude
+  cp .claude/settings.local.json ../numazugikai-<worktree-name>/.claude/
+fi
 
-# 3. .envをコピー（環境変数の引き継ぎ）
-cp .env ../mirai-gikai-<branch-name>/
+# 3. 対象 branch の雛形から .env を作成
+cp ../numazugikai-<worktree-name>/.env.example \
+  ../numazugikai-<worktree-name>/.env
 
 # 4. 依存パッケージをインストール
-cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
+cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
 ```
 
-- **必ず `develop` から分岐する**: `git worktree add` の末尾に `develop` を指定すること。省略すると現在のブランチ（HEADが別ブランチを指している場合）から分岐し、無関係なコミットがPRに混入する原因になる。
+- **通常の実装は最新の `origin/develop` から分岐する**: 共通機能だけでなく、自治体 profile、
+  adapter、ブランド、データ取得などの自治体対応も共通 trunk で実装する。
+  `sites/<site>/develop` は開発元ではなく、検証済みの `develop` を受け取る薄い
+  統合先である。例外は後述する自治体環境だけの fix / hotfix と、既存の沼津市
+  production hotfix とする。
+- **自治体間で `.env` をコピーしない**: 対象 branch の `.env.example` から作り、
+  必要な値だけを設定する。同じ自治体の既存 worktree から引き継ぐ場合も、接続先を
+  確認してから使う。
+- branch 名と PR の向き先は
+  [複数自治体ブランチ運用方針](docs/20260903_1906_複数自治体ブランチ運用方針.md)
+  に従う。
 
-- **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
-- **developに変更が残っている場合のリカバリ**: worktreeを作成する前に、developブランチの変更を必ずクリーンアップすること。作業途中の変更をdevelopに残したままworktreeを作成・作業することは禁止。
+- **目的**: `develop` を常にクリーンに保ち、作業の分離と並列作業を容易にする
+- **base branch に変更が残っている場合のリカバリ**: worktreeを作成する前に、base branch の変更を必ずクリーンアップすること。作業途中の変更をbase branchに残したままworktreeを作成・作業することは禁止。
   ```bash
-  # 変更を退避してからworktreeを作成
+  # 変更を退避し、最新の origin/develop から worktree を作成
   git stash --include-untracked
-  git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
+  git fetch origin develop
+  git worktree add ../numazugikai-<worktree-name> \
+    -b <feature-branch> origin/develop
   # worktreeに移動して退避した変更を適用
-  cd ../mirai-gikai-<branch-name>
+  cd ../numazugikai-<worktree-name>
   git stash pop
   ```
+
+### リモート操作の安全ルール
+
+- `origin` は必ず `seiichi3141/numazugikai` を指すこと。
+- `upstream` は `team-mirai/mirai-gikai` の参照専用 remote とし、push URL は
+  `DISABLED_DO_NOT_PUSH` を維持すること。
+- GitHub への書き込み操作は `--repo seiichi3141/numazugikai` を明示する。
+- PR 作成時は、通常の実装では `--base develop` を明示する。自治体環境だけの
+  staging 修正は `sites/<site>/develop`、production hotfix は
+  `sites/<site>/main` を明示する。既存の沼津市 production hotfix は
+  `--base main` を維持する。
+- upstream の更新は専用 branch から `develop` へ一度だけ取り込み、検証後に
+  自治体 lifecycle branch へ一方向で反映する。
+
+### 複数自治体の実装・同期ルール
+
+- `develop` を共通 trunk とする。移行期間中は既存の沼津市 staging branch と
+  deployment を兼ねるため、沼津市版の挙動とデプロイ条件を維持する。
+- 沼津市のリリースは従来どおり `develop` から `main` への PR で行う。
+- 再利用可能なコードと、各自治体の profile / adapter を含むアプリケーション変更は
+  すべて `develop` から開始し、`develop` 宛ての PR にする。
+- `sites/<site>/develop` と `sites/<site>/main` は、自治体専用環境での統合確認と
+  リリースだけを担う。通常の機能開発を直接積み上げない。
+- 共通 trunk の反映は `develop` から `sites/<site>/develop` への一方向の promotion
+  PR だけで行い、merge commit で祖先関係を保つ。squash / rebase merge、
+  site branch から `develop` への reverse merge、異なる site branch 間の
+  merge を禁止する。
+- `main` または `sites/<site>/{develop,main}` 宛ての lifecycle PR は、この
+  リポジトリ内の branch だけを head にする。外部 fork からの通常の contribution は
+  短期 branch から共通 `develop` を base にする。
+- 日常的な cherry-pick は禁止する。障害対応など切り離された緊急変更に限り、理由と
+  後続の trunk 反映方法を PR に記録し、`git cherry-pick -x` を使用できる。
+- 自治体専用の外部環境設定だけを直す場合は、対応する lifecycle branch から
+  `sites/<site>/fix/<topic>` または `sites/<site>/hotfix/<topic>` を作成できる。
+  アプリケーションコード、profile / adapter、DB schema は含めない。
+- `supabase/migrations/` と生成済み DB 型は `develop` の単一履歴で管理する。
+  site branch 独自の migration や生成型を作らず、promotion で同じ schema を運ぶ。
+- 既存の `sites/shizuoka-pref/develop` に残る Phase 0 の root 設定と
+  fail-closed ガードは、promotion ごとに trunk の profile / 環境機構へ置き換える。
+  同等以上の保護を確認せずにガードを削除しない。最終的な target tree の
+  差分は自治体専用の外部環境設定だけに縮小する。
 
 ### 実装完了後は即PR作成
 実装完了後は「コミットしますか？」等の確認を挟まず、コミット → push → PR作成まで一気に進めること。ユーザーへの確認は不要。
@@ -45,6 +103,17 @@ cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 2. **`/review` を実行**: Codexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正する。
 
 両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで一気に進めること（`gh pr create`）。
+
+### CodeRabbitは使用しない（沼津市版）
+
+PRのbaseが`develop`または`main`の沼津市版では、CodeRabbitによるレビューを
+使用しない。レビューの要求・到着待ち・bot固有のコメント取得や重要度判定を、
+PRの作成後確認や完了条件に含めない。これは上記の`/simplify`・`/review`、
+push前のローカル検証、GitHub CI、実際に投稿された人間のレビューを省略する
+意味ではない。
+
+`sites/<site>/*`をbaseとするPRは、対象自治体branchの`AGENTS.md`と運用方針に
+従う。沼津市版の不使用ルールを他自治体へ自動適用しない。
 
 ### UI変更時のスクリーンショット必須
 PR作成後、変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
@@ -63,7 +132,12 @@ Linear issue ID（例: `MIR-123`）を含むタスクを依頼された場合、
 - `packages/supabase/` は共有 Supabase クライアントと型定義を提供し、生成結果は `types/` に保存します。
 - `packages/shared/` は `web` と `admin` の両方で使う共通ロジック（AI モデル定義、ストリーム処理等）を提供します。
 - `packages/seed/` はローカルデータ投入用の TypeScript スクリプト (`run.ts`, `data.ts`) を管理します。
-- `supabase/` はマイグレーションと設定ファイルを保持します。
+- `supabase/` は全自治体で共有する単一系列のマイグレーションと設定ファイルを
+  保持します。
+- 自治体 profile と adapter は共通 trunk の `packages/` 配下で管理し、`web`、
+  `admin`、`worker` から共有します。新しい自治体も branch 固有のコピーを作らず、
+  profile / adapter を追加します。profile は自治体ごとにファイルを分け、registry は
+  登録だけを担わせて、自治体固有の変更が同じファイルへ集中しないようにします。
 - 設計ドキュメントは `docs/` に格納し、ルートの設定ファイル（`biome.json`, `pnpm-workspace.yaml` など）は全体ポリシーとして扱います。
 - **web と admin でのコード共有**: 同一ロジックを `web/` と `admin/` の両方で使う場合は、`packages/` 配下の workspace パッケージに切り出すこと。同じコードを両アプリに重複配置するのは禁止。既存の `@mirai-gikai/shared` パッケージに追加するか、用途に応じて新しいパッケージを作成する。
 
@@ -112,6 +186,10 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 - DB 関連は `pnpm db:reset`、`pnpm db:migrate`、`pnpm db:types:gen`、`pnpm seed` を用途に応じて組み合わせます。
 
 ## 沼津市議会向けの用語ルール（必須）
+
+この節は、現在の既定 profile である沼津市版に適用する。別自治体の文言は
+共通 trunk の自治体 profile / adapter に定義し、site branch の `AGENTS.md` を
+分岐させて実装しない。
 
 本リポジトリは本家「みらい議会」（国会向け）の fork で、**沼津市議会向け**に改修している。
 UI文言・コメント・プロンプトを書くときは次の語を使うこと。
@@ -178,12 +256,14 @@ UI文言・コメント・プロンプトを書くときは次の語を使うこ
 - コミットメッセージは既存履歴同様、短い命令形主体（日本語可）とし、課題連携は `(#id)` を付与します。
 - PR ではスコープ概要、実行テスト記録（例: `pnpm dev`, `pnpm --filter web test`）、UI 変更時のスクリーンショットや GIF を添付します。
 - スキーマ・シード・環境変数の変更は本文で明示し、レビューフィードバックへの対応状況を追跡コメントで共有して Ready for Review に切り替えます。
-- **イシュー連携**: 特定のイシューに対応する PR を作成する場合、PR 本文に `Resolves #123` の形式で記載してください。これにより PR マージ時にイシューが自動クローズされます。複数のイシューを閉じる場合は `Resolves #123, Resolves #456` のように列挙します。
-- **PR作成後の状態確認（必須）**: PR作成後、以下の4点を確認すること：
+- **イシュー連携**: `develop`（GitHub の default branch）宛ての PR は、本文に
+  `Resolves #123` と記載してマージ時に自動クローズできる。自治体別 branch 宛ての
+  PR では closing keyword が自動適用されないため、Development 欄または本文で
+  issue をリンクし、マージ確認後に issue を別途クローズする。
+- **PR作成後の状態確認（必須）**: PR作成後、以下の3点を確認すること：
   1. **Conflict確認**: `gh pr view <番号> --json mergeable,mergeStateStatus` でマージ可能か確認。conflictがあれば解消してpushする。
   2. **CI確認**: `gh pr checks <番号>` でCIの状態を確認。失敗があれば原因を調査し修正してpushする。CIが実行中の場合は完了まで待つ。
-  3. **CodeRabbitレビュー確認**: CodeRabbitのレビューが届くまで待ってからコメントを確認する。レビューは通常2〜3分で届く。`gh api repos/{owner}/{repo}/pulls/{number}/comments` でコメントを取得し、空なら少し待って再取得する。**Minor以上（Minor/Major/Critical）の指摘はすべて対応が必須。** 対応とは「修正してpush」または「スキップ理由を該当コメントに返信」のいずれか。Nitpickのみスキップ可。
-  4. **対応済みコメントへの返信とresolve（必須）**: 対応済みコメント（修正pushした場合・スキップした場合の両方）に対して、該当コメントへ返信した上でGraphQL APIでresolveする。返信なしで黙ってresolveするのは禁止。
+  3. **投稿済みレビューコメントの確認**: 人間または明示的に有効化されたその他のレビュアーからコメントが投稿されている場合は確認する。対応済みコメント（修正pushした場合・理由を説明して対応しない場合の両方）には、該当コメントへ返信した上でGraphQL APIでresolveする。返信なしで黙ってresolveしない。未投稿のレビュー到着を待つ必要はない。
      ```bash
      # 1. 該当コメントに返信（対応内容の概要を記載、修正の場合はコミットSHAを含める）
      gh api repos/{owner}/{repo}/pulls/{number}/comments -X POST \
@@ -197,7 +277,9 @@ UI文言・コメント・プロンプトを書くときは次の語を使うこ
 
 ## Supabase & Environment Notes
 - ローカル開発前に `npx supabase start` を実行し、`.env.example` を `.env` にコピーして値を整えます。
-- スキーマ変更時は `supabase/migrations` のマイグレーションと `packages/supabase/types/supabase.types.ts` の再生成ファイルをセットでコミットします。
+- スキーマ変更時は、`develop` から分岐した branch で `supabase/migrations` の
+  マイグレーションと `packages/supabase/types/supabase.types.ts` の再生成ファイルを
+  セットでコミットします。自治体 lifecycle branch では独自に変更しません。
 - `pnpm seed` は `admin@example.com / admin123456` を含む検証データを投入するため、開発用途に限定してください。
 - **RLSとアクセスパターン**: マイグレーションでは必ず `alter table <テーブル名> enable row level security;` を記述してRLSを有効化すること。ただし **ポリシーは定義しない**（デフォルト全拒否）。データアクセスはすべて `createAdminClient()`（Supabase Secret Key）経由で行い、認可ロジックはアプリケーション層（Server Actions / Loaders）で実装する。
 

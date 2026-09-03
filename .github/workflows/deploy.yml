@@ -17,8 +17,13 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   migrate:
+    # workflow_dispatch で自治体別 branch を選んでも、沼津市本番へ接続しない。
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -34,6 +39,7 @@ jobs:
 
   deploy:
     needs: migrate
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     environment: production
     strategy:

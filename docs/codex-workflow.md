@@ -4,7 +4,7 @@ tracker:
   team_key: "GIKAI"
   required_labels:
     - "ai-task"
-  github_repo: "team-mirai/mirai-gikai"
+  github_repo: "seiichi3141/numazugikai"
   conversational_states:
     - "QA"
     - "Blocked"
@@ -28,29 +28,18 @@ workspace:
   root: ~/code/symphony-workspaces
 hooks:
   after_create: |
-    git clone --depth 1 https://github.com/team-mirai/mirai-gikai .
-    if [ -n "$SYMPHONY_WORKFLOW_DIR" ]; then
-      src_root="$(cd "$SYMPHONY_WORKFLOW_DIR/.." && pwd)"
-      for envpath in .env admin/.env; do
-        src="$src_root/$envpath"
-        if [ -f "$src" ]; then
-          mkdir -p "$(dirname "$envpath")"
-          cp "$src" "$envpath"
-        fi
-      done
-    fi
+    git clone --depth 1 --no-single-branch https://github.com/seiichi3141/numazugikai .
+    git remote add upstream https://github.com/team-mirai/mirai-gikai.git
+    git remote set-url --push upstream DISABLED_DO_NOT_PUSH
     if command -v corepack >/dev/null 2>&1; then
       corepack enable >/dev/null 2>&1 || true
-    fi
-    if command -v pnpm >/dev/null 2>&1; then
-      pnpm install --frozen-lockfile
     fi
   before_remove: |
     set -e
     branch=$(git branch --show-current 2>/dev/null || true)
     if [ -n "$branch" ] && command -v gh >/dev/null 2>&1; then
-      for pr in $(gh pr list --repo team-mirai/mirai-gikai --head "$branch" --state open --json number --jq '.[].number' 2>/dev/null); do
-        gh pr close "$pr" --repo team-mirai/mirai-gikai || true
+      for pr in $(gh pr list --repo seiichi3141/numazugikai --head "$branch" --state open --json number --jq '.[].number' 2>/dev/null); do
+        gh pr close "$pr" --repo seiichi3141/numazugikai || true
       done
     fi
 agent:
@@ -71,7 +60,35 @@ codex:
 このセッションは Symphony が用意した issue 専用のワークスペース（`/Users/muraikenta/code/symphony-workspaces/<issue-identifier>` 配下に clone された独立コピー）で実行されており、他チケットや他セッションから既に隔離されています。`AGENTS.md` の `git worktree add` 必須ルールは Claude Code / Codex CLI を単一リポジトリでインタラクティブに起動した時の隔離手段として書かれており、Symphony セッションでは **適用しません**（ワークスペースが二重隔離になるため不要）。
 
 - 新しい worktree を作らず、現在の作業ディレクトリ（このリポジトリの clone）でそのままブランチ作成・コミット・push してください。
-- ブランチは Linear の `gitBranchName` を優先して使い、未設定なら `<issue-identifier>-<short-description>` 形式で `develop`（無ければリポジトリの主要ブランチ）から切ってください。
+- ブランチは Linear の `gitBranchName` を優先して使ってください。
+  共通機能と自治体 profile / adapter を含むアプリケーション変更は、
+  対象自治体にかかわらず `develop` を base とします。自治体専用の
+  staging 環境だけの `sites/<site>/fix/...` は `sites/<site>/develop`、
+  production 環境だけの `sites/<site>/hotfix/...` は
+  `sites/<site>/main`、既存の沼津市 production hotfix である `hotfix/...` は
+  `main` を base とする例外です。それ以外の site-scoped branch は使用せず、
+  Linear の branch 名がこの方針と矛盾する場合は実装前に
+  workpad に記録して `develop` 起点の名前に修正します。
+  未設定なら `<issue-identifier>-<short-description>` 形式で `develop` から
+  切ってください。
+- clone は全 lifecycle branch の shallow ref を取得する。通常は `develop`、
+  上記の自治体環境 fix / hotfix だけは対応する lifecycle branch を
+  対象 base とし、最初に明示的に
+  `git fetch origin <base-branch>` し、`origin/<base-branch>` から作業 branch を
+  checkout する。ローカルの古い base branch を起点にしない。
+  base が存在しなければ処理を停止してください。
+- checkout 後に、その branch の `.env.example` を `.env` にコピーしてから
+  `pnpm install --frozen-lockfile` を実行する。実サービスの `.env` は別自治体へ
+  コピーしない。対象自治体専用の値が必要な検証では、site-scoped な secret 設定が
+  無い限り停止してください。
+- `develop` から `sites/<site>/develop` への promotion 以外に共通変更を
+  反映しない。site branch から `develop` への reverse merge、site branch 間の
+  merge、日常的な cherry-pick を行わない。切り離された緊急変更で
+  cherry-pick が必要な場合は `-x` を使い、理由と trunk への整合方法を
+  workpad と PR に記録してください。
+- `sites/shizuoka-pref/develop` への promotion で Phase 0 の root 設定と
+  ガードが競合した場合は、trunk の profile / 環境機構へ段階的に置き換える。
+  同等以上の保護とテストがないままガードを削除しない。
 - `.git` 書き込み権限が必要な操作（`git checkout -b`, `git commit`, `git push`, `git fetch`）は問題なく実行できる前提で進めてください。それでも `Operation not permitted` などで書き込みに失敗する場合は blocked-access escape hatch に従ってください。
 
 {% if attempt %}
@@ -129,7 +146,7 @@ Description:
 - `linear`: Linear と対話する。Linear MCP サーバー（`mcp__linear__*`）を優先し、MCP でカバーされない操作（ファイルアップロード、スキーマイントロスペクションなど）は `linear_graphql` クライアントツールにフォールバックする。
 - `commit`: 実装中にクリーンで論理的なコミットを作成する。
 - `push`: リモートブランチを最新に保ち、更新を公開する。
-- `pull`: 引き継ぎ前にブランチを最新の `origin/main` で更新する。
+- `pull`: 引き継ぎ前にブランチを最新の対象 base branch で更新する。
 - `land`: チケットが `Merging` に達したら、明示的に `.agents/skills/land/SKILL.md` を開いて従う。これには `land` ループが含まれる。
 
 ## ステータスマップ
@@ -167,7 +184,7 @@ Description:
    - `Done` -> 何もせずシャットダウンする。
 4. 現在のブランチに対して PR が既に存在するか、それがクローズされているかを確認する。
    - ブランチ PR が存在し、`CLOSED` または `MERGED` の場合、この実行に対する以前のブランチ作業を再利用不可として扱う。
-   - `origin/main` から新しいブランチを作成し、新しい試みとして実行フローを再開する。
+   - 対象 base branch から新しいブランチを作成し、新しい試みとして実行フローを再開する。
 5. `Todo` チケットの場合、起動シーケンスをこの正確な順序で行う:
    - Step 0.5 の spec sufficiency check を実行する。不十分な場合は spec-draft パスに従い、このチケットでの作業をここで停止する。
    - 十分な場合、`update_issue(..., state: "In Progress")`
@@ -251,7 +268,7 @@ Description:
     - チケットの説明／コメントコンテキストに `Validation`、`Test Plan`、`Testing` セクションが含まれている場合、これらの要件を workpad の `Acceptance Criteria` と `Validation` セクションに必須チェックボックスとしてコピーする（オプションへの格下げ不可）。
 7.  プリンシパルスタイルでセルフレビューし、コメント内で計画を洗練する。
 8.  実装前に、具体的な再現シグナルを取得し workpad の `Notes` セクションに記録する（コマンド／出力、スクリーンショット、または決定論的な UI 動作）。
-9.  コード編集の前に `pull` スキルを実行して最新の `origin/main` と同期し、その pull／sync の結果を workpad の `Notes` に記録する。
+9.  コード編集の前に `pull` スキルを実行して最新の対象 base branch と同期し、その pull／sync の結果を workpad の `Notes` に記録する。
     - `pull skill evidence` ノートに以下を含める:
       - マージソース、
       - 結果（`clean` または `conflicts resolved`）、
@@ -264,7 +281,8 @@ workpad 整合時に前回ターン以降に追加された人間コメントを
 
 ### 分類
 
-各アクション可能コメントを以下のいずれかに振り分ける（エージェント自身の `## Codex Workpad`、bot サマリ `みらいいぬ自動調査` / `coderabbitai` などは対象外）:
+各アクション可能コメントを以下のいずれかに振り分ける（エージェント自身の
+`## Codex Workpad`やbotによる自動サマリなどは対象外）:
 
 - **質問 / 状況確認**: 「何してる？」「なぜ X？」「進捗は？」「テストはどこ？」など、回答を求めるコメント。期待される出力は答えであってコード変更ではない。
 - **情報共有 / FYI**: 「明日リリースします」「staging URL が変わった」など、対応不要のコンテキスト共有。
@@ -278,7 +296,8 @@ workpad 整合時に前回ターン以降に追加された人間コメントを
 1. workpad、最近の commit (`git log`)、PR 状態 (`gh pr view`)、テスト結果、参照ファイルなどから具体的・事実ベースの回答を組み立てる。commit SHA、ファイル: 行番号、PR チェック名などを引用する。憶測や「以下を試します」風のお茶濁しは禁止。回答が手元にないなら、まず調べてから答える、または明示的に「分からないので確認させてください」と書く。
 2. **質問が来たのと同じチャネル**に回答を投稿:
    - Linear コメント → Linear MCP `commentCreate` で質問の comment id を `parentId` にして返信（スレッド機能がない場合はトップレベル）。回答を workpad に書いて済ませない。
-   - GitHub PR トップレベルコメント → `gh pr comment <pr> --body "..."`。
+   - GitHub PR トップレベルコメント →
+     `gh pr comment <pr> --repo seiichi3141/numazugikai --body "..."`。
    - GitHub PR インラインレビューコメント → `gh api repos/<owner>/<repo>/pulls/<pr>/comments/<comment_id>/replies -f body=...` でスレッドを保つ。
 3. 質問コメントに `✅` リアクション（回答済み）。
 4. workpad の `Notes` に 1 行追加（`Answered question on Linear comment <id>: <one-line summary>`）。後続ターンが履歴を辿れるように。
@@ -339,6 +358,12 @@ Linear と GitHub はエージェントの返信を API トークン / `gh auth 
 - 利用者が本当に実装変更を望む場合は、明示的に `Rework` または `Todo` に動かしてもらう。会話モードのコメントから推測して動かない。
 
 ## PR フィードバックスイーププロトコル（必須）
+
+沼津市版（PRのbaseが`develop`または`main`）ではCodeRabbitを使用せず、
+レビューを要求・待機・個別ポーリングしない。`AGENTS.md`のセルフレビュー、
+ローカル検証、GitHub CIは必須ゲートとして維持する。フィードバックスイープでは、
+実際に投稿された人間または明示的に有効化されたその他のレビュアーのコメントだけを
+対象にする。
 
 チケットに PR がアタッチされている場合、`Human PR Review` に移動する前にこのプロトコルを実行する:
 
@@ -414,7 +439,7 @@ Symphony 自体やこの WORKFLOW（つまり「エージェントがどう動�
 7.  すべての `git push` 試行の前に、スコープに必要な検証を実行し、それがパスすることを確認する。失敗した場合は、問題に対処してグリーンになるまで再実行し、その後変更を commit して push する。
 8.  PR URL を issue にアタッチする（添付を優先。添付が利用できない場合のみ workpad コメントを使用）。
     - GitHub PR にラベル `symphony` があることを確認する（無ければ追加する）。
-9.  最新の `origin/main` をブランチにマージし、コンフリクトを解決し、チェックを再実行する。
+9.  最新の対象 base branch をブランチにマージし、コンフリクトを解決し、チェックを再実行する。
 10. workpad コメントを最終チェックリストの状態と検証ノートで更新する。
     - 完了した plan／acceptance／validation チェックリスト項目をチェック済みとマークする。
     - 同じ workpad コメントに最終引き継ぎノート（commit + 検証サマリ）を追加する。
@@ -460,7 +485,7 @@ Symphony 自体やこの WORKFLOW（つまり「エージェントがどう動�
 1. workpad に完全リセットを正当化する理由を記録（レビュアーコメントやブランチ状態を引用）。
 2. 新しいブランチを示すコメントを残して既存 PR をクローズ。
 3. issue から既存の `## Codex Workpad` コメントを削除。
-4. `origin/main` から新しいブランチを作成。
+4. 対象 base branch から新しいブランチを作成。
 5. 通常のキックオフフローを実行: 新しい workpad、新しい計画、エンドツーエンドで実装。
 
 迷ったら漸進的パスをデフォルトに。レビュアーは自分がレビューした PR にフィードバックが反映されることを期待しており、新しい PR で出されることを期待していない。
@@ -478,7 +503,7 @@ Symphony 自体やこの WORKFLOW（つまり「エージェントがどう動�
 ## ガードレール
 
 - ブランチ PR が既にクローズ／マージされている場合、そのブランチや以前の実装状態を継続のために再利用しない。
-- クローズ／マージされたブランチ PR の場合、`origin/main` から新しいブランチを作成し、新規開始のように再現／計画からやり直す。
+- クローズ／マージされたブランチ PR の場合、対象 base branch から新しいブランチを作成し、新規開始のように再現／計画からやり直す。
 - issue 状態が `Backlog` の場合、変更しない。人間が `Todo` に移動するのを待つ。
 - 計画や進捗追跡のために issue 本文／説明を編集しない。唯一の例外は Step 0.5 の spec-draft パスで、`Human Spec Review` のための明示的な成果物として description を書き換える。
 - issue ごとに正確に 1 つの永続的な workpad コメント（`## Codex Workpad`）を使用する。

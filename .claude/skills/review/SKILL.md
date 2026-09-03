@@ -9,7 +9,8 @@ description: コードレビュー・テストガイドラインチェック・�
 
 ## 使い方
 
-引数なしで実行すると、develop ブランチとの差分をレビューする。
+引数なしで実行すると、PR の base（未作成なら共通 `develop`、自治体環境の
+fix / hotfix は対応する lifecycle branch）との差分をレビューする。
 
 ```
 /review
@@ -23,8 +24,14 @@ description: コードレビュー・テストガイドラインチェック・�
 まず現在のブランチと変更内容を確認する:
 
 ```bash
-git branch --show-current
-git diff --stat develop...HEAD
+CURRENT_BRANCH=$(git branch --show-current)
+BASE_BRANCH=$(gh pr view --repo seiichi3141/numazugikai \
+  --json baseRefName --jq .baseRefName 2>/dev/null || true)
+if [ -z "$BASE_BRANCH" ]; then
+  BASE_BRANCH=$(node scripts/resolve-branch-base.mjs "$CURRENT_BRANCH")
+fi
+git fetch origin "$BASE_BRANCH"
+git diff --stat "origin/$BASE_BRANCH"...HEAD
 ```
 
 変更がない場合（かつ未コミット変更もない場合）はユーザーに通知して終了。
@@ -39,7 +46,13 @@ git diff --stat develop...HEAD
 `codex` CLI が利用可能な場合のみ実行する。ユーザーから追加の指示（引数）があれば PROMPT として渡す。
 
 ```bash
-which codex 2>/dev/null && codex review --base develop
+if which codex >/dev/null 2>&1; then
+  if [ -n "$(git status --short)" ]; then
+    codex review --uncommitted
+  else
+    codex review --base "origin/$BASE_BRANCH"
+  fi
+fi
 ```
 
 `codex` が見つからない場合はこのチェックをスキップする。
@@ -64,5 +77,5 @@ which codex 2>/dev/null && codex review --base develop
 
 ## 注意事項
 
-- レビュー対象はデフォルトで `develop` ブランチとの差分
+- レビュー対象はデフォルトで PR の対象 base branch との差分
 - エージェント定義ファイルが存在しない場合は、該当チェックをスキップして残りを実行する

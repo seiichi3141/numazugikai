@@ -13,6 +13,9 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/deploy_worker.yml"
 
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

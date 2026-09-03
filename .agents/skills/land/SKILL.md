@@ -2,7 +2,7 @@
 name: land
 description:
   PR をランディングする。コンフリクトを監視・解決し、チェックを待ち、グリーンに
-  なったら squash-merge する。land、merge、PR を完了まで導くことを依頼された
+  なったら用途に合う方式で merge する。land、merge、PR を完了まで導くことを依頼された
   ときに使用する。
 ---
 
@@ -10,11 +10,14 @@ description:
 
 ## ゴール
 
-- PR が main とコンフリクトフリーであることを確実にする。
+- PR が対象 base branch とコンフリクトフリーであることを確実にする。
 - CI をグリーンに保ち、失敗が発生したときは修正する。
-- チェックがパスしたら PR を squash-merge する。
+- 通常の feature PR は squash-merge する。
+- `develop` から `main` への release PR と、履歴保存を明示した PR は merge commit
+  で取り込み、長期 lifecycle branch と移植元コミットの履歴を保持する。
 - PR がマージされるまでユーザーに譲らない。ブロックされない限りウォッチャーループを実行し続ける。
-- マージ後にリモートブランチを削除する必要はない。リポジトリが head ブランチを自動削除する。
+- マージコマンドでは head branch を削除しない。短期 branch の後片付けはマージ確認後に
+  別途行い、lifecycle branch は必ず保持する。
 
 ## 前提条件
 
@@ -26,12 +29,17 @@ description:
 1. 現在のブランチに対する PR を特定する。
 2. push 前にすべての関門がローカルでグリーンであることを確認する。
 3. 作業ツリーに未コミットの変更がある場合、進める前に `commit` スキルでコミットし `push` スキルで push する。
-4. main に対するマージ可能性とコンフリクトを確認する。
-5. コンフリクトがある場合、`pull` スキルを使って `origin/main` を fetch／merge してコンフリクトを解決し、その後 `push` スキルを使って更新されたブランチを公開する。
+4. PR の `baseRefName` に対するマージ可能性とコンフリクトを確認する。
+5. コンフリクトがある場合、`pull` スキルを使って対象 base branch を
+   fetch／merge してコンフリクトを解決し、その後 `push` スキルを使って
+   更新されたブランチを公開する。
 6. マージ前に Codex のレビューコメント（存在する場合）が確認され、必要な修正が処理されていることを確認する。
 7. 完了までチェックを監視する。
 8. チェックが失敗した場合、ログを取得し、問題を修正し、`commit` スキルでコミット、`push` スキルで push し、チェックを再実行する。
-9. すべてのチェックがグリーンでレビューフィードバックが対処されたら、PR タイトル／本文をマージの subject／body として squash-merge し、ブランチを削除する。
+9. すべてのチェックがグリーンでレビューフィードバックが対処されたら、PR の
+   base/head/label からマージ方式を決める。通常は squash、同じ自治体の
+   `develop` → `main`、または `preserve-history` label 付き PR は merge commit を使う。
+   `develop` / `main` と `sites/<site>/{develop,main}` は削除しない。
 10. **コンテキストガード:** レビューフィードバックを実装する前に、それがユーザーの述べた意図やタスクコンテキストと矛盾しないことを確認する。矛盾する場合は、根拠を添えてインラインで返信し、コードを変更する前にユーザーに確認する。
 11. **プッシュバックテンプレート:** 同意しないときは、認知 + 根拠 + 代替案の提示でインライン返信する。
 12. **曖昧性ゲート:** 曖昧性が進捗をブロックする場合、明確化フロー（PR を現在の GH ユーザーにアサインし、メンションし、応答を待つ）を使用する。曖昧性が解決するまで実装しない。
@@ -44,12 +52,16 @@ description:
 ```
 # ブランチと PR コンテキストを確認
 branch=$(git branch --show-current)
-pr_number=$(gh pr view --json number -q .number)
-pr_title=$(gh pr view --json title -q .title)
-pr_body=$(gh pr view --json body -q .body)
+pr_number=$(gh pr view --repo seiichi3141/numazugikai --json number -q .number)
+pr_title=$(gh pr view --repo seiichi3141/numazugikai --json title -q .title)
+pr_body=$(gh pr view --repo seiichi3141/numazugikai --json body -q .body)
+base=$(gh pr view --repo seiichi3141/numazugikai --json baseRefName -q .baseRefName)
+head=$(gh pr view --repo seiichi3141/numazugikai --json headRefName -q .headRefName)
+preserve_history=$(gh pr view --repo seiichi3141/numazugikai --json labels \
+  --jq 'any(.labels[]; .name == "preserve-history")')
 
 # マージ可能性とコンフリクトを確認
-mergeable=$(gh pr view --json mergeable -q .mergeable)
+mergeable=$(gh pr view --repo seiichi3141/numazugikai --json mergeable -q .mergeable)
 
 if [ "$mergeable" = "CONFLICTING" ]; then
   # `pull` スキルを実行して fetch + merge + コンフリクト解決を処理する。
@@ -70,16 +82,37 @@ while true; do
 done
 
 # チェックを監視
-if ! gh pr checks --watch; then
-  gh pr checks
+if ! gh pr checks --repo seiichi3141/numazugikai --watch; then
+  gh pr checks --repo seiichi3141/numazugikai
   # 失敗した run を特定してログを検査
   # gh run list --branch "$branch"
   # gh run view <run-id> --log
   exit 1
 fi
 
-# Squash-merge（このリポジトリではマージ時にリモートブランチが自動削除される）
-gh pr merge --squash --subject "$pr_title" --body "$pr_body"
+# lifecycle release または履歴保存PRは merge commit、それ以外は squash。
+merge_commit=false
+if [ "$base" = "main" ] && [ "$head" = "develop" ]; then
+  merge_commit=true
+else
+  case "$base" in
+    sites/*/main)
+      site=${base#sites/}
+      site=${site%/main}
+      if [ "$head" = "sites/$site/develop" ]; then
+        merge_commit=true
+      fi
+      ;;
+  esac
+fi
+
+if [ "$merge_commit" = true ] || [ "$preserve_history" = true ]; then
+  gh pr merge --repo seiichi3141/numazugikai --merge \
+    --subject "$pr_title" --body "$pr_body"
+else
+  gh pr merge --repo seiichi3141/numazugikai --squash \
+    --subject "$pr_title" --body "$pr_body"
+fi
 ```
 
 ## Async Watch Helper
@@ -100,8 +133,10 @@ python3 .agents/skills/land/land_watch.py
 
 - チェックが失敗した場合、`gh pr checks` と `gh run view --log` で詳細を取得し、ローカルで修正、`commit` スキルでコミット、`push` スキルで push し、ウォッチを再実行する。
 - 不安定な失敗（flaky）を判別する判断力を使う。失敗が flake（例: 1 プラットフォームのみのタイムアウト）であれば、修正せずに進めてもよい。
-- CI が autofix コミット（GitHub Actions が author）を push した場合、それは新しい CI run をトリガしない。更新された PR head を検出し、ローカルに pull し、必要なら `origin/main` をマージし、本物の author コミットを追加し、CI を再トリガするために force-push し、その後チェックループを再開する。
-- マージコミット上で全ジョブが pnpm lockfile 破損エラーで失敗する場合、最新の `origin/main` を fetch、マージ、force-push、CI 再実行が修復策。
+- CI が autofix コミット（GitHub Actions が author）を push した場合、それは新しい CI run をトリガしない。更新された PR head を検出し、ローカルに pull し、必要なら対象 base branch をマージし、本物の author コミットを追加し、CI を再トリガするために force-push し、その後チェックループを再開する。
+- マージコミット上で全ジョブが pnpm lockfile 破損エラーで失敗する場合、最新の対象 base branch を fetch、マージ、force-push、CI 再実行が修復策。
+- `preserve-history` は独立リポジトリから既存コミットを移植する PR など、元の commit
+  SHA を target branch に残す必要がある場合だけ付ける。
 - マージ可能性が `UNKNOWN` の場合、待って再確認する。
 - レビューコメント（人間または Codex レビュー）が未対応のままマージしない。
 - Codex レビュージョブは失敗時にリトライされ、ノンブロッキングである。レビューフィードバックが利用可能になったシグナルとしては、ジョブの状態ではなく、`## Codex Review — <persona>` issue コメントの存在を使う。

@@ -19,9 +19,9 @@ description: 複数の独立PRをチーム×worktreeで並列作成する。タ�
 ユーザーの指示からPR一覧を整理する:
 
 ```
-| # | ブランチ名 | 作業内容 | 対象ファイル |
-|---|-----------|---------|-------------|
-| 1 | feat/xxx  | ...     | src/...     |
+| # | base | ブランチ名 | 作業内容 | 対象ファイル |
+|---|------|-------------|---------|-------------|
+| 1 | develop | feat/xxx | ... | src/... |
 ```
 
 PRの数に応じてエージェント数を決める（目安: 4-5が上限）。
@@ -34,15 +34,20 @@ PRの数に応じてエージェント数を決める（目安: 4-5が上限）�
 ```bash
 # {team} はチーム名の略称（例: test4, refactor2）
 # {x} はエージェント識別子（a, b, c, d...）
-git worktree add ../mirai-gikai-{team}-{x} -b {team}-{x}-base
-mkdir -p ../mirai-gikai-{team}-{x}/.claude
-cp .claude/settings.local.json ../mirai-gikai-{team}-{x}/.claude/
+git fetch origin {base}
+git worktree add ../numazugikai-{team}-{x} \
+  -b {team}-{x}-base origin/{base}
+if [ -f .claude/settings.local.json ]; then
+  mkdir -p ../numazugikai-{team}-{x}/.claude
+  cp .claude/settings.local.json ../numazugikai-{team}-{x}/.claude/
+fi
+cp ../numazugikai-{team}-{x}/.env.example ../numazugikai-{team}-{x}/.env
 ```
 
 依存パッケージのインストール（全worktreeをバックグラウンドで並列実行）:
 
 ```bash
-cd ../mirai-gikai-{team}-{x} && pnpm install --frozen-lockfile
+cd ../numazugikai-{team}-{x} && pnpm install --frozen-lockfile
 ```
 
 ### Phase 3: チーム組成＆エージェント起動
@@ -81,7 +86,7 @@ Task(
 - ...
 
 ## 作業手順
-1. `git checkout -b {branch} develop` でブランチ作成
+1. `git fetch origin {base}` の後、`git checkout -b {branch} origin/{base}` でブランチ作成
 2. 対象ファイルを読んで理解
 3. 実装・修正
 4. push前のローカル検証（CIと同じコマンドを全て実行し、全て通過すること）:
@@ -92,8 +97,9 @@ Task(
 5. エラーがあれば修正して再度ステップ4を実行
 6. コミット（Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>）
 7. `git push -u origin {branch}`
-8. `gh pr create --base develop --title "{title}" --body "..."`
-9. 次のPRがあれば `git checkout -b {next-branch} develop` で次へ
+8. `gh pr create --repo seiichi3141/numazugikai --base {base} --title "{title}" --body "..."`
+9. 次のPRがあれば `git fetch origin {next-base}` の後、
+   `git checkout -b {next-branch} origin/{next-base}` で次へ
 10. 全完了後、リーダーにメッセージで報告（PR番号・URL）
 ```
 
@@ -105,15 +111,17 @@ Task(
 # 全PRのCI状態を一括確認
 for pr in {PR番号リスト}; do
   echo "=== PR #$pr ==="
-  gh pr checks $pr
+  gh pr checks "$pr" --repo seiichi3141/numazugikai
 done
 ```
 
 ```bash
-# 全PRのコメントを確認（CodeRabbitやレビューアからのフィードバック）
+# 全PRの投稿済みレビューコメントを確認
 for pr in {PR番号リスト}; do
   echo "=== PR #$pr comments ==="
-  gh pr view $pr --comments
+  gh pr view "$pr" --repo seiichi3141/numazugikai --comments
+  gh api "repos/seiichi3141/numazugikai/pulls/$pr/comments"
+  gh pr view "$pr" --repo seiichi3141/numazugikai --json reviews
 done
 ```
 
@@ -123,8 +131,14 @@ CI失敗時の対応:
 - **テスト失敗**: worktreeで修正して再push
 
 PRコメント対応:
-- **CodeRabbitの指摘**: 重要な指摘はworktreeで修正してpush
-- **軽微な指摘（nitpick等）**: マージ後に対応するか、必要に応じて対応
+- **アクション可能な指摘**: worktreeで修正してpushするか、対応しない理由を
+  該当コメントに返信し、対応済みスレッドをresolveする
+- **未投稿のレビュー**: 到着を待たない
+
+PRのbaseが`develop`または`main`の沼津市版ではCodeRabbitを使用しない。
+CodeRabbitのレビューを要求・待機・個別取得せず、必須CIと実際に投稿された
+レビューコメントだけを確認する。`sites/<site>/*`宛ては対象自治体branchの
+`AGENTS.md`と運用方針に従う。
 
 ### Phase 5: クリーンアップ
 
@@ -133,7 +147,7 @@ PRコメント対応:
 SendMessage(type: "shutdown_request", recipient: "agent-{x}")
 
 # worktree削除
-git worktree remove ../mirai-gikai-{team}-{x}
+git worktree remove ../numazugikai-{team}-{x}
 git branch -D {team}-{x}-base
 
 # チーム削除
@@ -154,5 +168,5 @@ TeamDelete
 
 - エージェント数は4-5が実用的上限（APIレート制限、CI負荷）
 - CIのflaky testに注意 → 失敗時はログ確認してから再実行
-- worktreeパスは `../mirai-gikai-{name}` 形式
-- `settings.local.json` のコピーは必須（権限設定のため）
+- worktreeパスは `../numazugikai-{name}` 形式
+- `settings.local.json` は存在し、ローカル権限設定が必要な場合だけコピーする

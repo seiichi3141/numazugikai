@@ -52,7 +52,13 @@ CLAUDE.md のコーディング規約を前提に、実装完了後・コミッ�
 
 ## 実行手順
 
-1. `git diff --name-only develop...HEAD` で変更ファイル一覧を取得（未コミットの場合は `git diff --name-only` を使用）
+1. `gh pr view --repo seiichi3141/numazugikai --json baseRefName --jq .baseRefName`
+   で PR の base を取得し、
+   `git fetch origin "$BASE_BRANCH"` の後に
+   `git diff --name-only "origin/$BASE_BRANCH"...HEAD` で変更ファイル一覧を取得する
+   （PR 作成前は共通 `develop`、自治体環境の fix / hotfix では対応する
+   lifecycle branch を推定し、
+   未コミットの場合は `git diff --name-only` を使用）
 2. 変更ファイルの内容を読み、各チェック観点を適用
 3. 結果を以下の形式で出力：
 

@@ -1,0 +1,28 @@
+name: Branch Policy
+
+on:
+  # default branch に置いた信頼済み validator を使う。PR の merge ref を checkout
+  # すると、PR 自身が validator を変更して policy を回避できるため使用しない。
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited]
+    branches: [main, develop, "sites/*/main", "sites/*/develop"]
+
+permissions:
+  contents: read
+
+jobs:
+  branch-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted policy from the default branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Validate head and base branches
+        run: node scripts/check-pr-branch-policy.mjs
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+          PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_BASE_REPOSITORY: ${{ github.event.pull_request.base.repo.full_name }}

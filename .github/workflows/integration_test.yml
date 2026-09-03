@@ -2,9 +2,12 @@ name: Integration Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, "sites/*/main", "sites/*/develop"]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, "sites/*/main", "sites/*/develop"]
+
+permissions:
+  contents: read
 
 jobs:
   integration-test:

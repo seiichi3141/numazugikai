@@ -126,19 +126,25 @@ pnpm typecheck
 
 ```bash
 # メインリポジトリのルートで実行
-git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
-mkdir -p ../mirai-gikai-<branch-name>/.claude
-cp .claude/settings.local.json ../mirai-gikai-<branch-name>/.claude/
-cp .env ../mirai-gikai-<branch-name>/
+git fetch origin develop
+git worktree add ../numazugikai-<worktree-name> \
+  -b <branch-name> origin/develop
+if [ -f .claude/settings.local.json ]; then
+  mkdir -p ../numazugikai-<worktree-name>/.claude
+  cp .claude/settings.local.json ../numazugikai-<worktree-name>/.claude/
+fi
+cp ../numazugikai-<worktree-name>/.env.example \
+  ../numazugikai-<worktree-name>/.env
 ```
 
-- ブランチ名は `chore/codify-<変更内容の要約>` とする（例: `chore/codify-add-pr-step`）
+- branch 名は対象自治体にかかわらず `chore/codify-<要約>` とする。ルール変更は
+  共通 trunk へ集約し、site-scoped な chore branch は作成しない
 - 変更対象のファイルをworktreeにコピーする
 
 #### 7b. コミットとpush
 
 ```bash
-cd ../mirai-gikai-<branch-name>
+cd ../numazugikai-<worktree-name>
 git add <変更ファイル>
 git commit -m "<コミットメッセージ>"
 git push -u origin <branch-name>
@@ -147,14 +153,16 @@ git push -u origin <branch-name>
 #### 7c. PR作成
 
 ```bash
-gh pr create --title "<タイトル>" --body "<本文>"
+gh pr create --repo seiichi3141/numazugikai \
+  --base develop --title "<タイトル>" --body "<本文>"
 ```
 
 - PR本文には「仕組み化サマリ」（ステップ5の出力）を含める
-- PR作成前に `gh pr list --state open` で既存PRとの重複を確認する
+- PR作成前に `gh pr list --repo seiichi3141/numazugikai --state open` で
+  既存PRとの重複を確認する
 
 #### 7d. worktreeクリーンアップ
 
 ```bash
-git worktree remove ../mirai-gikai-<branch-name>
+git worktree remove ../numazugikai-<worktree-name>
 ```
