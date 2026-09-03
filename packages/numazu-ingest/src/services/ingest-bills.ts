@@ -22,6 +22,7 @@ import {
   NUMAZU_SITE_URLS,
 } from "../shared/constants-site";
 import type { ParsedBill } from "../shared/types";
+import { buildNumazuBillSourceRecordKey } from "../utils/build-numazu-bill-source-record-key";
 
 const SOURCE = "gian_pdf";
 
@@ -106,6 +107,12 @@ export async function ingestBillsForSession(
   for (const bill of parsed.bills) {
     const billId = await upsertBill({
       councilSessionId,
+      sourceRecordKey: buildNumazuBillSourceRecordKey({
+        sessionSlug,
+        numberKind: bill.numberKind,
+        numberValue: bill.numberValue,
+        submitter: bill.submitter,
+      }),
       billNumber: bill.billNumber,
       numberKind: bill.numberKind,
       numberValue: bill.numberValue,
