@@ -2,6 +2,11 @@
 # pnpm workspace の .ts ソースをそのまま tsx で実行する（ビルド工程を持たない）。
 FROM node:22-slim
 
+# 議案審議結果PDFをテキスト化するために必要。
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends poppler-utils \
+  && rm -rf /var/lib/apt/lists/*
+
 # pnpm を有効化（packageManager フィールドのバージョンを使用）
 RUN corepack enable
 

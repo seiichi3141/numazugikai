@@ -22,7 +22,10 @@ import {
   NUMAZU_SITE_URLS,
 } from "../shared/constants-site";
 import type { ParsedBill } from "../shared/types";
+import { assertGianResultHasBills } from "../utils/assert-ingest-results";
 import { buildNumazuBillSourceRecordKey } from "../utils/build-numazu-bill-source-record-key";
+
+export { assertNoBillFailuresForEraYear } from "../utils/assert-ingest-results";
 
 const SOURCE = "gian_pdf";
 
@@ -75,6 +78,7 @@ export async function ingestBillsForSession(
   if (parsed.sessionNumber === null || parsed.year === null) {
     throw new Error(`会期の見出しを読み取れなかった: ${url}`);
   }
+  assertGianResultHasBills(parsed, url);
 
   const sessionSlug = buildSessionSlug(parsed.year, parsed.sessionNumber);
   const kind = parsed.sessionLabel?.includes("臨時")
@@ -216,7 +220,7 @@ export type IngestTermResult = {
   found: number;
   results: IngestBillsResult[];
   /** 取り込めなかったPDFとその理由 */
-  failures: { path: string; reason: string }[];
+  failures: { path: string; eraYear: number; month: number; reason: string }[];
 };
 
 /**
@@ -240,7 +244,7 @@ export async function ingestBillsForTerm(params: {
   const pdfs = parseTermIndex(page.text, params.term);
 
   const results: IngestBillsResult[] = [];
-  const failures: { path: string; reason: string }[] = [];
+  const failures: IngestTermResult["failures"] = [];
 
   for (const pdf of pdfs) {
     try {
@@ -256,6 +260,8 @@ export async function ingestBillsForTerm(params: {
     } catch (error) {
       failures.push({
         path: pdf.path,
+        eraYear: pdf.eraYear,
+        month: pdf.month,
         reason: error instanceof Error ? error.message : String(error),
       });
       console.warn(`${pdf.path} を取り込めなかった: ${String(error)}`);
