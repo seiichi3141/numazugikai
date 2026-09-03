@@ -64,8 +64,10 @@ codex:
   `sites/<site>/hotfix/...` なら `sites/<site>/main`、それ以外の
   `sites/<site>/...` なら `sites/<site>/develop`、既存の沼津市向け branch なら
   `develop` を対象 base branch とします。
-  未設定なら `<issue-identifier>-<short-description>` 形式で対象 base branch から
-  切ってください。
+  静岡県版のチケットでは `sites/shizuoka-pref/<kind>/<topic>` を必須とし、
+  `gitBranchName` が未設定または別自治体の prefix なら処理を停止してください。
+  沼津市版のチケットで未設定なら `<issue-identifier>-<short-description>` 形式で
+  `develop` から切ってください。
 - clone は全 lifecycle branch の shallow ref を取得する。最初に対象 base を明示的に
   `git fetch origin <base-branch>` し、その base から作業 branch を checkout する。
   base が存在しなければ処理を停止してください。

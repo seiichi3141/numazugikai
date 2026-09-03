@@ -2,6 +2,7 @@ import type { AdminClient } from "./helper";
 
 const DEFAULT_ADMIN_EMAIL = "admin@example.com";
 const DEFAULT_ADMIN_PASSWORD = "admin123456";
+const SHIZUOKA_LOCAL_SUPABASE_PORT = "55421";
 
 /**
  * SUPABASE_URL がローカルの Supabase を指しているかを判定する。
@@ -23,6 +24,19 @@ export function isLocalSupabaseUrl(rawUrl: string | undefined): boolean {
   // IPv4 ループバックは完全一致で判定する
   const isIpv4Loopback = /^127(\.\d{1,3}){3}$/.test(host);
   return host === "localhost" || host === "::1" || isIpv4Loopback;
+}
+
+/** 静岡県版専用のローカル Supabase API を指しているか判定する。 */
+export function isShizuokaLocalSupabaseUrl(
+  rawUrl: string | undefined
+): boolean {
+  if (!isLocalSupabaseUrl(rawUrl) || !rawUrl) return false;
+
+  try {
+    return new URL(rawUrl).port === SHIZUOKA_LOCAL_SUPABASE_PORT;
+  } catch {
+    return false;
+  }
 }
 
 /**

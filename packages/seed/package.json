@@ -7,7 +7,11 @@
     "./main/data": "./main/data.ts"
   },
   "scripts": {
+    "guard:shizuoka-data": "tsx main/assert-shizuoka-seed-ready.ts",
     "seed": "tsx main/run.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -17,7 +21,9 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "tsx": "^4.19.1",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
   }
 }

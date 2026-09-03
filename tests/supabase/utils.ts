@@ -5,7 +5,7 @@ import type { Database } from "../../packages/supabase/types/supabase.types";
 type BillInsert = Database["public"]["Tables"]["bills"]["Insert"];
 
 // ── 環境変数（`.env` または CI が供給。`npx supabase status` で確認） ──
-const SUPABASE_URL = process.env.SUPABASE_URL ?? "http://127.0.0.1:54421";
+const SUPABASE_URL = process.env.SUPABASE_URL ?? "http://127.0.0.1:55421";
 const SECRET_KEY = requireEnv("SUPABASE_SECRET_KEY");
 const PUBLISHABLE_KEY = requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
 
