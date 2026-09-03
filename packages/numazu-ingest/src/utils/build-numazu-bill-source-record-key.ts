@@ -17,7 +17,6 @@ function resolveSubmitterKind(
   submitter: BillSubmitter | null
 ): Exclude<CouncilSubmitterKind, "unknown"> | null {
   if (submitter !== null) return submitter;
-  if (numberKind === "hatsugi") return "member";
   if (numberKind === "seigan" || numberKind === "chinjo") return "citizen";
   return null;
 }
@@ -37,7 +36,8 @@ function resolveDocumentKind(
 
 /**
  * 既存Numazu議案を新しい自治体共通keyへ決定的に写像する。
- * 写像はadd_bill_source_record_key migrationのbackfill関数と一致させる。
+ * 0100 migrationが提出者不明の発議へ付けた旧推測keyは0130 migrationで解除する。
+ * 発議は結果PDFで提出者が確定するまでkeyを割り当てない。
  */
 export function buildNumazuBillSourceRecordKey(
   input: BuildNumazuBillSourceRecordKeyInput

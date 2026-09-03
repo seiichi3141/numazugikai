@@ -11,7 +11,7 @@ export type BillNumberKind =
   | "gi" // 議第◯号（市長・議員提出の議案）
   | "hou" // 報第◯号（報告）
   | "nin" // 認第◯号（人事同意・専決承認）
-  | "hatsugi" // 発議第◯号（議員提出の発議）
+  | "hatsugi" // 発議第◯号（議員・委員会提出の発議）
   | "seigan" // 請願第◯号
   | "chinjo"; // 陳情第◯号
 

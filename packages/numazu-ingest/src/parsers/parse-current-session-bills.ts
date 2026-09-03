@@ -79,7 +79,6 @@ export function inferCurrentBillCategory(
 function inferCurrentBillSubmitter(
   numberKind: BillNumberKind
 ): BillSubmitter | null {
-  if (numberKind === "hatsugi") return "member";
   if (numberKind === "seigan" || numberKind === "chinjo") return "citizen";
   return null;
 }

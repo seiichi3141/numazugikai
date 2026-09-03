@@ -58,6 +58,13 @@ const identityCollisionMigrationSql = readFileSync(
   ),
   "utf8"
 );
+const deferCurrentHatsugiIdentityMigrationSql = readFileSync(
+  new URL(
+    "../../../supabase/migrations/20260904013000_defer_current_hatsugi_identity.sql",
+    import.meta.url
+  ),
+  "utf8"
+);
 
 describe("add_bill_source_record_key migration", () => {
   const sql = postgres(databaseUrl, { max: 1 });
@@ -155,6 +162,12 @@ describe("add_bill_source_record_key migration", () => {
           (13, '00000000-0000-0000-0000-000000000001', '議第60号', 'gi', 60, 'mayor',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm'),
           (14, '00000000-0000-0000-0000-000000000001', '報第16号', 'hou', 16, 'mayor',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm'),
+          (15, '00000000-0000-0000-0000-000000000001', '発議第3号', 'hatsugi', 3, 'member',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm'),
+          (16, '00000000-0000-0000-0000-000000000001', '発議第4号', 'hatsugi', 4, 'member',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (17, '00000000-0000-0000-0000-000000000001', '発議第5号', 'hatsugi', 5, 'committee',
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm');
       `);
 
@@ -164,11 +177,14 @@ describe("add_bill_source_record_key migration", () => {
         set source_record_key = case test_case
           when 13 then 'numazu-city:2026-13:executive_bill:mayor:numbered:gi-60'
           when 14 then 'numazu-city:2026-13:report:mayor:numbered:hou-16'
+          when 15 then 'numazu-city:2026-13:member_bill:member:numbered:hatsugi-3'
+          when 17 then 'numazu-city:2026-13:committee_bill:committee:numbered:hatsugi-5'
         end
-        where test_case in (13, 14)
+        where test_case in (13, 14, 15, 17)
       `;
       await transaction.unsafe(functionMigrationSql);
       await transaction.unsafe(identityCollisionMigrationSql);
+      await transaction.unsafe(deferCurrentHatsugiIdentityMigrationSql);
 
       const rows = await transaction<
         { test_case: number; source_record_key: string | null }[]
@@ -191,12 +207,7 @@ describe("add_bill_source_record_key migration", () => {
         },
         {
           test_case: 2,
-          source_record_key: buildNumazuBillSourceRecordKey({
-            sessionSlug: "2026-13",
-            numberKind: "hatsugi",
-            numberValue: 1,
-            submitter: null,
-          }),
+          source_record_key: null,
         },
         {
           test_case: 3,
@@ -258,6 +269,25 @@ describe("add_bill_source_record_key migration", () => {
         },
         { test_case: 13, source_record_key: null },
         { test_case: 14, source_record_key: null },
+        { test_case: 15, source_record_key: null },
+        {
+          test_case: 16,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "hatsugi",
+            numberValue: 4,
+            submitter: "member",
+          }),
+        },
+        {
+          test_case: 17,
+          source_record_key: buildNumazuBillSourceRecordKey({
+            sessionSlug: "2026-13",
+            numberKind: "hatsugi",
+            numberValue: 5,
+            submitter: "committee",
+          }),
+        },
       ]);
 
       const cleanedCurrentSessionBills = await transaction<
@@ -269,12 +299,13 @@ describe("add_bill_source_record_key migration", () => {
       >`
         select test_case, source_record_key, submitter::text
         from bills
-        where test_case in (13, 14)
+        where test_case in (13, 14, 15)
         order by test_case
       `;
       expect(cleanedCurrentSessionBills).toEqual([
         { test_case: 13, source_record_key: null, submitter: null },
         { test_case: 14, source_record_key: null, submitter: null },
+        { test_case: 15, source_record_key: null, submitter: null },
       ]);
 
       const constraints = await transaction<{ constraint_name: string }[]>`
