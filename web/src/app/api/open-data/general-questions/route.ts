@@ -19,6 +19,7 @@ export async function GET(request: Request) {
           "Cache-Control": "no-store",
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": 'attachment; filename="general-questions.csv"',
+          "X-Next-Cursor": result.nextCursor ?? "",
         },
       });
     }

@@ -5,6 +5,7 @@ import type {
   GeneralQuestionCoverage,
   GeneralQuestionSession,
 } from "../../shared/types/general-question";
+import { prioritizePrimaryEvidence } from "../../shared/utils/prioritize-primary-evidence";
 import { sortQuestionItems } from "../../shared/utils/sort-question-items";
 
 type PageResult<T> = {
@@ -43,6 +44,25 @@ async function fetchAllRows<T>(
   }
 }
 
+async function fetchRowsByIdChunks<T>(
+  ids: string[],
+  loadPage: (
+    chunk: string[],
+    from: number,
+    to: number
+  ) => PromiseLike<PageResult<T>>
+): Promise<PageResult<T>> {
+  const data: T[] = [];
+  const uniqueIds = [...new Set(ids)];
+  for (let offset = 0; offset < uniqueIds.length; offset += FILTER_CHUNK_SIZE) {
+    const chunk = uniqueIds.slice(offset, offset + FILTER_CHUNK_SIZE);
+    const result = await fetchAllRows((from, to) => loadPage(chunk, from, to));
+    if (result.error) return result;
+    data.push(...(result.data ?? []));
+  }
+  return { data, error: null };
+}
+
 export async function findPublishedGeneralQuestionSessions(): Promise<
   GeneralQuestionSession[]
 >;
@@ -63,9 +83,6 @@ export async function findPublishedGeneralQuestionSessions(options?: {
     coverageTargetsResult,
     coverageResult,
     appearanceSourcesResult,
-    appearanceOccurrencesResult,
-    sourcesResult,
-    sourceVersionsResult,
   ] = await Promise.all([
     fetchAllRows((from, to) =>
       supabase
@@ -165,37 +182,17 @@ export async function findPublishedGeneralQuestionSessions(options?: {
         ? supabase
             .from("general_question_appearance_sources")
             .select(
-              "appearance_revision_id, appearance_source_occurrence_id, source_version_id"
+              "id, appearance_revision_id, ingestion_source_id, source_version_id, role"
             )
             .eq("qa_status", "verified")
             .in("appearance_id", appearanceIds)
         : supabase
             .from("general_question_appearance_sources")
             .select(
-              "appearance_revision_id, appearance_source_occurrence_id, source_version_id"
+              "id, appearance_revision_id, ingestion_source_id, source_version_id, role"
             )
             .eq("qa_status", "verified")
       ).range(from, to)
-    ),
-    fetchAllRows((from, to) =>
-      (appearanceIds?.length
-        ? supabase
-            .from("general_question_appearance_source_occurrences")
-            .select("id, ingestion_source_id")
-            .in("appearance_id", appearanceIds)
-        : supabase
-            .from("general_question_appearance_source_occurrences")
-            .select("id, ingestion_source_id")
-      ).range(from, to)
-    ),
-    fetchAllRows((from, to) =>
-      supabase.from("ingestion_sources").select("id, url").range(from, to)
-    ),
-    fetchAllRows((from, to) =>
-      supabase
-        .from("ingestion_source_versions")
-        .select("id, fetched_at")
-        .range(from, to)
     ),
   ]);
   const failed = [
@@ -207,14 +204,36 @@ export async function findPublishedGeneralQuestionSessions(options?: {
     coverageTargetsResult,
     coverageResult,
     appearanceSourcesResult,
-    appearanceOccurrencesResult,
-    sourcesResult,
-    sourceVersionsResult,
   ].find((result) => result.error);
   if (failed?.error)
     throw new Error(
       `一般質問公開データの取得に失敗した: ${failed.error.message}`
     );
+
+  const appearanceSourceRows = appearanceSourcesResult.data ?? [];
+  const [sourcesResult, sourceVersionsResult] = await Promise.all([
+    fetchRowsByIdChunks(
+      appearanceSourceRows.map((row) => row.ingestion_source_id),
+      (ids, from, to) =>
+        supabase
+          .from("ingestion_sources")
+          .select("id, url")
+          .in("id", ids)
+          .range(from, to)
+    ),
+    fetchRowsByIdChunks(
+      appearanceSourceRows.map((row) => row.source_version_id),
+      (ids, from, to) =>
+        supabase
+          .from("ingestion_source_versions")
+          .select("id, fetched_at")
+          .in("id", ids)
+          .range(from, to)
+    ),
+  ]);
+  if (sourcesResult.error || sourceVersionsResult.error) {
+    throw new Error("一般質問の出典情報取得に失敗した");
+  }
 
   const { data: release, error: releaseError } = await supabase
     .from("topic_classification_releases")
@@ -317,9 +336,6 @@ export async function findPublishedGeneralQuestionSessions(options?: {
   for (const row of answerersResult.data ?? []) {
     appendMapValue(answerersByAppearance, row.appearance_id, row);
   }
-  const occurrenceById = new Map(
-    (appearanceOccurrencesResult.data ?? []).map((row) => [row.id, row])
-  );
   const sourceById = new Map(
     (sourcesResult.data ?? []).map((row) => [row.id, row])
   );
@@ -330,13 +346,9 @@ export async function findPublishedGeneralQuestionSessions(options?: {
     string,
     { url: string; fetchedAt: string | null }
   >();
-  for (const evidence of appearanceSourcesResult.data ?? []) {
-    const occurrence = occurrenceById.get(
-      evidence.appearance_source_occurrence_id
-    );
-    const source = occurrence
-      ? sourceById.get(occurrence.ingestion_source_id)
-      : null;
+  const prioritizedEvidence = prioritizePrimaryEvidence(appearanceSourceRows);
+  for (const evidence of prioritizedEvidence) {
+    const source = sourceById.get(evidence.ingestion_source_id);
     const sourceVersion = evidence.source_version_id
       ? sourceVersionById.get(evidence.source_version_id)
       : null;

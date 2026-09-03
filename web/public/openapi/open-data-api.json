@@ -94,6 +94,12 @@
         "responses": {
           "200": {
             "description": "取得成功。JSONまたはCSV。",
+            "headers": {
+              "X-Next-Cursor": {
+                "description": "CSVレスポンスの次ページカーソル。空文字の場合は最終ページ。",
+                "schema": { "type": "string" }
+              }
+            },
             "content": {
               "application/json": { "schema": { "type": "object", "required": ["items", "nextCursor"], "properties": { "items": { "type": "array", "items": { "type": "object" } }, "nextCursor": { "type": ["string", "null"] } } } },
               "text/csv": { "schema": { "type": "string" } }

@@ -26,6 +26,7 @@ describe("GET /api/open-data/general-questions", () => {
     const response = await GET(request("?format=csv"));
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toContain("text/csv");
+    expect(response.headers.has("X-Next-Cursor")).toBe(true);
     expect(await response.text()).toContain("appearance_id");
   });
 });
