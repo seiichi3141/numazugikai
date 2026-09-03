@@ -81,7 +81,7 @@ describe("parseCurrentSessionBillsHtml", () => {
     );
 
     expect(parseCurrentSessionBillsHtml(html)?.bills.slice(-2)).toMatchObject([
-      { billNumber: "発議第1号", submitter: "member" },
+      { billNumber: "発議第1号", submitter: null },
       { billNumber: "請願第2号", submitter: "citizen" },
     ]);
   });

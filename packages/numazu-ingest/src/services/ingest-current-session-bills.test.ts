@@ -126,6 +126,25 @@ describe("ingestCurrentSessionBills", () => {
     expect(fake.upserts[0]?.councilSessionId).toBe("created-session-id");
   });
 
+  it("提出者を確定できない発議は永続identityを付けずに保存する", async () => {
+    const fake = createDependencies();
+    const html = HTML.replace(
+      "</ul>",
+      "<li>発議第1号　市政に関する意見書について</li></ul>"
+    );
+
+    await ingestCurrentSessionBills({
+      client: new FakeCurrentSessionBillsClient(html),
+      dependencies: fake.dependencies,
+    });
+
+    expect(fake.upserts.at(-1)).toMatchObject({
+      billNumber: "発議第1号",
+      submitter: null,
+      sourceRecordKey: null,
+    });
+  });
+
   it("議案保存が途中で失敗した場合はハッシュを記録しない", async () => {
     const fake = createDependencies({ failUpsertAt: 2 });
 
