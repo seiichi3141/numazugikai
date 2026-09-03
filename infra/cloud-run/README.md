@@ -104,7 +104,8 @@ AmiVoiceを20:30に取得する。全結果PDFの走査とテキスト化は1日
 プロビジョニングはCloud Run Jobの実行失敗、取り込みSchedulerの起動失敗、軽量系統で
 23時間30分、日次系統で25時間成功がない状態を検知するCloud Monitoring alert policyも
 作成・更新する。日次系統は毎日20:30の実行間隔より長い25時間で判定し、定刻どおりの
-成功を誤検知しない。productionでは通知先となる
+成功を誤検知しない。通常のmetric-absenceは23時間30分が上限のため、日次系統だけは
+25時間を扱えるPromQLの`absent_over_time`を使用する。productionでは通知先となる
 `MONITORING_NOTIFICATION_CHANNELS`が必須であり、未設定なら処理を停止する。
 設計の背景・動作確認・運用は
 [docs/20260715_1043_トピック分析スケジューラー化.md](../../docs/20260715_1043_トピック分析スケジューラー化.md)

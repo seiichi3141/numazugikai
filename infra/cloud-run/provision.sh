@@ -373,35 +373,35 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
     local duration="$5"
     local documentation="$6"
     local existing
+    local existing_condition_kind=""
     local existing_condition_name=""
+    local existing_policy_json
     local policy_json
-    local args=(
-      --project "$PROJECT_ID"
-      --display-name "$display_name"
-      --condition-display-name "$condition_name"
-      --condition-filter "$condition_filter"
-      --if "$condition_if"
-      --duration "$duration"
-      --trigger-count 1
-      --documentation "$documentation"
-    )
+    local desired_condition_kind="threshold"
+    if [[ "$condition_if" == "absent" || "$condition_if" == "promql_absent" ]]; then
+      desired_condition_kind="$condition_if"
+    fi
     existing="$(gcloud monitoring policies list \
       --project "$PROJECT_ID" \
       --filter="displayName=\"${display_name}\"" \
       --format='value(name)' --limit=1)"
     if [[ -n "$existing" ]]; then
-      existing_condition_name="$(gcloud monitoring policies describe "$existing" \
-        --project "$PROJECT_ID" \
-        --format='value(conditions[0].name)')"
-    fi
-
-    if [[ -z "$existing" ]]; then
-      if [[ -n "$MONITORING_NOTIFICATION_CHANNELS" ]]; then
-        args+=(--notification-channels "$MONITORING_NOTIFICATION_CHANNELS")
+      existing_policy_json="$(gcloud monitoring policies describe "$existing" \
+        --project "$PROJECT_ID" --format=json)"
+      existing_condition_name="$(jq -r '.conditions[0].name // ""' \
+        <<<"$existing_policy_json")"
+      existing_condition_kind="$(jq -r '
+        .conditions[0]
+        | if has("conditionAbsent") then "absent"
+          elif has("conditionPrometheusQueryLanguage") then "promql_absent"
+          elif has("conditionThreshold") then "threshold"
+          else ""
+          end
+        ' <<<"$existing_policy_json")"
+      if [[ "$existing_condition_kind" != "$desired_condition_kind" ]]; then
+        # condition種別の変更時は既存IDを再利用せず、新しいconditionとして置換する。
+        existing_condition_name=""
       fi
-      log "alert policy '$display_name' を作成"
-      gcloud monitoring policies create "${args[@]}" >/dev/null
-      return
     fi
 
     policy_json="$(jq -cn \
@@ -431,7 +431,15 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
               + if $condition_resource_name == "" then {}
                 else { name: $condition_resource_name }
                 end
-              + if $condition_if == "absent" then {
+              + if $condition_if == "promql_absent" then {
+                  conditionPrometheusQueryLanguage: {
+                    query: $condition_filter,
+                    duration: "0s",
+                    evaluationInterval: "300s",
+                    ruleGroup: "numazu-ingest",
+                    alertRule: "daily_success_absence"
+                  }
+                } elif $condition_if == "absent" then {
                   conditionAbsent: {
                     filter: $condition_filter,
                     duration: $duration,
@@ -449,10 +457,17 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
           ]
         }
       ')"
-    log "alert policy '$display_name' を更新"
-    gcloud monitoring policies update "$existing" \
-      --project "$PROJECT_ID" \
-      --policy "$policy_json" >/dev/null
+    if [[ -n "$existing" ]]; then
+      log "alert policy '$display_name' を更新"
+      gcloud monitoring policies update "$existing" \
+        --project "$PROJECT_ID" \
+        --policy "$policy_json" >/dev/null
+    else
+      log "alert policy '$display_name' を作成"
+      gcloud monitoring policies create \
+        --project "$PROJECT_ID" \
+        --policy "$policy_json" >/dev/null
+    fi
   }
 
   ensure_alert_policy \
@@ -479,9 +494,9 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
   ensure_alert_policy \
     "Numazu daily ingest has no success for 25h (${DEPLOY_ENV})" \
     "会議録取り込みの成功が25時間ない" \
-    "metric.type=\"logging.googleapis.com/user/${INGEST_DAILY_SUCCESS_METRIC}\" AND resource.type=\"cloud_run_job\"" \
-    "absent" \
-    "90000s" \
+    "absent_over_time({\"logging.googleapis.com/user/${INGEST_DAILY_SUCCESS_METRIC}\", monitored_resource=\"cloud_run_job\"}[25h])" \
+    "promql_absent" \
+    "0s" \
     "会議録・AmiVoiceの定期取り込みを確認してください。"
 fi
 
