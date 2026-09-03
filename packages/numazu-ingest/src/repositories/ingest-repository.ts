@@ -51,7 +51,9 @@ export async function upsertCouncilSession(
         start_date: session.startDate,
         end_date: session.endDate,
         source_url: session.sourceUrl,
-        external_council_id: session.externalCouncilId ?? null,
+        ...(session.externalCouncilId === undefined
+          ? {}
+          : { external_council_id: session.externalCouncilId }),
       },
       { onConflict: "slug" }
     )
@@ -63,21 +65,57 @@ export async function upsertCouncilSession(
 }
 
 /**
- * 会期が無ければ作り、あればそのIDを返す（既存の日付は上書きしない）。
+ * 会期が無ければ作り、あればそのIDを返す。
  *
  * 会期の正確な日付は会期予定ページが持っている。議案審議結果PDFから逆算した
- * 日付でそれを潰さないよう、こちらは insert のみ行う。
+ * 日付でそれを潰さないよう、既存値は原則として上書きしない。
+ * `replaceExistingSourceUrl` を指定した場合だけ、そのURLを出典とする暫定会期を
+ * 今回の値へ置換する。
  */
 export async function ensureCouncilSession(
-  session: CouncilSessionUpsert
+  session: CouncilSessionUpsert,
+  options: { replaceExistingSourceUrl?: string } = {}
 ): Promise<string> {
   const supabase = createAdminClient();
-  const { data: existing } = await supabase
+  const { data: existing, error } = await supabase
     .from("council_sessions")
-    .select("id")
+    .select("id, source_url")
     .eq("slug", session.slug)
     .maybeSingle();
-  if (existing) return existing.id;
+  if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
+  if (existing) {
+    if (
+      options.replaceExistingSourceUrl === undefined ||
+      existing.source_url !== options.replaceExistingSourceUrl ||
+      session.sourceUrl === options.replaceExistingSourceUrl
+    ) {
+      return existing.id;
+    }
+
+    // 開会中ページから作った暫定会期だけを、後続のより詳しいソースで置換する。
+    // 条件付き更新にして、同時に会期予定ページが正式値を保存した場合は上書きしない。
+    const { data: replaced, error: replaceError } = await supabase
+      .from("council_sessions")
+      .update({
+        name: session.name,
+        session_number: session.sessionNumber,
+        kind: session.kind,
+        start_date: session.startDate,
+        end_date: session.endDate,
+        source_url: session.sourceUrl,
+        ...(session.externalCouncilId === undefined
+          ? {}
+          : { external_council_id: session.externalCouncilId }),
+      })
+      .eq("id", existing.id)
+      .eq("source_url", options.replaceExistingSourceUrl)
+      .select("id")
+      .maybeSingle();
+    if (replaceError) {
+      throw new Error(`暫定会期の更新に失敗した: ${replaceError.message}`);
+    }
+    return replaced?.id ?? existing.id;
+  }
 
   return upsertCouncilSession(session);
 }
