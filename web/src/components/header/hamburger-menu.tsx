@@ -3,14 +3,13 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { RubyToggle } from "@/lib/rubyful";
+import { DisplaySettingsControls } from "./display-settings";
 import { HEADER_NAVIGATION_LINKS } from "./navigation-links";
 
 export function HamburgerMenu() {
@@ -29,7 +28,7 @@ export function HamburgerMenu() {
           <Menu className="h-5 w-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-56 flex flex-col gap-3" align="end">
+      <PopoverContent className="w-72 flex flex-col gap-3" align="end">
         <nav aria-label="メインメニュー">
           <ul className="flex flex-col">
             {HEADER_NAVIGATION_LINKS.map((link) => (
@@ -46,10 +45,10 @@ export function HamburgerMenu() {
           </ul>
         </nav>
         <div className="border-t pt-3">
-          <RubyToggle />
-        </div>
-        <div className="border-t pt-3">
-          <ThemeToggle showLabel />
+          <p className="px-3 pb-1 text-xs font-bold text-muted-foreground">
+            表示設定
+          </p>
+          <DisplaySettingsControls />
         </div>
       </PopoverContent>
     </Popover>
