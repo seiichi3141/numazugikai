@@ -270,7 +270,7 @@ describe("bills.source_record_key", () => {
       source_record_key: sourceRecordKey,
       status: "submitted",
       publish_status: "draft",
-      submitted_date: "2026-09-04",
+      submitted_date: "2026-09-04T00:00:00+00:00",
       submitter: "mayor",
     });
   });
