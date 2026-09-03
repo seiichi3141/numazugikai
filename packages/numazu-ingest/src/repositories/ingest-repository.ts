@@ -106,7 +106,10 @@ export async function upsertCommittee(shortName: string): Promise<string> {
   return data.id;
 }
 
-/** 会期IDと議案番号で突合して議案を作成・更新する。 */
+/**
+ * 結果PDFの完全な解析結果を、会期IDと議案番号で突合して作成・更新する。
+ * nullable項目も解析結果を正として置換するため、部分情報の保存には使用しない。
+ */
 export async function upsertBill(bill: BillUpsert): Promise<string> {
   const supabase = createAdminClient();
   const { data, error } = await supabase.rpc("upsert_ingested_bill", {
@@ -133,20 +136,25 @@ export async function upsertBill(bill: BillUpsert): Promise<string> {
     ...(bill.documentUrl === null ? {} : { p_document_url: bill.documentUrl }),
   });
 
-  if (error) throw new Error(`議案の保存に失敗した: ${error.message}`);
+  if (error) {
+    const diagnostic = [error.details, error.hint].filter(Boolean).join(" / ");
+    throw new Error(
+      `議案の保存に失敗した: ${error.message}${diagnostic ? ` (${diagnostic})` : ""}`
+    );
+  }
   return data;
 }
 
 export type CurrentSessionBillUpsert = {
   councilSessionId: string;
-  sourceRecordKey: string;
+  sourceRecordKey: string | null;
   billNumber: string;
   numberKind: Database["public"]["Enums"]["bill_number_kind_enum"];
   numberValue: number;
   name: string;
   category: BillCategory;
   submittedOn: string;
-  submitter: Database["public"]["Enums"]["bill_submitter_enum"];
+  submitter: Database["public"]["Enums"]["bill_submitter_enum"] | null;
   sourceUrl: string;
   documentUrl: string | null;
 };
@@ -176,15 +184,68 @@ export async function upsertCurrentSessionBill(
     id: string,
     sourceRecordKey: string | null
   ): Promise<{ id: string; created: false }> => {
+    const incomingSourceRecordKey = bill.sourceRecordKey;
+    if (
+      sourceRecordKey !== null &&
+      incomingSourceRecordKey !== null &&
+      sourceRecordKey !== incomingSourceRecordKey
+    ) {
+      throw new Error(
+        `議案の永続identityが一致しません: bill_number=${bill.billNumber}, existing_source_record_key=${sourceRecordKey}, incoming_source_record_key=${incomingSourceRecordKey}`
+      );
+    }
     const updates: Database["public"]["Tables"]["bills"]["Update"] = {
       name: bill.name,
     };
     if (bill.documentUrl) updates.document_url = bill.documentUrl;
-    if (sourceRecordKey === null) {
-      updates.source_record_key = bill.sourceRecordKey;
+    const promotesSourceRecordKey =
+      sourceRecordKey === null && incomingSourceRecordKey !== null;
+    if (promotesSourceRecordKey) {
+      updates.source_record_key = incomingSourceRecordKey;
     }
-    const { error } = await supabase.from("bills").update(updates).eq("id", id);
+    let updateQuery = supabase.from("bills").update(updates).eq("id", id);
+    if (promotesSourceRecordKey) {
+      updateQuery = updateQuery.is("source_record_key", null);
+    }
+    const { data: updated, error } = await updateQuery
+      .select("id")
+      .maybeSingle();
     if (error) throw new Error(`議案の更新に失敗した: ${error.message}`);
+    if (!updated) {
+      if (!promotesSourceRecordKey) {
+        throw new Error(`議案の更新対象を確認できませんでした: ${id}`);
+      }
+      const { data: latest, error: refetchError } = await supabase
+        .from("bills")
+        .select("source_record_key")
+        .eq("id", id)
+        .single();
+      if (refetchError) {
+        throw new Error(`議案の再検索に失敗した: ${refetchError.message}`);
+      }
+      if (latest.source_record_key !== incomingSourceRecordKey) {
+        throw new Error(
+          `議案の永続identityが一致しません: bill_number=${bill.billNumber}, existing_source_record_key=${latest.source_record_key}, incoming_source_record_key=${incomingSourceRecordKey}`
+        );
+      }
+      const retryUpdates: Database["public"]["Tables"]["bills"]["Update"] = {
+        name: bill.name,
+      };
+      if (bill.documentUrl) retryUpdates.document_url = bill.documentUrl;
+      const { data: retried, error: retryError } = await supabase
+        .from("bills")
+        .update(retryUpdates)
+        .eq("id", id)
+        .eq("source_record_key", incomingSourceRecordKey)
+        .select("id")
+        .maybeSingle();
+      if (retryError) {
+        throw new Error(`議案の更新再試行に失敗した: ${retryError.message}`);
+      }
+      if (!retried) {
+        throw new Error(`議案の更新再試行で対象を確認できませんでした: ${id}`);
+      }
+    }
     return { id, created: false };
   };
 

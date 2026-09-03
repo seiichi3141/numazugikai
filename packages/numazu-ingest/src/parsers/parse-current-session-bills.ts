@@ -12,7 +12,7 @@ export type ParsedCurrentSessionBill = {
   numberValue: number;
   title: string;
   category: BillCategory;
-  submitter: BillSubmitter;
+  submitter: BillSubmitter | null;
   submittedOn: string | null;
   documentUrl: string | null;
 };
@@ -76,10 +76,12 @@ export function inferCurrentBillCategory(
   return "other";
 }
 
-function inferCurrentBillSubmitter(numberKind: BillNumberKind): BillSubmitter {
+function inferCurrentBillSubmitter(
+  numberKind: BillNumberKind
+): BillSubmitter | null {
   if (numberKind === "hatsugi") return "member";
   if (numberKind === "seigan" || numberKind === "chinjo") return "citizen";
-  return "mayor";
+  return null;
 }
 
 function parseSessionHeading(

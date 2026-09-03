@@ -86,7 +86,8 @@ describe("ingestCurrentSessionBills", () => {
       councilSessionId: "session-id",
       billNumber: "報第22号",
       submittedOn: "2026-09-04",
-      submitter: "mayor",
+      sourceRecordKey: null,
+      submitter: null,
     });
     expect(fake.savedHashes).toHaveLength(1);
   });

@@ -51,6 +51,13 @@ const functionMigrationSql = readFileSync(
   ),
   "utf8"
 );
+const identityCollisionMigrationSql = readFileSync(
+  new URL(
+    "../../../supabase/migrations/20260904012000_reject_ingest_identity_collision.sql",
+    import.meta.url
+  ),
+  "utf8"
+);
 
 describe("add_bill_source_record_key migration", () => {
   const sql = postgres(databaseUrl, { max: 1 });
@@ -144,11 +151,24 @@ describe("add_bill_source_record_key migration", () => {
           (11, '00000000-0000-0000-0000-000000000001', '陳情第1号', 'chinjo', 1, null,
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
           (12, '00000000-0000-0000-0000-000000000001', '認第1号', 'nin', 1, 'mayor',
-            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm');
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (13, '00000000-0000-0000-0000-000000000001', '議第60号', 'gi', 60, 'mayor',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm'),
+          (14, '00000000-0000-0000-0000-000000000001', '報第16号', 'hou', 16, 'mayor',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm');
       `);
 
       await transaction.unsafe(migrationSql);
+      await transaction`
+        update bills
+        set source_record_key = case test_case
+          when 13 then 'numazu-city:2026-13:executive_bill:mayor:numbered:gi-60'
+          when 14 then 'numazu-city:2026-13:report:mayor:numbered:hou-16'
+        end
+        where test_case in (13, 14)
+      `;
       await transaction.unsafe(functionMigrationSql);
+      await transaction.unsafe(identityCollisionMigrationSql);
 
       const rows = await transaction<
         { test_case: number; source_record_key: string | null }[]
@@ -236,6 +256,25 @@ describe("add_bill_source_record_key migration", () => {
             submitter: "mayor",
           }),
         },
+        { test_case: 13, source_record_key: null },
+        { test_case: 14, source_record_key: null },
+      ]);
+
+      const cleanedCurrentSessionBills = await transaction<
+        {
+          source_record_key: string | null;
+          submitter: string | null;
+          test_case: number;
+        }[]
+      >`
+        select test_case, source_record_key, submitter::text
+        from bills
+        where test_case in (13, 14)
+        order by test_case
+      `;
+      expect(cleanedCurrentSessionBills).toEqual([
+        { test_case: 13, source_record_key: null, submitter: null },
+        { test_case: 14, source_record_key: null, submitter: null },
       ]);
 
       const constraints = await transaction<{ constraint_name: string }[]>`
@@ -258,6 +297,39 @@ describe("add_bill_source_record_key migration", () => {
           and column_name = 'source_record_key'
       `;
       expect(column?.is_nullable).toBe("YES");
+
+      const [upsertFunction] = await transaction<
+        {
+          authenticated_execute: boolean;
+          function_comment: string | null;
+          function_count: number;
+          identity_arguments: string;
+          anon_execute: boolean;
+          service_role_execute: boolean;
+        }[]
+      >`
+        select
+          count(*)::integer as function_count,
+          min(obj_description(pg_proc.oid, 'pg_proc')) as function_comment,
+          min(pg_get_function_identity_arguments(pg_proc.oid)) as identity_arguments,
+          bool_and(has_function_privilege('anon', pg_proc.oid, 'EXECUTE')) as anon_execute,
+          bool_and(has_function_privilege('authenticated', pg_proc.oid, 'EXECUTE')) as authenticated_execute,
+          bool_and(has_function_privilege('service_role', pg_proc.oid, 'EXECUTE')) as service_role_execute
+        from pg_proc
+        join pg_namespace on pg_namespace.oid = pg_proc.pronamespace
+        where pg_namespace.nspname = ${schemaName}
+          and pg_proc.proname = 'upsert_ingested_bill'
+      `;
+      expect(upsertFunction?.function_count).toBe(1);
+      expect(upsertFunction?.function_comment).toBe(
+        "取り込み議案を原子的にupsertし、異なる永続identityによる上書きを拒否する"
+      );
+      expect(upsertFunction?.identity_arguments).toBe(
+        "p_council_session_id uuid, p_bill_number text, p_number_kind bill_number_kind_enum, p_number_value integer, p_name text, p_category bill_category_enum, p_status bill_status_enum, p_source_url text, p_source_record_key text, p_legal_basis text, p_submitted_on date, p_submitter bill_submitter_enum, p_committee_id uuid, p_committee_result text, p_decided_on date, p_status_note text, p_document_url text"
+      );
+      expect(upsertFunction?.anon_execute).toBe(false);
+      expect(upsertFunction?.authenticated_execute).toBe(false);
+      expect(upsertFunction?.service_role_execute).toBe(true);
 
       await transaction.unsafe("set local search_path to public");
       await transaction.unsafe(`drop schema ${quotedSchemaName} cascade`);
