@@ -133,7 +133,12 @@ export async function upsertBill(bill: BillUpsert): Promise<string> {
     ...(bill.documentUrl === null ? {} : { p_document_url: bill.documentUrl }),
   });
 
-  if (error) throw new Error(`議案の保存に失敗した: ${error.message}`);
+  if (error) {
+    const diagnostic = [error.details, error.hint].filter(Boolean).join(" / ");
+    throw new Error(
+      `議案の保存に失敗した: ${error.message}${diagnostic ? ` (${diagnostic})` : ""}`
+    );
+  }
   return data;
 }
 

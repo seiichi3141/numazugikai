@@ -51,6 +51,13 @@ const functionMigrationSql = readFileSync(
   ),
   "utf8"
 );
+const identityCollisionMigrationSql = readFileSync(
+  new URL(
+    "../../../supabase/migrations/20260904012000_reject_ingest_identity_collision.sql",
+    import.meta.url
+  ),
+  "utf8"
+);
 
 describe("add_bill_source_record_key migration", () => {
   const sql = postgres(databaseUrl, { max: 1 });
@@ -149,6 +156,7 @@ describe("add_bill_source_record_key migration", () => {
 
       await transaction.unsafe(migrationSql);
       await transaction.unsafe(functionMigrationSql);
+      await transaction.unsafe(identityCollisionMigrationSql);
 
       const rows = await transaction<
         { test_case: number; source_record_key: string | null }[]
@@ -258,6 +266,39 @@ describe("add_bill_source_record_key migration", () => {
           and column_name = 'source_record_key'
       `;
       expect(column?.is_nullable).toBe("YES");
+
+      const [upsertFunction] = await transaction<
+        {
+          authenticated_execute: boolean;
+          function_comment: string | null;
+          function_count: number;
+          identity_arguments: string;
+          anon_execute: boolean;
+          service_role_execute: boolean;
+        }[]
+      >`
+        select
+          count(*)::integer as function_count,
+          min(obj_description(pg_proc.oid, 'pg_proc')) as function_comment,
+          min(pg_get_function_identity_arguments(pg_proc.oid)) as identity_arguments,
+          bool_and(has_function_privilege('anon', pg_proc.oid, 'EXECUTE')) as anon_execute,
+          bool_and(has_function_privilege('authenticated', pg_proc.oid, 'EXECUTE')) as authenticated_execute,
+          bool_and(has_function_privilege('service_role', pg_proc.oid, 'EXECUTE')) as service_role_execute
+        from pg_proc
+        join pg_namespace on pg_namespace.oid = pg_proc.pronamespace
+        where pg_namespace.nspname = ${schemaName}
+          and pg_proc.proname = 'upsert_ingested_bill'
+      `;
+      expect(upsertFunction?.function_count).toBe(1);
+      expect(upsertFunction?.function_comment).toBe(
+        "取り込み議案を原子的にupsertし、異なる永続identityによる上書きを拒否する"
+      );
+      expect(upsertFunction?.identity_arguments).toBe(
+        "p_council_session_id uuid, p_bill_number text, p_number_kind bill_number_kind_enum, p_number_value integer, p_name text, p_category bill_category_enum, p_status bill_status_enum, p_source_url text, p_source_record_key text, p_legal_basis text, p_submitted_on date, p_submitter bill_submitter_enum, p_committee_id uuid, p_committee_result text, p_decided_on date, p_status_note text, p_document_url text"
+      );
+      expect(upsertFunction?.anon_execute).toBe(false);
+      expect(upsertFunction?.authenticated_execute).toBe(false);
+      expect(upsertFunction?.service_role_execute).toBe(true);
 
       await transaction.unsafe("set local search_path to public");
       await transaction.unsafe(`drop schema ${quotedSchemaName} cascade`);
