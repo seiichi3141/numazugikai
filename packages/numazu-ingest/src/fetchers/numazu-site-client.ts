@@ -4,6 +4,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { normalizeHtmlForContentHash } from "../utils/normalize-html-for-content-hash";
 
 const execFileAsync = promisify(execFile);
 
@@ -68,7 +69,7 @@ export class NumazuSiteClient {
     return {
       url,
       text,
-      contentHash: sha256(buffer),
+      contentHash: sha256(normalizeHtmlForContentHash(text)),
       etag: headers.etag,
       lastModified: headers.lastModified,
     };
