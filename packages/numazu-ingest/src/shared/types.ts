@@ -1,4 +1,10 @@
-/** 沼津市議会の議案取り込みで扱う共通型 */
+import type {
+  CouncilBillCategory,
+  CouncilDecision,
+  CouncilSubmitterKind,
+} from "@mirai-gikai/council-ingest-core/types";
+
+/** 沼津市議会の議案取り込みで扱う型 */
 
 /** 議案番号の接頭辞の種別 */
 export type BillNumberKind =
@@ -10,37 +16,40 @@ export type BillNumberKind =
   | "chinjo"; // 陳情第◯号
 
 /** 議案の分類（地方自治法の根拠区分に対応） */
-export type BillCategory =
-  | "ordinance" // 条例（法96条1項1号）
-  | "budget" // 予算（2号）
-  | "settlement" // 決算（3号）
-  | "contract" // 契約ほか（4〜14号）
-  | "provisional_approval" // 専決承認（法179条関係）
-  | "report" // 報告（法180条関係ほか）
-  | "personnel" // 人事
-  | "opinion_paper" // 意見書・決議（発議）
-  | "petition" // 請願・陳情
-  | "other"; // その他
+export type BillCategory = Extract<
+  CouncilBillCategory,
+  | "ordinance"
+  | "budget"
+  | "settlement"
+  | "contract"
+  | "provisional_approval"
+  | "report"
+  | "personnel"
+  | "opinion_paper"
+  | "petition"
+  | "other"
+>;
 
 /** 議案の提出者 */
-export type BillSubmitter =
-  | "mayor" // 市長
-  | "member" // 議員
-  | "committee" // 委員会
-  | "citizen"; // 市民（請願・陳情）
+export type BillSubmitter = Extract<
+  CouncilSubmitterKind,
+  "mayor" | "member" | "committee" | "citizen"
+>;
 
 /** 本会議での議決結果 */
-export type BillDecision =
-  | "passed" // 可決
-  | "rejected" // 否決
-  | "consented" // 同意（人事案件）
-  | "approved" // 承認（専決処分の承認）
-  | "certified" // 認定（決算）
-  | "adopted" // 採択（請願・陳情）
-  | "not_adopted" // 不採択
-  | "continued" // 継続審査
-  | "withdrawn" // 撤回
-  | "reported"; // 報告済
+export type BillDecision = Extract<
+  CouncilDecision,
+  | "passed"
+  | "rejected"
+  | "consented"
+  | "approved"
+  | "certified"
+  | "adopted"
+  | "not_adopted"
+  | "continued"
+  | "withdrawn"
+  | "reported"
+>;
 
 /** 議案審議結果PDFから抽出した1件の議案 */
 export type ParsedBill = {
