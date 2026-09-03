@@ -205,11 +205,13 @@ describe("bills.source_record_key", () => {
       numberValue: 88,
       name: "開会中ページのテスト議案",
       category: "contract",
-      submittedOn: "2026-09-04",
+      submittedOn: null,
+      defaultSubmittedOn: "2026-09-04",
       submitter: null,
       sourceUrl: "https://example.com/current-session",
       documentUrl: null,
     });
+
     billIds.push(saved.id);
 
     const { data, error } = await adminClient
@@ -230,6 +232,73 @@ describe("bills.source_record_key", () => {
     });
   });
 
+  it("開会中ページの再取得で暫定行の提出日とカテゴリを更新する", async () => {
+    const session = await createTestCouncilSession({
+      slug: `current-bill-refresh-${Date.now()}`,
+    });
+    sessionIds.push(session.id);
+    const sourceUrl = "https://example.com/current-session-refresh";
+    const first = await upsertCurrentSessionBill({
+      councilSessionId: session.id,
+      sourceRecordKey: null,
+      billNumber: "議第87号",
+      numberKind: "gi",
+      numberValue: 87,
+      name: "掲載直後の件名",
+      category: "other",
+      submittedOn: "2026-09-01",
+      defaultSubmittedOn: "2026-09-01",
+      submitter: null,
+      sourceUrl,
+      documentUrl: null,
+    });
+    billIds.push(first.id);
+
+    const saved = await upsertCurrentSessionBill({
+      councilSessionId: session.id,
+      sourceRecordKey: null,
+      billNumber: "議第87号",
+      numberKind: "gi",
+      numberValue: 87,
+      name: "更新後の件名",
+      category: "contract",
+      submittedOn: "2026-09-04",
+      defaultSubmittedOn: "2026-09-04",
+      submitter: null,
+      sourceUrl,
+      documentUrl: null,
+    });
+
+    await upsertCurrentSessionBill({
+      councilSessionId: session.id,
+      sourceRecordKey: null,
+      billNumber: "議第87号",
+      numberKind: "gi",
+      numberValue: 87,
+      name: "追加日表示が消えた後の件名",
+      category: "budget",
+      submittedOn: null,
+      defaultSubmittedOn: "2026-08-20",
+      submitter: null,
+      sourceUrl,
+      documentUrl: null,
+    });
+
+    const { data, error } = await adminClient
+      .from("bills")
+      .select("name, category, submitted_date, source_url")
+      .eq("id", first.id)
+      .single();
+    expect(error).toBeNull();
+    expect(saved).toEqual({ id: first.id, created: false });
+    expect(data).toEqual({
+      name: "追加日表示が消えた後の件名",
+      category: "budget",
+      submitted_date: "2026-09-04T00:00:00+00:00",
+      source_url: sourceUrl,
+    });
+  });
+
   it("開会中ページの再取得で確定済みの審議結果を消さない", async () => {
     const session = await createTestCouncilSession({
       slug: `current-bill-update-${Date.now()}`,
@@ -241,6 +310,7 @@ describe("bills.source_record_key", () => {
       source_record_key: sourceRecordKey,
       bill_number: "議第89号",
       category: "ordinance",
+      submitted_date: "2026-08-01",
       status: "passed",
       decided_on: "2026-10-08",
       source_url: "https://example.com/final-result",
@@ -257,6 +327,7 @@ describe("bills.source_record_key", () => {
       name: "公式ページで更新された件名",
       category: "contract",
       submittedOn: "2026-09-04",
+      defaultSubmittedOn: "2026-09-04",
       submitter: null,
       sourceUrl: "https://example.com/current-session",
       documentUrl: "https://example.com/new-document.pdf",
@@ -265,7 +336,7 @@ describe("bills.source_record_key", () => {
     const { data, error } = await adminClient
       .from("bills")
       .select(
-        "name, source_record_key, category, status, decided_on, source_url, document_url"
+        "name, source_record_key, category, submitted_date, status, decided_on, source_url, document_url"
       )
       .eq("id", first.id)
       .single();
@@ -275,6 +346,7 @@ describe("bills.source_record_key", () => {
       name: "公式ページで更新された件名",
       source_record_key: sourceRecordKey,
       category: "ordinance",
+      submitted_date: "2026-08-01T00:00:00+00:00",
       status: "passed",
       decided_on: "2026-10-08",
       source_url: "https://example.com/final-result",
@@ -307,6 +379,7 @@ describe("bills.source_record_key", () => {
         name: "上書きされない件名",
         category: "opinion_paper",
         submittedOn: "2026-09-04",
+        defaultSubmittedOn: "2026-09-04",
         submitter: "committee",
         sourceUrl: "https://example.com/current-session",
         documentUrl: "https://example.com/replacement.pdf",
@@ -350,6 +423,7 @@ describe("bills.source_record_key", () => {
       name: "永続key補完テスト議案",
       category: "other",
       submittedOn: "2026-09-04",
+      defaultSubmittedOn: "2026-09-04",
       submitter: "member",
       sourceUrl: "https://example.com/current-session",
       documentUrl: null,
@@ -397,6 +471,7 @@ describe("bills.source_record_key", () => {
           name: `並行更新${index + 1}`,
           category: "opinion_paper",
           submittedOn: "2026-09-04",
+          defaultSubmittedOn: "2026-09-04",
           submitter: index === 0 ? "member" : "committee",
           sourceUrl: "https://example.com/current-session",
           documentUrl: null,
@@ -429,6 +504,9 @@ describe("bills.source_record_key", () => {
       source_record_key: null,
       bill_number: "発議第93号",
       name: "identity確定前の議案",
+      category: "other",
+      submitted_date: "2026-09-01",
+      source_url: "https://example.com/current-session",
     });
     billIds.push(original.id);
     const sourceRecordKey = `numazu-city:${session.slug}:member_bill:member:numbered:hatsugi-93`;
@@ -444,6 +522,7 @@ describe("bills.source_record_key", () => {
           name,
           category: "opinion_paper",
           submittedOn: "2026-09-04",
+          defaultSubmittedOn: "2026-09-04",
           submitter: "member",
           sourceUrl: "https://example.com/current-session",
           documentUrl: null,
@@ -454,11 +533,13 @@ describe("bills.source_record_key", () => {
     expect(results.every(({ status }) => status === "fulfilled")).toBe(true);
     const { data, error } = await adminClient
       .from("bills")
-      .select("name, source_record_key")
+      .select("name, source_record_key, category, submitted_date")
       .eq("id", original.id)
       .single();
     expect(error).toBeNull();
     expect(["並行更新A", "並行更新B"]).toContain(data?.name);
     expect(data?.source_record_key).toBe(sourceRecordKey);
+    expect(data?.category).toBe("opinion_paper");
+    expect(data?.submitted_date).toBe("2026-09-04T00:00:00+00:00");
   });
 });
