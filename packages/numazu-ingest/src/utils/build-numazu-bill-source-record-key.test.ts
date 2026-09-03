@@ -6,7 +6,7 @@ describe("buildNumazuBillSourceRecordKey", () => {
     ["gi", "mayor", 58, "executive_bill:mayor:numbered:gi-58"],
     ["nin", "mayor", 1, "executive_bill:mayor:numbered:nin-1"],
     ["hou", "mayor", 14, "report:mayor:numbered:hou-14"],
-    ["hatsugi", null, 4, "member_bill:member:numbered:hatsugi-4"],
+    ["hatsugi", "member", 4, "member_bill:member:numbered:hatsugi-4"],
     ["seigan", null, 2, "petition:citizen:numbered:seigan-2"],
     ["chinjo", null, 3, "petition:citizen:numbered:chinjo-3"],
     ["gi", "committee", 1, "committee_bill:committee:numbered:gi-1"],
@@ -26,6 +26,7 @@ describe("buildNumazuBillSourceRecordKey", () => {
     "gi",
     "nin",
     "hou",
+    "hatsugi",
   ] as const)("提出者を確定できない%sはkeyを割り当てない", (numberKind) => {
     expect(
       buildNumazuBillSourceRecordKey({
