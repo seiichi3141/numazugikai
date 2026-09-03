@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# 沼津市版ではCodeRabbitを使用しない。他自治体branchは個別に判断する。
 
 language: ja-JP
 
@@ -8,7 +9,7 @@ reviews:
   high_level_summary: true
   sequence_diagrams: true
   auto_review:
-    enabled: true
+    enabled: false
     drafts: true
     ignore_title_keywords: []
     labels:

@@ -104,6 +104,17 @@ cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
 
 両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで一気に進めること（`gh pr create`）。
 
+### CodeRabbitは使用しない（沼津市版）
+
+PRのbaseが`develop`または`main`の沼津市版では、CodeRabbitによるレビューを
+使用しない。レビューの要求・到着待ち・bot固有のコメント取得や重要度判定を、
+PRの作成後確認や完了条件に含めない。これは上記の`/simplify`・`/review`、
+push前のローカル検証、GitHub CI、実際に投稿された人間のレビューを省略する
+意味ではない。
+
+`sites/<site>/*`をbaseとするPRは、対象自治体branchの`AGENTS.md`と運用方針に
+従う。沼津市版の不使用ルールを他自治体へ自動適用しない。
+
 ### UI変更時のスクリーンショット必須
 PR作成後、変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
 
@@ -249,11 +260,10 @@ UI文言・コメント・プロンプトを書くときは次の語を使うこ
   `Resolves #123` と記載してマージ時に自動クローズできる。自治体別 branch 宛ての
   PR では closing keyword が自動適用されないため、Development 欄または本文で
   issue をリンクし、マージ確認後に issue を別途クローズする。
-- **PR作成後の状態確認（必須）**: PR作成後、以下の4点を確認すること：
+- **PR作成後の状態確認（必須）**: PR作成後、以下の3点を確認すること：
   1. **Conflict確認**: `gh pr view <番号> --json mergeable,mergeStateStatus` でマージ可能か確認。conflictがあれば解消してpushする。
   2. **CI確認**: `gh pr checks <番号>` でCIの状態を確認。失敗があれば原因を調査し修正してpushする。CIが実行中の場合は完了まで待つ。
-  3. **CodeRabbitレビュー確認**: CodeRabbitのレビューが届くまで待ってからコメントを確認する。レビューは通常2〜3分で届く。`gh api repos/{owner}/{repo}/pulls/{number}/comments` でコメントを取得し、空なら少し待って再取得する。**Minor以上（Minor/Major/Critical）の指摘はすべて対応が必須。** 対応とは「修正してpush」または「スキップ理由を該当コメントに返信」のいずれか。Nitpickのみスキップ可。
-  4. **対応済みコメントへの返信とresolve（必須）**: 対応済みコメント（修正pushした場合・スキップした場合の両方）に対して、該当コメントへ返信した上でGraphQL APIでresolveする。返信なしで黙ってresolveするのは禁止。
+  3. **投稿済みレビューコメントの確認**: 人間または明示的に有効化されたその他のレビュアーからコメントが投稿されている場合は確認する。対応済みコメント（修正pushした場合・理由を説明して対応しない場合の両方）には、該当コメントへ返信した上でGraphQL APIでresolveする。返信なしで黙ってresolveしない。未投稿のレビュー到着を待つ必要はない。
      ```bash
      # 1. 該当コメントに返信（対応内容の概要を記載、修正の場合はコミットSHAを含める）
      gh api repos/{owner}/{repo}/pulls/{number}/comments -X POST \
