@@ -443,7 +443,11 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
                   conditionAbsent: {
                     filter: $condition_filter,
                     duration: $duration,
-                    trigger: { count: 1 }
+                    trigger: { count: 1 },
+                    aggregations: [{
+                      alignmentPeriod: "300s",
+                      perSeriesAligner: "ALIGN_SUM"
+                    }]
                   }
                 } else {
                   conditionThreshold: {
@@ -451,7 +455,11 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
                     comparison: "COMPARISON_GT",
                     thresholdValue: 0,
                     duration: $duration,
-                    trigger: { count: 1 }
+                    trigger: { count: 1 },
+                    aggregations: [{
+                      alignmentPeriod: "300s",
+                      perSeriesAligner: "ALIGN_SUM"
+                    }]
                   }
                 } end)
           ]
