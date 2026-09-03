@@ -1,4 +1,7 @@
-import { upsertBill } from "../../packages/numazu-ingest/src/repositories/ingest-repository";
+import {
+  upsertBill,
+  upsertCurrentSessionBill,
+} from "../../packages/numazu-ingest/src/repositories/ingest-repository";
 import {
   adminClient,
   cleanupTestBill,
@@ -230,5 +233,140 @@ describe("bills.source_record_key", () => {
 
     expect(error?.code).toBe("23505");
     expect(error?.message).toContain("bills_session_bill_number_key");
+  });
+
+  it("開会中ページの新規議案をdraftとして登録する", async () => {
+    const session = await createTestCouncilSession({
+      slug: `current-bill-insert-${Date.now()}`,
+    });
+    sessionIds.push(session.id);
+    const sourceRecordKey = `numazu-city:${session.slug}:executive_bill:mayor:numbered:gi-88`;
+
+    const saved = await upsertCurrentSessionBill({
+      councilSessionId: session.id,
+      sourceRecordKey,
+      billNumber: "議第88号",
+      numberKind: "gi",
+      numberValue: 88,
+      name: "開会中ページのテスト議案",
+      category: "contract",
+      submittedOn: "2026-09-04",
+      submitter: "mayor",
+      sourceUrl: "https://example.com/current-session",
+      documentUrl: null,
+    });
+    billIds.push(saved.id);
+
+    const { data, error } = await adminClient
+      .from("bills")
+      .select(
+        "source_record_key, status, publish_status, submitted_date, submitter"
+      )
+      .eq("id", saved.id)
+      .single();
+    expect(error).toBeNull();
+    expect(saved.created).toBe(true);
+    expect(data).toEqual({
+      source_record_key: sourceRecordKey,
+      status: "submitted",
+      publish_status: "draft",
+      submitted_date: "2026-09-04",
+      submitter: "mayor",
+    });
+  });
+
+  it("開会中ページの再取得で確定済みの審議結果を消さない", async () => {
+    const session = await createTestCouncilSession({
+      slug: `current-bill-update-${Date.now()}`,
+    });
+    sessionIds.push(session.id);
+    const sourceRecordKey = `numazu-city:${session.slug}:executive_bill:mayor:numbered:gi-89`;
+    const first = await createTestBill({
+      council_session_id: session.id,
+      source_record_key: sourceRecordKey,
+      bill_number: "議第89号",
+      category: "ordinance",
+      status: "passed",
+      decided_on: "2026-10-08",
+      source_url: "https://example.com/final-result",
+      document_url: "https://example.com/old-document.pdf",
+    });
+    billIds.push(first.id);
+
+    const saved = await upsertCurrentSessionBill({
+      councilSessionId: session.id,
+      sourceRecordKey: `numazu-city:${session.slug}:executive_bill:mayor:numbered:gi-999`,
+      billNumber: "議第89号",
+      numberKind: "gi",
+      numberValue: 89,
+      name: "公式ページで更新された件名",
+      category: "contract",
+      submittedOn: "2026-09-04",
+      submitter: "mayor",
+      sourceUrl: "https://example.com/current-session",
+      documentUrl: "https://example.com/new-document.pdf",
+    });
+
+    const { data, error } = await adminClient
+      .from("bills")
+      .select(
+        "name, source_record_key, category, status, decided_on, source_url, document_url"
+      )
+      .eq("id", first.id)
+      .single();
+    expect(error).toBeNull();
+    expect(saved).toEqual({ id: first.id, created: false });
+    expect(data).toEqual({
+      name: "公式ページで更新された件名",
+      source_record_key: sourceRecordKey,
+      category: "ordinance",
+      status: "passed",
+      decided_on: "2026-10-08",
+      source_url: "https://example.com/final-result",
+      document_url: "https://example.com/new-document.pdf",
+    });
+  });
+
+  it("既存URLを保持しながら未設定の永続keyだけを補完する", async () => {
+    const session = await createTestCouncilSession({
+      slug: `current-bill-fill-key-${Date.now()}`,
+    });
+    sessionIds.push(session.id);
+    const sourceRecordKey = `numazu-city:${session.slug}:executive_bill:mayor:numbered:gi-90`;
+    const first = await createTestBill({
+      council_session_id: session.id,
+      source_record_key: null,
+      bill_number: "議第90号",
+      status: "passed",
+      document_url: "https://example.com/existing-document.pdf",
+    });
+    billIds.push(first.id);
+
+    const saved = await upsertCurrentSessionBill({
+      councilSessionId: session.id,
+      sourceRecordKey,
+      billNumber: "議第90号",
+      numberKind: "gi",
+      numberValue: 90,
+      name: "永続key補完テスト議案",
+      category: "other",
+      submittedOn: "2026-09-04",
+      submitter: "mayor",
+      sourceUrl: "https://example.com/current-session",
+      documentUrl: null,
+    });
+
+    const { data, error } = await adminClient
+      .from("bills")
+      .select("source_record_key, status, document_url")
+      .eq("id", first.id)
+      .single();
+    expect(error).toBeNull();
+    expect(saved).toEqual({ id: first.id, created: false });
+    expect(data).toEqual({
+      source_record_key: sourceRecordKey,
+      status: "passed",
+      document_url: "https://example.com/existing-document.pdf",
+    });
   });
 });
