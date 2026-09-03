@@ -26,7 +26,7 @@ vi.mock(
   })
 );
 vi.mock("./hamburger-menu", () => ({ HamburgerMenu: () => null }));
-vi.mock("@/lib/rubyful", () => ({ RubyToggle: () => null }));
+vi.mock("./display-settings", () => ({ DisplaySettingsPopover: () => null }));
 
 beforeEach(() => {
   sendGAEventMock.mockClear();
