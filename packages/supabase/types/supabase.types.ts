@@ -175,6 +175,7 @@ export type Database = {
           published_at: string | null
           share_thumbnail_url: string | null
           slug: string | null
+          source_record_key: string | null
           source_url: string | null
           status: Database["public"]["Enums"]["bill_status_enum"]
           status_note: string | null
@@ -213,6 +214,7 @@ export type Database = {
           published_at?: string | null
           share_thumbnail_url?: string | null
           slug?: string | null
+          source_record_key?: string | null
           source_url?: string | null
           status?: Database["public"]["Enums"]["bill_status_enum"]
           status_note?: string | null
@@ -251,6 +253,7 @@ export type Database = {
           published_at?: string | null
           share_thumbnail_url?: string | null
           slug?: string | null
+          source_record_key?: string | null
           source_url?: string | null
           status?: Database["public"]["Enums"]["bill_status_enum"]
           status_note?: string | null
@@ -4036,6 +4039,28 @@ export type Database = {
         Args: { p_config_id: string }
         Returns: undefined
       }
+      upsert_ingested_bill: {
+        Args: {
+          p_bill_number: string
+          p_category: Database["public"]["Enums"]["bill_category_enum"]
+          p_committee_id?: string
+          p_committee_result?: string
+          p_council_session_id: string
+          p_decided_on?: string
+          p_document_url?: string
+          p_legal_basis?: string
+          p_name: string
+          p_number_kind: Database["public"]["Enums"]["bill_number_kind_enum"]
+          p_number_value: number
+          p_source_record_key?: string
+          p_source_url: string
+          p_status: Database["public"]["Enums"]["bill_status_enum"]
+          p_status_note?: string
+          p_submitted_on?: string
+          p_submitter?: Database["public"]["Enums"]["bill_submitter_enum"]
+        }
+        Returns: string
+      }
     }
     Enums: {
       bill_category_enum:
@@ -4513,4 +4538,3 @@ export const Constants = {
     },
   },
 } as const
-

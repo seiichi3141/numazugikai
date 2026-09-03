@@ -49,6 +49,7 @@
       "web/src/**/*",
       "admin/src/**/*",
       "tests/**/*",
+      "packages/council-ingest-core/**/*",
       "packages/numazu-ingest/**/*",
       "packages/bill-explainer/**/*",
       "packages/site-config/src/**/*",

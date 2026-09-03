@@ -31,6 +31,7 @@ const baseBill: Bill = {
   published_at: null,
   submitted_date: null,
   share_thumbnail_url: null,
+  source_record_key: "numazu-city:2025-1:executive_bill:mayor:numbered:gi-58",
   source_url: null,
   slug: null,
   status: "submitted",
@@ -70,6 +71,11 @@ describe("prepareBillForDuplication", () => {
     const billWithSlug = { ...baseBill, slug: "test-slug" };
     const result = prepareBillForDuplication(billWithSlug);
     expect(result.slug).toBeNull();
+  });
+
+  it("source record keyをnullにリセットする", () => {
+    const result = prepareBillForDuplication(baseBill);
+    expect(result.source_record_key).toBeNull();
   });
 
   it("その他のフィールドを保持する", () => {

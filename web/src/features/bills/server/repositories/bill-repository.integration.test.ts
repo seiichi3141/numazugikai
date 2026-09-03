@@ -17,6 +17,7 @@ import {
   findBillById,
   findBillContentByDifficulty,
   findBillDebatesByBillId,
+  findBillIdsWithDebates,
   findComingSoonBills,
   findFeaturedBillsWithContents,
   findFeaturedTags,
@@ -180,6 +181,41 @@ describe("bill-repository 統合テスト", () => {
         stance: "against",
         source_url: "https://example.com/minutes#debate",
       });
+    });
+  });
+
+  describe("findBillIdsWithDebates", () => {
+    it("討論がある議案IDだけを重複なく返す", async () => {
+      const billWithDebates = await createTestBill();
+      const billWithoutDebates = await createTestBill();
+      billIds.push(billWithDebates.id, billWithoutDebates.id);
+
+      const { error } = await adminClient.from("bill_debates").insert([
+        {
+          bill_id: billWithDebates.id,
+          speaker_name: "賛成議員",
+          stance: "for",
+          source_url: "https://example.com/minutes#for",
+        },
+        {
+          bill_id: billWithDebates.id,
+          speaker_name: "反対議員",
+          stance: "against",
+          source_url: "https://example.com/minutes#against",
+        },
+      ]);
+      expect(error).toBeNull();
+
+      const result = await findBillIdsWithDebates([
+        billWithDebates.id,
+        billWithoutDebates.id,
+      ]);
+
+      expect(result).toEqual(new Set([billWithDebates.id]));
+    });
+
+    it("空配列ならDBへ問い合わせず空のSetを返す", async () => {
+      await expect(findBillIdsWithDebates([])).resolves.toEqual(new Set());
     });
   });
 
