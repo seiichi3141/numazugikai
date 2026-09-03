@@ -56,6 +56,9 @@ importers:
       '@mirai-gikai/shared':
         specifier: workspace:*
         version: link:../packages/shared
+      '@mirai-gikai/site-config':
+        specifier: workspace:*
+        version: link:../packages/site-config
       '@mirai-gikai/supabase':
         specifier: workspace:*
         version: link:../packages/supabase

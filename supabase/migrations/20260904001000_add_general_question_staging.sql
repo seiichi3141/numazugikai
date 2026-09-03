@@ -41,7 +41,17 @@ create table general_question_staging_appearances (
     on delete restrict,
   reviewed_matched_appearance_id uuid references general_question_appearances(id)
     on delete restrict,
+  reviewed_match_confirmed boolean not null default false,
   parsed_payload jsonb not null check (jsonb_typeof(parsed_payload) = 'object'),
+  generated_public_summaries jsonb not null default '{}'::jsonb
+    constraint general_question_staging_generated_summaries_check
+    check (jsonb_typeof(generated_public_summaries) = 'object'),
+  summary_generation_model text,
+  summary_prompt_version text,
+  summary_generated_at timestamptz,
+  reviewed_public_summaries jsonb not null default '{}'::jsonb
+    constraint general_question_staging_reviewed_summaries_check
+    check (jsonb_typeof(reviewed_public_summaries) = 'object'),
   reviewed_held_on date,
   qa_status qa_status_enum not null default 'pending',
   review_note text,
@@ -50,6 +60,13 @@ create table general_question_staging_appearances (
   created_at timestamptz not null default now(),
   check ((reviewed_by is null) = (reviewed_at is null)),
   check (qa_status = 'pending' or reviewed_by is not null),
+  constraint general_question_staging_summary_metadata_check check (
+    (summary_generation_model is null and summary_prompt_version is null
+      and summary_generated_at is null)
+    or (nullif(btrim(summary_generation_model), '') is not null
+      and nullif(btrim(summary_prompt_version), '') is not null
+      and summary_generated_at is not null)
+  ),
   check (
     (change_kind in ('changed', 'unchanged', 'missing')
       and matched_appearance_id is not null)
@@ -94,10 +111,18 @@ as $$
 begin
   if (to_jsonb(old) - array[
     'qa_status', 'review_note', 'reviewed_by', 'reviewed_at',
-    'reviewed_held_on', 'reviewed_matched_appearance_id'
+    'reviewed_held_on', 'reviewed_matched_appearance_id',
+    'reviewed_match_confirmed',
+    'generated_public_summaries', 'summary_generation_model',
+    'summary_prompt_version', 'summary_generated_at',
+    'reviewed_public_summaries'
   ]) is distinct from (to_jsonb(new) - array[
     'qa_status', 'review_note', 'reviewed_by', 'reviewed_at',
-    'reviewed_held_on', 'reviewed_matched_appearance_id'
+    'reviewed_held_on', 'reviewed_matched_appearance_id',
+    'reviewed_match_confirmed',
+    'generated_public_summaries', 'summary_generation_model',
+    'summary_prompt_version', 'summary_generated_at',
+    'reviewed_public_summaries'
   ]) then
     raise exception 'staged parser output is immutable';
   end if;

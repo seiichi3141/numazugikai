@@ -1705,6 +1705,8 @@ export type Database = {
           reviewed_at: string | null
           reviewed_by: string | null
           revision_number: number
+          summary_generation_model: string
+          summary_prompt_version: string
         }
         Insert: {
           appearance_id: string
@@ -1719,6 +1721,8 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           revision_number: number
+          summary_generation_model: string
+          summary_prompt_version: string
         }
         Update: {
           appearance_id?: string
@@ -1733,6 +1737,8 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           revision_number?: number
+          summary_generation_model?: string
+          summary_prompt_version?: string
         }
         Relationships: [
           {
@@ -2215,6 +2221,7 @@ export type Database = {
           change_kind: Database["public"]["Enums"]["general_question_change_kind_enum"]
           content_fingerprint: string
           created_at: string
+          generated_public_summaries: Json
           id: string
           matched_appearance_id: string | null
           parsed_payload: Json
@@ -2223,14 +2230,20 @@ export type Database = {
           reviewed_at: string | null
           reviewed_by: string | null
           reviewed_held_on: string | null
+          reviewed_match_confirmed: boolean
           reviewed_matched_appearance_id: string | null
+          reviewed_public_summaries: Json
           source_appearance_key: string
+          summary_generated_at: string | null
+          summary_generation_model: string | null
+          summary_prompt_version: string | null
         }
         Insert: {
           batch_id: string
           change_kind: Database["public"]["Enums"]["general_question_change_kind_enum"]
           content_fingerprint: string
           created_at?: string
+          generated_public_summaries?: Json
           id?: string
           matched_appearance_id?: string | null
           parsed_payload: Json
@@ -2239,14 +2252,20 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           reviewed_held_on?: string | null
+          reviewed_match_confirmed?: boolean
           reviewed_matched_appearance_id?: string | null
+          reviewed_public_summaries?: Json
           source_appearance_key: string
+          summary_generated_at?: string | null
+          summary_generation_model?: string | null
+          summary_prompt_version?: string | null
         }
         Update: {
           batch_id?: string
           change_kind?: Database["public"]["Enums"]["general_question_change_kind_enum"]
           content_fingerprint?: string
           created_at?: string
+          generated_public_summaries?: Json
           id?: string
           matched_appearance_id?: string | null
           parsed_payload?: Json
@@ -2255,8 +2274,13 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           reviewed_held_on?: string | null
+          reviewed_match_confirmed?: boolean
           reviewed_matched_appearance_id?: string | null
+          reviewed_public_summaries?: Json
           source_appearance_key?: string
+          summary_generated_at?: string | null
+          summary_generation_model?: string | null
+          summary_prompt_version?: string | null
         }
         Relationships: [
           {

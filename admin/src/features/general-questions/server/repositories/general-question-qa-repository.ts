@@ -5,6 +5,14 @@ import type {
   GeneralQuestionPolicyTopic,
   GeneralQuestionQaRow,
 } from "../../shared/types";
+import {
+  GENERAL_QUESTION_SUMMARY_MAX_LENGTH,
+  type GeneralQuestionSourceItem,
+} from "../../shared/utils/general-question-summary";
+import {
+  parseGeneralQuestionSourceItems,
+  parseGeneralQuestionSummaryMap,
+} from "../../shared/utils/parse-general-question-qa-payload";
 
 type ParsedPayload = {
   speakerName?: unknown;
@@ -28,7 +36,36 @@ function parseValidationErrors(value: unknown): string[] {
 }
 
 const QA_ROW_SELECT =
-  "id, source_appearance_key, change_kind, qa_status, review_note, reviewed_held_on, reviewed_matched_appearance_id, parsed_payload, created_at, general_question_staging_applications(id), general_question_import_batches(error_details, ingestion_source_versions(ingestion_sources(source)))" as const;
+  "id, source_appearance_key, change_kind, qa_status, review_note, reviewed_held_on, matched_appearance_id, reviewed_matched_appearance_id, parsed_payload, generated_public_summaries, reviewed_public_summaries, summary_generation_model, summary_prompt_version, created_at, general_question_staging_applications(id), general_question_import_batches(error_details, ingestion_source_versions(ingestion_sources(source)))" as const;
+
+async function findPdfBackedAppearanceIds(
+  supabase: ReturnType<typeof createAdminClient>,
+  appearanceIds: string[]
+): Promise<Set<string>> {
+  if (appearanceIds.length === 0) return new Set();
+  const { data: pdfSources, error: sourceError } = await supabase
+    .from("ingestion_sources")
+    .select("id")
+    .eq("source", "general_question_pdf");
+  if (sourceError) {
+    throw new Error(`一般質問PDF出典の取得に失敗した: ${sourceError.message}`);
+  }
+  const sourceIds = (pdfSources ?? []).map((source) => source.id);
+  if (sourceIds.length === 0) return new Set();
+  const { data: evidence, error: evidenceError } = await supabase
+    .from("general_question_appearance_sources")
+    .select("appearance_id")
+    .in("appearance_id", appearanceIds)
+    .in("ingestion_source_id", sourceIds)
+    .eq("role", "primary")
+    .eq("qa_status", "verified");
+  if (evidenceError) {
+    throw new Error(
+      `一般質問PDF根拠の取得に失敗した: ${evidenceError.message}`
+    );
+  }
+  return new Set((evidence ?? []).map((row) => row.appearance_id));
+}
 
 export async function findGeneralQuestionQaRows(params: {
   page: number;
@@ -110,6 +147,10 @@ export async function findGeneralQuestionQaRows(params: {
       `一般質問の突合候補取得に失敗した: ${appearancesResult.error.message}`
     );
   }
+  const pdfBackedAppearanceIds = await findPdfBackedAppearanceIds(
+    supabase,
+    (appearancesResult.data ?? []).map((appearance) => appearance.appearance_id)
+  );
   const meetingById = new Map(
     (meetingsResult.data ?? []).map((meeting) => [meeting.meeting_id, meeting])
   );
@@ -130,8 +171,21 @@ export async function findGeneralQuestionQaRows(params: {
 
   const items = (stagingRows ?? []).map((row) => {
     const payload = row.parsed_payload as ParsedPayload;
+    const parsedItems = parseGeneralQuestionSourceItems(payload.items);
+    const generatedSummaries = parseGeneralQuestionSummaryMap(
+      row.generated_public_summaries
+    );
+    const reviewedSummaries = parseGeneralQuestionSummaryMap(
+      row.reviewed_public_summaries
+    );
     const heldOn = typeof payload.heldOn === "string" ? payload.heldOn : null;
     const effectiveHeldOn = row.reviewed_held_on ?? heldOn;
+    const sourceKind =
+      row.general_question_import_batches?.ingestion_source_versions
+        ?.ingestion_sources?.source ?? "unknown";
+    const dateCandidates = effectiveHeldOn
+      ? (candidatesByDate.get(effectiveHeldOn) ?? [])
+      : [];
     return {
       id: row.id,
       sourceAppearanceKey: row.source_appearance_key,
@@ -142,10 +196,14 @@ export async function findGeneralQuestionQaRows(params: {
         typeof payload.speakerName === "string" ? payload.speakerName : "不明",
       heldOn,
       reviewedHeldOn: row.reviewed_held_on,
+      matchedAppearanceId: row.matched_appearance_id,
       reviewedMatchedAppearanceId: row.reviewed_matched_appearance_id,
-      matchCandidates: effectiveHeldOn
-        ? (candidatesByDate.get(effectiveHeldOn) ?? [])
-        : [],
+      matchCandidates:
+        sourceKind === "general_question_record"
+          ? dateCandidates.filter((candidate) =>
+              pdfBackedAppearanceIds.has(candidate.id)
+            )
+          : dateCandidates,
       questionKind:
         typeof payload.questionKind === "string"
           ? payload.questionKind
@@ -154,22 +212,24 @@ export async function findGeneralQuestionQaRows(params: {
         typeof payload.deliveryMethod === "string"
           ? payload.deliveryMethod
           : "unknown",
-      itemCount: Array.isArray(payload.items) ? payload.items.length : 0,
+      items: parsedItems.map((item) => ({
+        ...item,
+        generatedSummary: generatedSummaries[item.sourceKey] ?? null,
+        reviewedSummary: reviewedSummaries[item.sourceKey] ?? null,
+      })),
+      summaryGenerationModel: row.summary_generation_model,
+      summaryPromptVersion: row.summary_prompt_version,
       answerers: Array.isArray(payload.answerers)
         ? payload.answerers.filter(
             (value): value is string => typeof value === "string"
           )
         : [],
       createdAt: row.created_at,
-      applied:
-        Array.isArray(row.general_question_staging_applications) &&
-        row.general_question_staging_applications.length > 0,
+      applied: row.general_question_staging_applications !== null,
       validationErrors: parseValidationErrors(
         row.general_question_import_batches?.error_details
       ),
-      sourceKind:
-        row.general_question_import_batches?.ingestion_source_versions
-          ?.ingestion_sources?.source ?? "unknown",
+      sourceKind,
     };
   });
   return {
@@ -375,12 +435,16 @@ export async function reviewGeneralQuestionQaRow(input: {
   reviewNote: string | null;
   reviewedHeldOn: string | null;
   reviewedMatchedAppearanceId: string | null;
+  reviewedMatchDecisionSubmitted: boolean;
+  reviewedPublicSummaries: Record<string, string>;
   reviewedBy: string;
 }): Promise<void> {
   const supabase = createAdminClient();
   const { data: target, error: targetError } = await supabase
     .from("general_question_staging_appearances")
-    .select("change_kind, general_question_import_batches(error_details)")
+    .select(
+      "change_kind, parsed_payload, summary_generation_model, general_question_import_batches(error_details, ingestion_source_versions(ingestion_sources(source)))"
+    )
     .eq("id", input.id)
     .eq("qa_status", "pending")
     .maybeSingle();
@@ -403,6 +467,61 @@ export async function reviewGeneralQuestionQaRow(input: {
   ) {
     throw new Error("解析検証エラーがあるバッチは承認できません");
   }
+  if (input.qaStatus === "verified") {
+    if (
+      target.change_kind === "unchanged" &&
+      input.reviewedMatchDecisionSubmitted &&
+      input.reviewedMatchedAppearanceId === null
+    ) {
+      throw new Error("変更なしの行は既存の登壇枠との突合を解除できません");
+    }
+    const sourceItems = parseGeneralQuestionSourceItems(
+      (target.parsed_payload as ParsedPayload).items
+    );
+    const isRecordSource =
+      target.general_question_import_batches?.ingestion_source_versions
+        ?.ingestion_sources?.source === "general_question_record";
+    const isEvidenceOnlyRecordMatch =
+      isRecordSource &&
+      input.reviewedMatchedAppearanceId !== null &&
+      (
+        await findPdfBackedAppearanceIds(supabase, [
+          input.reviewedMatchedAppearanceId,
+        ])
+      ).has(input.reviewedMatchedAppearanceId);
+    if (
+      isRecordSource &&
+      input.reviewedMatchedAppearanceId !== null &&
+      !isEvidenceOnlyRecordMatch
+    ) {
+      throw new Error("突合先には人手確認済みのPDF正本根拠が必要です");
+    }
+    const requiredSummaryItems =
+      target.change_kind === "unchanged" || isEvidenceOnlyRecordMatch
+        ? []
+        : sourceItems;
+    if (requiredSummaryItems.length > 0 && !target.summary_generation_model) {
+      throw new Error("承認前にAI要約を生成してください");
+    }
+    if (!isEvidenceOnlyRecordMatch) {
+      const sourceKeys = new Set(
+        requiredSummaryItems.map((item) => item.sourceKey)
+      );
+      const submittedKeys = Object.keys(input.reviewedPublicSummaries);
+      if (
+        submittedKeys.length !== sourceKeys.size ||
+        submittedKeys.some((key) => !sourceKeys.has(key))
+      ) {
+        throw new Error("確認済み要約の項目が原資料と一致しません");
+      }
+      for (const item of requiredSummaryItems) {
+        const summary = input.reviewedPublicSummaries[item.sourceKey]?.trim();
+        if (!summary || summary.length > GENERAL_QUESTION_SUMMARY_MAX_LENGTH) {
+          throw new Error(`確認済み要約が不正です: ${item.sourceKey}`);
+        }
+      }
+    }
+  }
   const { data, error } = await supabase
     .from("general_question_staging_appearances")
     .update({
@@ -410,6 +529,10 @@ export async function reviewGeneralQuestionQaRow(input: {
       review_note: input.reviewNote,
       reviewed_held_on: input.reviewedHeldOn,
       reviewed_matched_appearance_id: input.reviewedMatchedAppearanceId,
+      reviewed_match_confirmed:
+        input.qaStatus === "verified" && input.reviewedMatchDecisionSubmitted,
+      reviewed_public_summaries:
+        input.qaStatus === "verified" ? input.reviewedPublicSummaries : {},
       reviewed_by: input.reviewedBy,
       reviewed_at: new Date().toISOString(),
     })
@@ -418,5 +541,64 @@ export async function reviewGeneralQuestionQaRow(input: {
     .select("id");
   if (error)
     throw new Error(`一般質問QA結果の保存に失敗した: ${error.message}`);
+  if (data.length !== 1) throw new Error("対象は既に確認済みか、存在しません");
+}
+
+export async function findGeneralQuestionSummarySource(id: string): Promise<{
+  speakerName: string;
+  items: GeneralQuestionSourceItem[];
+}> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("general_question_staging_appearances")
+    .select(
+      "change_kind, parsed_payload, general_question_import_batches(error_details, ingestion_source_versions(ingestion_sources(source)))"
+    )
+    .eq("id", id)
+    .eq("qa_status", "pending")
+    .maybeSingle();
+  if (error)
+    throw new Error(`一般質問要約対象の取得に失敗した: ${error.message}`);
+  if (!data) throw new Error("対象は既に確認済みか、存在しません");
+  if (
+    data.change_kind === "unchanged" ||
+    data.change_kind === "missing" ||
+    data.change_kind === "ambiguous" ||
+    parseValidationErrors(data.general_question_import_batches?.error_details)
+      .length > 0
+  ) {
+    throw new Error("この行はAI要約を生成できません");
+  }
+  const payload = data.parsed_payload as ParsedPayload;
+  const items = parseGeneralQuestionSourceItems(payload.items);
+  if (items.length === 0) throw new Error("要約対象の質問項目がありません");
+  return {
+    speakerName:
+      typeof payload.speakerName === "string" ? payload.speakerName : "不明",
+    items,
+  };
+}
+
+export async function saveGeneratedGeneralQuestionSummaries(input: {
+  id: string;
+  summaries: Record<string, string>;
+  model: string;
+  promptVersion: string;
+}): Promise<void> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("general_question_staging_appearances")
+    .update({
+      generated_public_summaries: input.summaries,
+      reviewed_public_summaries: input.summaries,
+      summary_generation_model: input.model,
+      summary_prompt_version: input.promptVersion,
+      summary_generated_at: new Date().toISOString(),
+    })
+    .eq("id", input.id)
+    .eq("qa_status", "pending")
+    .select("id");
+  if (error)
+    throw new Error(`一般質問AI要約の保存に失敗した: ${error.message}`);
   if (data.length !== 1) throw new Error("対象は既に確認済みか、存在しません");
 }

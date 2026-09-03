@@ -165,7 +165,17 @@ create table general_question_item_revisions (
   revision_number integer not null check (revision_number >= 1),
   parent_item_id uuid,
   item_order integer check (item_order is null or item_order >= 1),
-  public_summary text not null check (nullif(btrim(public_summary), '') is not null),
+  public_summary text not null
+    constraint general_question_item_public_summary_check check (
+    nullif(btrim(public_summary), '') is not null
+    and char_length(public_summary) <= 120
+  ),
+  summary_generation_model text not null
+    constraint general_question_item_summary_generation_model_check
+    check (nullif(btrim(summary_generation_model), '') is not null),
+  summary_prompt_version text not null
+    constraint general_question_item_summary_prompt_version_check
+    check (nullif(btrim(summary_prompt_version), '') is not null),
   qa_status qa_status_enum not null default 'pending',
   publication_state publication_state_enum not null default 'draft',
   reviewed_by uuid,

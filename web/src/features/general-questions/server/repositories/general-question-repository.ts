@@ -21,6 +21,8 @@ type ClassifiedTopicRow = {
 
 const PAGE_SIZE = 1000;
 const FILTER_CHUNK_SIZE = 200;
+const PUBLISHED_ITEM_SELECT =
+  "id, question_item_id, appearance_id, parent_item_id, item_order, public_summary, summary_generation_model, summary_prompt_version" as const;
 
 function appendMapValue<K, V>(map: Map<K, V[]>, key: K, value: V): void {
   const values = map.get(key);
@@ -127,17 +129,13 @@ export async function findPublishedGeneralQuestionSessions(options?: {
       (appearanceIds?.length
         ? supabase
             .from("general_question_item_revisions")
-            .select(
-              "id, question_item_id, appearance_id, parent_item_id, item_order, public_summary"
-            )
+            .select(PUBLISHED_ITEM_SELECT)
             .eq("qa_status", "verified")
             .eq("publication_state", "published")
             .in("appearance_id", appearanceIds)
         : supabase
             .from("general_question_item_revisions")
-            .select(
-              "id, question_item_id, appearance_id, parent_item_id, item_order, public_summary"
-            )
+            .select(PUBLISHED_ITEM_SELECT)
             .eq("qa_status", "verified")
             .eq("publication_state", "published")
       ).range(from, to)
@@ -382,6 +380,8 @@ export async function findPublishedGeneralQuestionSessions(options?: {
           parentItemId: item.parent_item_id,
           order: item.item_order,
           summary: item.public_summary,
+          summaryGenerationModel: item.summary_generation_model,
+          summaryPromptVersion: item.summary_prompt_version,
           topics: topicsByItemRevision.get(item.id) ?? [],
         }))
       ),

@@ -18,6 +18,7 @@ export type SiteJurisdiction = Readonly<{
 export type RuntimeExternalLinks = Readonly<{
   report: HttpsUrl;
   councilOfficial: HttpsUrl;
+  sourceTerms: HttpsUrl;
   forkGuidelinesNote: HttpsUrl;
   githubRepository: HttpsUrl;
   upstreamService: HttpsUrl;

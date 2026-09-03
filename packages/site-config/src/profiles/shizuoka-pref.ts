@@ -22,5 +22,6 @@ export const shizuokaPrefProfile = {
     ...SHARED_EXTERNAL_LINKS,
     report: null,
     councilOfficial: "https://www.pref.shizuoka.jp/kensei/kengikai/index.html",
+    sourceTerms: "https://www.pref.shizuoka.jp/about/link.html",
   },
 } as const satisfies RuntimeBlockedSiteProfile;

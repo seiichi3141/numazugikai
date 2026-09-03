@@ -15,12 +15,12 @@ export const publishedGeneralQuestionItemFixtureSql = `
   );
   insert into public.general_question_item_revisions (
     id, question_item_id, appearance_id, revision_number, item_order,
-    public_summary
+    public_summary, summary_generation_model, summary_prompt_version
   ) values (
     '00000000-0000-0000-0000-000000000302',
     '00000000-0000-0000-0000-000000000301',
     '00000000-0000-0000-0000-000000000201',
-    1, 1, '防災対策について'
+    1, 1, '地域防災の取組', 'openai/gpt-5-mini', '2026-09-04-v1'
   );
   insert into public.general_question_item_source_occurrences (
     id, question_item_id, appearance_id, appearance_source_occurrence_id,

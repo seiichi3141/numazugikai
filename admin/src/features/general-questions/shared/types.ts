@@ -9,11 +9,20 @@ export type GeneralQuestionQaRow = {
   speakerName: string;
   heldOn: string | null;
   reviewedHeldOn: string | null;
+  matchedAppearanceId: string | null;
   reviewedMatchedAppearanceId: string | null;
   matchCandidates: Array<{ id: string; label: string }>;
   questionKind: string;
   deliveryMethod: string;
-  itemCount: number;
+  items: Array<{
+    sourceKey: string;
+    label: string;
+    parentSourceKey: string | null;
+    generatedSummary: string | null;
+    reviewedSummary: string | null;
+  }>;
+  summaryGenerationModel: string | null;
+  summaryPromptVersion: string | null;
   answerers: string[];
   createdAt: string;
   applied: boolean;

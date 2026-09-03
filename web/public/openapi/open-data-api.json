@@ -79,7 +79,7 @@
     "/api/open-data/general-questions": {
       "get": {
         "summary": "一般質問データの取得",
-        "description": "人手確認済みで公開中の登壇枠だけを、会期・開催日・質問順で返します。質問項目、政策分野、答弁者役職、公式資料URL、取得日時、カバレッジ、分類releaseを含みます。format=csvでは同じ公開範囲をCSVで取得できます。",
+        "description": "人手確認済みで公開中の登壇枠だけを、会期・開催日・質問順で返します。質問項目の表示文は公式資料を基に生成AIで作成し、人手確認済みです。生成モデルとプロンプト版を各項目に含みます。公式資料由来の情報に本サービス独自のライセンスは付与していないため、sourceTermsUrlの条件を確認してください。format=csvでは同じ公開範囲をCSVで取得できます。",
         "operationId": "listOpenDataGeneralQuestions",
         "parameters": [
           { "$ref": "#/components/parameters/Limit" },
@@ -98,10 +98,18 @@
               "X-Next-Cursor": {
                 "description": "CSVレスポンスの次ページカーソル。空文字の場合は最終ページ。",
                 "schema": { "type": "string" }
+              },
+              "Link": {
+                "description": "公式資料の利用条件ページ（rel=terms-of-service）",
+                "schema": { "type": "string" }
+              },
+              "X-Content-Provenance": {
+                "description": "公式資料由来・AI要約・人手確認済みであることを示す値",
+                "schema": { "type": "string" }
               }
             },
             "content": {
-              "application/json": { "schema": { "type": "object", "required": ["items", "nextCursor"], "properties": { "items": { "type": "array", "items": { "type": "object" } }, "nextCursor": { "type": ["string", "null"] } } } },
+              "application/json": { "schema": { "type": "object", "required": ["items", "nextCursor", "rights"], "properties": { "items": { "type": "array", "items": { "type": "object" } }, "nextCursor": { "type": ["string", "null"] }, "rights": { "type": "object", "required": ["sourceAttribution", "sourceTermsUrl", "notice"], "properties": { "sourceAttribution": { "type": "string" }, "sourceTermsUrl": { "type": "string", "format": "uri" }, "notice": { "type": "string" } } } } } },
               "text/csv": { "schema": { "type": "string" } }
             }
           },

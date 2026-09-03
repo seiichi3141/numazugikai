@@ -18,6 +18,11 @@ export async function reviewGeneralQuestion(formData: FormData): Promise<void> {
   const reviewedMatchedAppearanceId = formData.get(
     "reviewedMatchedAppearanceId"
   );
+  const reviewedMatchDecisionSubmitted = formData.has(
+    "reviewedMatchedAppearanceId"
+  );
+  const summaryKeys = formData.getAll("summaryKey");
+  const summaryValues = formData.getAll("summaryValue");
   if (typeof id !== "string" || !id) throw new Error("対象IDが不正です");
   if (decision !== "verified" && decision !== "rejected") {
     throw new Error("確認結果が不正です");
@@ -39,6 +44,23 @@ export async function reviewGeneralQuestion(formData: FormData): Promise<void> {
   ) {
     throw new Error("突合先の登壇枠IDが不正です");
   }
+  const reviewedPublicSummaries: Record<string, string> = {};
+  if (decision === "verified") {
+    if (summaryKeys.length !== summaryValues.length) {
+      throw new Error("確認済み要約の入力が不正です");
+    }
+    for (let index = 0; index < summaryKeys.length; index += 1) {
+      const key = summaryKeys[index];
+      const value = summaryValues[index];
+      if (typeof key !== "string" || typeof value !== "string" || !key) {
+        throw new Error("確認済み要約の入力が不正です");
+      }
+      if (reviewedPublicSummaries[key] !== undefined) {
+        throw new Error(`確認済み要約の項目が重複しています: ${key}`);
+      }
+      reviewedPublicSummaries[key] = value.trim();
+    }
+  }
   await reviewGeneralQuestionQaRow({
     id,
     qaStatus: decision,
@@ -55,6 +77,8 @@ export async function reviewGeneralQuestion(formData: FormData): Promise<void> {
       reviewedMatchedAppearanceId
         ? reviewedMatchedAppearanceId
         : null,
+    reviewedMatchDecisionSubmitted,
+    reviewedPublicSummaries,
     reviewedBy: admin.id,
   });
   if (decision === "verified") {

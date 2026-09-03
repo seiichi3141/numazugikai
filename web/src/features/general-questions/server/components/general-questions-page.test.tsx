@@ -44,6 +44,8 @@ vi.mock("../loaders/get-general-question-sessions", () => ({
               parentItemId: null,
               order: 1,
               summary: "防災について",
+              summaryGenerationModel: "openai/gpt-5-mini",
+              summaryPromptVersion: "2026-09-04-v1",
               topics: [
                 {
                   id: "topic-1",

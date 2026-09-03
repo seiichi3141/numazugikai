@@ -51,6 +51,7 @@ declare
   revision_number integer;
   item_index integer := 0;
   answerer_index integer := 0;
+  is_evidence_only_record_match boolean := false;
 begin
   if p_reviewed_by is null then
     raise exception 'reviewer is required';
@@ -100,12 +101,64 @@ begin
     raise exception 'unsupported general question source';
   end if;
 
+  appearance_id := case
+    when staged.reviewed_match_confirmed
+      then staged.reviewed_matched_appearance_id
+    else staged.matched_appearance_id
+  end;
+
+  if ingestion_source.source = 'general_question_record' then
+    if staged.reviewed_matched_appearance_id is not null
+      and not staged.reviewed_match_confirmed then
+      raise exception 'meeting record match requires explicit reviewer confirmation';
+    end if;
+    if appearance_id is not null then
+      select exists (
+        select 1
+        from public.general_question_appearance_sources appearance_source
+        join public.ingestion_sources primary_source
+          on primary_source.id = appearance_source.ingestion_source_id
+        where appearance_source.appearance_id = apply.appearance_id
+          and appearance_source.role = 'primary'
+          and appearance_source.qa_status = 'verified'
+          and primary_source.source = 'general_question_pdf'
+      ) into is_evidence_only_record_match;
+      if not is_evidence_only_record_match then
+        raise exception 'record match requires verified primary PDF evidence';
+      end if;
+    end if;
+  end if;
+
   -- 消滅候補は既存公開値を自動で取り下げず、QA記録だけを残す。
   if staged.change_kind = 'missing' then
     raise exception 'missing staging row must not remove published data automatically';
   end if;
   if staged.change_kind = 'ambiguous' then
     raise exception 'ambiguous staging row cannot be applied';
+  end if;
+
+  if not is_evidence_only_record_match
+    and staged.change_kind <> 'unchanged' and jsonb_array_length(coalesce(
+    staged.parsed_payload -> 'items', '[]'::jsonb
+  )) > 0 and (
+    staged.summary_generation_model is null
+    or staged.summary_prompt_version is null
+    or staged.summary_generated_at is null
+  ) then
+    raise exception 'AI summary generation metadata is required before apply';
+  end if;
+  if not is_evidence_only_record_match
+    and staged.change_kind <> 'unchanged' then
+    for item in select value from jsonb_array_elements(
+      coalesce(staged.parsed_payload -> 'items', '[]'::jsonb)
+    ) loop
+      if nullif(btrim(
+        staged.reviewed_public_summaries ->> (item ->> 'sourceKey')
+      ), '') is null then
+        raise exception 'reviewed AI summary is required for item %',
+          item ->> 'sourceKey';
+      end if;
+    end loop;
   end if;
 
   payload := staged.parsed_payload;
@@ -117,10 +170,6 @@ begin
     raise exception 'held date is required before apply';
   end if;
 
-  appearance_id := coalesce(
-    staged.reviewed_matched_appearance_id,
-    staged.matched_appearance_id
-  );
   if appearance_id is not null then
     select appearance.meeting_id into meeting_id
     from public.general_question_appearances appearance
@@ -252,10 +301,134 @@ begin
   do update set source_appearance_key = excluded.source_appearance_key
   returning id into appearance_occurrence_id;
 
+  -- 内容不変の取得版は公開revisionを作り直さず、新しい出典根拠だけを追記する。
+  if staged.change_kind = 'unchanged' then
+    if appearance_id is null then
+      raise exception 'unchanged staging row requires a matched appearance';
+    end if;
+    select revision.id into appearance_revision_id
+    from public.general_question_appearance_revisions revision
+    where revision.appearance_id = apply.appearance_id
+      and revision.qa_status = 'verified'
+      and revision.publication_state = 'published';
+    if appearance_revision_id is null then
+      raise exception 'unchanged staging row requires a published revision';
+    end if;
+    insert into public.general_question_appearance_sources (
+      appearance_source_occurrence_id, appearance_revision_id, appearance_id,
+      meeting_id, ingestion_source_id, source_version_id, parse_run_id,
+      source_locator, role, extraction_method, observed_speaker_name,
+      observed_seat_number, observed_question_order, observed_question_kind,
+      observed_delivery_method, qa_status, verified_by, verified_at
+    ) values (
+      appearance_occurrence_id, appearance_revision_id, appearance_id,
+      meeting_id, source_version.ingestion_source_id, batch.source_version_id,
+      evidence_parse_run_id, 'appearance=' || staged.source_appearance_key,
+      case when ingestion_source.source = 'general_question_record'
+        then 'supplementary' else 'primary'
+      end::public.general_question_evidence_role_enum,
+      evidence_method, payload ->> 'speakerName',
+      nullif(payload ->> 'seatNumber', '')::integer,
+      nullif(payload ->> 'questionOrder', '')::integer,
+      coalesce(nullif(payload ->> 'questionKind', ''), 'unknown')::public.general_question_kind_enum,
+      coalesce(nullif(payload ->> 'deliveryMethod', ''), 'unknown')::public.general_question_delivery_method_enum,
+      'verified', p_reviewed_by, now()
+    ) returning id into appearance_source_id;
+    for item in select value from jsonb_array_elements(
+      coalesce(payload -> 'items', '[]'::jsonb)
+    ) loop
+      select stable.id, revision.id
+      into question_item_id, question_item_revision_id
+      from public.general_question_items stable
+      join public.general_question_item_revisions revision
+        on revision.question_item_id = stable.id
+       and revision.qa_status = 'verified'
+       and revision.publication_state = 'published'
+      where stable.appearance_id = apply.appearance_id
+        and stable.item_key = item ->> 'sourceKey';
+      if question_item_revision_id is null then
+        raise exception 'unchanged item requires a published revision: %',
+          item ->> 'sourceKey';
+      end if;
+      insert into public.general_question_item_source_occurrences (
+        question_item_id, appearance_id, appearance_source_occurrence_id,
+        source_item_key
+      ) values (
+        question_item_id, appearance_id, appearance_occurrence_id,
+        item ->> 'sourceKey'
+      ) on conflict (appearance_source_occurrence_id, source_item_key)
+        do update set source_item_key = excluded.source_item_key
+      returning id into item_occurrence_id;
+      insert into public.general_question_item_sources (
+        item_source_occurrence_id, appearance_source_occurrence_id,
+        question_item_revision_id, question_item_id, appearance_id,
+        appearance_source_id, source_locator, observed_label, qa_status,
+        verified_by, verified_at
+      ) values (
+        item_occurrence_id, appearance_occurrence_id,
+        question_item_revision_id, question_item_id, appearance_id,
+        appearance_source_id,
+        'appearance=' || staged.source_appearance_key || ';item=' || (item ->> 'sourceKey'),
+        item ->> 'label', 'verified', p_reviewed_by, now()
+      );
+    end loop;
+    for answerer in select value #>> '{}' from jsonb_array_elements(
+      coalesce(payload -> 'answerers', '[]'::jsonb)
+    ) loop
+      answerer_index := answerer_index + 1;
+      select stable.id, revision.id
+      into answerer_id, answerer_revision_id
+      from public.general_question_answerers stable
+      join public.general_question_answerer_revisions revision
+        on revision.answerer_id = stable.id
+       and revision.qa_status = 'verified'
+       and revision.publication_state = 'published'
+      where stable.appearance_id = apply.appearance_id
+        and stable.answerer_key = 'answerer-' || answerer_index;
+      if answerer_revision_id is null then
+        raise exception 'unchanged answerer requires a published revision: %',
+          answerer_index;
+      end if;
+      insert into public.general_question_answerer_source_occurrences (
+        answerer_id, appearance_id, appearance_source_occurrence_id,
+        source_answerer_key
+      ) values (
+        answerer_id, appearance_id, appearance_occurrence_id,
+        'answerer-' || answerer_index
+      ) on conflict (appearance_source_occurrence_id, source_answerer_key)
+        do update set source_answerer_key = excluded.source_answerer_key
+      returning id into answerer_occurrence_id;
+      insert into public.general_question_answerer_sources (
+        answerer_source_occurrence_id, appearance_source_occurrence_id,
+        answerer_revision_id, answerer_id, appearance_id,
+        appearance_source_id, source_locator, observed_role_name, qa_status,
+        verified_by, verified_at
+      ) values (
+        answerer_occurrence_id, appearance_occurrence_id,
+        answerer_revision_id, answerer_id, appearance_id,
+        appearance_source_id,
+        'appearance=' || staged.source_appearance_key || ';answerer=' || answerer_index,
+        answerer, 'verified', p_reviewed_by, now()
+      );
+    end loop;
+    insert into public.general_question_staging_applications (
+      staging_id, appearance_id, applied_by
+    ) values (p_staging_id, appearance_id, p_reviewed_by);
+    if not exists (
+      select 1 from public.general_question_staging_appearances remaining
+      where remaining.batch_id = batch.id and remaining.qa_status = 'pending'
+    ) then
+      update public.general_question_import_batches set status = 'approved'
+      where id = batch.id and status = 'awaiting_review';
+      update public.general_question_import_batches set status = 'applied'
+      where id = batch.id and status = 'approved';
+    end if;
+    return appearance_id;
+  end if;
+
   -- PDF正本へ会議記録を突合した場合は、完全性の低い会議記録で内容を置換せず
   -- 既存の公開revisionへ補足根拠だけを追加する。
-  if ingestion_source.source = 'general_question_record'
-    and staged.reviewed_matched_appearance_id is not null then
+  if is_evidence_only_record_match then
     select revision.id into appearance_revision_id
     from public.general_question_appearance_revisions revision
     where revision.appearance_id = apply.appearance_id
@@ -384,10 +557,13 @@ begin
     where revision.question_item_id = apply.question_item_id;
     insert into public.general_question_item_revisions (
       question_item_id, appearance_id, revision_number, parent_item_id,
-      item_order, public_summary
+      item_order, public_summary, summary_generation_model,
+      summary_prompt_version
     ) values (
       question_item_id, appearance_id, revision_number, parent_item_id,
-      coalesce(nullif(item ->> 'order', '')::integer, item_index), item ->> 'label'
+      coalesce(nullif(item ->> 'order', '')::integer, item_index),
+      staged.reviewed_public_summaries ->> (item ->> 'sourceKey'),
+      staged.summary_generation_model, staged.summary_prompt_version
     ) returning id into question_item_revision_id;
     insert into public.general_question_item_source_occurrences (
       question_item_id, appearance_id, appearance_source_occurrence_id,

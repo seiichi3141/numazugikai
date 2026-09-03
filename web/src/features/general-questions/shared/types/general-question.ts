@@ -8,6 +8,16 @@ export type GeneralQuestionCoverage = {
   checkedAt: string;
 };
 
+export type GeneralQuestionItem = {
+  id: string;
+  parentItemId: string | null;
+  order: number | null;
+  summary: string;
+  summaryGenerationModel: string;
+  summaryPromptVersion: string;
+  topics: Array<{ id: string; slug: string; label: string }>;
+};
+
 export type GeneralQuestionAppearance = {
   id: string;
   meetingId: string;
@@ -19,13 +29,7 @@ export type GeneralQuestionAppearance = {
   questionOrder: number | null;
   questionKind: string;
   deliveryMethod: string;
-  items: Array<{
-    id: string;
-    parentItemId: string | null;
-    order: number | null;
-    summary: string;
-    topics: Array<{ id: string; slug: string; label: string }>;
-  }>;
+  items: GeneralQuestionItem[];
   answerers: Array<{
     id: string;
     personName: string;

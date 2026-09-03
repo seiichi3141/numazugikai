@@ -33,6 +33,8 @@ describe("buildGeneralQuestionVisualization", () => {
                 parentItemId: null,
                 order: 1,
                 summary: "防災",
+                summaryGenerationModel: "openai/gpt-5-mini",
+                summaryPromptVersion: "2026-09-04-v1",
                 topics: [{ id: "disaster", slug: "disaster", label: "防災" }],
               },
               {
@@ -40,6 +42,8 @@ describe("buildGeneralQuestionVisualization", () => {
                 parentItemId: "item-1",
                 order: 1,
                 summary: "避難",
+                summaryGenerationModel: "openai/gpt-5-mini",
+                summaryPromptVersion: "2026-09-04-v1",
                 topics: [{ id: "disaster", slug: "disaster", label: "防災" }],
               },
             ],

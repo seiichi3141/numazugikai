@@ -90,6 +90,9 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             沼津市議会の一般質問を、開催日と質問項目から確認できます。本サービスは非公式であり、正式な内容は各公式資料をご確認ください。
           </p>
+          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            質問項目の表示文は公式資料を基に生成AIで要約し、人手で原資料との照合・確認を行っています。
+          </p>
         </header>
 
         <form className="grid gap-4 rounded-xl border bg-card p-5 sm:grid-cols-2 lg:grid-cols-6">

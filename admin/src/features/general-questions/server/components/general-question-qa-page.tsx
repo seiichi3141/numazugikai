@@ -1,10 +1,12 @@
 import "server-only";
 
 import { Button } from "@/components/ui/button";
+import { GENERAL_QUESTION_SUMMARY_MAX_LENGTH } from "../../shared/utils/general-question-summary";
 import {
   classifyGeneralQuestion,
   publishGeneralQuestionRelease,
 } from "../actions/classify-general-question";
+import { generateGeneralQuestionSummaryAction } from "../actions/generate-general-question-summaries";
 import {
   applyGeneralQuestion,
   reviewGeneralQuestion,
@@ -139,7 +141,7 @@ export async function GeneralQuestionQaPage({
                 </div>
                 <div>
                   <dt className="font-medium">質問項目</dt>
-                  <dd>{row.itemCount}件</dd>
+                  <dd>{row.items.length}件</dd>
                 </div>
                 <div>
                   <dt className="font-medium">答弁者</dt>
@@ -162,12 +164,104 @@ export async function GeneralQuestionQaPage({
                 </div>
               ) : null}
               {row.sourceKind === "general_question_record" ? (
-                <p className="mt-4 rounded-md border p-3 text-sm text-muted-foreground">
-                  会議記録由来の補完データです。質問種別・方式・項目はPDFと同等の完全性を持たないため、PDF由来の登壇枠との突合を確認してください。
-                </p>
+                <div className="mt-4 rounded-md border p-3 text-sm text-muted-foreground">
+                  <p>
+                    会議記録由来の補完データです。質問種別・方式・項目はPDFと同等の完全性を持たないため、原資料とAI要約を特に慎重に確認してください。
+                  </p>
+                  <p className="mt-1">
+                    同日のPDF由来データがある場合だけ既存の登壇枠へ突合し、PDFがない年代はAI要約を人手確認して新しい登壇枠として登録します。
+                  </p>
+                </div>
+              ) : null}
+              {row.items.length > 0 ? (
+                <section
+                  className="mt-4 space-y-3"
+                  aria-label="質問項目と公開用AI要約"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold">質問項目と公開用AI要約</h3>
+                      <p className="text-sm text-muted-foreground">
+                        原文見出しは照合用です。AI要約を原資料と比較し、必要なら編集してから承認してください。
+                      </p>
+                    </div>
+                    {row.qaStatus === "pending" &&
+                    row.changeKind !== "unchanged" &&
+                    row.changeKind !== "missing" &&
+                    row.changeKind !== "ambiguous" &&
+                    row.validationErrors.length === 0 ? (
+                      <form action={generateGeneralQuestionSummaryAction}>
+                        <input type="hidden" name="id" value={row.id} />
+                        <Button type="submit" variant="outline">
+                          {row.summaryGenerationModel
+                            ? "AI要約を再生成"
+                            : "AI要約を生成"}
+                        </Button>
+                      </form>
+                    ) : null}
+                  </div>
+                  {row.summaryGenerationModel ? (
+                    <p className="text-xs text-muted-foreground">
+                      生成モデル: {row.summaryGenerationModel} / プロンプト版:{" "}
+                      {row.summaryPromptVersion}
+                    </p>
+                  ) : null}
+                  <ol className="space-y-3">
+                    {row.items.map((item) => (
+                      <li
+                        key={item.sourceKey}
+                        className="rounded-md border p-3"
+                      >
+                        <p className="text-sm">
+                          <span className="font-medium">原文見出し:</span>{" "}
+                          {item.label}
+                        </p>
+                        {row.changeKind === "unchanged" ? (
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            内容に変更がないため、公開済みのAI要約を維持します。
+                          </p>
+                        ) : row.qaStatus === "pending" &&
+                          item.generatedSummary ? (
+                          <label className="mt-2 block text-sm font-medium">
+                            公開用要約（人手確認・編集）
+                            <input
+                              type="hidden"
+                              name="summaryKey"
+                              value={item.sourceKey}
+                              form={`review-${row.id}`}
+                            />
+                            <textarea
+                              name="summaryValue"
+                              form={`review-${row.id}`}
+                              required
+                              maxLength={GENERAL_QUESTION_SUMMARY_MAX_LENGTH}
+                              defaultValue={
+                                item.reviewedSummary ?? item.generatedSummary
+                              }
+                              className="mt-1 min-h-16 w-full rounded-md border p-2 font-normal"
+                            />
+                          </label>
+                        ) : item.reviewedSummary ? (
+                          <p className="mt-2 text-sm">
+                            <span className="font-medium">公開用要約:</span>{" "}
+                            {item.reviewedSummary}
+                          </p>
+                        ) : (
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            AI要約は未生成です。
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
               ) : null}
               {row.qaStatus === "pending" ? (
-                <form action={reviewGeneralQuestion} className="mt-4 space-y-3">
+                <form
+                  id={`review-${row.id}`}
+                  action={reviewGeneralQuestion}
+                  className="mt-4 space-y-3"
+                >
                   <input type="hidden" name="id" value={row.id} />
                   <label
                     className="block text-sm font-medium"
@@ -196,7 +290,15 @@ export async function GeneralQuestionQaPage({
                       既存の登壇枠との突合
                       <select
                         name="reviewedMatchedAppearanceId"
-                        defaultValue=""
+                        defaultValue={
+                          row.reviewedMatchedAppearanceId ??
+                          row.matchedAppearanceId ??
+                          ""
+                        }
+                        required={
+                          row.sourceKind === "general_question_record" &&
+                          !row.summaryGenerationModel
+                        }
                         className="mt-1 block w-full rounded-md border p-2"
                       >
                         <option value="">新しい登壇枠として登録</option>
@@ -214,7 +316,12 @@ export async function GeneralQuestionQaPage({
                   <div className="flex gap-2">
                     {row.changeKind !== "missing" &&
                     row.changeKind !== "ambiguous" &&
-                    row.validationErrors.length === 0 ? (
+                    row.validationErrors.length === 0 &&
+                    (row.changeKind === "unchanged" ||
+                      row.items.length === 0 ||
+                      (row.sourceKind === "general_question_record" &&
+                        row.matchCandidates.length > 0) ||
+                      row.summaryGenerationModel) ? (
                       <Button type="submit" name="decision" value="verified">
                         承認
                       </Button>
@@ -224,6 +331,7 @@ export async function GeneralQuestionQaPage({
                       name="decision"
                       value="rejected"
                       variant="outline"
+                      formNoValidate
                     >
                       却下
                     </Button>

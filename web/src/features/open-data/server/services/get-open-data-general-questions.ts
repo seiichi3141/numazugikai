@@ -1,6 +1,8 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import { findPublishedGeneralQuestionSessions } from "@/features/general-questions/server/repositories/general-question-repository";
+import type { GeneralQuestionItem } from "@/features/general-questions/shared/types/general-question";
+import { SITE_PROFILE } from "@/lib/site";
 import type { OpenDataCursor } from "../../shared/utils/cursor";
 import { paginateRows } from "../../shared/utils/paginate";
 
@@ -14,13 +16,7 @@ export type OpenDataGeneralQuestionItem = {
   deliveryMethod: string;
   speakerName: string;
   seatNumber: number | null;
-  items: Array<{
-    id: string;
-    parentItemId: string | null;
-    order: number | null;
-    summary: string;
-    topics: Array<{ id: string; slug: string; label: string }>;
-  }>;
+  items: GeneralQuestionItem[];
   answerers: Array<{
     id: string;
     personName: string;
@@ -50,6 +46,7 @@ export async function getOpenDataGeneralQuestions(params: {
 }): Promise<{
   items: OpenDataGeneralQuestionItem[];
   nextCursor: string | null;
+  rights: typeof GENERAL_QUESTION_DATA_RIGHTS;
 }> {
   const supabase = createAdminClient();
   const { data: candidates, error } = await supabase.rpc(
@@ -73,7 +70,9 @@ export async function getOpenDataGeneralQuestions(params: {
     params.limit,
     (row) => ({ createdAt: row.cursor_at, id: row.appearance_id })
   );
-  if (pageCandidates.length === 0) return { items: [], nextCursor };
+  if (pageCandidates.length === 0) {
+    return { items: [], nextCursor, rights: GENERAL_QUESTION_DATA_RIGHTS };
+  }
 
   const sessions = await findPublishedGeneralQuestionSessions({
     appearanceIds: pageCandidates.map((row) => row.appearance_id),
@@ -118,8 +117,16 @@ export async function getOpenDataGeneralQuestions(params: {
       return row;
     }),
     nextCursor,
+    rights: GENERAL_QUESTION_DATA_RIGHTS,
   };
 }
+
+export const GENERAL_QUESTION_DATA_RIGHTS = {
+  sourceAttribution: `質問項目の原資料: ${SITE_PROFILE.jurisdiction.name}・${SITE_PROFILE.jurisdiction.councilName}公式資料。要約・構造化: ${SITE_PROFILE.branding.name}（生成モデルとプロンプト版は項目ごとに表示し、AI生成分は人手確認）`,
+  sourceTermsUrl: SITE_PROFILE.externalLinks.sourceTerms,
+  notice:
+    "公式資料由来の情報に本サービス独自のライセンスは付与していません。利用前に出典元の条件を確認してください。",
+} as const;
 
 function csvCell(value: unknown): string {
   const text = value === null || value === undefined ? "" : String(value);
@@ -150,6 +157,8 @@ export function generalQuestionsToCsv(
     "taxonomy_version",
     "coverage_states",
     "coverage_source_kinds",
+    "summary_generation_models",
+    "summary_prompt_versions",
   ];
   const lines = items.map((item) => [
     item.appearanceId,
@@ -178,6 +187,12 @@ export function generalQuestionsToCsv(
     item.classificationRelease?.taxonomyVersion,
     item.coverage.map((coverage) => coverage.state).join("|"),
     item.coverage.map((coverage) => coverage.sourceKind).join("|"),
+    [
+      ...new Set(item.items.map((question) => question.summaryGenerationModel)),
+    ].join("|"),
+    [
+      ...new Set(item.items.map((question) => question.summaryPromptVersion)),
+    ].join("|"),
   ]);
   return `${header.map(csvCell).join(",")}\n${lines.map((line) => line.map(csvCell).join(",")).join("\n")}\n`;
 }
