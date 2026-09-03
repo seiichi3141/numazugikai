@@ -8,25 +8,28 @@
 変更作業は、**必ず git worktree を作成してから開始すること**。メインのリポジトリディレクトリでは直接変更を行わない。
 
 ```bash
-# 1. 対象自治体の develop から worktree を作成
-git worktree add ../numazugikai-<worktree-name> \
-  -b <feature-branch> <base-branch>
+# 1. 静岡県版の develop から worktree を作成
+git fetch origin sites/shizuoka-pref/develop
+git worktree add ../numazugikai-shizuoka-<worktree-name> \
+  -b sites/shizuoka-pref/<kind>/<topic> origin/sites/shizuoka-pref/develop
 
-# 2. settings.local.jsonをコピー（権限設定のため必須）
-mkdir -p ../numazugikai-<worktree-name>/.claude
-cp .claude/settings.local.json ../numazugikai-<worktree-name>/.claude/
+# 2. settings.local.json がある場合はコピー
+mkdir -p ../numazugikai-shizuoka-<worktree-name>/.claude
+test ! -f .claude/settings.local.json || \
+  cp .claude/settings.local.json ../numazugikai-shizuoka-<worktree-name>/.claude/
 
 # 3. 対象 branch の雛形から .env を作成
-cp ../numazugikai-<worktree-name>/.env.example \
-  ../numazugikai-<worktree-name>/.env
+cp ../numazugikai-shizuoka-<worktree-name>/.env.example \
+  ../numazugikai-shizuoka-<worktree-name>/.env
 
 # 4. 依存パッケージをインストール
-cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
+cd ../numazugikai-shizuoka-<worktree-name> && pnpm install --frozen-lockfile
 ```
 
-- **base branch を明示する**: 沼津市の既存開発は `develop`、自治体別開発は
-  `sites/<site>/develop` から分岐する。hotfix だけは対応する `main` から分岐する。
-  省略すると現在の HEAD から分岐し、別の自治体のコミットが PR に混入する原因になる。
+- **base branch を明示する**: 静岡県版の通常開発は
+  `sites/shizuoka-pref/develop` から分岐する。hotfix は、将来作成する
+  `sites/shizuoka-pref/main` から分岐する。省略すると現在の HEAD から分岐し、
+  別の自治体のコミットが PR に混入する原因になる。
 - **自治体間で `.env` をコピーしない**: 対象 branch の `.env.example` から作り、
   必要な値だけを設定する。同じ自治体の既存 worktree から引き継ぐ場合も、接続先を
   確認してから使う。
@@ -39,10 +42,11 @@ cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
   ```bash
   # 変更を退避してから、base branch を明示して worktree を作成
   git stash --include-untracked
-  git worktree add ../numazugikai-<worktree-name> \
-    -b <feature-branch> <base-branch>
+  git fetch origin sites/shizuoka-pref/develop
+  git worktree add ../numazugikai-shizuoka-<worktree-name> \
+    -b sites/shizuoka-pref/<kind>/<topic> origin/sites/shizuoka-pref/develop
   # worktreeに移動して退避した変更を適用
-  cd ../numazugikai-<worktree-name>
+  cd ../numazugikai-shizuoka-<worktree-name>
   git stash pop
   ```
 
@@ -52,8 +56,8 @@ cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
 - `upstream` は `team-mirai/mirai-gikai` の参照専用 remote とし、push URL は
   `DISABLED_DO_NOT_PUSH` を維持すること。
 - GitHub への書き込み操作は `--repo seiichi3141/numazugikai` を明示する。
-- PR 作成時は `--base` に通常開発では対象自治体の develop、hotfix では同じ
-  自治体の main を明示する。
+- PR 作成時は通常開発なら `--base sites/shizuoka-pref/develop`、hotfix なら
+  `--base sites/shizuoka-pref/main` を明示する。
 - upstream の更新は専用 branch で fetch し、自治体ごとに個別の PR で取り込む。
 
 ### 実装完了後は即PR作成
@@ -65,7 +69,9 @@ cd ../numazugikai-<worktree-name> && pnpm install --frozen-lockfile
 1. **`/simplify` を実行**: 変更コードの重複・可読性・効率の観点から自己修正を行う。明らかな問題を先に潰しておくことで、後段の `/review` の指摘ノイズを減らす。
 2. **`/review` を実行**: Codexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正する。
 
-両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで一気に進めること（`gh pr create`）。
+両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで
+一気に進めること（`gh pr create --repo seiichi3141/numazugikai \
+--base sites/shizuoka-pref/develop`）。
 
 ### UI変更時のスクリーンショット必須
 PR作成後、変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
@@ -130,37 +136,48 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 - `pnpm dev` は `.env` を共有しつつ `web`・`admin`・各パッケージの dev サーバーを並列起動します。
 - `pnpm test` でワークスペース横断の Vitest を実行。局所実行は `pnpm --filter web test` や `test:watch` を利用します。
 - 品質ゲートとして `pnpm lint`（Biome format+lint）と `pnpm typecheck` を PR 前に通過させます。
-- DB 関連は `pnpm db:reset`、`pnpm db:migrate`、`pnpm db:types:gen`、`pnpm seed` を用途に応じて組み合わせます。
+- ローカル Supabase は project ID `shizuokagikai` と 554xx 番台のポートを使う。
+  DB 操作前に `.env` の URL が `http://127.0.0.1:55421` を指すことを確認する。
+  静岡県用 seed へ置き換えるまでは `pnpm db:reset` と `pnpm seed` を実行しない。
 
-## 沼津市議会向けの用語ルール（必須）
+## 静岡県議会向けの用語ルール（必須）
 
-この節は `develop` / `main` と、`sites/` で始まらない既存の沼津市向け
-feature branch に適用する。自治体別 branch では、その branch の `AGENTS.md` に
-記載された用語ルールを優先する。
+この branch は「みらい議会」の沼津市議会版を基に、**静岡県議会向け**へ
+改修している。新しく作る UI 文言・コメント・プロンプトでは次の語を使うこと。
+公式原文、過去の migration、参照元を説明する文書、互換性のために残す識別子へ
+一括置換を適用してはならない。
 
-本リポジトリは本家「みらい議会」（国会向け）の fork で、**沼津市議会向け**に改修している。
-UI文言・コメント・プロンプトを書くときは次の語を使うこと。
-
-| 使わない（本家＝国会） | 使う（本サービス＝沼津市議会） |
+| 使わない | 使う（本サービス＝静岡県議会） |
 | :-- | :-- |
-| 国会 | 沼津市議会 / 市議会 |
+| 国会 / 沼津市議会 / 市議会 | 静岡県議会 / 県議会 |
 | 法案 | 議案（条例改正は「条例案」、予算は「予算案」） |
 | 衆議院 / 参議院 | （一院制のため概念なし） |
 | 法案成立 | 可決 |
-| 国会議員 | 市議会議員 |
+| 国会議員 / 市議会議員 | 県議会議員 |
+| 市長 | 知事 |
 | 国会会期 | 会期（定例会・臨時会） |
-| チームみらい | （使わない） |
+| 市政 / 市民 | 県政 / 県民 |
 
-- サービス名は **みらい議会＠沼津市**
-- 審議の流れは「議案提出 → 委員会付託 → 委員会審査 → 本会議議決」の一段階
-- 常任委員会は 総務経済 / 民生病院教育 / 建設水道危機管理 / 一般会計予算決算
-- 定例会は年4回（2月・6月・9月・11月）
-- **本サービスは沼津市および沼津市議会の公式サービスではない**。その旨が伝わる表現を保つこと
-- チームみらいのロゴ・タイポグラフィ・商標は使用禁止（AGPL-3.0 第7条 / FORK_GUIDELINES）。
-  免責文言「これは政党チームみらいが運営しているものではありません」をフッターに保持すること
-- 議員数・会派構成など変動する数字を文言に直書きしないこと
+- サービス名は **みらい議会＠静岡県** とする。
+- 基本的な審議の流れは
+  「議案提出 → 委員会付託 → 委員会審査 → 本会議議決」とし、付託省略や
+  審査非該当などの例外をデータで表現できるようにする。
+- 委員会名、議員数、会派構成など変動する情報を文言やロジックへ直書きせず、
+  静岡県議会の公式情報を出典 URL 付きで取り込むこと。
+- **本サービスは静岡県および静岡県議会の公式サービスではない**。
+  その旨が伝わる表現を保つこと。
+- チームみらいのロゴ・タイポグラフィ・商標は使用禁止
+  （AGPL-3.0 第7条 / FORK_GUIDELINES）。免責文言
+  「これは政党チームみらいが運営しているものではありません」を
+  フッターに保持すること。
+- 県公式サイトの写真、イラスト、本文、PDF、動画を無断で複製・再配布しない。
+  取り込みは原則として事実情報の正規化と一次情報へのリンクに限定すること。
+- 議員の住所、電話番号、メールアドレスなど、サービスに不要な個人情報を
+  取り込まないこと。
 
-詳細は [docs/20260901_2220_沼津市向けブランディング対応状況.md](docs/20260901_2220_沼津市向けブランディング対応状況.md) を参照。
+詳細は
+[静岡県議会向け移行計画](docs/20260903_1741_shizuoka-prefecture-migration-plan.md)
+を参照。
 
 ## Coding Style & Naming Conventions
 - Biome が 2 スペースインデント、LF、ダブルクォート、セミコロン、80 文字幅を強制します。
@@ -198,7 +215,7 @@ UI文言・コメント・プロンプトを書くときは次の語を使うこ
   pnpm build       # Next.js ビルドチェック
   pnpm test        # 全ワークスペースのテスト実行
   ```
-- **push / PR作成前のGitHub状態確認（必須）**: `git push` やPR作成を行う前に、必ず `gh pr list` や `gh pr view <番号>` でGitHub上のPR状態（open/merged/closed）を確認すること。マージ済みブランチへの追加pushや、既にクローズされたPRとの重複を防ぐ。
+- **push / PR作成前のGitHub状態確認（必須）**: `git push` やPR作成を行う前に、必ず `gh pr list --repo seiichi3141/numazugikai` や `gh pr view <番号> --repo seiichi3141/numazugikai` でGitHub上のPR状態（open/merged/closed）を確認すること。マージ済みブランチへの追加pushや、既にクローズされたPRとの重複を防ぐ。
 - **PRのスコープを厳守**: PRには現在のタスクに関係する変更のみを含めること。レビューやセルフレビューで無関係な変更（別タスクの修正、ついでのリファクタ等）が混入していた場合は、コミット前に取り除く。
 - コミットメッセージは既存履歴同様、短い命令形主体（日本語可）とし、課題連携は `(#id)` を付与します。
 - PR ではスコープ概要、実行テスト記録（例: `pnpm dev`, `pnpm --filter web test`）、UI 変更時のスクリーンショットや GIF を添付します。
@@ -224,9 +241,12 @@ UI文言・コメント・プロンプトを書くときは次の語を使うこ
      ```
 
 ## Supabase & Environment Notes
-- ローカル開発前に `npx supabase start` を実行し、`.env.example` を `.env` にコピーして値を整えます。
+- ローカル開発前に `.env.example` を `.env` にコピーし、`npx supabase start` 後の
+  値を設定する。別プロジェクトや別自治体の `.env` は流用しない。
 - スキーマ変更時は `supabase/migrations` のマイグレーションと `packages/supabase/types/supabase.types.ts` の再生成ファイルをセットでコミットします。
-- `pnpm seed` は `admin@example.com / admin123456` を含む検証データを投入するため、開発用途に限定してください。
+- `pnpm seed` は `admin@example.com / admin123456` を含む検証データを投入する。
+  静岡県用 seed へ置き換わるまでは実行禁止とし、置き換え後もローカル開発に
+  限定する。
 - **RLSとアクセスパターン**: マイグレーションでは必ず `alter table <テーブル名> enable row level security;` を記述してRLSを有効化すること。ただし **ポリシーは定義しない**（デフォルト全拒否）。データアクセスはすべて `createAdminClient()`（Supabase Secret Key）経由で行い、認可ロジックはアプリケーション層（Server Actions / Loaders）で実装する。
 
 ## ドキュメント作成ルール
