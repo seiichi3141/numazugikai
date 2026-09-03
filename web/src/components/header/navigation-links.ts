@@ -5,4 +5,5 @@ export const HEADER_NAVIGATION_LINKS = [
   { label: "トップ", href: routes.home() },
   { label: "議案を検索する", href: routes.billsList() },
   { label: "定例会の一覧", href: routes.gikaiSessions() },
+  { label: "一般質問を見る", href: routes.generalQuestions() },
 ] as const;

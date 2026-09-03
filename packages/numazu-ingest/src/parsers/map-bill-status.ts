@@ -89,7 +89,14 @@ export function buildSessionName(params: {
   kind: "regular" | "extraordinary";
   era?: string;
 }): string {
-  const era = params.era ?? "令和";
+  const era =
+    params.era ??
+    (params.year > ERA_BASE_YEAR.令和 ||
+    (params.year === ERA_BASE_YEAR.令和 && (params.month ?? 12) >= 5)
+      ? "令和"
+      : params.year >= ERA_BASE_YEAR.平成
+        ? "平成"
+        : "昭和");
   const baseYear = ERA_BASE_YEAR[era];
   const kindLabel = params.kind === "extraordinary" ? "臨時会" : "定例会";
   const eraYear =

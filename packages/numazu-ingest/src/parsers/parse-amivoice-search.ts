@@ -14,9 +14,8 @@ export type AmivoiceSearchHit = {
  * 結果は `［ 1］ 2019/06/20 文教産業委員会 …` の形で並び、
  * 各行に `DataSubmit2('v20190620_01.vcsv', …)` のリンクが付く。
  *
- * 注意: この検索は該当件数（「69件の文書」）より少ない件数しか一覧に出さない。
- * 全件を取る方法は見つかっていないため、ここで得られるのは部分集合である。
- * 詳細は docs/20260902_0030_沼津市議会データソース調査ノート.md を参照。
+ * 1ページ分を解析する純粋関数であり、全ページの巡回と公式件数との一致確認は
+ * AmivoiceClient.searchMinutes が担当する。
  */
 export function parseAmivoiceSearchResult(html: string): AmivoiceSearchHit[] {
   const hits: AmivoiceSearchHit[] = [];

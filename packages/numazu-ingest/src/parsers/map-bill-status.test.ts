@@ -68,6 +68,28 @@ describe("buildSessionName", () => {
     ).toBe("令和8年第13回（6月）定例会");
   });
 
+  it("西暦年から平成の会期名を選ぶ", () => {
+    expect(
+      buildSessionName({
+        year: 2004,
+        sessionNumber: 9,
+        month: 6,
+        kind: "regular",
+      })
+    ).toBe("平成16年第9回（6月）定例会");
+  });
+
+  it("2019年4月以前を平成31年として扱う", () => {
+    expect(
+      buildSessionName({
+        year: 2019,
+        sessionNumber: 16,
+        month: 2,
+        kind: "regular",
+      })
+    ).toBe("平成31年第16回（2月）定例会");
+  });
+
   it("議案審議結果PDF由来でも同じ表記になる", () => {
     // PDFの見出しは「第13回（令和８年６月）定例会」だが、同じ名前に正規化する
     expect(

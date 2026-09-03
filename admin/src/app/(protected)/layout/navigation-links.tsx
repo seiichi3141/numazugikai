@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const navigationLinks = [
   { href: routes.bills(), label: "議案管理" },
   { href: routes.councilSessions(), label: "会期管理" },
+  { href: routes.generalQuestionsQa(), label: "一般質問QA" },
   { href: routes.tags(), label: "タグ管理" },
   { href: routes.interviews(), label: "インタビュー" },
   // 全議案トピック分析(/user-topic-analysis)は隠し機能のためヘッダーに出さない（URL直アクセスのみ）。
