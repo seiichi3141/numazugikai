@@ -191,7 +191,8 @@ export type CurrentSessionBillUpsert = {
   numberValue: number;
   name: string;
   category: BillCategory;
-  submittedOn: string;
+  submittedOn: string | null;
+  defaultSubmittedOn: string;
   submitter: Database["public"]["Enums"]["bill_submitter_enum"] | null;
   sourceUrl: string;
   documentUrl: string | null;
@@ -209,7 +210,7 @@ export async function upsertCurrentSessionBill(
   const supabase = createAdminClient();
   const { data: existing, error: findError } = await supabase
     .from("bills")
-    .select("id, source_record_key")
+    .select("id, source_record_key, source_url")
     .eq("council_session_id", bill.councilSessionId)
     .eq("bill_number", bill.billNumber)
     .maybeSingle();
@@ -220,7 +221,8 @@ export async function upsertCurrentSessionBill(
 
   const updateExisting = async (
     id: string,
-    sourceRecordKey: string | null
+    sourceRecordKey: string | null,
+    sourceUrl: string | null
   ): Promise<{ id: string; created: false }> => {
     const incomingSourceRecordKey = bill.sourceRecordKey;
     if (
@@ -284,11 +286,35 @@ export async function upsertCurrentSessionBill(
         throw new Error(`議案の更新再試行で対象を確認できませんでした: ${id}`);
       }
     }
+
+    if (sourceUrl === bill.sourceUrl) {
+      // 同じ開会中ページから作成した暫定行だけ、後から掲載・訂正された値へ追従する。
+      // source_urlを更新条件にも含め、結果PDFの保存が同時に走っても確定値を降格させない。
+      const { error: metadataError } = await supabase
+        .from("bills")
+        .update({
+          category: bill.category,
+          ...(bill.submittedOn === null
+            ? {}
+            : { submitted_date: bill.submittedOn }),
+        })
+        .eq("id", id)
+        .eq("source_url", bill.sourceUrl);
+      if (metadataError) {
+        throw new Error(
+          `議案の暫定情報更新に失敗した: ${metadataError.message}`
+        );
+      }
+    }
     return { id, created: false };
   };
 
   if (existing) {
-    return updateExisting(existing.id, existing.source_record_key);
+    return updateExisting(
+      existing.id,
+      existing.source_record_key,
+      existing.source_url
+    );
   }
 
   const { data, error } = await supabase
@@ -301,7 +327,7 @@ export async function upsertCurrentSessionBill(
       bill_number_value: bill.numberValue,
       name: bill.name,
       category: bill.category,
-      submitted_date: bill.submittedOn,
+      submitted_date: bill.submittedOn ?? bill.defaultSubmittedOn,
       submitter: bill.submitter,
       status: "submitted",
       source_url: bill.sourceUrl,
@@ -313,12 +339,16 @@ export async function upsertCurrentSessionBill(
   if (error?.code === "23505") {
     const { data: concurrent } = await supabase
       .from("bills")
-      .select("id, source_record_key")
+      .select("id, source_record_key, source_url")
       .eq("council_session_id", bill.councilSessionId)
       .eq("bill_number", bill.billNumber)
       .single();
     if (concurrent) {
-      return updateExisting(concurrent.id, concurrent.source_record_key);
+      return updateExisting(
+        concurrent.id,
+        concurrent.source_record_key,
+        concurrent.source_url
+      );
     }
   }
   if (error) throw new Error(`議案の保存に失敗した: ${error.message}`);
