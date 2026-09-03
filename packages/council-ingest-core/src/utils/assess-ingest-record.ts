@@ -53,24 +53,15 @@ export function assessIngestRecord(
   let sourceRecordKeyIsValid: boolean | null = null;
   if (record.submitterKind !== "unknown") {
     try {
-      if (record.identity.kind === "numbered") {
-        sourceRecordKeyIsValid =
-          record.sourceRecordKey ===
-          buildSourceRecordKey({
-            siteKey: record.siteKey,
-            sessionKey: record.sessionKey,
-            documentKind: record.documentKind,
-            submitterKind: record.submitterKind,
-            identity: record.identity,
-          });
-      } else {
-        const stableId = record.identity.stableId.trim();
-        sourceRecordKeyIsValid =
-          stableId.length > 0 &&
-          record.sourceRecordKey.endsWith(
-            `:stable:${encodeURIComponent(stableId)}`
-          );
-      }
+      sourceRecordKeyIsValid =
+        record.sourceRecordKey ===
+        buildSourceRecordKey({
+          siteKey: record.siteKey,
+          sessionKey: record.sessionKey,
+          documentKind: record.documentKind,
+          submitterKind: record.submitterKind,
+          identity: record.identity,
+        });
     } catch {
       sourceRecordKeyIsValid = false;
     }
