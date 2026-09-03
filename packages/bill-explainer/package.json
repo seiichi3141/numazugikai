@@ -24,6 +24,10 @@
     "./assign-thumbnail-keys": {
       "types": "./src/assign-thumbnail-keys.ts",
       "default": "./src/assign-thumbnail-keys.ts"
+    },
+    "./assign-bill-tags": {
+      "types": "./src/assign-bill-tags.ts",
+      "default": "./src/assign-bill-tags.ts"
     }
   },
   "dependencies": {

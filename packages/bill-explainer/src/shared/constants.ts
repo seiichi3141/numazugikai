@@ -23,3 +23,6 @@ export const MAX_EXPLANATION_CHARS = 12_000;
 
 /** サムネイル題材の選択は短い出力なので、解説より短いタイムアウトで十分。 */
 export const THUMBNAIL_KEY_TIMEOUT_MS = 60_000;
+
+/** テーマタグの選択は短い構造化出力なので、解説より短いタイムアウトで十分。 */
+export const BILL_TAG_TIMEOUT_MS = 60_000;
