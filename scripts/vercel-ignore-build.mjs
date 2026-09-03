@@ -27,6 +27,12 @@ if (branch === "main" || branch === "develop") {
   build(`branch "${branch}" deploys via deploy hook`);
 }
 
+// 自治体別ブランチは、各自治体専用の Vercel project を設定するまで
+// この（沼津市用）Git 連携から一切ビルドしない。
+if (branch.startsWith("sites/")) {
+  skip(`site branch "${branch}" is isolated from the Numazu Vercel projects`);
+}
+
 if (!branch || !owner || !repo) {
   build("missing VERCEL_GIT_* environment variables");
 }

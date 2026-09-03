@@ -15,6 +15,9 @@ permissions:
 
 jobs:
   capture:
+    # workflow_dispatch で自治体別 branch を選んでも、沼津市用の production
+    # secrets と更新フローを起動しない。
+    if: github.ref_name == 'develop'
     runs-on: ubuntu-latest
     outputs:
       source_sha: ${{ steps.source.outputs.sha }}
@@ -72,6 +75,7 @@ jobs:
 
   publish:
     needs: capture
+    if: github.ref_name == 'develop'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -111,6 +115,7 @@ jobs:
           git push --force-with-lease origin "$screenshot_branch"
 
           pr_number=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
             --head "$screenshot_branch" \
             --base develop \
             --state open \
@@ -118,6 +123,7 @@ jobs:
             --jq '.[0].number // empty')
           if [ -z "$pr_number" ]; then
             gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
               --base develop \
               --head "$screenshot_branch" \
               --title "OGP用モバイルスクリーンショットを更新" \

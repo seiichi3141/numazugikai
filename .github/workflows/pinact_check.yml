@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/**'
   push:
-    branches: [main, develop]
+    branches: [main, develop, "sites/*/main", "sites/*/develop"]
     paths:
       - '.github/workflows/**'
 
@@ -13,7 +13,7 @@ jobs:
   pinact-check:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout code

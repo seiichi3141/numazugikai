@@ -16,13 +16,14 @@ $ARGUMENTS
 
 ```bash
 # PR詳細
-gh pr view <PR番号> --json title,body,state,author,additions,deletions,files,headRefName,baseRefName
+gh pr view <PR番号> --repo seiichi3141/numazugikai \
+  --json title,body,state,author,additions,deletions,files,headRefName,baseRefName
 
 # 差分
-gh pr diff <PR番号>
+gh pr diff <PR番号> --repo seiichi3141/numazugikai
 
 # CI状況
-gh pr checks <PR番号>
+gh pr checks <PR番号> --repo seiichi3141/numazugikai
 ```
 
 ### 2. レビュー観点
@@ -136,17 +137,20 @@ gh pr checks <PR番号>
 以下のコマンドを実行：
 
 ```bash
-gh pr review <PR番号> --approve --body "LGTM
+gh pr review <PR番号> --repo seiichi3141/numazugikai --approve --body "LGTM
 
 <変更内容への感謝を1行で簡潔に>"
 ```
 
 #### マージする場合
 
-以下のコマンドを実行：
+`.agents/skills/land/SKILL.md` を開き、base/head と `preserve-history` label に応じた
+マージ方式で実行する。長期 branch を削除する `--delete-branch` は使わない。
 
 ```bash
-gh pr merge <PR番号> --squash --delete-branch
+# 詳細な判定と監視は land skill に従う
+gh pr view <PR番号> --repo seiichi3141/numazugikai \
+  --json baseRefName,headRefName,labels
 ```
 
 ### 6. フィードバックコメント（懸念点・提案がある場合）
@@ -177,5 +181,6 @@ gh pr merge <PR番号> --squash --delete-branch
 ユーザーが選択したパターンに基づいて、以下のコマンドでコメントを投稿：
 
 ```bash
-gh pr comment <PR番号> --body "<選択されたコメント内容>"
+gh pr comment <PR番号> --repo seiichi3141/numazugikai \
+  --body "<選択されたコメント内容>"
 ```
