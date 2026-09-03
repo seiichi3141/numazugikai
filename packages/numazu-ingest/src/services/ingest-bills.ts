@@ -84,22 +84,29 @@ export async function ingestBillsForSession(
   const kind = parsed.sessionLabel?.includes("臨時")
     ? ("extraordinary" as const)
     : ("regular" as const);
-  const councilSessionId = await ensureCouncilSession({
-    name: buildSessionName({
-      year: parsed.year,
+  const inferredStartDate = earliestDate(parsed.bills);
+  const inferredEndDate = latestDate(parsed.bills);
+  const councilSessionId = await ensureCouncilSession(
+    {
+      name: buildSessionName({
+        year: parsed.year,
+        sessionNumber: parsed.sessionNumber,
+        month: parsed.month,
+        kind,
+        era: parsed.era ?? undefined,
+      }),
+      slug: sessionSlug,
       sessionNumber: parsed.sessionNumber,
-      month: parsed.month,
       kind,
-      era: parsed.era ?? undefined,
-    }),
-    slug: sessionSlug,
-    sessionNumber: parsed.sessionNumber,
-    kind,
-    // 会期予定ページが未取得のときの暫定値。議案の提出日・議決日から推定する
-    startDate: earliestDate(parsed.bills) ?? `${parsed.year}-01-01`,
-    endDate: latestDate(parsed.bills) ?? `${parsed.year}-12-31`,
-    sourceUrl: buildReportTermUrl(params.term),
-  });
+      // 会期予定ページが未取得のときの暫定値。議案の提出日・議決日から推定する
+      startDate: inferredStartDate ?? `${parsed.year}-01-01`,
+      endDate: inferredEndDate ?? `${parsed.year}-12-31`,
+      sourceUrl: buildReportTermUrl(params.term),
+    },
+    inferredStartDate !== null && inferredEndDate !== null
+      ? { replaceExistingSourceUrl: NUMAZU_SITE_URLS.billDocuments }
+      : undefined
+  );
 
   // 委員会は略称ごとに1度だけ登録する
   const committeeIds = new Map<string, string>();
