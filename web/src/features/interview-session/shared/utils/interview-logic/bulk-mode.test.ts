@@ -17,6 +17,7 @@ const makeBill = (
   is_featured: false,
   is_review_completed: true,
   source_url: null,
+  source_record_key: null,
   slug: null,
   council_session_id: null,
   bill_number: null,

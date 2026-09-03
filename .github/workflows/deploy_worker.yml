@@ -1,12 +1,15 @@
 name: Deploy Topic Analysis Worker
 
-# worker / topic-analysis-core / その依存パッケージが変わったときだけ
+# workerと、workerから直接・間接に読み込むパッケージが変わったときだけ
 # イメージをビルドして Artifact Registry に push し、Cloud Run Job を更新する。
 on:
   push:
     branches: [main, develop]
     paths:
       - "worker/**"
+      - "packages/bill-explainer/**"
+      - "packages/council-ingest-core/**"
+      - "packages/numazu-ingest/**"
       - "packages/topic-analysis-core/**"
       - "packages/shared/**"
       - "packages/supabase/**"

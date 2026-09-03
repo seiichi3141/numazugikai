@@ -17,6 +17,7 @@ export type CouncilSessionUpsert = {
 
 export type BillUpsert = {
   councilSessionId: string;
+  sourceRecordKey: string | null;
   billNumber: string;
   numberKind: Database["public"]["Enums"]["bill_number_kind_enum"];
   numberValue: number;
@@ -50,7 +51,9 @@ export async function upsertCouncilSession(
         start_date: session.startDate,
         end_date: session.endDate,
         source_url: session.sourceUrl,
-        external_council_id: session.externalCouncilId ?? null,
+        ...(session.externalCouncilId === undefined
+          ? {}
+          : { external_council_id: session.externalCouncilId }),
       },
       { onConflict: "slug" }
     )
@@ -62,21 +65,57 @@ export async function upsertCouncilSession(
 }
 
 /**
- * 会期が無ければ作り、あればそのIDを返す（既存の日付は上書きしない）。
+ * 会期が無ければ作り、あればそのIDを返す。
  *
  * 会期の正確な日付は会期予定ページが持っている。議案審議結果PDFから逆算した
- * 日付でそれを潰さないよう、こちらは insert のみ行う。
+ * 日付でそれを潰さないよう、既存値は原則として上書きしない。
+ * `replaceExistingSourceUrl` を指定した場合だけ、そのURLを出典とする暫定会期を
+ * 今回の値へ置換する。
  */
 export async function ensureCouncilSession(
-  session: CouncilSessionUpsert
+  session: CouncilSessionUpsert,
+  options: { replaceExistingSourceUrl?: string } = {}
 ): Promise<string> {
   const supabase = createAdminClient();
-  const { data: existing } = await supabase
+  const { data: existing, error } = await supabase
     .from("council_sessions")
-    .select("id")
+    .select("id, source_url")
     .eq("slug", session.slug)
     .maybeSingle();
-  if (existing) return existing.id;
+  if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
+  if (existing) {
+    if (
+      options.replaceExistingSourceUrl === undefined ||
+      existing.source_url !== options.replaceExistingSourceUrl ||
+      session.sourceUrl === options.replaceExistingSourceUrl
+    ) {
+      return existing.id;
+    }
+
+    // 開会中ページから作った暫定会期だけを、後続のより詳しいソースで置換する。
+    // 条件付き更新にして、同時に会期予定ページが正式値を保存した場合は上書きしない。
+    const { data: replaced, error: replaceError } = await supabase
+      .from("council_sessions")
+      .update({
+        name: session.name,
+        session_number: session.sessionNumber,
+        kind: session.kind,
+        start_date: session.startDate,
+        end_date: session.endDate,
+        source_url: session.sourceUrl,
+        ...(session.externalCouncilId === undefined
+          ? {}
+          : { external_council_id: session.externalCouncilId }),
+      })
+      .eq("id", existing.id)
+      .eq("source_url", options.replaceExistingSourceUrl)
+      .select("id")
+      .maybeSingle();
+    if (replaceError) {
+      throw new Error(`暫定会期の更新に失敗した: ${replaceError.message}`);
+    }
+    return replaced?.id ?? existing.id;
+  }
 
   return upsertCouncilSession(session);
 }
@@ -105,37 +144,215 @@ export async function upsertCommittee(shortName: string): Promise<string> {
   return data.id;
 }
 
-/** 会期IDと議案番号で突合して議案を作成・更新する。 */
+/**
+ * 結果PDFの完全な解析結果を、会期IDと議案番号で突合して作成・更新する。
+ * nullable項目も解析結果を正として置換するため、部分情報の保存には使用しない。
+ */
 export async function upsertBill(bill: BillUpsert): Promise<string> {
   const supabase = createAdminClient();
+  const { data, error } = await supabase.rpc("upsert_ingested_bill", {
+    p_bill_number: bill.billNumber,
+    p_category: bill.category,
+    p_council_session_id: bill.councilSessionId,
+    p_name: bill.name,
+    p_number_kind: bill.numberKind,
+    p_number_value: bill.numberValue,
+    p_source_url: bill.sourceUrl,
+    p_status: bill.status,
+    ...(bill.sourceRecordKey === null
+      ? {}
+      : { p_source_record_key: bill.sourceRecordKey }),
+    ...(bill.legalBasis === null ? {} : { p_legal_basis: bill.legalBasis }),
+    ...(bill.submittedOn === null ? {} : { p_submitted_on: bill.submittedOn }),
+    ...(bill.submitter === null ? {} : { p_submitter: bill.submitter }),
+    ...(bill.committeeId === null ? {} : { p_committee_id: bill.committeeId }),
+    ...(bill.committeeResult === null
+      ? {}
+      : { p_committee_result: bill.committeeResult }),
+    ...(bill.decidedOn === null ? {} : { p_decided_on: bill.decidedOn }),
+    ...(bill.statusNote === null ? {} : { p_status_note: bill.statusNote }),
+    ...(bill.documentUrl === null ? {} : { p_document_url: bill.documentUrl }),
+  });
+
+  if (error) {
+    const diagnostic = [error.details, error.hint].filter(Boolean).join(" / ");
+    throw new Error(
+      `議案の保存に失敗した: ${error.message}${diagnostic ? ` (${diagnostic})` : ""}`
+    );
+  }
+  return data;
+}
+
+export type CurrentSessionBillUpsert = {
+  councilSessionId: string;
+  sourceRecordKey: string | null;
+  billNumber: string;
+  numberKind: Database["public"]["Enums"]["bill_number_kind_enum"];
+  numberValue: number;
+  name: string;
+  category: BillCategory;
+  submittedOn: string | null;
+  defaultSubmittedOn: string;
+  submitter: Database["public"]["Enums"]["bill_submitter_enum"] | null;
+  sourceUrl: string;
+  documentUrl: string | null;
+};
+
+/**
+ * 開会中ページの提出議案を保存する。
+ *
+ * 既存行は閉会後の結果PDFから得た委員会・議決結果を持つ可能性があるため、
+ * 開会中ページに存在する項目だけを更新し、それ以外をnullへ戻さない。
+ */
+export async function upsertCurrentSessionBill(
+  bill: CurrentSessionBillUpsert
+): Promise<{ id: string; created: boolean }> {
+  const supabase = createAdminClient();
+  const { data: existing, error: findError } = await supabase
+    .from("bills")
+    .select("id, source_record_key, source_url")
+    .eq("council_session_id", bill.councilSessionId)
+    .eq("bill_number", bill.billNumber)
+    .maybeSingle();
+
+  if (findError) {
+    throw new Error(`議案の検索に失敗した: ${findError.message}`);
+  }
+
+  const updateExisting = async (
+    id: string,
+    sourceRecordKey: string | null,
+    sourceUrl: string | null
+  ): Promise<{ id: string; created: false }> => {
+    const incomingSourceRecordKey = bill.sourceRecordKey;
+    if (
+      sourceRecordKey !== null &&
+      incomingSourceRecordKey !== null &&
+      sourceRecordKey !== incomingSourceRecordKey
+    ) {
+      throw new Error(
+        `議案の永続identityが一致しません: bill_number=${bill.billNumber}, existing_source_record_key=${sourceRecordKey}, incoming_source_record_key=${incomingSourceRecordKey}`
+      );
+    }
+    const updates: Database["public"]["Tables"]["bills"]["Update"] = {
+      name: bill.name,
+    };
+    if (bill.documentUrl) updates.document_url = bill.documentUrl;
+    const promotesSourceRecordKey =
+      sourceRecordKey === null && incomingSourceRecordKey !== null;
+    if (promotesSourceRecordKey) {
+      updates.source_record_key = incomingSourceRecordKey;
+    }
+    let updateQuery = supabase.from("bills").update(updates).eq("id", id);
+    if (promotesSourceRecordKey) {
+      updateQuery = updateQuery.is("source_record_key", null);
+    }
+    const { data: updated, error } = await updateQuery
+      .select("id")
+      .maybeSingle();
+    if (error) throw new Error(`議案の更新に失敗した: ${error.message}`);
+    if (!updated) {
+      if (!promotesSourceRecordKey) {
+        throw new Error(`議案の更新対象を確認できませんでした: ${id}`);
+      }
+      const { data: latest, error: refetchError } = await supabase
+        .from("bills")
+        .select("source_record_key")
+        .eq("id", id)
+        .single();
+      if (refetchError) {
+        throw new Error(`議案の再検索に失敗した: ${refetchError.message}`);
+      }
+      if (latest.source_record_key !== incomingSourceRecordKey) {
+        throw new Error(
+          `議案の永続identityが一致しません: bill_number=${bill.billNumber}, existing_source_record_key=${latest.source_record_key}, incoming_source_record_key=${incomingSourceRecordKey}`
+        );
+      }
+      const retryUpdates: Database["public"]["Tables"]["bills"]["Update"] = {
+        name: bill.name,
+      };
+      if (bill.documentUrl) retryUpdates.document_url = bill.documentUrl;
+      const { data: retried, error: retryError } = await supabase
+        .from("bills")
+        .update(retryUpdates)
+        .eq("id", id)
+        .eq("source_record_key", incomingSourceRecordKey)
+        .select("id")
+        .maybeSingle();
+      if (retryError) {
+        throw new Error(`議案の更新再試行に失敗した: ${retryError.message}`);
+      }
+      if (!retried) {
+        throw new Error(`議案の更新再試行で対象を確認できませんでした: ${id}`);
+      }
+    }
+
+    if (sourceUrl === bill.sourceUrl) {
+      // 同じ開会中ページから作成した暫定行だけ、後から掲載・訂正された値へ追従する。
+      // source_urlを更新条件にも含め、結果PDFの保存が同時に走っても確定値を降格させない。
+      const { error: metadataError } = await supabase
+        .from("bills")
+        .update({
+          category: bill.category,
+          ...(bill.submittedOn === null
+            ? {}
+            : { submitted_date: bill.submittedOn }),
+        })
+        .eq("id", id)
+        .eq("source_url", bill.sourceUrl);
+      if (metadataError) {
+        throw new Error(
+          `議案の暫定情報更新に失敗した: ${metadataError.message}`
+        );
+      }
+    }
+    return { id, created: false };
+  };
+
+  if (existing) {
+    return updateExisting(
+      existing.id,
+      existing.source_record_key,
+      existing.source_url
+    );
+  }
+
   const { data, error } = await supabase
     .from("bills")
-    .upsert(
-      {
-        council_session_id: bill.councilSessionId,
-        bill_number: bill.billNumber,
-        bill_number_kind: bill.numberKind,
-        bill_number_value: bill.numberValue,
-        name: bill.name,
-        category: bill.category,
-        legal_basis: bill.legalBasis,
-        submitted_date: bill.submittedOn,
-        submitter: bill.submitter,
-        committee_id: bill.committeeId,
-        committee_result: bill.committeeResult,
-        decided_on: bill.decidedOn,
-        status: bill.status,
-        status_note: bill.statusNote,
-        source_url: bill.sourceUrl,
-        document_url: bill.documentUrl,
-      },
-      { onConflict: "council_session_id,bill_number" }
-    )
+    .insert({
+      council_session_id: bill.councilSessionId,
+      source_record_key: bill.sourceRecordKey,
+      bill_number: bill.billNumber,
+      bill_number_kind: bill.numberKind,
+      bill_number_value: bill.numberValue,
+      name: bill.name,
+      category: bill.category,
+      submitted_date: bill.submittedOn ?? bill.defaultSubmittedOn,
+      submitter: bill.submitter,
+      status: "submitted",
+      source_url: bill.sourceUrl,
+      document_url: bill.documentUrl,
+    })
     .select("id")
     .single();
 
+  if (error?.code === "23505") {
+    const { data: concurrent } = await supabase
+      .from("bills")
+      .select("id, source_record_key, source_url")
+      .eq("council_session_id", bill.councilSessionId)
+      .eq("bill_number", bill.billNumber)
+      .single();
+    if (concurrent) {
+      return updateExisting(
+        concurrent.id,
+        concurrent.source_record_key,
+        concurrent.source_url
+      );
+    }
+  }
   if (error) throw new Error(`議案の保存に失敗した: ${error.message}`);
-  return data.id;
+  return { id: data.id, created: true };
 }
 
 /** 議案本文PDFのリンクだけを後から埋める。 */
@@ -354,6 +571,20 @@ export async function findCouncilSessionIdBySlug(
     .eq("slug", slug)
     .maybeSingle();
   return data?.id ?? null;
+}
+
+/** slugから会期IDと正確な開会日を引く。 */
+export async function findCouncilSessionBySlug(
+  slug: string
+): Promise<{ id: string; startDate: string } | null> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("council_sessions")
+    .select("id, start_date")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw new Error(`会期の取得に失敗した: ${error.message}`);
+  return data ? { id: data.id, startDate: data.start_date } : null;
 }
 
 /** 会期の期間一覧（委員会の開催日と会期を突合するために使う）。 */

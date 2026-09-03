@@ -22,6 +22,10 @@ import {
   NUMAZU_SITE_URLS,
 } from "../shared/constants-site";
 import type { ParsedBill } from "../shared/types";
+import { assertGianResultHasBills } from "../utils/assert-ingest-results";
+import { buildNumazuBillSourceRecordKey } from "../utils/build-numazu-bill-source-record-key";
+
+export { assertNoBillFailuresForEraYear } from "../utils/assert-ingest-results";
 
 const SOURCE = "gian_pdf";
 
@@ -74,27 +78,35 @@ export async function ingestBillsForSession(
   if (parsed.sessionNumber === null || parsed.year === null) {
     throw new Error(`会期の見出しを読み取れなかった: ${url}`);
   }
+  assertGianResultHasBills(parsed, url);
 
   const sessionSlug = buildSessionSlug(parsed.year, parsed.sessionNumber);
   const kind = parsed.sessionLabel?.includes("臨時")
     ? ("extraordinary" as const)
     : ("regular" as const);
-  const councilSessionId = await ensureCouncilSession({
-    name: buildSessionName({
-      year: parsed.year,
+  const inferredStartDate = earliestDate(parsed.bills);
+  const inferredEndDate = latestDate(parsed.bills);
+  const councilSessionId = await ensureCouncilSession(
+    {
+      name: buildSessionName({
+        year: parsed.year,
+        sessionNumber: parsed.sessionNumber,
+        month: parsed.month,
+        kind,
+        era: parsed.era ?? undefined,
+      }),
+      slug: sessionSlug,
       sessionNumber: parsed.sessionNumber,
-      month: parsed.month,
       kind,
-      era: parsed.era ?? undefined,
-    }),
-    slug: sessionSlug,
-    sessionNumber: parsed.sessionNumber,
-    kind,
-    // 会期予定ページが未取得のときの暫定値。議案の提出日・議決日から推定する
-    startDate: earliestDate(parsed.bills) ?? `${parsed.year}-01-01`,
-    endDate: latestDate(parsed.bills) ?? `${parsed.year}-12-31`,
-    sourceUrl: buildReportTermUrl(params.term),
-  });
+      // 会期予定ページが未取得のときの暫定値。議案の提出日・議決日から推定する
+      startDate: inferredStartDate ?? `${parsed.year}-01-01`,
+      endDate: inferredEndDate ?? `${parsed.year}-12-31`,
+      sourceUrl: buildReportTermUrl(params.term),
+    },
+    inferredStartDate !== null && inferredEndDate !== null
+      ? { replaceExistingSourceUrl: NUMAZU_SITE_URLS.billDocuments }
+      : undefined
+  );
 
   // 委員会は略称ごとに1度だけ登録する
   const committeeIds = new Map<string, string>();
@@ -106,6 +118,12 @@ export async function ingestBillsForSession(
   for (const bill of parsed.bills) {
     const billId = await upsertBill({
       councilSessionId,
+      sourceRecordKey: buildNumazuBillSourceRecordKey({
+        sessionSlug,
+        numberKind: bill.numberKind,
+        numberValue: bill.numberValue,
+        submitter: bill.submitter,
+      }),
       billNumber: bill.billNumber,
       numberKind: bill.numberKind,
       numberValue: bill.numberValue,
@@ -209,7 +227,7 @@ export type IngestTermResult = {
   found: number;
   results: IngestBillsResult[];
   /** 取り込めなかったPDFとその理由 */
-  failures: { path: string; reason: string }[];
+  failures: { path: string; eraYear: number; month: number; reason: string }[];
 };
 
 /**
@@ -233,7 +251,7 @@ export async function ingestBillsForTerm(params: {
   const pdfs = parseTermIndex(page.text, params.term);
 
   const results: IngestBillsResult[] = [];
-  const failures: { path: string; reason: string }[] = [];
+  const failures: IngestTermResult["failures"] = [];
 
   for (const pdf of pdfs) {
     try {
@@ -249,6 +267,8 @@ export async function ingestBillsForTerm(params: {
     } catch (error) {
       failures.push({
         path: pdf.path,
+        eraYear: pdf.eraYear,
+        month: pdf.month,
         reason: error instanceof Error ? error.message : String(error),
       });
       console.warn(`${pdf.path} を取り込めなかった: ${String(error)}`);

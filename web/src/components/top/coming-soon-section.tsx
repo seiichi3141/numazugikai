@@ -6,10 +6,13 @@ import type { ComingSoonBill } from "@/features/bills/shared/types";
 import { Card, CardContent } from "../ui/card";
 
 interface ComingSoonSectionProps {
-  bills: ComingSoonBill[];
+  /** null は自治体設定による非表示、空配列は表示対象なしを表す。 */
+  bills: ComingSoonBill[] | null;
 }
 
 export function ComingSoonSection({ bills }: ComingSoonSectionProps) {
+  if (bills === null) return null;
+
   return (
     <section className="flex flex-col gap-6">
       {/* ヘッダー */}

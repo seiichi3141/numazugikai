@@ -1,6 +1,6 @@
 # Cloud Run 実行基盤プロビジョニング（コード化）
 
-トピック分析・意見再抽出バックフィルを実行する **Cloud Run Job** の GCP リソースを、
+議会データ取り込み・トピック分析・意見再抽出を実行する **Cloud Run Job** のGCPリソースを、
 冪等な gcloud スクリプト [`provision.sh`](./provision.sh) で構築する。
 
 手順の背景・各リソースの意味は
@@ -11,15 +11,16 @@
 
 | リソース | 内容 |
 | --- | --- |
-| API | run / artifactregistry / secretmanager / cloudscheduler を有効化 |
+| API | run / artifactregistry / secretmanager / cloudscheduler / logging / monitoring を有効化 |
 | Artifact Registry | docker リポジトリ（既定 `topic-analysis`） |
-| Secret Manager | `SUPABASE_URL` / `SUPABASE_SECRET_KEY` / `AI_GATEWAY_API_KEY` に **環境サフィックス**を付けたもの（例 `SUPABASE_URL_STAGING`）。**コンテナのみ**・値は別途 |
+| Secret Manager | `SUPABASE_URL` / `SUPABASE_SECRET_KEY` / `AI_GATEWAY_API_KEY` / `OPENAI_API_KEY` に **環境サフィックス**を付けたもの（例 `SUPABASE_URL_STAGING`）。**コンテナのみ**・値は別途 |
 | SA: runtime | Job 実行用。secret 読み取り権限 |
 | SA: invoker | admin が `jobs:run` を呼ぶ用。custom invoker role + runtime への actAs |
 | SA: scheduler | Cloud Scheduler が `jobs:run` を呼ぶ用。custom invoker role + runtime への actAs（**鍵は発行しない**） |
 | SA: deployer | CI（`deploy_worker.yml`）用。AR writer + run.developer + actAs |
 | Cloud Run Job | `topic-analysis-worker-<DEPLOY_ENV>`（batch 向け設定）。**無ければ作成**、以後の image 更新は CI |
-| Cloud Scheduler | `topic-analysis-cron-<DEPLOY_ENV>`。日次（既定 6:00 JST）で Job を `--mode=analyze-all`（全議案・増分）で起動。**作成 or 設定更新**（冪等） |
+| Cloud Scheduler | 分析用1件と、軽量・会議録取り込み用2件を**作成 or 設定更新**（冪等） |
+| Cloud Monitoring | 取り込み失敗と、各取り込み系統で所定時間成功がない状態のalert policy |
 
 ## 環境（staging / production）の分離
 
@@ -46,7 +47,8 @@ Secret Manager は **プロジェクトでグローバル（名前が一意）**
 
 ## 前提
 
-- `gcloud` 認証済み（`gcloud auth login`）でプロジェクトへの権限がある。
+- `gcloud` と `jq` がインストール済みで、`gcloud auth login` によりプロジェクトへの
+  権限がある。
 - 初回 Job 作成でイメージをビルドする場合は `docker` が必要（`WORKER_IMAGE` を渡せば不要）。
 
 ## 使い方
@@ -81,9 +83,35 @@ CONFIG_FILE=infra/cloud-run/config.env.production bash infra/cloud-run/provision
 
 ## 定期実行（Cloud Scheduler）
 
-日次（既定 6:00 JST）で Cloud Run Job を `--mode=analyze-all`（全議案・増分）で起動する
-Cloud Scheduler ジョブを作成する。スケジュールは `SCHEDULER_CRON` / `SCHEDULER_TIMEZONE`、
-停止したい環境は `SCHEDULER_PAUSED=1` で調整する（config.example.env 参照）。
+次の3つのCloud Schedulerジョブを作成する。
+
+| ジョブ | 既定スケジュール | worker引数 |
+| --- | --- | --- |
+| トピック分析 | 毎日6:00 JST | `--mode=analyze-all` |
+| 会期・提出議案 | 毎日6:30・18:30 JST | `--mode=ingest --target=frequent` |
+| 議決結果・会議録・AmiVoice・AIタグ付け | 毎日20:30 JST | `--mode=maintain-bills` |
+
+取り込みは負荷に応じて2系統に分ける。`frequent`は会期予定、開会中の提出議案、
+議案本文リンクを6:30と18:30に取得し、`daily`は期の索引にある議案審議結果、会議録、
+AmiVoiceを20:30に取得し、未分類の議案を既存のテーマ定義に基づいてAIでタグ付けする。
+全結果PDFの走査とテキスト化、AIタグ付けは1日1回に限定する。
+新しい議案は`draft`で作成し、自動公開しない。管理画面で内容を確認して公開状態を変更する。
+取得元の内容ハッシュが同じ場合は解析・DB更新を省略する。
+
+既存議案を同じAI基準で再分類する初回バックフィルは、workerイメージ更新後に
+Cloud Run Jobを`--mode=bill-tags --force`で一度だけ手動実行する。通常実行ではタグが
+未設定の議案だけを対象にするため、日次処理が既存の分類を毎回上書きすることはない。
+
+分析用は`SCHEDULER_*`、軽量取り込み用は`INGEST_SCHEDULER_*`、会議録取り込み用は
+`INGEST_DAILY_SCHEDULER_*`で時刻・タイムゾーン・一時停止を個別に調整する
+（`config.example.env`参照）。いずれも失敗時は1回だけ再試行する。
+
+プロビジョニングはCloud Run Jobの実行失敗、取り込みSchedulerの起動失敗、軽量系統で
+23時間30分、日次系統で25時間成功がない状態を検知するCloud Monitoring alert policyも
+作成・更新する。日次系統は毎日20:30の実行間隔より長い25時間で判定し、定刻どおりの
+成功を誤検知しない。通常のmetric-absenceは23時間30分が上限のため、日次系統だけは
+25時間を扱えるPromQLの`absent_over_time`を使用する。productionでは通知先となる
+`MONITORING_NOTIFICATION_CHANNELS`が必須であり、未設定なら処理を停止する。
 設計の背景・動作確認・運用は
 [docs/20260715_1043_トピック分析スケジューラー化.md](../../docs/20260715_1043_トピック分析スケジューラー化.md)
 を参照。
@@ -94,7 +122,34 @@ Cloud Scheduler ジョブを作成する。スケジュールは `SCHEDULER_CRON
 - Cloud Run Job は「無ければ作成」のみ。**イメージ差し替えは CI（`deploy_worker.yml`）**が担うため、
   既存 Job には触れない。
 - Cloud Scheduler は provision.sh が設定のオーナー。既存なら **設定を更新**し、
-  有効/一時停止も `SCHEDULER_PAUSED` に揃える。
+  有効/一時停止も各Schedulerの設定値に揃える。
+
+## 運用確認
+
+プロビジョニング後は、取り込みジョブを手動実行し、Cloud RunとDBの両方を確認する。
+
+```bash
+gcloud scheduler jobs run "numazu-ingest-cron-${DEPLOY_ENV}" \
+  --location "$GCP_REGION" \
+  --project "$GCP_PROJECT_ID"
+
+gcloud scheduler jobs run "numazu-ingest-daily-cron-${DEPLOY_ENV}" \
+  --location "$GCP_REGION" \
+  --project "$GCP_PROJECT_ID"
+
+gcloud run jobs executions list \
+  --job "topic-analysis-worker-${DEPLOY_ENV}" \
+  --region "$GCP_REGION" \
+  --project "$GCP_PROJECT_ID" \
+  --limit 5
+```
+
+DBでは`ingestion_runs.source = 'frequent'`と`'daily'`の最新行が`completed`であること、
+`frequent`の`stats.currentBills.billCount`が公式ページの提出議案件数と一致することを
+確認する。内容に変更がなく`skipped = true`の場合も、解析した掲載件数を`billCount`に返す。
+提出議案が0件または一部でも解析不能ならジョブを失敗させるため、Cloud Run Job失敗の
+alertで検知される。Schedulerの認証・起動失敗は別のalert、軽量系統で23時間30分、
+日次系統で25時間成功がなければ対応するabsence alertで通知される。
 
 ## 関連
 
