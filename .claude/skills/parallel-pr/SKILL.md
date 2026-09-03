@@ -116,10 +116,12 @@ done
 ```
 
 ```bash
-# 全PRのコメントを確認（CodeRabbitやレビューアからのフィードバック）
+# 全PRの投稿済みレビューコメントを確認
 for pr in {PR番号リスト}; do
   echo "=== PR #$pr comments ==="
   gh pr view "$pr" --repo seiichi3141/numazugikai --comments
+  gh api "repos/seiichi3141/numazugikai/pulls/$pr/comments"
+  gh pr view "$pr" --repo seiichi3141/numazugikai --json reviews
 done
 ```
 
@@ -129,8 +131,14 @@ CI失敗時の対応:
 - **テスト失敗**: worktreeで修正して再push
 
 PRコメント対応:
-- **CodeRabbitの指摘**: 重要な指摘はworktreeで修正してpush
-- **軽微な指摘（nitpick等）**: マージ後に対応するか、必要に応じて対応
+- **アクション可能な指摘**: worktreeで修正してpushするか、対応しない理由を
+  該当コメントに返信し、対応済みスレッドをresolveする
+- **未投稿のレビュー**: 到着を待たない
+
+PRのbaseが`develop`または`main`の沼津市版ではCodeRabbitを使用しない。
+CodeRabbitのレビューを要求・待機・個別取得せず、必須CIと実際に投稿された
+レビューコメントだけを確認する。`sites/<site>/*`宛ては対象自治体branchの
+`AGENTS.md`と運用方針に従う。
 
 ### Phase 5: クリーンアップ
 
