@@ -2,9 +2,41 @@ import { readFileSync } from "node:fs";
 import postgres from "postgres";
 import { buildNumazuBillSourceRecordKey } from "../../../packages/numazu-ingest/src/utils/build-numazu-bill-source-record-key";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  "postgresql://postgres:postgres@127.0.0.1:54432/postgres";
+function resolveDatabaseUrl(): string {
+  if (process.env.TEST_DATABASE_URL) {
+    return process.env.TEST_DATABASE_URL;
+  }
+
+  const supabaseConfig = readFileSync(
+    new URL("../../../supabase/config.toml", import.meta.url),
+    "utf8"
+  );
+  const configLines = supabaseConfig.split(/\r?\n/);
+  const dbSectionStart = configLines.findIndex((line) =>
+    /^\s*\[db\]\s*(?:#.*)?$/.test(line)
+  );
+  const nextSectionOffset = configLines
+    .slice(dbSectionStart + 1)
+    .findIndex((line) => /^\s*\[/.test(line));
+  const dbSectionEnd =
+    nextSectionOffset === -1
+      ? configLines.length
+      : dbSectionStart + 1 + nextSectionOffset;
+  const dbSection =
+    dbSectionStart === -1
+      ? null
+      : configLines.slice(dbSectionStart + 1, dbSectionEnd).join("\n");
+  const localDatabasePort = dbSection
+    ? /^\s*port\s*=\s*(\d+)\s*(?:#.*)?$/m.exec(dbSection)?.[1]
+    : undefined;
+  if (!localDatabasePort) {
+    throw new Error("supabase/config.toml の [db].port を取得できません");
+  }
+
+  return `postgresql://postgres:postgres@127.0.0.1:${localDatabasePort}/postgres`;
+}
+
+const databaseUrl = resolveDatabaseUrl();
 const migrationSql = readFileSync(
   new URL(
     "../../../supabase/migrations/20260904010000_add_bill_source_record_key.sql",

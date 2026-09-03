@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CouncilIngestRecord } from "../shared/types";
 import {
   SYNTHETIC_DUPLICATE_NUMBER_RECORDS,
+  SYNTHETIC_NUMBERLESS_CORRECTION,
   SYNTHETIC_REVIEW_VOTE_POSITIONS,
 } from "../testing/synthetic-fixtures";
 import { assessIngestRecord } from "./assess-ingest-record";
@@ -141,6 +142,86 @@ describe("assessIngestRecord", () => {
     expect(assessIngestRecord(record)).toMatchObject({
       reviewStatus: "needs_review",
       issues: ["unknown_submitter"],
+    });
+  });
+
+  it("stable identityでもsource record key全体の一致を要求する", () => {
+    const base = SYNTHETIC_DUPLICATE_NUMBER_RECORDS[0];
+    const invalidSourceRecordKey =
+      "wrong-site:wrong-session:opinion:assembly:stable:opinion-001";
+    const record = {
+      ...base,
+      identity: { kind: "stable" as const, stableId: "opinion-001" },
+      sourceRecordKey: invalidSourceRecordKey,
+      observations: base.observations.map((observation) => ({
+        ...observation,
+        sourceRecordKey: invalidSourceRecordKey,
+        normalized: {
+          ...observation.normalized,
+          normalizedNumber: null,
+        },
+      })),
+    };
+
+    expect(assessIngestRecord(record)).toEqual({
+      reviewStatus: "needs_review",
+      sourceConflict: false,
+      issues: ["record_source_key_invalid"],
+    });
+  });
+
+  it("正しいstable identityのsource record keyを受け入れる", () => {
+    const base = SYNTHETIC_DUPLICATE_NUMBER_RECORDS[0];
+    const fixture = SYNTHETIC_NUMBERLESS_CORRECTION;
+    const observation = fixture.before;
+    const record = {
+      ...base,
+      siteKey: observation.provenance.siteKey,
+      sessionKey: "2026-02-regular",
+      documentKind: "opinion" as const,
+      submitterKind: "assembly" as const,
+      identity: fixture.identity,
+      sourceRecordKey: fixture.sourceRecordKey,
+      displayNumber: observation.normalized.displayNumber,
+      title: observation.normalized.title,
+      decidedOn: observation.normalized.decidedOn,
+      result: {
+        ...observation.normalized.result,
+        rawResult: observation.rawResult,
+      },
+      observations: [observation],
+      votes: [],
+    };
+
+    expect(assessIngestRecord(record)).toEqual({
+      reviewStatus: "ready",
+      sourceConflict: false,
+      issues: [],
+    });
+  });
+
+  it("空のstable identityを公開前レビューへ送る", () => {
+    const base = SYNTHETIC_DUPLICATE_NUMBER_RECORDS[0];
+    const sourceRecordKey =
+      "shizuoka-pref:2026-02-regular:executive_bill:governor:stable:invalid";
+    const record = {
+      ...base,
+      identity: { kind: "stable" as const, stableId: " " },
+      sourceRecordKey,
+      observations: base.observations.map((observation) => ({
+        ...observation,
+        sourceRecordKey,
+        normalized: {
+          ...observation.normalized,
+          normalizedNumber: null,
+        },
+      })),
+    };
+
+    expect(assessIngestRecord(record)).toEqual({
+      reviewStatus: "needs_review",
+      sourceConflict: false,
+      issues: ["record_source_key_invalid"],
     });
   });
 });
