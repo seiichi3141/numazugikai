@@ -1,3 +1,4 @@
+import { MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card } from "@/components/ui/card";
@@ -30,7 +31,10 @@ export function BillSearchCard({ bill }: { bill: BillListItem }) {
   const summary = bill.bill_content?.summary;
   const reportCount = bill.publicReportCount ?? 0;
   const hasBadges =
-    bill.tags.length > 0 || bill.hasPublicInterview || reportCount > 0;
+    bill.tags.length > 0 ||
+    bill.hasPublicInterview ||
+    reportCount > 0 ||
+    bill.hasDebate;
 
   return (
     <Card className="overflow-hidden border border-foreground shadow-none transition-colors hover:bg-muted/50">
@@ -84,6 +88,14 @@ export function BillSearchCard({ bill }: { bill: BillListItem }) {
             ))}
             {bill.hasPublicInterview && (
               <BillPill>AIインタビュー受付中</BillPill>
+            )}
+            {bill.hasDebate && (
+              <BillPill>
+                <span className="inline-flex items-center gap-1">
+                  <MessageSquareText className="size-3.5" aria-hidden="true" />
+                  本会議討論あり
+                </span>
+              </BillPill>
             )}
             {/* 回答が集まっている議案だけ数字を出す。0人と書くと参加をためらわせる。 */}
             {reportCount > 0 && (

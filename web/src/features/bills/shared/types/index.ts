@@ -76,6 +76,8 @@ export type BillListItem = Pick<
   tags: BillTag[];
   hasPublicInterview?: boolean;
   publicReportCount?: number;
+  /** 本会議での賛成・反対討論の記録があるか。 */
+  hasDebate?: boolean;
 };
 
 export type BillWithContent = Bill & {
@@ -86,6 +88,8 @@ export type BillWithContent = Bill & {
   hasPublicInterview?: boolean;
   /** 公開レポート件数。一覧の回答数バッジと「声が集まっている順」に使う。 */
   publicReportCount?: number;
+  /** 本会議での賛成・反対討論の記録があるか。 */
+  hasDebate?: boolean;
 };
 
 // タグごとにグループ化された議案
