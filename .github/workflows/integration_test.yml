@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
 
       - name: Install dependencies
@@ -41,8 +41,8 @@ jobs:
       - name: Export Supabase env vars
         run: |
           {
-            echo "SUPABASE_URL=http://127.0.0.1:54421"
-            echo "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54421"
+            echo "SUPABASE_URL=http://127.0.0.1:55421"
+            echo "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:55421"
             supabase status -o env \
               | grep -E '^(PUBLISHABLE_KEY|SECRET_KEY)=' \
               | sed -e 's/^PUBLISHABLE_KEY="\(.*\)"$/NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=\1/' \

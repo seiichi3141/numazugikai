@@ -1,9 +1,7 @@
 name: Update OGP Screenshot
 
 on:
-  schedule:
-    # 毎日 05:30 JST。公開サイトの表示更新を翌朝までに取り込む。
-    - cron: "30 20 * * *"
+  # 静岡県版の公開後に定期実行を再設定する。
   workflow_dispatch:
 
 concurrency:
@@ -15,6 +13,8 @@ permissions:
 
 jobs:
   capture:
+    # 静岡県版のブランドと公開先が確定するまで外部デプロイを行わない。
+    if: ${{ vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       source_sha: ${{ steps.source.outputs.sha }}

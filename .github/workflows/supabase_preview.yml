@@ -93,7 +93,8 @@ jobs:
       - name: Delete preview branch
         if: >-
           steps.ready.outputs.branching == 'true' &&
-          (github.event.action == 'closed' || steps.changes.outputs.supabase == 'false')
+          (github.event.action == 'closed' || steps.changes.outputs.supabase == 'false' ||
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED != 'true')
         run: |
           # ブランチ不在（作成していない PR）は正常系として静かに抜ける。
           # 認証エラー等の判定不能な失敗は課金リークにつながるため明示的に失敗させる
@@ -111,7 +112,8 @@ jobs:
       - name: Delete Vercel branch env vars
         if: >-
           steps.ready.outputs.vercel == 'true' &&
-          (github.event.action == 'closed' || steps.changes.outputs.supabase == 'false')
+          (github.event.action == 'closed' || steps.changes.outputs.supabase == 'false' ||
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED != 'true')
         run: |
           # このワークフローが管理する4キーのみ削除し、手動設定されたブランチ別の
           # 環境変数（feature flag 等）には触れない
@@ -138,6 +140,7 @@ jobs:
       - name: Create preview branch if absent
         id: create
         if: >-
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' &&
           github.event.action != 'closed' && steps.changes.outputs.supabase == 'true' &&
           steps.ready.outputs.branching == 'true'
         run: |
@@ -154,6 +157,7 @@ jobs:
 
       - name: Wait for branch to be ready
         if: >-
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' &&
           github.event.action != 'closed' && steps.changes.outputs.supabase == 'true' &&
           steps.ready.outputs.branching == 'true'
         run: |
@@ -183,6 +187,7 @@ jobs:
       - name: Load branch credentials
         id: creds
         if: >-
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' &&
           github.event.action != 'closed' && steps.changes.outputs.supabase == 'true' &&
           steps.ready.outputs.branching == 'true'
         run: |
@@ -207,6 +212,7 @@ jobs:
 
       - name: Apply migrations
         if: >-
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' &&
           github.event.action != 'closed' && steps.changes.outputs.supabase == 'true' &&
           steps.ready.outputs.branching == 'true'
         run: |
@@ -222,6 +228,7 @@ jobs:
       # upsert のため冪等。作成時に一度失敗しても次の synchronize で回復できるよう毎回実行する
       - name: Set Vercel branch env vars
         if: >-
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' &&
           github.event.action != 'closed' && steps.changes.outputs.supabase == 'true' &&
           steps.ready.outputs.branching == 'true' && steps.ready.outputs.vercel == 'true'
         run: |
@@ -248,6 +255,7 @@ jobs:
       # （同一ブランチの古いビルドは Vercel の auto job cancelation で整理される）
       - name: Redeploy Vercel previews
         if: >-
+          vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' &&
           github.event.action != 'closed' && steps.changes.outputs.supabase == 'true' &&
           steps.ready.outputs.branching == 'true' && steps.ready.outputs.vercel == 'true'
         run: |

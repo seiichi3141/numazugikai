@@ -15,6 +15,8 @@ on:
 
 jobs:
   build-and-deploy:
+    # 静岡県版の GCP 構成が確定するまで移行元の worker をデプロイしない。
+    if: ${{ vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     # develop→staging / main→production。接続先は環境ごとの Secret で切り替える。
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}

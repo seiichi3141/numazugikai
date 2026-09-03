@@ -2,10 +2,10 @@
 
 ## 脆弱性の報告
 
-team-mirai/mirai-gikai におけるセキュリティ脆弱性を発見された場合は、
+seiichi3141/shizuokagikai におけるセキュリティ脆弱性を発見された場合は、
 GitHub の Private Vulnerability Reporting よりご報告ください。
 
-報告フォーム: https://github.com/team-mirai/mirai-gikai/security/advisories/new
+報告フォーム: https://github.com/seiichi3141/shizuokagikai/security/advisories/new
 
 公開 Issue や Pull Request、SNS 等で詳細を共有する前に、
 上記の非公開チャネルからご連絡いただけますと幸いです。
@@ -18,7 +18,7 @@ GitHub の Private Vulnerability Reporting よりご報告ください。
 
 ## 対象範囲
 
-本ポリシーは team-mirai/mirai-gikai リポジトリおよび、
+本ポリシーは seiichi3141/shizuokagikai リポジトリおよび、
 本リポジトリのコードからデプロイされている公開アプリケーションを対象とします。
 
 ## 謝辞

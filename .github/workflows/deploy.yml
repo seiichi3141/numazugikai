@@ -19,6 +19,8 @@ concurrency:
 
 jobs:
   migrate:
+    # 静岡県版の DB と公開先が確定するまで移行元のデプロイを停止する。
+    if: ${{ vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -34,6 +36,7 @@ jobs:
 
   deploy:
     needs: migrate
+    if: ${{ vars.SHIZUOKA_DEPLOYMENTS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     environment: production
     strategy:

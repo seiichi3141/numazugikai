@@ -4,7 +4,7 @@ tracker:
   team_key: "GIKAI"
   required_labels:
     - "ai-task"
-  github_repo: "team-mirai/mirai-gikai"
+  github_repo: "seiichi3141/shizuokagikai"
   conversational_states:
     - "QA"
     - "Blocked"
@@ -28,7 +28,7 @@ workspace:
   root: ~/code/symphony-workspaces
 hooks:
   after_create: |
-    git clone --depth 1 https://github.com/team-mirai/mirai-gikai .
+    git clone --depth 1 https://github.com/seiichi3141/shizuokagikai .
     if [ -n "$SYMPHONY_WORKFLOW_DIR" ]; then
       src_root="$(cd "$SYMPHONY_WORKFLOW_DIR/.." && pwd)"
       for envpath in .env admin/.env; do
@@ -49,8 +49,8 @@ hooks:
     set -e
     branch=$(git branch --show-current 2>/dev/null || true)
     if [ -n "$branch" ] && command -v gh >/dev/null 2>&1; then
-      for pr in $(gh pr list --repo team-mirai/mirai-gikai --head "$branch" --state open --json number --jq '.[].number' 2>/dev/null); do
-        gh pr close "$pr" --repo team-mirai/mirai-gikai || true
+      for pr in $(gh pr list --repo seiichi3141/shizuokagikai --head "$branch" --state open --json number --jq '.[].number' 2>/dev/null); do
+        gh pr close "$pr" --repo seiichi3141/shizuokagikai || true
       done
     fi
 agent:

@@ -25,7 +25,10 @@ import {
   clearAllData,
   type AdminClient,
 } from "../shared/helper";
-import { seedLocalAdminUser } from "../shared/admin-user";
+import {
+  isShizuokaLocalSupabaseUrl,
+  seedLocalAdminUser,
+} from "../shared/admin-user";
 
 /**
  * みらい議会＠沼津市のシード。
@@ -38,10 +41,17 @@ import { seedLocalAdminUser } from "../shared/admin-user";
  * の3つで、いずれも取り込み済みの実在議案に紐づける。
  */
 async function seedDatabase() {
-  const supabase = createAdminClient();
   console.log("🌱 Starting database seeding...");
 
   try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    if (!isShizuokaLocalSupabaseUrl(supabaseUrl)) {
+      throw new Error(
+        "Refusing destructive seed: SUPABASE_URL must point to the Shizuoka local Supabase API on port 55421."
+      );
+    }
+
+    const supabase = createAdminClient();
     await clearAllData(supabase);
 
     // ローカル開発用の admin ユーザー（ローカル接続時のみ作成される）
