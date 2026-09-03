@@ -126,16 +126,19 @@ pnpm typecheck
 
 ```bash
 # メインリポジトリのルートで実行
+git fetch origin develop
 git worktree add ../numazugikai-<worktree-name> \
-  -b <branch-name> <base-branch>
-mkdir -p ../numazugikai-<worktree-name>/.claude
-cp .claude/settings.local.json ../numazugikai-<worktree-name>/.claude/
+  -b <branch-name> origin/develop
+if [ -f .claude/settings.local.json ]; then
+  mkdir -p ../numazugikai-<worktree-name>/.claude
+  cp .claude/settings.local.json ../numazugikai-<worktree-name>/.claude/
+fi
 cp ../numazugikai-<worktree-name>/.env.example \
   ../numazugikai-<worktree-name>/.env
 ```
 
-- branch 名は既存沼津向けなら `chore/codify-<要約>`、自治体別なら
-  `sites/<site>/chore/codify-<要約>` とする
+- branch 名は対象自治体にかかわらず `chore/codify-<要約>` とする。ルール変更は
+  共通 trunk へ集約し、site-scoped な chore branch は作成しない
 - 変更対象のファイルをworktreeにコピーする
 
 #### 7b. コミットとpush
@@ -151,7 +154,7 @@ git push -u origin <branch-name>
 
 ```bash
 gh pr create --repo seiichi3141/numazugikai \
-  --base <base-branch> --title "<タイトル>" --body "<本文>"
+  --base develop --title "<タイトル>" --body "<本文>"
 ```
 
 - PR本文には「仕組み化サマリ」（ステップ5の出力）を含める

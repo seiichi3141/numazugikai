@@ -30,10 +30,13 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=ingest --target=all                        # 会期・議員・議案をまとめて
  *   tsx src/main.ts --mode=ingest --target=sessions                   # 定例会の会期予定
  *   tsx src/main.ts --mode=ingest --target=members                    # 会派・議員
+ *   tsx src/main.ts --mode=ingest --target=current-bills              # 開会中ページの提出議案
  *   tsx src/main.ts --mode=ingest --target=bills                      # 当年の定例会の議案
  *   tsx src/main.ts --mode=ingest --target=minutes                    # 議会中継の会議録から議案説明・討論
  *   tsx src/main.ts --mode=ingest --target=amivoice                   # 会議記録検索システムから議案説明・委員会審査・討論
  *   tsx src/main.ts --mode=ingest --target=amivoice-archive           # 過去の委員会記録（検索経由・2015年〜）
+ *   tsx src/main.ts --mode=ingest --target=frequent                   # 会期・提出議案（1日複数回向け）
+ *   tsx src/main.ts --mode=ingest --target=daily                      # 議決結果・会議録・AmiVoice（1日1回向け）
  *   tsx src/main.ts --mode=ingest --target=amivoice-archive --year=2019
  *
  *   議案解説の生成（OpenAI API を直接利用。Gateway は経由しない）:
@@ -66,10 +69,13 @@ type Mode =
 const INGEST_TARGETS = [
   "sessions",
   "members",
+  "current-bills",
   "bills",
   "minutes",
   "amivoice",
   "amivoice-archive",
+  "frequent",
+  "daily",
   "all",
 ] as const;
 

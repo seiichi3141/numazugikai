@@ -47,6 +47,14 @@ GENERATE_KEYS="${GENERATE_KEYS:-0}"   # 1 のとき SA キーを発行（既定�
 SCHEDULER_CRON="${SCHEDULER_CRON:-0 6 * * *}"
 SCHEDULER_TIMEZONE="${SCHEDULER_TIMEZONE:-Asia/Tokyo}"
 SCHEDULER_PAUSED="${SCHEDULER_PAUSED:-0}"   # 1 のとき一時停止状態にする（リソースは作る）
+INGEST_SCHEDULER_CRON="${INGEST_SCHEDULER_CRON:-30 6,18 * * *}"
+INGEST_SCHEDULER_TIMEZONE="${INGEST_SCHEDULER_TIMEZONE:-Asia/Tokyo}"
+INGEST_SCHEDULER_PAUSED="${INGEST_SCHEDULER_PAUSED:-0}"
+INGEST_DAILY_SCHEDULER_CRON="${INGEST_DAILY_SCHEDULER_CRON:-30 20 * * *}"
+INGEST_DAILY_SCHEDULER_TIMEZONE="${INGEST_DAILY_SCHEDULER_TIMEZONE:-Asia/Tokyo}"
+INGEST_DAILY_SCHEDULER_PAUSED="${INGEST_DAILY_SCHEDULER_PAUSED:-0}"
+MONITORING_ALERTS_ENABLED="${MONITORING_ALERTS_ENABLED:-1}"
+MONITORING_NOTIFICATION_CHANNELS="${MONITORING_NOTIFICATION_CHANNELS:-}"
 
 if [[ -z "$PROJECT_ID" ]]; then
   echo "ERROR: GCP_PROJECT_ID が未設定です（config.env か環境変数で指定）。" >&2
@@ -58,6 +66,16 @@ if [[ -z "$DEPLOY_ENV" ]]; then
   echo "       他環境のシークレットを上書きする恐れがあります。" >&2
   exit 1
 fi
+if [[ "$MONITORING_ALERTS_ENABLED" == "1" && "$DEPLOY_ENV" == "production" \
+  && -z "$MONITORING_NOTIFICATION_CHANNELS" ]]; then
+  echo "ERROR: production では MONITORING_NOTIFICATION_CHANNELS が必要です。" >&2
+  echo "       projects/<project>/notificationChannels/<id> をカンマ区切りで指定してください。" >&2
+  exit 1
+fi
+if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]] && ! command -v jq >/dev/null 2>&1; then
+  echo "ERROR: Cloud Monitoringのalert policy構築には jq が必要です。" >&2
+  exit 1
+fi
 
 # Secret はプロジェクトでグローバル（名前が一意）。同一プロジェクトに複数環境を
 # 置くため、Secret 名を環境サフィックスで分離する（例: SUPABASE_URL_STAGING）。
@@ -66,6 +84,8 @@ ENV_UPPER="$(printf '%s' "$DEPLOY_ENV" | tr '[:lower:]' '[:upper:]')"
 SECRET_SUFFIX="${SECRET_SUFFIX:-_${ENV_UPPER}}"
 JOB="${GCP_TOPIC_ANALYSIS_JOB:-topic-analysis-worker-${DEPLOY_ENV}}"
 SCHEDULER_JOB="${SCHEDULER_JOB_NAME:-topic-analysis-cron-${DEPLOY_ENV}}"
+INGEST_SCHEDULER_JOB="${INGEST_SCHEDULER_JOB_NAME:-numazu-ingest-cron-${DEPLOY_ENV}}"
+INGEST_DAILY_SCHEDULER_JOB="${INGEST_DAILY_SCHEDULER_JOB_NAME:-numazu-ingest-daily-cron-${DEPLOY_ENV}}"
 
 RUNTIME_SA="${RUNTIME_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 INVOKER_SA="${INVOKER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
@@ -86,12 +106,14 @@ log "環境: DEPLOY_ENV=${DEPLOY_ENV} / Secret 接尾辞=${SECRET_SUFFIX} / Job=
 gcloud config set project "$PROJECT_ID" >/dev/null
 
 # ── 1. API 有効化（services enable は冪等） ──
-log "API 有効化 (run / artifactregistry / secretmanager / cloudscheduler)"
+log "API 有効化 (run / artifactregistry / secretmanager / cloudscheduler / logging / monitoring)"
 gcloud services enable \
   run.googleapis.com \
   artifactregistry.googleapis.com \
   secretmanager.googleapis.com \
   cloudscheduler.googleapis.com \
+  logging.googleapis.com \
+  monitoring.googleapis.com \
   --project "$PROJECT_ID"
 
 # ── 2. Artifact Registry リポジトリ ──
@@ -227,50 +249,258 @@ for sa in "$INVOKER_SA" "$SCHEDULER_SA"; do
 done
 log "invoker / scheduler SA に jobs.run/runWithOverrides（custom role）+ runtime SA への actAs を付与"
 
-# ── 8. Cloud Scheduler（定期実行: 全議案の増分分析）──
-# run.jobs.run（Cloud Run Admin API v2）を OAuth で叩き、overrides で --mode=analyze-all を渡す。
-# 設計・運用は docs/20260715_1043_トピック分析スケジューラー化.md を参照。
+# ── 8. Cloud Scheduler（定期実行）──
+# run.jobs.run（Cloud Run Admin API v2）をOAuthで叩き、argsを上書きする。
 RUN_JOB_URI="https://run.googleapis.com/v2/projects/${PROJECT_ID}/locations/${REGION}/jobs/${JOB}:run"
-SCHEDULER_BODY='{"overrides":{"containerOverrides":[{"args":["--mode=analyze-all"]}]}}'
-scheduler_flags=(
-  --location "$REGION"
-  --project "$PROJECT_ID"
-  --schedule "$SCHEDULER_CRON"
-  --time-zone "$SCHEDULER_TIMEZONE"
-  --uri "$RUN_JOB_URI"
-  --http-method POST
-  --message-body "$SCHEDULER_BODY"
-  --oauth-service-account-email "$SCHEDULER_SA"
-  --attempt-deadline 180s
-)
-# describe 1回で存在確認と state 取得を兼ねる（update は state を保持する）。
-scheduler_state="$(gcloud scheduler jobs describe "$SCHEDULER_JOB" \
-  --location "$REGION" --project "$PROJECT_ID" \
-  --format='value(state)' 2>/dev/null || true)"
-if [[ -n "$scheduler_state" ]]; then
-  log "scheduler '$SCHEDULER_JOB' は既存（設定を更新: cron='${SCHEDULER_CRON}' tz=${SCHEDULER_TIMEZONE}）"
-  gcloud scheduler jobs update http "$SCHEDULER_JOB" \
-    "${scheduler_flags[@]}" \
-    --update-headers Content-Type=application/json >/dev/null
-else
-  log "scheduler '$SCHEDULER_JOB' を作成（cron='${SCHEDULER_CRON}' tz=${SCHEDULER_TIMEZONE}）"
-  gcloud scheduler jobs create http "$SCHEDULER_JOB" \
-    "${scheduler_flags[@]}" \
-    --headers Content-Type=application/json >/dev/null
-  scheduler_state="ENABLED"   # 新規作成直後は必ず ENABLED
-fi
-# 望む状態（有効/一時停止）へ冪等に揃える。
-if [[ "$SCHEDULER_PAUSED" == "1" && "$scheduler_state" != "PAUSED" ]]; then
-  log "scheduler '$SCHEDULER_JOB' を一時停止（SCHEDULER_PAUSED=1）"
-  gcloud scheduler jobs pause "$SCHEDULER_JOB" \
-    --location "$REGION" --project "$PROJECT_ID" >/dev/null
-elif [[ "$SCHEDULER_PAUSED" != "1" && "$scheduler_state" == "PAUSED" ]]; then
-  log "scheduler '$SCHEDULER_JOB' を再開"
-  gcloud scheduler jobs resume "$SCHEDULER_JOB" \
-    --location "$REGION" --project "$PROJECT_ID" >/dev/null
+
+ensure_scheduler() {
+  local scheduler_job="$1"
+  local scheduler_cron="$2"
+  local scheduler_timezone="$3"
+  local scheduler_paused="$4"
+  local scheduler_body="$5"
+  local scheduler_state
+  local scheduler_flags=(
+    --location "$REGION"
+    --project "$PROJECT_ID"
+    --schedule "$scheduler_cron"
+    --time-zone "$scheduler_timezone"
+    --uri "$RUN_JOB_URI"
+    --http-method POST
+    --message-body "$scheduler_body"
+    --oauth-service-account-email "$SCHEDULER_SA"
+    --attempt-deadline 180s
+    --max-retry-attempts 1
+    --min-backoff 60s
+    --max-backoff 300s
+  )
+
+  scheduler_state="$(gcloud scheduler jobs describe "$scheduler_job" \
+    --location "$REGION" --project "$PROJECT_ID" \
+    --format='value(state)' 2>/dev/null || true)"
+  if [[ -n "$scheduler_state" ]]; then
+    log "scheduler '$scheduler_job' は既存（設定を更新: cron='${scheduler_cron}' tz=${scheduler_timezone}）"
+    gcloud scheduler jobs update http "$scheduler_job" \
+      "${scheduler_flags[@]}" \
+      --update-headers Content-Type=application/json >/dev/null
+  else
+    log "scheduler '$scheduler_job' を作成（cron='${scheduler_cron}' tz=${scheduler_timezone}）"
+    gcloud scheduler jobs create http "$scheduler_job" \
+      "${scheduler_flags[@]}" \
+      --headers Content-Type=application/json >/dev/null
+    scheduler_state="ENABLED"
+  fi
+
+  if [[ "$scheduler_paused" == "1" && "$scheduler_state" != "PAUSED" ]]; then
+    log "scheduler '$scheduler_job' を一時停止"
+    gcloud scheduler jobs pause "$scheduler_job" \
+      --location "$REGION" --project "$PROJECT_ID" >/dev/null
+  elif [[ "$scheduler_paused" != "1" && "$scheduler_state" == "PAUSED" ]]; then
+    log "scheduler '$scheduler_job' を再開"
+    gcloud scheduler jobs resume "$scheduler_job" \
+      --location "$REGION" --project "$PROJECT_ID" >/dev/null
+  fi
+}
+
+ensure_scheduler \
+  "$SCHEDULER_JOB" \
+  "$SCHEDULER_CRON" \
+  "$SCHEDULER_TIMEZONE" \
+  "$SCHEDULER_PAUSED" \
+  '{"overrides":{"containerOverrides":[{"args":["--mode=analyze-all"]}]}}'
+
+ensure_scheduler \
+  "$INGEST_SCHEDULER_JOB" \
+  "$INGEST_SCHEDULER_CRON" \
+  "$INGEST_SCHEDULER_TIMEZONE" \
+  "$INGEST_SCHEDULER_PAUSED" \
+  '{"overrides":{"containerOverrides":[{"args":["--mode=ingest","--target=frequent"]}]}}'
+
+ensure_scheduler \
+  "$INGEST_DAILY_SCHEDULER_JOB" \
+  "$INGEST_DAILY_SCHEDULER_CRON" \
+  "$INGEST_DAILY_SCHEDULER_TIMEZONE" \
+  "$INGEST_DAILY_SCHEDULER_PAUSED" \
+  '{"overrides":{"containerOverrides":[{"args":["--mode=ingest","--target=daily"]}]}}'
+
+# ── 9. Cloud Monitoring（取り込み失敗・定期実行の成功なし）──
+# 取り込みモードごとの完了/失敗ログをカウンタ化する。Cloud Run Job は分析と共用のため、
+# platform metric ではなくログ本文で取り込み実行だけを識別する。
+if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
+  METRIC_ENV="$(printf '%s' "$DEPLOY_ENV" | tr -c '[:alnum:]_' '_')"
+  INGEST_SCHEDULER_FAILURE_METRIC="numazu_ingest_scheduler_failure_${METRIC_ENV}"
+  INGEST_FREQUENT_SUCCESS_METRIC="numazu_ingest_frequent_success_${METRIC_ENV}"
+  INGEST_DAILY_SUCCESS_METRIC="numazu_ingest_daily_success_${METRIC_ENV}"
+
+  ensure_log_metric() {
+    local metric_name="$1"
+    local description="$2"
+    local log_filter="$3"
+    if gcloud logging metrics describe "$metric_name" \
+      --project "$PROJECT_ID" >/dev/null 2>&1; then
+      log "logs-based metric '$metric_name' を更新"
+      gcloud logging metrics update "$metric_name" \
+        --project "$PROJECT_ID" \
+        --description "$description" \
+        --log-filter "$log_filter" >/dev/null
+    else
+      log "logs-based metric '$metric_name' を作成"
+      gcloud logging metrics create "$metric_name" \
+        --project "$PROJECT_ID" \
+        --description "$description" \
+        --log-filter "$log_filter" >/dev/null
+    fi
+  }
+
+  ensure_log_metric \
+    "$INGEST_SCHEDULER_FAILURE_METRIC" \
+    "Failed Numazu council ingestion scheduler attempts (${DEPLOY_ENV})" \
+    "resource.type=\"cloud_scheduler_job\" AND (resource.labels.job_id=\"${INGEST_SCHEDULER_JOB}\" OR resource.labels.job_id=\"${INGEST_DAILY_SCHEDULER_JOB}\") AND severity>=ERROR"
+  ensure_log_metric \
+    "$INGEST_FREQUENT_SUCCESS_METRIC" \
+    "Successful frequent Numazu council ingestion runs (${DEPLOY_ENV})" \
+    "resource.type=\"cloud_run_job\" AND resource.labels.job_name=\"${JOB}\" AND textPayload:\"取り込み完了 (frequent):\""
+  ensure_log_metric \
+    "$INGEST_DAILY_SUCCESS_METRIC" \
+    "Successful daily Numazu council ingestion runs (${DEPLOY_ENV})" \
+    "resource.type=\"cloud_run_job\" AND resource.labels.job_name=\"${JOB}\" AND textPayload:\"取り込み完了 (daily):\""
+
+  ensure_alert_policy() {
+    local display_name="$1"
+    local condition_name="$2"
+    local condition_filter="$3"
+    local condition_if="$4"
+    local duration="$5"
+    local documentation="$6"
+    local existing
+    local existing_condition_kind=""
+    local existing_condition_name=""
+    local existing_policy_json
+    local policy_json
+    local desired_condition_kind="threshold"
+    if [[ "$condition_if" == "absent" || "$condition_if" == "promql_absent" ]]; then
+      desired_condition_kind="$condition_if"
+    fi
+    existing="$(gcloud monitoring policies list \
+      --project "$PROJECT_ID" \
+      --filter="displayName=\"${display_name}\"" \
+      --format='value(name)' --limit=1)"
+    if [[ -n "$existing" ]]; then
+      existing_policy_json="$(gcloud monitoring policies describe "$existing" \
+        --project "$PROJECT_ID" --format=json)"
+      existing_condition_name="$(jq -r '.conditions[0].name // ""' \
+        <<<"$existing_policy_json")"
+      existing_condition_kind="$(jq -r '
+        .conditions[0]
+        | if has("conditionAbsent") then "absent"
+          elif has("conditionPrometheusQueryLanguage") then "promql_absent"
+          elif has("conditionThreshold") then "threshold"
+          else ""
+          end
+        ' <<<"$existing_policy_json")"
+      if [[ "$existing_condition_kind" != "$desired_condition_kind" ]]; then
+        # condition種別の変更時は既存IDを再利用せず、新しいconditionとして置換する。
+        existing_condition_name=""
+      fi
+    fi
+
+    policy_json="$(jq -cn \
+      --arg display_name "$display_name" \
+      --arg condition_name "$condition_name" \
+      --arg condition_resource_name "$existing_condition_name" \
+      --arg condition_filter "$condition_filter" \
+      --arg condition_if "$condition_if" \
+      --arg duration "$duration" \
+      --arg documentation "$documentation" \
+      --arg notification_channels "$MONITORING_NOTIFICATION_CHANNELS" '
+        {
+          displayName: $display_name,
+          combiner: "OR",
+          enabled: true,
+          documentation: {
+            content: $documentation,
+            mimeType: "text/markdown"
+          },
+          notificationChannels: (
+            $notification_channels
+            | split(",")
+            | map(select(length > 0))
+          ),
+          conditions: [
+            ({ displayName: $condition_name }
+              + if $condition_resource_name == "" then {}
+                else { name: $condition_resource_name }
+                end
+              + if $condition_if == "promql_absent" then {
+                  conditionPrometheusQueryLanguage: {
+                    query: $condition_filter,
+                    duration: "0s",
+                    evaluationInterval: "300s",
+                    ruleGroup: "numazu-ingest",
+                    alertRule: "daily_success_absence"
+                  }
+                } elif $condition_if == "absent" then {
+                  conditionAbsent: {
+                    filter: $condition_filter,
+                    duration: $duration,
+                    trigger: { count: 1 }
+                  }
+                } else {
+                  conditionThreshold: {
+                    filter: $condition_filter,
+                    comparison: "COMPARISON_GT",
+                    thresholdValue: 0,
+                    duration: $duration,
+                    trigger: { count: 1 }
+                  }
+                } end)
+          ]
+        }
+      ')"
+    if [[ -n "$existing" ]]; then
+      log "alert policy '$display_name' を更新"
+      gcloud monitoring policies update "$existing" \
+        --project "$PROJECT_ID" \
+        --policy "$policy_json" >/dev/null
+    else
+      log "alert policy '$display_name' を作成"
+      gcloud monitoring policies create \
+        --project "$PROJECT_ID" \
+        --policy "$policy_json" >/dev/null
+    fi
+  }
+
+  ensure_alert_policy \
+    "Numazu worker execution failed (${DEPLOY_ENV})" \
+    "Cloud Run Job実行が失敗" \
+    "metric.type=\"run.googleapis.com/job/completed_execution_count\" AND resource.type=\"cloud_run_job\" AND resource.labels.job_name=\"${JOB}\" AND metric.labels.result=\"failed\"" \
+    "> 0" \
+    "0s" \
+    "コンテナ起動・環境変数・DB接続を含むCloud Run Jobの失敗を確認してください。"
+  ensure_alert_policy \
+    "Numazu ingest scheduler failed (${DEPLOY_ENV})" \
+    "Cloud Schedulerからの起動が失敗" \
+    "metric.type=\"logging.googleapis.com/user/${INGEST_SCHEDULER_FAILURE_METRIC}\" AND resource.type=\"cloud_scheduler_job\"" \
+    "> 0" \
+    "0s" \
+    "Cloud Schedulerの認証、IAM、Cloud Run Admin APIへの起動要求を確認してください。"
+  ensure_alert_policy \
+    "Numazu frequent ingest has no success for 24h (${DEPLOY_ENV})" \
+    "軽量取り込みの成功が24時間ない" \
+    "metric.type=\"logging.googleapis.com/user/${INGEST_FREQUENT_SUCCESS_METRIC}\" AND resource.type=\"cloud_run_job\"" \
+    "absent" \
+    "84600s" \
+    "会期・提出議案・議決結果の定期取り込みを確認してください。"
+  ensure_alert_policy \
+    "Numazu daily ingest has no success for 25h (${DEPLOY_ENV})" \
+    "会議録取り込みの成功が25時間ない" \
+    "absent_over_time({\"logging.googleapis.com/user/${INGEST_DAILY_SUCCESS_METRIC}\", monitored_resource=\"cloud_run_job\"}[25h])" \
+    "promql_absent" \
+    "0s" \
+    "会議録・AmiVoiceの定期取り込みを確認してください。"
 fi
 
-# ── 9. deployer SA（CI がイメージ push + Job 更新）: AR writer + run.developer + actAs ──
+# ── 10. deployer SA（CI がイメージ push + Job 更新）: AR writer + run.developer + actAs ──
 gcloud artifacts repositories add-iam-policy-binding "$AR_REPO" \
   --location "$REGION" --project "$PROJECT_ID" \
   --member="serviceAccount:${DEPLOYER_SA}" \
@@ -285,7 +515,7 @@ gcloud iam service-accounts add-iam-policy-binding "$RUNTIME_SA" \
   --role="roles/iam.serviceAccountUser" >/dev/null
 log "deployer SA に artifactregistry.writer + run.developer + actAs を付与"
 
-# ── 10. SA キー発行（任意・GENERATE_KEYS=1 のときのみ。鍵はコミットしない＝gitignore 済み） ──
+# ── 11. SA キー発行（任意・GENERATE_KEYS=1 のときのみ。鍵はコミットしない＝gitignore 済み） ──
 if [[ "$GENERATE_KEYS" == "1" ]]; then
   log "SA キーを発行（invoker-key.json / deployer-key.json）"
   gcloud iam service-accounts keys create "${REPO_ROOT}/invoker-key.json" \

@@ -1,0 +1,32 @@
+{
+  "name": "@mirai-gikai/site-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./profiles": {
+      "types": "./src/profiles.ts",
+      "default": "./src/profiles.ts"
+    },
+    "./resolve-site-profile": {
+      "types": "./src/resolve-site-profile.ts",
+      "default": "./src/resolve-site-profile.ts"
+    },
+    "./types": {
+      "types": "./src/types.ts",
+      "default": "./src/types.ts"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4"
+  }
+}

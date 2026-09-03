@@ -1,16 +1,8 @@
-const SITE_WORK_KINDS = new Set([
-  "feat",
-  "fix",
-  "hotfix",
-  "chore",
-  "docs",
-  "refactor",
-  "test",
-]);
+const SITE_ENVIRONMENT_WORK_KINDS = new Set(["fix", "hotfix"]);
 
-function parseSiteWorkBranch(branch) {
+function parseSiteEnvironmentWorkBranch(branch) {
   const match = /^sites\/([^/]+)\/([^/]+)\/(.+)$/.exec(branch);
-  if (!match || !SITE_WORK_KINDS.has(match[2])) {
+  if (!match || !SITE_ENVIRONMENT_WORK_KINDS.has(match[2])) {
     return null;
   }
 
@@ -29,9 +21,26 @@ export function isLifecycleBranch(branch) {
  * PR の head / base が自治体境界を越えていないか検証する。
  * @returns {string | null} 違反理由。問題がなければ null。
  */
-export function getBranchPolicyError(head, base) {
+export function getBranchPolicyError(
+  head,
+  base,
+  headRepository,
+  baseRepository
+) {
   if (!head || !base) {
     return "PR_HEAD and PR_BASE are required";
+  }
+
+  const targetsLifecycleBranch =
+    base === "main" || /^sites\/[^/]+\/(develop|main)$/.test(base);
+  if (targetsLifecycleBranch) {
+    if (!headRepository || !baseRepository) {
+      return "PR_HEAD_REPOSITORY and PR_BASE_REPOSITORY are required for lifecycle PRs";
+    }
+
+    if (headRepository !== baseRepository) {
+      return `Lifecycle PRs must originate from the base repository "${baseRepository}"`;
+    }
   }
 
   if (base === "main") {
@@ -41,8 +50,12 @@ export function getBranchPolicyError(head, base) {
   }
 
   if (base === "develop") {
-    return head.startsWith("sites/")
-      ? "Site branches must not target the Numazu develop branch"
+    if (head.startsWith("sites/")) {
+      return "Site branches must not target the shared develop branch";
+    }
+
+    return head === "main" || head.startsWith("hotfix/")
+      ? "Numazu release branches must target main, not shared develop"
       : null;
   }
 
@@ -52,23 +65,29 @@ export function getBranchPolicyError(head, base) {
   }
 
   const [, site, lifecycle] = siteBase;
-  const workBranch = parseSiteWorkBranch(head);
-  const isRelease = head === `sites/${site}/develop`;
-  if (!workBranch && !isRelease) {
-    return `Head branch must use an allowed work kind inside "sites/${site}/"`;
-  }
-  if (workBranch && workBranch.site !== site) {
+  const workBranch = parseSiteEnvironmentWorkBranch(head);
+  const headSite = /^sites\/([^/]+)\//.exec(head)?.[1];
+  if (headSite && headSite !== site) {
     return `Head branch must stay inside "sites/${site}/"`;
   }
 
-  if (lifecycle === "main") {
-    const isHotfix = workBranch?.kind === "hotfix";
-    if (!isRelease && !isHotfix) {
-      return `Production PRs for "${site}" must come from its develop or hotfix branch`;
+  if (lifecycle === "develop") {
+    if (head === "develop" || workBranch?.kind === "fix") {
+      return null;
     }
+
+    return `Development PRs for "${site}" must come from shared develop or its fix branch`;
   }
 
-  return null;
+  if (head === "develop") {
+    return `Shared develop must promote through "sites/${site}/develop"`;
+  }
+
+  const isRelease = head === `sites/${site}/develop`;
+  const isHotfix = workBranch?.kind === "hotfix";
+  return isRelease || isHotfix
+    ? null
+    : `Production PRs for "${site}" must come from its develop or hotfix branch`;
 }
 
 /**
@@ -94,11 +113,13 @@ export function getExpectedBaseBranch(branch) {
     return stage === "develop" ? `sites/${site}/main` : null;
   }
 
-  const siteWork = parseSiteWorkBranch(branch);
+  const siteWork = parseSiteEnvironmentWorkBranch(branch);
   if (siteWork) {
-    return siteWork.kind === "hotfix"
-      ? `sites/${siteWork.site}/main`
-      : `sites/${siteWork.site}/develop`;
+    if (siteWork.kind === "fix") {
+      return `sites/${siteWork.site}/develop`;
+    }
+
+    return siteWork.kind === "hotfix" ? `sites/${siteWork.site}/main` : null;
   }
 
   if (branch.startsWith("sites/")) {

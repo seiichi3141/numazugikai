@@ -11,7 +11,7 @@ BRANCH=$(git branch --show-current 2>/dev/null || true)
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
 # lifecycle branch 自体への push は検証不要。完全一致の共通判定を使い、
-# sites/<site>/feat/main のような短期 branch を誤って除外しない。
+# sites/<site>/feat/main のような lifecycle branch に似た名前を誤って除外しない。
 if node "$REPO_ROOT/scripts/is-lifecycle-branch.mjs" "$BRANCH"; then
   exit 0
 fi
