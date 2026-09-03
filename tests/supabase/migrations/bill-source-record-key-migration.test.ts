@@ -151,10 +151,22 @@ describe("add_bill_source_record_key migration", () => {
           (11, '00000000-0000-0000-0000-000000000001', '陳情第1号', 'chinjo', 1, null,
             'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
           (12, '00000000-0000-0000-0000-000000000001', '認第1号', 'nin', 1, 'mayor',
-            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm');
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/teirei_25.htm'),
+          (13, '00000000-0000-0000-0000-000000000001', '議第60号', 'gi', 60, 'mayor',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm'),
+          (14, '00000000-0000-0000-0000-000000000001', '報第16号', 'hou', 16, 'mayor',
+            'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm');
       `);
 
       await transaction.unsafe(migrationSql);
+      await transaction`
+        update bills
+        set source_record_key = case test_case
+          when 13 then 'numazu-city:2026-13:executive_bill:mayor:numbered:gi-60'
+          when 14 then 'numazu-city:2026-13:report:mayor:numbered:hou-16'
+        end
+        where test_case in (13, 14)
+      `;
       await transaction.unsafe(functionMigrationSql);
       await transaction.unsafe(identityCollisionMigrationSql);
 
@@ -244,6 +256,25 @@ describe("add_bill_source_record_key migration", () => {
             submitter: "mayor",
           }),
         },
+        { test_case: 13, source_record_key: null },
+        { test_case: 14, source_record_key: null },
+      ]);
+
+      const cleanedCurrentSessionBills = await transaction<
+        {
+          source_record_key: string | null;
+          submitter: string | null;
+          test_case: number;
+        }[]
+      >`
+        select test_case, source_record_key, submitter::text
+        from bills
+        where test_case in (13, 14)
+        order by test_case
+      `;
+      expect(cleanedCurrentSessionBills).toEqual([
+        { test_case: 13, source_record_key: null, submitter: null },
+        { test_case: 14, source_record_key: null, submitter: null },
       ]);
 
       const constraints = await transaction<{ constraint_name: string }[]>`

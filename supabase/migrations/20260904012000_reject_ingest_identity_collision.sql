@@ -1,5 +1,20 @@
 -- 同じ会期・表示番号に別の永続identityが到着した場合、内容だけを上書きせず拒否する。
 -- legacy writerのnull keyと、同一identityの再取り込みは従来どおり許可する。
+-- 開会中ページだけを根拠にmayorと推測した既存recordは未確定へ戻し、
+-- 後日取得する結果PDFの確定提出者で安全に昇格できるようにする。
+-- cleanup後は開会中ページまたは結果PDFの再取り込みで復旧する。
+update bills
+set
+  source_record_key = null,
+  submitter = null
+where source_url = 'https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/oshirase.htm'
+  and bill_number_kind in ('gi', 'hou', 'nin')
+  and submitter = 'mayor'
+  and (
+    source_record_key ~ '^numazu-city:[^:]+:executive_bill:mayor:numbered:(gi|nin)-[0-9]+$'
+    or source_record_key ~ '^numazu-city:[^:]+:report:mayor:numbered:hou-[0-9]+$'
+  );
+
 create or replace function upsert_ingested_bill(
   p_council_session_id uuid,
   p_bill_number text,

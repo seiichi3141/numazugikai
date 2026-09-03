@@ -37,7 +37,7 @@ describe("parseCurrentSessionBillsHtml", () => {
         numberValue: 22,
         title: "専決処分の報告について（損害賠償額の決定）",
         category: "report",
-        submitter: "mayor",
+        submitter: null,
         submittedOn: null,
         documentUrl: null,
       },
@@ -47,7 +47,7 @@ describe("parseCurrentSessionBillsHtml", () => {
         numberValue: 36,
         title: "令和7年度沼津市一般会計歳入歳出決算の認定",
         category: "settlement",
-        submitter: "mayor",
+        submitter: null,
         submittedOn: null,
         documentUrl:
           "https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/gian0809/nin-1.pdf",
@@ -58,7 +58,7 @@ describe("parseCurrentSessionBillsHtml", () => {
         numberValue: 78,
         title: "沼津市保育施設条例の一部改正",
         category: "ordinance",
-        submitter: "mayor",
+        submitter: null,
         submittedOn: null,
         documentUrl:
           "https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/annai/houkoku/gian0809/gi-1.pdf",
@@ -72,6 +72,18 @@ describe("parseCurrentSessionBillsHtml", () => {
         (bill) => bill.billNumber
       ) ?? [];
     expect(numbers).not.toContain("議第90号");
+  });
+
+  it("番号種別から提出者を確定できる議案だけ提出者を補う", () => {
+    const html = HTML.replace(
+      "</ul>",
+      "<li>発議第1号　市政に関する意見書について</li><li>請願第2号　公共交通の充実を求める請願について</li></ul>"
+    );
+
+    expect(parseCurrentSessionBillsHtml(html)?.bills.slice(-2)).toMatchObject([
+      { billNumber: "発議第1号", submitter: "member" },
+      { billNumber: "請願第2号", submitter: "citizen" },
+    ]);
   });
 
   it("会期または提出議案一覧がなければnullを返す", () => {

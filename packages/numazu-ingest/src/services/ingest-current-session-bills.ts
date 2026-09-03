@@ -98,6 +98,8 @@ export async function ingestCurrentSessionBills(
   }
 
   let createdCount = 0;
+  // identity衝突は個別skipせずbatchを失敗させ、hashも保存しない。
+  // 推測で処理済みにせず、次回実行でも人手確認が必要な状態を可視化する。
   for (const bill of parsed.bills) {
     const sourceRecordKey = buildNumazuBillSourceRecordKey({
       sessionSlug,
@@ -105,9 +107,9 @@ export async function ingestCurrentSessionBills(
       numberValue: bill.numberValue,
       submitter: bill.submitter,
     });
-    if (!sourceRecordKey) {
+    if (bill.submitter !== null && sourceRecordKey === null) {
       throw new Error(
-        `議案 ${bill.billNumber} の永続キーを生成できませんでした`
+        `議案 ${bill.billNumber} の確定済み提出者から永続キーを生成できませんでした`
       );
     }
     const saved = await dependencies.upsertCurrentSessionBill({

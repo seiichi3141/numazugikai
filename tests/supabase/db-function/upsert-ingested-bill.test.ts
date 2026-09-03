@@ -154,7 +154,7 @@ describe("upsert_ingested_bill", () => {
     });
   });
 
-  it("keyなしの再取り込みは内容を更新して既存の永続keyを保持する", async () => {
+  it("legacy結果PDFのkeyなし再取り込みは完全な内容を更新して既存keyを保持する", async () => {
     const session = await createTestCouncilSession({
       slug: `identified-key-retention-${Date.now()}`,
     });
