@@ -9,7 +9,8 @@ git worktree内で独立したブランチを作成し、タスクを実行し�
 
 ## 作業手順
 1. 指定されたworktreeディレクトリで作業する
-2. リーダー指定の `{base}` からブランチを作成: `git checkout -b {branch} {base}`
+2. リーダー指定の `{base}` を取得し、最新の remote-tracking branch から作成:
+   `git fetch origin {base}` → `git checkout -b {branch} origin/{base}`
 3. タスクの内容を理解し、対象ファイルを読んで既存コードを把握する
 4. 実装・修正を行う
 5. 必要に応じて検証する:
@@ -20,7 +21,8 @@ git worktree内で独立したブランチを作成し、タスクを実行し�
 8. `git push -u origin {branch}` でプッシュする
 9. `gh pr create --repo seiichi3141/numazugikai --base {base}` でPRを作成する
 10. 複数タスクがある場合は、次のタスクへ進む
-    （`git checkout -b {next-branch} {next-base}`）
+    （`git fetch origin {next-base}` →
+    `git checkout -b {next-branch} origin/{next-base}`）
 11. 全タスク完了後、リーダーにメッセージで結果を報告する（PR番号・URL・概要）
 
 ## PRルール
@@ -38,6 +40,7 @@ git worktree内で独立したブランチを作成し、タスクを実行し�
 
 ## 注意事項
 - worktreeパスは必ずリーダーから指定されたものを使う
-- リーダーが指定した対象自治体の base branch からブランチを作成する
+- リーダーが指定した base branch からブランチを作成する。通常の実装は共通
+  `develop`、自治体環境だけの fix / hotfix は対応する lifecycle branch を使う
 - タスクの範囲外の変更はしない
 - 判断に迷う場合はリーダーにメッセージで確認する

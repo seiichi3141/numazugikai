@@ -34,9 +34,13 @@ PRの数に応じてエージェント数を決める（目安: 4-5が上限）�
 ```bash
 # {team} はチーム名の略称（例: test4, refactor2）
 # {x} はエージェント識別子（a, b, c, d...）
-git worktree add ../numazugikai-{team}-{x} -b {team}-{x}-base {base}
-mkdir -p ../numazugikai-{team}-{x}/.claude
-cp .claude/settings.local.json ../numazugikai-{team}-{x}/.claude/
+git fetch origin {base}
+git worktree add ../numazugikai-{team}-{x} \
+  -b {team}-{x}-base origin/{base}
+if [ -f .claude/settings.local.json ]; then
+  mkdir -p ../numazugikai-{team}-{x}/.claude
+  cp .claude/settings.local.json ../numazugikai-{team}-{x}/.claude/
+fi
 cp ../numazugikai-{team}-{x}/.env.example ../numazugikai-{team}-{x}/.env
 ```
 
@@ -82,7 +86,7 @@ Task(
 - ...
 
 ## 作業手順
-1. `git checkout -b {branch} {base}` でブランチ作成
+1. `git fetch origin {base}` の後、`git checkout -b {branch} origin/{base}` でブランチ作成
 2. 対象ファイルを読んで理解
 3. 実装・修正
 4. push前のローカル検証（CIと同じコマンドを全て実行し、全て通過すること）:
@@ -94,7 +98,8 @@ Task(
 6. コミット（Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>）
 7. `git push -u origin {branch}`
 8. `gh pr create --repo seiichi3141/numazugikai --base {base} --title "{title}" --body "..."`
-9. 次のPRがあれば `git checkout -b {next-branch} {next-base}` で次へ
+9. 次のPRがあれば `git fetch origin {next-base}` の後、
+   `git checkout -b {next-branch} origin/{next-base}` で次へ
 10. 全完了後、リーダーにメッセージで報告（PR番号・URL）
 ```
 
@@ -134,7 +139,7 @@ PRコメント対応:
 SendMessage(type: "shutdown_request", recipient: "agent-{x}")
 
 # worktree削除
-git worktree remove ../mirai-gikai-{team}-{x}
+git worktree remove ../numazugikai-{team}-{x}
 git branch -D {team}-{x}-base
 
 # チーム削除
@@ -156,4 +161,4 @@ TeamDelete
 - エージェント数は4-5が実用的上限（APIレート制限、CI負荷）
 - CIのflaky testに注意 → 失敗時はログ確認してから再実行
 - worktreeパスは `../numazugikai-{name}` 形式
-- `settings.local.json` のコピーは必須（権限設定のため）
+- `settings.local.json` は存在し、ローカル権限設定が必要な場合だけコピーする

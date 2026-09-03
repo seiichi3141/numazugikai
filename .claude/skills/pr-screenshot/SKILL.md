@@ -46,7 +46,8 @@ gh pr list --repo seiichi3141/numazugikai \
   --head "$(git branch --show-current)" --json number --jq '.[0].number'
 BASE_BRANCH=$(gh pr view --repo seiichi3141/numazugikai \
   --json baseRefName --jq .baseRefName)
-git diff --name-only "$BASE_BRANCH"...HEAD
+git fetch origin "$BASE_BRANCH"
+git diff --name-only "origin/$BASE_BRANCH"...HEAD
 ```
 
 変更されたファイルパスから、影響を受けるUI画面を推定する:
