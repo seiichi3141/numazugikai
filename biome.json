@@ -49,8 +49,12 @@
       "web/src/**/*",
       "admin/src/**/*",
       "tests/**/*",
+      "packages/council-ingest-core/**/*",
       "packages/numazu-ingest/**/*",
       "packages/bill-explainer/**/*",
+      "packages/site-config/src/**/*",
+      "packages/site-config/package.json",
+      "packages/site-config/tsconfig.json",
       "!.claude/worktrees",
       "!packages/numazu-ingest/**/__fixtures__"
     ]

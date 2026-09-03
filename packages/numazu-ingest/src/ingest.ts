@@ -10,9 +10,11 @@ import {
   ingestAmivoiceMinutes,
 } from "./services/ingest-amivoice";
 import {
+  assertNoBillFailuresForEraYear,
   ingestBillsForSession,
   ingestBillsForTerm,
 } from "./services/ingest-bills";
+import { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
 import { ingestMembers } from "./services/ingest-members";
 import { ingestMinutes } from "./services/ingest-minutes";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
@@ -26,6 +28,7 @@ export {
   ingestBillsForSession,
   ingestBillsForTerm,
 } from "./services/ingest-bills";
+export { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
 export { ingestMembers } from "./services/ingest-members";
 export { ingestMinutes } from "./services/ingest-minutes";
 export { ingestSessionSchedule } from "./services/ingest-sessions";
@@ -34,10 +37,13 @@ export { CURRENT_TERM } from "./shared/constants-site";
 export type IngestMode =
   | "sessions"
   | "members"
+  | "current-bills"
   | "bills"
   | "minutes"
   | "amivoice"
   | "amivoice-archive"
+  | "frequent"
+  | "daily"
   | "all";
 
 export type IngestOptions = {
@@ -70,6 +76,7 @@ export async function runIngest(options: IngestOptions): Promise<void> {
     console.log(`取り込み完了 (${options.mode}):`, JSON.stringify(stats));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    console.error(`取り込み失敗 (${options.mode}): ${message}`);
     await finishIngestionRun(runId, { status: "failed", error: message });
     throw error;
   }
@@ -88,6 +95,12 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
 
     case "members":
       return ingestMembers({ client: discussVisionClient });
+
+    case "current-bills":
+      return ingestCurrentSessionBills({
+        force: options.force,
+        client: siteClient,
+      });
 
     case "bills":
       return ingestBills(options, siteClient);
@@ -108,16 +121,45 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
       return ingestAmivoiceArchive({ years });
     }
 
+    case "frequent": {
+      const sessions = await ingestSessionSchedule({
+        force: options.force,
+        client: siteClient,
+      });
+      const currentBills = await ingestCurrentSessionBills({
+        force: options.force,
+        client: siteClient,
+      });
+      return { sessions, currentBills };
+    }
+
+    case "daily": {
+      const bills = await ingestBillsForTerm({
+        term: options.term ?? CURRENT_TERM,
+        force: options.force,
+        client: siteClient,
+      });
+      const currentEraYear = new Date().getFullYear() - 2018;
+      assertNoBillFailuresForEraYear(bills, currentEraYear);
+      const minutes = await ingestMinutesForYear(options, discussVisionClient);
+      const amivoice = await ingestAmivoiceMinutes();
+      return { bills, minutes, amivoice };
+    }
+
     case "all": {
       const sessions = await ingestSessionSchedule({
         force: options.force,
         client: siteClient,
       });
       const members = await ingestMembers({ client: discussVisionClient });
+      const currentBills = await ingestCurrentSessionBills({
+        force: options.force,
+        client: siteClient,
+      });
       const bills = await ingestBills(options, siteClient);
       // 会議録は議案が入っている前提で突合するため最後に流す
       const minutes = await ingestMinutesForYear(options, discussVisionClient);
-      return { sessions, members, bills, minutes };
+      return { sessions, members, currentBills, bills, minutes };
     }
   }
 }

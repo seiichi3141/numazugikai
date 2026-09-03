@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@mirai-gikai/council-ingest-core": "workspace:*",
     "@mirai-gikai/supabase": "workspace:*"
   },
   "peerDependencies": {

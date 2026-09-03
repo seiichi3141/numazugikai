@@ -23,6 +23,9 @@ importers:
       lint-staged:
         specifier: ^15.5.2
         version: 15.5.2
+      postgres:
+        specifier: ^3.4.9
+        version: 3.4.9
       simple-git-hooks:
         specifier: ^2.13.1
         version: 2.13.1
@@ -206,8 +209,23 @@ importers:
         specifier: ^4.1.12
         version: 4.4.3
 
+  packages/council-ingest-core:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.3
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.13.3)(@vitest/ui@3.2.4)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.9.0)
+
   packages/numazu-ingest:
     dependencies:
+      '@mirai-gikai/council-ingest-core':
+        specifier: workspace:*
+        version: link:../council-ingest-core
       '@mirai-gikai/supabase':
         specifier: workspace:*
         version: link:../supabase
@@ -275,6 +293,21 @@ importers:
         specifier: ^4.1.12
         version: 4.4.3
 
+  packages/site-config:
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.19.28
+      '@vitest/coverage-v8':
+        specifier: ^3.2.4
+        version: 3.2.4(vitest@3.2.4)
+      typescript:
+        specifier: ^5.6.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@20.19.28)(@vitest/ui@3.2.4)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.9.0)
+
   packages/supabase:
     dependencies:
       '@supabase/ssr':
@@ -327,6 +360,9 @@ importers:
       '@mirai-gikai/shared':
         specifier: workspace:*
         version: link:../packages/shared
+      '@mirai-gikai/site-config':
+        specifier: workspace:*
+        version: link:../packages/site-config
       '@mirai-gikai/supabase':
         specifier: workspace:*
         version: link:../packages/supabase
@@ -4795,6 +4831,10 @@ packages:
   postcss@8.5.16:
     resolution: {integrity: sha512-vuwillviilfKZsg0VGj5R/YwwcHx4SLsIOI/7K6mQkWx+l5cUHTjj5g0AasTBcyXsbfTgrwsUNmVUb5xVwyPwg==}
     engines: {node: ^10 || ^12 || >=14}
+
+  postgres@3.4.9:
+    resolution: {integrity: sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw==}
+    engines: {node: '>=12'}
 
   pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
@@ -10488,6 +10528,8 @@ snapshots:
       nanoid: 3.3.15
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  postgres@3.4.9: {}
 
   pretty-format@27.5.1:
     dependencies:

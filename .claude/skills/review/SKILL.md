@@ -9,8 +9,8 @@ description: コードレビュー・テストガイドラインチェック・�
 
 ## 使い方
 
-引数なしで実行すると、PR の base（未作成なら branch 名から推定した自治体別
-develop、hotfix は main）との差分をレビューする。
+引数なしで実行すると、PR の base（未作成なら共通 `develop`、自治体環境の
+fix / hotfix は対応する lifecycle branch）との差分をレビューする。
 
 ```
 /review
@@ -30,7 +30,8 @@ BASE_BRANCH=$(gh pr view --repo seiichi3141/numazugikai \
 if [ -z "$BASE_BRANCH" ]; then
   BASE_BRANCH=$(node scripts/resolve-branch-base.mjs "$CURRENT_BRANCH")
 fi
-git diff --stat "$BASE_BRANCH"...HEAD
+git fetch origin "$BASE_BRANCH"
+git diff --stat "origin/$BASE_BRANCH"...HEAD
 ```
 
 変更がない場合（かつ未コミット変更もない場合）はユーザーに通知して終了。
@@ -45,7 +46,13 @@ git diff --stat "$BASE_BRANCH"...HEAD
 `codex` CLI が利用可能な場合のみ実行する。ユーザーから追加の指示（引数）があれば PROMPT として渡す。
 
 ```bash
-which codex 2>/dev/null && codex review --base "$BASE_BRANCH"
+if which codex >/dev/null 2>&1; then
+  if [ -n "$(git status --short)" ]; then
+    codex review --uncommitted
+  else
+    codex review --base "origin/$BASE_BRANCH"
+  fi
+fi
 ```
 
 `codex` が見つからない場合はこのチェックをスキップする。

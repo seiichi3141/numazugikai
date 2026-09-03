@@ -61,20 +61,34 @@ codex:
 
 - 新しい worktree を作らず、現在の作業ディレクトリ（このリポジトリの clone）でそのままブランチ作成・コミット・push してください。
 - ブランチは Linear の `gitBranchName` を優先して使ってください。
-  `sites/<site>/hotfix/...` なら `sites/<site>/main`、それ以外の
-  `sites/<site>/...` なら `sites/<site>/develop`、既存の沼津市向け branch なら
-  `develop` を対象 base branch とします。
-  静岡県版のチケットでは `sites/shizuoka-pref/<kind>/<topic>` を必須とし、
-  `gitBranchName` が未設定または別自治体の prefix なら処理を停止してください。
-  沼津市版のチケットで未設定なら `<issue-identifier>-<short-description>` 形式で
-  `develop` から切ってください。
-- clone は全 lifecycle branch の shallow ref を取得する。最初に対象 base を明示的に
-  `git fetch origin <base-branch>` し、その base から作業 branch を checkout する。
+  共通機能と自治体 profile / adapter を含むアプリケーション変更は、
+  対象自治体にかかわらず `develop` を base とします。自治体専用の
+  staging 環境だけの `sites/<site>/fix/...` は `sites/<site>/develop`、
+  production 環境だけの `sites/<site>/hotfix/...` は
+  `sites/<site>/main`、既存の沼津市 production hotfix である `hotfix/...` は
+  `main` を base とする例外です。それ以外の site-scoped branch は使用せず、
+  Linear の branch 名がこの方針と矛盾する場合は実装前に
+  workpad に記録して `develop` 起点の名前に修正します。
+  未設定なら `<issue-identifier>-<short-description>` 形式で `develop` から
+  切ってください。
+- clone は全 lifecycle branch の shallow ref を取得する。通常は `develop`、
+  上記の自治体環境 fix / hotfix だけは対応する lifecycle branch を
+  対象 base とし、最初に明示的に
+  `git fetch origin <base-branch>` し、`origin/<base-branch>` から作業 branch を
+  checkout する。ローカルの古い base branch を起点にしない。
   base が存在しなければ処理を停止してください。
 - checkout 後に、その branch の `.env.example` を `.env` にコピーしてから
   `pnpm install --frozen-lockfile` を実行する。実サービスの `.env` は別自治体へ
   コピーしない。対象自治体専用の値が必要な検証では、site-scoped な secret 設定が
   無い限り停止してください。
+- `develop` から `sites/<site>/develop` への promotion 以外に共通変更を
+  反映しない。site branch から `develop` への reverse merge、site branch 間の
+  merge、日常的な cherry-pick を行わない。切り離された緊急変更で
+  cherry-pick が必要な場合は `-x` を使い、理由と trunk への整合方法を
+  workpad と PR に記録してください。
+- `sites/shizuoka-pref/develop` への promotion で Phase 0 の root 設定と
+  ガードが競合した場合は、trunk の profile / 環境機構へ段階的に置き換える。
+  同等以上の保護とテストがないままガードを削除しない。
 - `.git` 書き込み権限が必要な操作（`git checkout -b`, `git commit`, `git push`, `git fetch`）は問題なく実行できる前提で進めてください。それでも `Operation not permitted` などで書き込みに失敗する場合は blocked-access escape hatch に従ってください。
 
 {% if attempt %}
@@ -267,7 +281,8 @@ workpad 整合時に前回ターン以降に追加された人間コメントを
 
 ### 分類
 
-各アクション可能コメントを以下のいずれかに振り分ける（エージェント自身の `## Codex Workpad`、bot サマリ `みらいいぬ自動調査` / `coderabbitai` などは対象外）:
+各アクション可能コメントを以下のいずれかに振り分ける（エージェント自身の
+`## Codex Workpad`やbotによる自動サマリなどは対象外）:
 
 - **質問 / 状況確認**: 「何してる？」「なぜ X？」「進捗は？」「テストはどこ？」など、回答を求めるコメント。期待される出力は答えであってコード変更ではない。
 - **情報共有 / FYI**: 「明日リリースします」「staging URL が変わった」など、対応不要のコンテキスト共有。
@@ -343,6 +358,12 @@ Linear と GitHub はエージェントの返信を API トークン / `gh auth 
 - 利用者が本当に実装変更を望む場合は、明示的に `Rework` または `Todo` に動かしてもらう。会話モードのコメントから推測して動かない。
 
 ## PR フィードバックスイーププロトコル（必須）
+
+沼津市版（PRのbaseが`develop`または`main`）ではCodeRabbitを使用せず、
+レビューを要求・待機・個別ポーリングしない。`AGENTS.md`のセルフレビュー、
+ローカル検証、GitHub CIは必須ゲートとして維持する。フィードバックスイープでは、
+実際に投稿された人間または明示的に有効化されたその他のレビュアーのコメントだけを
+対象にする。
 
 チケットに PR がアタッチされている場合、`Human PR Review` に移動する前にこのプロトコルを実行する:
 

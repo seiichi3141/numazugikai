@@ -1,17 +1,18 @@
+import { SITE_PROFILE } from "@/lib/site";
+
 /**
  * 外部リンク定数
  */
 
-/** 沼津市議会の公式ページ。議会の仕組み・日程などの一次情報はここに委ねる */
-const NUMAZU_COUNCIL_OFFICIAL =
-  "https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/index.htm";
-
+/** 既存importとの互換性を保つ外部リンクのファサード。 */
 export const EXTERNAL_LINKS = {
-  REPORT: "https://forms.gle/wJXXMt6cv2ZdiCgg6",
-  NUMAZU_COUNCIL: NUMAZU_COUNCIL_OFFICIAL,
+  REPORT: SITE_PROFILE.externalLinks.report,
+  COUNCIL_OFFICIAL: SITE_PROFILE.externalLinks.councilOfficial,
+  /** @deprecated 新規コードでは COUNCIL_OFFICIAL を使用する。 */
+  NUMAZU_COUNCIL: SITE_PROFILE.externalLinks.councilOfficial,
   /** フォーク元「みらい議会」の自主制作ガイドライン */
-  FORK_GUIDELINES_NOTE: "https://note.com/team_mirai_jp/n/nc59ec347e8c7",
-  GITHUB_REPO: "https://github.com/seiichi3141/numazugikai",
+  FORK_GUIDELINES_NOTE: SITE_PROFILE.externalLinks.forkGuidelinesNote,
+  GITHUB_REPO: SITE_PROFILE.externalLinks.githubRepository,
 
   /**
    * フォーク元の本家サービス。
@@ -19,5 +20,5 @@ export const EXTERNAL_LINKS = {
    * 本家の FORK_GUIDELINES が掲載を推奨しており、免責文言と合わせて
    * フッターから参照する。
    */
-  UPSTREAM_SERVICE: "https://gikai.team-mir.ai/",
+  UPSTREAM_SERVICE: SITE_PROFILE.externalLinks.upstreamService,
 } as const;

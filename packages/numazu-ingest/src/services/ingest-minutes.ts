@@ -87,7 +87,9 @@ export async function ingestMinutesForCouncil(params: {
       const sourceUrl = buildCouncilWatchUrl(
         params.council.council_id,
         schedule.schedule_id,
-        item.playlist_id
+        item.playlist_id,
+        item.speaker_id,
+        params.council.year.slice(0, 4)
       );
 
       for (const explanation of extractBillExplanations(text)) {
