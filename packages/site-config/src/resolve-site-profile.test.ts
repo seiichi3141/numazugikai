@@ -36,6 +36,7 @@ describe("resolveSiteProfile", () => {
       description:
         "沼津市議会でいま何が決まっているかを、わかりやすく伝えるプラットフォーム",
     });
+    expect(profile.features).toEqual({ showComingSoonBills: false });
     expect(profile.externalLinks).toEqual({
       forkGuidelinesNote: "https://note.com/team_mirai_jp/n/nc59ec347e8c7",
       githubRepository: "https://github.com/seiichi3141/numazugikai",
@@ -62,6 +63,9 @@ describe("resolveSiteProfile", () => {
 
 describe("assertSiteProfileIsRuntimeReady", () => {
   it("準備中profileを個別に利用しようとしても拒否する", () => {
+    expect(shizuokaPrefProfile.features).toEqual({
+      showComingSoonBills: true,
+    });
     expect(() =>
       assertSiteProfileIsRuntimeReady(shizuokaPrefProfile)
     ).toThrowError("静岡県議会向けの表示・データ取得・運用環境が未完成");

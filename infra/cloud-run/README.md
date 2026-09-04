@@ -17,7 +17,7 @@
 | SA: runtime | Job 実行用。secret 読み取り権限 |
 | SA: invoker | admin が `jobs:run` を呼ぶ用。custom invoker role + runtime への actAs |
 | SA: scheduler | Cloud Scheduler が `jobs:run` を呼ぶ用。custom invoker role + runtime への actAs（**鍵は発行しない**） |
-| SA: deployer | CI（`deploy_worker.yml`）用。AR writer + run.developer + actAs |
+| SA: deployer | CI（`deploy_worker.yml`）用。AR writer + run.developer + actAs + Worker用Supabase secretのversion管理（値の読み取り不可） |
 | Cloud Run Job | `topic-analysis-worker-<DEPLOY_ENV>`（batch 向け設定）。**無ければ作成**、以後の image 更新は CI |
 | Cloud Scheduler | 分析用1件と、軽量・会議録取り込み用2件を**作成 or 設定更新**（冪等） |
 | Cloud Monitoring | 取り込み失敗と、各取り込み系統で所定時間成功がない状態のalert policy |
@@ -39,6 +39,20 @@ Secret Manager は **プロジェクトでグローバル（名前が一意）**
 `develop`→`topic-analysis-worker-staging` を既定 Job 名として更新する。provision 時に別名の Job を
 作った場合は、各 GitHub Environment の Secret `GCP_TOPIC_ANALYSIS_JOB` を**その Job 名に合わせて**設定すること
 （不一致だと `gcloud run jobs update` が `NOT_FOUND` で失敗する）。
+
+`main`のWorkerデプロイでは、Vercel Web production環境の
+`NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SECRET_KEY`を正本として、対応するGCP Secretへ
+新しいversionを追加し、2つのversionをCloud Run Jobへまとめて固定する。途中失敗時は
+Jobを旧ペアへ戻してから新versionを無効化するため、URLとkeyの片方だけが切り替わる
+ことはない。成功時は現行と直前の2世代だけを有効なまま保持する。これによりWebとWorkerの
+接続先がずれることを防ぐ。GitHubの
+production Environmentには`VERCEL_TOKEN` / `VERCEL_ORG_ID` /
+`VERCEL_PROJECT_ID_WEB`も設定する。
+
+Secret名を`SECRET_SUFFIX`等で変更した環境では、GitHub Environment variablesの
+`GCP_SUPABASE_URL_SECRET` / `GCP_SUPABASE_SECRET_KEY_SECRET`に実際の名前を設定する。
+`workflow_dispatch`をmain branchで実行すれば、Vercel側の値だけを変更した場合も
+Workerの再デプロイとSecret再同期を明示的に行える。
 
 **サービスアカウントの分離（任意）**: 既定では runtime / invoker / deployer SA は環境間で**共有**される
 （runtime SA は `*_STAGING` と `*_PRODUCTION` の両 Secret にアクセス可能）。環境ごとに IAM を完全分離したい場合は
@@ -89,13 +103,18 @@ CONFIG_FILE=infra/cloud-run/config.env.production bash infra/cloud-run/provision
 | --- | --- | --- |
 | トピック分析 | 毎日6:00 JST | `--mode=analyze-all` |
 | 会期・提出議案 | 毎日6:30・18:30 JST | `--mode=ingest --target=frequent` |
-| 議決結果・会議録・AmiVoice | 毎日20:30 JST | `--mode=ingest --target=daily` |
+| 議決結果・会議録・AmiVoice・AIタグ付け | 毎日20:30 JST | `--mode=maintain-bills` |
 
 取り込みは負荷に応じて2系統に分ける。`frequent`は会期予定、開会中の提出議案、
 議案本文リンクを6:30と18:30に取得し、`daily`は期の索引にある議案審議結果、会議録、
-AmiVoiceを20:30に取得する。全結果PDFの走査とテキスト化は1日1回に限定する。
+AmiVoiceを20:30に取得し、未分類の議案を既存のテーマ定義に基づいてAIでタグ付けする。
+全結果PDFの走査とテキスト化、AIタグ付けは1日1回に限定する。
 新しい議案は`draft`で作成し、自動公開しない。管理画面で内容を確認して公開状態を変更する。
 取得元の内容ハッシュが同じ場合は解析・DB更新を省略する。
+
+既存議案を同じAI基準で再分類する初回バックフィルは、workerイメージ更新後に
+Cloud Run Jobを`--mode=bill-tags --force`で一度だけ手動実行する。通常実行ではタグが
+未設定の議案だけを対象にするため、日次処理が既存の分類を毎回上書きすることはない。
 
 分析用は`SCHEDULER_*`、軽量取り込み用は`INGEST_SCHEDULER_*`、会議録取り込み用は
 `INGEST_DAILY_SCHEDULER_*`で時刻・タイムゾーン・一時停止を個別に調整する

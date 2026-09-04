@@ -3,6 +3,7 @@ name: Deploy Topic Analysis Worker
 # workerと、workerから直接・間接に読み込むパッケージが変わったときだけ
 # イメージをビルドして Artifact Registry に push し、Cloud Run Job を更新する。
 on:
+  workflow_dispatch:
   push:
     branches: [main, develop]
     paths:
@@ -19,8 +20,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: deploy-topic-analysis-worker-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
+    if: github.ref_name == 'main' || github.ref_name == 'develop'
     runs-on: ubuntu-latest
     # develop→staging / main→production。接続先は環境ごとの Secret で切り替える。
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
@@ -29,6 +35,8 @@ jobs:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GCP_REGION: ${{ secrets.GCP_REGION || 'asia-northeast1' }}
       GCP_AR_REPO: ${{ secrets.GCP_AR_REPO || 'topic-analysis' }}
+      GCP_SUPABASE_URL_SECRET: ${{ vars.GCP_SUPABASE_URL_SECRET || 'SUPABASE_URL_PRODUCTION' }}
+      GCP_SUPABASE_SECRET_KEY_SECRET: ${{ vars.GCP_SUPABASE_SECRET_KEY_SECRET || 'SUPABASE_SECRET_KEY_PRODUCTION' }}
       # 既定は環境別 Job 名（provision.sh の topic-analysis-worker-<DEPLOY_ENV> に合わせる）。
       # provision 時に別名を使った場合は各環境の Secret GCP_TOPIC_ANALYSIS_JOB で上書きすること。
       GCP_TOPIC_ANALYSIS_JOB: ${{ secrets.GCP_TOPIC_ANALYSIS_JOB || (github.ref_name == 'main' && 'topic-analysis-worker-production' || 'topic-analysis-worker-staging') }}
@@ -60,6 +68,161 @@ jobs:
           gcloud config set project "$GCP_PROJECT_ID"
           gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
+      # production WebとWorkerが同じSupabaseを参照するよう、Vercelを正本として同期する。
+      # 値はログへ出さず、deployer SAには対象secretのversion管理権限だけを付与する。
+      - name: Sync production Supabase secrets
+        if: steps.cfg.outputs.configured == 'true' && github.ref_name == 'main'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID_WEB: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+        run: |
+          set -euo pipefail
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID_WEB" ]; then
+            echo "Vercel production configuration is incomplete." >&2
+            exit 1
+          fi
+          if ! [[ "$GCP_SUPABASE_URL_SECRET" =~ ^[A-Za-z0-9_-]+$ ]] ||
+             ! [[ "$GCP_SUPABASE_SECRET_KEY_SECRET" =~ ^[A-Za-z0-9_-]+$ ]]; then
+            echo "GCP Supabase secret names are invalid." >&2
+            exit 1
+          fi
+
+          env_file="${RUNNER_TEMP}/web-production.env"
+          VERCEL_PROJECT_ID="$VERCEL_PROJECT_ID_WEB" \
+          npx --yes vercel@59.10.0 env pull "$env_file" \
+            --environment production \
+            --token "$VERCEL_TOKEN" \
+            --yes
+
+          supabase_url="$(sed -n -E 's/^NEXT_PUBLIC_SUPABASE_URL="?(.*)"?$/\1/p' "$env_file" | sed 's/"$//' | head -1)"
+          supabase_secret_key="$(sed -n -E 's/^SUPABASE_SECRET_KEY="?(.*)"?$/\1/p' "$env_file" | sed 's/"$//' | head -1)"
+
+          case "$supabase_url" in
+            https://*.supabase.co) ;;
+            *) echo "Production Supabase URL is missing or invalid." >&2; exit 1 ;;
+          esac
+          if [ -z "$supabase_secret_key" ]; then
+            echo "Production Supabase secret key is missing." >&2
+            exit 1
+          fi
+          case "$supabase_secret_key" in
+            sb_secret_*) ;;
+            eyJ*)
+              key_role="$(node -e '
+                try {
+                  const payload = JSON.parse(Buffer.from(process.argv[1].split(".")[1], "base64url"));
+                  process.stdout.write(payload.role ?? "");
+                } catch {}
+              ' "$supabase_secret_key")"
+              if [ "$key_role" != "service_role" ]; then
+                echo "Legacy Supabase key is not a service_role key." >&2
+                exit 1
+              fi
+              ;;
+            *) echo "Production Supabase secret key format is invalid." >&2; exit 1 ;;
+          esac
+
+          probe_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            "${supabase_url}/rest/v1/" \
+            --header "apikey: ${supabase_secret_key}")"
+          if [ "$probe_status" != "200" ]; then
+            echo "Production Supabase URL and secret key validation failed." >&2
+            exit 1
+          fi
+
+          job_config="$(gcloud run jobs describe "$GCP_TOPIC_ANALYSIS_JOB" \
+            --region "$GCP_REGION" --project "$GCP_PROJECT_ID" --format=json)"
+          current_url_secret="$(jq -r '.. | objects | select(.name? == "SUPABASE_URL" and .valueFrom?.secretKeyRef?) | .valueFrom.secretKeyRef.name' <<<"$job_config")"
+          current_url_version="$(jq -r '.. | objects | select(.name? == "SUPABASE_URL" and .valueFrom?.secretKeyRef?) | .valueFrom.secretKeyRef.key' <<<"$job_config")"
+          current_key_secret="$(jq -r '.. | objects | select(.name? == "SUPABASE_SECRET_KEY" and .valueFrom?.secretKeyRef?) | .valueFrom.secretKeyRef.name' <<<"$job_config")"
+          current_key_version="$(jq -r '.. | objects | select(.name? == "SUPABASE_SECRET_KEY" and .valueFrom?.secretKeyRef?) | .valueFrom.secretKeyRef.key' <<<"$job_config")"
+          if [ "$current_url_secret" != "$GCP_SUPABASE_URL_SECRET" ] ||
+             [ "$current_key_secret" != "$GCP_SUPABASE_SECRET_KEY_SECRET" ]; then
+            echo "Cloud Run Job and configured GCP secret names do not match." >&2
+            exit 1
+          fi
+          if [ "$current_url_version" = "latest" ]; then
+            current_url_version="$(gcloud secrets versions list "$current_url_secret" \
+              --project "$GCP_PROJECT_ID" --filter='state=ENABLED' --sort-by='~createTime' \
+              --limit=1 --format='value(name)')"
+          fi
+          if [ "$current_key_version" = "latest" ]; then
+            current_key_version="$(gcloud secrets versions list "$current_key_secret" \
+              --project "$GCP_PROJECT_ID" --filter='state=ENABLED' --sort-by='~createTime' \
+              --limit=1 --format='value(name)')"
+          fi
+          current_url_version="${current_url_version##*/}"
+          current_key_version="${current_key_version##*/}"
+          if [ -z "$current_url_version" ] || [ -z "$current_key_version" ]; then
+            echo "Current GCP Supabase secret versions are unavailable." >&2
+            exit 1
+          fi
+
+          # :latest参照を現在のversionへ固定してから新versionを作り、片方だけが
+          # Workerから見える時間を作らない。最後のJob更新で新しいペアへ切り替える。
+          gcloud run jobs update "$GCP_TOPIC_ANALYSIS_JOB" \
+            --region "$GCP_REGION" --project "$GCP_PROJECT_ID" \
+            --update-secrets "SUPABASE_URL=${GCP_SUPABASE_URL_SECRET}:${current_url_version},SUPABASE_SECRET_KEY=${GCP_SUPABASE_SECRET_KEY_SECRET}:${current_key_version}" \
+            >/dev/null
+
+          new_url_version=""
+          new_key_version=""
+          rollback_new_versions() {
+            trap - ERR INT TERM
+            if ! gcloud run jobs update "$GCP_TOPIC_ANALYSIS_JOB" \
+              --region "$GCP_REGION" --project "$GCP_PROJECT_ID" \
+              --update-secrets "SUPABASE_URL=${current_url_secret}:${current_url_version},SUPABASE_SECRET_KEY=${current_key_secret}:${current_key_version}" \
+              >/dev/null; then
+              echo "Failed to restore the previous secret pair; keeping new versions enabled." >&2
+              exit 1
+            fi
+            if [ -n "$new_url_version" ]; then
+              gcloud secrets versions disable "$new_url_version" \
+                --secret "$GCP_SUPABASE_URL_SECRET" --project "$GCP_PROJECT_ID" --quiet || true
+            fi
+            if [ -n "$new_key_version" ]; then
+              gcloud secrets versions disable "$new_key_version" \
+                --secret "$GCP_SUPABASE_SECRET_KEY_SECRET" --project "$GCP_PROJECT_ID" --quiet || true
+            fi
+            exit 1
+          }
+          trap rollback_new_versions ERR INT TERM
+
+          new_url_version_resource="$(printf '%s' "$supabase_url" | gcloud secrets versions add \
+            "$GCP_SUPABASE_URL_SECRET" --data-file=- --project "$GCP_PROJECT_ID" \
+            --format='value(name)')"
+          new_url_version="${new_url_version_resource##*/}"
+          new_key_version_resource="$(printf '%s' "$supabase_secret_key" | gcloud secrets versions add \
+            "$GCP_SUPABASE_SECRET_KEY_SECRET" --data-file=- --project "$GCP_PROJECT_ID" \
+            --format='value(name)')"
+          new_key_version="${new_key_version_resource##*/}"
+
+          gcloud run jobs update "$GCP_TOPIC_ANALYSIS_JOB" \
+            --region "$GCP_REGION" --project "$GCP_PROJECT_ID" \
+            --update-secrets "SUPABASE_URL=${GCP_SUPABASE_URL_SECRET}:${new_url_version},SUPABASE_SECRET_KEY=${GCP_SUPABASE_SECRET_KEY_SECRET}:${new_key_version}" \
+            >/dev/null
+          trap - ERR INT TERM
+
+          # 現行と直前の1世代だけをrollback用に保持し、それより古いversionは無効化する。
+          for version in $(gcloud secrets versions list "$GCP_SUPABASE_URL_SECRET" \
+            --project "$GCP_PROJECT_ID" --filter='state=ENABLED' --format='value(name)'); do
+            version="${version##*/}"
+            if [ "$version" != "$new_url_version" ] && [ "$version" != "$current_url_version" ]; then
+              gcloud secrets versions disable "$version" --secret "$GCP_SUPABASE_URL_SECRET" \
+                --project "$GCP_PROJECT_ID" --quiet || true
+            fi
+          done
+          for version in $(gcloud secrets versions list "$GCP_SUPABASE_SECRET_KEY_SECRET" \
+            --project "$GCP_PROJECT_ID" --filter='state=ENABLED' --format='value(name)'); do
+            version="${version##*/}"
+            if [ "$version" != "$new_key_version" ] && [ "$version" != "$current_key_version" ]; then
+              gcloud secrets versions disable "$version" --secret "$GCP_SUPABASE_SECRET_KEY_SECRET" \
+                --project "$GCP_PROJECT_ID" --quiet || true
+            fi
+          done
+          echo "Production Supabase secrets synchronized."
+
       - name: Build and push image
         if: steps.cfg.outputs.configured == 'true'
         run: |
@@ -80,4 +243,4 @@ jobs:
 
       - name: Cleanup credentials
         if: always()
-        run: rm -f "${RUNNER_TEMP}/gcp-key.json"
+        run: rm -f "${RUNNER_TEMP}/gcp-key.json" "${RUNNER_TEMP}/web-production.env"

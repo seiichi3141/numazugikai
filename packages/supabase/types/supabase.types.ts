@@ -3996,6 +3996,14 @@ export type Database = {
         Args: { p_reviewed_by: string; p_staging_id: string }
         Returns: undefined
       }
+      replace_bill_tags: {
+        Args: {
+          p_bill_id: string
+          p_managed_tag_ids: string[]
+          p_next_tag_ids: string[]
+        }
+        Returns: undefined
+      }
       save_general_question_staging: {
         Args: {
           p_council_session_id?: string

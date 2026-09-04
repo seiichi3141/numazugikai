@@ -14,6 +14,9 @@ export const numazuCityProfile = {
     name: "沼津市",
     councilName: "沼津市議会",
   },
+  features: {
+    showComingSoonBills: false,
+  },
   externalLinks: {
     ...SHARED_EXTERNAL_LINKS,
     report: "https://forms.gle/wJXXMt6cv2ZdiCgg6",

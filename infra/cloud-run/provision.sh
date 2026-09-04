@@ -321,7 +321,7 @@ ensure_scheduler \
   "$INGEST_DAILY_SCHEDULER_CRON" \
   "$INGEST_DAILY_SCHEDULER_TIMEZONE" \
   "$INGEST_DAILY_SCHEDULER_PAUSED" \
-  '{"overrides":{"containerOverrides":[{"args":["--mode=ingest","--target=daily"]}]}}'
+  '{"overrides":{"containerOverrides":[{"args":["--mode=maintain-bills"]}]}}'
 
 # ── 9. Cloud Monitoring（取り込み失敗・定期実行の成功なし）──
 # 取り込みモードごとの完了/失敗ログをカウンタ化する。Cloud Run Job は分析と共用のため、
@@ -451,7 +451,11 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
                     comparison: "COMPARISON_GT",
                     thresholdValue: 0,
                     duration: $duration,
-                    trigger: { count: 1 }
+                    trigger: { count: 1 },
+                    aggregations: [{
+                      alignmentPeriod: "300s",
+                      perSeriesAligner: "ALIGN_SUM"
+                    }]
                   }
                 } end)
           ]
@@ -500,7 +504,7 @@ if [[ "$MONITORING_ALERTS_ENABLED" == "1" ]]; then
     "会議録・AmiVoiceの定期取り込みを確認してください。"
 fi
 
-# ── 10. deployer SA（CI がイメージ push + Job 更新）: AR writer + run.developer + actAs ──
+# ── 10. deployer SA（CI がイメージ push + Job 更新 + production secret 同期）──
 gcloud artifacts repositories add-iam-policy-binding "$AR_REPO" \
   --location "$REGION" --project "$PROJECT_ID" \
   --member="serviceAccount:${DEPLOYER_SA}" \
@@ -513,7 +517,13 @@ gcloud iam service-accounts add-iam-policy-binding "$RUNTIME_SA" \
   --project "$PROJECT_ID" \
   --member="serviceAccount:${DEPLOYER_SA}" \
   --role="roles/iam.serviceAccountUser" >/dev/null
-log "deployer SA に artifactregistry.writer + run.developer + actAs を付与"
+for s in "SUPABASE_URL${SECRET_SUFFIX}" "SUPABASE_SECRET_KEY${SECRET_SUFFIX}"; do
+  gcloud secrets add-iam-policy-binding "$s" \
+    --member="serviceAccount:${DEPLOYER_SA}" \
+    --role="roles/secretmanager.secretVersionManager" \
+    --project "$PROJECT_ID" >/dev/null
+done
+log "deployer SA に image・Job更新、actAs、Supabase secret version管理権限（値の読み取り不可）を付与"
 
 # ── 11. SA キー発行（任意・GENERATE_KEYS=1 のときのみ。鍵はコミットしない＝gitignore 済み） ──
 if [[ "$GENERATE_KEYS" == "1" ]]; then
