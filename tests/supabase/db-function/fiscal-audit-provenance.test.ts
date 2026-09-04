@@ -39,7 +39,7 @@ const fiscalEvidenceFixtureSql = `
     edition_source_occurrence_id, ingestion_source_id,
     source_version_id, observation_revision, evidence_revision,
     extraction_method, source_locator, title, fiscal_year,
-    publisher, qa_status, publication_state, verified_by, verified_at
+    publisher
   ) values (
     '10000000-0000-0000-0000-000000000006',
     '10000000-0000-0000-0000-000000000004',
@@ -48,8 +48,7 @@ const fiscalEvidenceFixtureSql = `
     '10000000-0000-0000-0000-000000000001',
     '10000000-0000-0000-0000-000000000002',
     1, 1, 'manual', 'page=1', '財政根拠fixture', 2088,
-    '沼津市', 'verified', 'reviewed',
-    '10000000-0000-0000-0000-000000000099', now()
+    '沼津市'
   );
 `;
 

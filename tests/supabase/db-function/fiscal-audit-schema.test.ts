@@ -105,7 +105,7 @@ describe("財政coverage・分類監査schema", () => {
     expect(result).toContain("ROLLBACK");
   });
 
-  it("coverageとmappingの公開をguard完成まで拒否する", () => {
+  it("coverageとmappingの公開行をdraftから開始させる", () => {
     const result = executeInTestDatabase(`
       begin;
       do $$
@@ -137,7 +137,7 @@ describe("財政coverage・分類監査schema", () => {
           raise exception 'coverage publication unexpectedly succeeded';
         exception
           when others then
-            if sqlerrm not like '%publication is disabled%' then raise; end if;
+            if sqlerrm not like '%must start as draft%' then raise; end if;
         end;
 
         insert into public.fiscal_classification_mappings (
@@ -155,7 +155,7 @@ describe("財政coverage・分類監査schema", () => {
           raise exception 'mapping publication unexpectedly succeeded';
         exception
           when others then
-            if sqlerrm not like '%publication is disabled%' then raise; end if;
+            if sqlerrm not like '%must start as draft%' then raise; end if;
         end;
       end;
       $$;
@@ -262,7 +262,7 @@ describe("財政coverage・分類監査schema", () => {
           raise exception 'audit delete unexpectedly succeeded';
         exception
           when others then
-            if sqlerrm not like '%audit snapshot is append-only%' then raise; end if;
+            if sqlerrm not like '%publication history is append-only%' then raise; end if;
         end;
         begin
           truncate public.fiscal_classification_mapping_sources;

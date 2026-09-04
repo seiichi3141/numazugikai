@@ -101,12 +101,12 @@ revisionとして追記する。
 財政テーブルはすべてRLSを有効にし、ポリシーを定義しない。公開・管理アクセスは
 既存方針どおりサーバー側の`createAdminClient()`を経由する。
 
-parser根拠を公開する後続PRでは、共通registryのconsumer type
-`fiscal_data`を使用し、保持中の非公開原本にだけactive referenceを作る。
-根拠完全性とregistry同期のguardが入るまでは、財政の各revisionを`published`へ
-遷移させる操作をDB triggerでfail closedにする。
-複数出典の必須ロールと別出典性を検証するguardが入るまでは、`cross_source`検算の
-作成もfail closedにする。
+parser根拠の公開では、共通registryのconsumer type `fiscal_data`を使用し、保持中の
+非公開原本にだけactive referenceを作る。公開版とactive referenceの双方向差分を
+遅延constraint triggerで拒否する。財政の各revisionはdraftから開始し、内容と子根拠を
+凍結したままreviewed、published、supersededの順方向へだけ遷移できる。
+`cross_source`検算をpassedまたはreviewedへ進める場合は、baselineとcomparedを含む
+verifiedな別ingestion sourceの根拠を2件以上必須とする。
 
 ## 取込staging
 
@@ -130,8 +130,7 @@ staging件数、hard error・warning件数を保存する。parserの出力は
 
 ## 後続PR
 
-1. publication guard、制御された状態遷移、source registry同期を完成させる。
-2. 令和6年度決算・主要施策報告と令和8年度予算概要の金額parserを追加する。
-3. 検算・人手QAを経て初期基準値を投入する。
-4. 公開repository/APIと表中心の`/finance`を追加する。
-5. 議案詳細との双方向リンク、グラフ、アクセシビリティE2Eを追加する。
+1. 令和6年度決算・主要施策報告と令和8年度予算概要の金額parserを追加する。
+2. 検算・人手QAを経て初期基準値を投入する。
+3. 公開repository/APIと表中心の`/finance`を追加する。
+4. 議案詳細との双方向リンク、グラフ、アクセシビリティE2Eを追加する。

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { executeInTestDatabase } from "./ingestion-audit-test-database";
 
 describe("prevent_fiscal_audit_snapshot_mutation()", () => {
-  it("17の監査テーブルに更新削除・truncate triggerを設定する", () => {
+  it("17の監査テーブルでtruncateを引き続き拒否する", () => {
     const result = executeInTestDatabase(`
       select count(*)
       from pg_trigger
@@ -11,7 +11,7 @@ describe("prevent_fiscal_audit_snapshot_mutation()", () => {
         and not tgisinternal;
     `);
 
-    expect(result).toBe("34");
+    expect(result).toBe("17");
   });
 
   it("revisionのUPDATEとDELETEを拒否する", () => {
@@ -35,7 +35,7 @@ describe("prevent_fiscal_audit_snapshot_mutation()", () => {
           raise exception 'audit snapshot update unexpectedly succeeded';
         exception
           when others then
-            if sqlerrm not like '%audit snapshot is append-only%' then raise; end if;
+            if sqlerrm not like '%publication content is immutable%' then raise; end if;
         end;
 
         begin
@@ -44,7 +44,7 @@ describe("prevent_fiscal_audit_snapshot_mutation()", () => {
           raise exception 'audit snapshot delete unexpectedly succeeded';
         exception
           when others then
-            if sqlerrm not like '%audit snapshot is append-only%' then raise; end if;
+            if sqlerrm not like '%publication history is append-only%' then raise; end if;
         end;
       end;
       $$;

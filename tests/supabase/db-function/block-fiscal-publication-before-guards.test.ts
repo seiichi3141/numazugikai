@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { executeInTestDatabase } from "./ingestion-audit-test-database";
 
 describe("block_fiscal_publication_before_guards()", () => {
-  it("公開状態を持つ7テーブルにfail-closed triggerを設定する", () => {
+  it("旧fail-closed triggerを制御済みpublication triggerへ置き換える", () => {
     const result = executeInTestDatabase(`
       select count(*)
       from pg_trigger
@@ -17,10 +17,10 @@ describe("block_fiscal_publication_before_guards()", () => {
       ) and not tgisinternal;
     `);
 
-    expect(result).toBe("7");
+    expect(result).toBe("0");
   });
 
-  it("draftは許可し、publishedのINSERTを拒否する", () => {
+  it("公開行の直接INSERTを拒否する", () => {
     const result = executeInTestDatabase(`
       begin;
       do $$
@@ -48,7 +48,7 @@ describe("block_fiscal_publication_before_guards()", () => {
           raise exception 'unguarded publication insert unexpectedly succeeded';
         exception
           when others then
-            if sqlerrm not like '%publication is disabled%' then raise; end if;
+            if sqlerrm not like '%must start as draft%' then raise; end if;
         end;
       end;
       $$;
