@@ -6521,6 +6521,16 @@ export type Database = {
       }
     }
     Views: {
+      fiscal_expected_source_version_references: {
+        Row: {
+          consumer_id: string | null
+          consumer_type: string | null
+          evidence_id: string | null
+          evidence_table: string | null
+          source_version_id: string | null
+        }
+        Relationships: []
+      }
       fiscal_import_batch_qa_counts: {
         Row: {
           batch_id: string | null
