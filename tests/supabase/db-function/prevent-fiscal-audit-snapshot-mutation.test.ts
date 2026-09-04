@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { executeInTestDatabase } from "./ingestion-audit-test-database";
 
 describe("prevent_fiscal_audit_snapshot_mutation()", () => {
-  it("10の監査テーブルに更新削除・truncate triggerを設定する", () => {
+  it("17の監査テーブルに更新削除・truncate triggerを設定する", () => {
     const result = executeInTestDatabase(`
       select count(*)
       from pg_trigger
@@ -11,7 +11,7 @@ describe("prevent_fiscal_audit_snapshot_mutation()", () => {
         and not tgisinternal;
     `);
 
-    expect(result).toBe("20");
+    expect(result).toBe("34");
   });
 
   it("revisionのUPDATEとDELETEを拒否する", () => {

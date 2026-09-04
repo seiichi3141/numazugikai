@@ -85,6 +85,20 @@ const tables = [
   "fiscal_event_bill_link_revisions",
   "fiscal_validation_results",
   "fiscal_validation_result_evidence",
+  "fiscal_data_coverage",
+  "fiscal_data_coverage_source_occurrences",
+  "fiscal_data_coverage_observations",
+  "fiscal_data_coverage_observation_sources",
+  "fiscal_classification_source_occurrences",
+  "fiscal_classification_sources",
+  "fiscal_classification_mappings",
+  "fiscal_classification_mapping_revisions",
+  "fiscal_classification_mapping_members",
+  "fiscal_classification_mapping_source_occurrences",
+  "fiscal_classification_mapping_sources",
+  "fiscal_event_bill_link_source_occurrences",
+  "fiscal_event_bill_link_sources",
+  "fiscal_source_kind_event_rules",
 ] as const;
 
 describe("RLS default deny（全テーブル共通）", () => {

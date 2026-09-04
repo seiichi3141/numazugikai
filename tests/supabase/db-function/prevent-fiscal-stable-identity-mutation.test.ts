@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { executeInTestDatabase } from "./ingestion-audit-test-database";
 
 describe("prevent_fiscal_stable_identity_mutation()", () => {
-  it("14の安定IDテーブルに更新削除・truncate triggerを設定する", () => {
+  it("21の安定IDテーブルに更新削除・truncate triggerを設定する", () => {
     const result = executeInTestDatabase(`
       select count(*)
       from pg_trigger
@@ -11,7 +11,7 @@ describe("prevent_fiscal_stable_identity_mutation()", () => {
         and not tgisinternal;
     `);
 
-    expect(result).toBe("28");
+    expect(result).toBe("42");
   });
 
   it("安定IDのUPDATEとDELETEを拒否する", () => {

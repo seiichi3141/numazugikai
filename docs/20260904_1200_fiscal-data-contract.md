@@ -82,6 +82,19 @@ revision、observation、evidenceも追記専用として凍結し、後続の�
 再割当しない。parser再解析は新しいparse run、人手による再解釈は増分したevidence
 revisionとして追記する。
 
+## Coverageと年度間分類
+
+`fiscal_data_coverage`は金額の欠損とは別に、資料、membership、金額セット、分類、
+年度間mapping、指標、議案リンクが収集対象として存在するかを保持する。
+未公表、取得不能、部分取得、解析失敗、確認済み0件を別の観測として追記し、
+未確認を0件へ丸めない。nullableな会計と基準日も生成identity keyを介した複合外部キーで
+正本・資料内出現・観測・根拠の全階層へ固定する。
+
+分類の原コード・原名称・担当部局は版別根拠へ保存する。年度間の改称、分割、統合、
+比較上の同等関係は分類IDへ暗黙に寄せず、`fiscal_classification_mappings`と
+そのrevision・member・根拠へ記録する。議案リンクにも資料内出現と版別根拠を持たせ、
+候補生成後の手動確定を取得版まで追跡できるようにする。
+
 ## 公開とアクセス
 
 財政テーブルはすべてRLSを有効にし、ポリシーを定義しない。公開・管理アクセスは
@@ -96,7 +109,7 @@ parser根拠を公開する後続PRでは、共通registryのconsumer type
 
 ## 後続PR
 
-1. 分類mapping、coverage、publication guard、source registry同期を完成させる。
+1. publication guard、制御された状態遷移、source registry同期を完成させる。
 2. 令和6年度決算・主要施策報告と令和8年度予算概要のstaging/parserを追加する。
 3. 検算・人手QAを経て初期基準値を投入する。
 4. 公開repository/APIと表中心の`/finance`を追加する。

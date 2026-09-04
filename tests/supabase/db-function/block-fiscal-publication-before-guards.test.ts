@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { executeInTestDatabase } from "./ingestion-audit-test-database";
 
 describe("block_fiscal_publication_before_guards()", () => {
-  it("公開状態を持つ5テーブルにfail-closed triggerを設定する", () => {
+  it("公開状態を持つ7テーブルにfail-closed triggerを設定する", () => {
     const result = executeInTestDatabase(`
       select count(*)
       from pg_trigger
@@ -11,11 +11,13 @@ describe("block_fiscal_publication_before_guards()", () => {
         'fiscal_membership_publication_fail_closed',
         'fiscal_classification_publication_fail_closed',
         'fiscal_amount_set_publication_fail_closed',
-        'fiscal_bill_link_publication_fail_closed'
+        'fiscal_bill_link_publication_fail_closed',
+        'fiscal_coverage_publication_fail_closed',
+        'fiscal_mapping_publication_fail_closed'
       ) and not tgisinternal;
     `);
 
-    expect(result).toBe("5");
+    expect(result).toBe("7");
   });
 
   it("draftは許可し、publishedのINSERTを拒否する", () => {

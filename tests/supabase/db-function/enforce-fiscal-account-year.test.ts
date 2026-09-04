@@ -92,4 +92,42 @@ describe("enforce_fiscal_account_year()", () => {
 
     expect(result).toContain("ROLLBACK");
   });
+
+  it("coverageでも会計の有効期間外年度を拒否する", () => {
+    const result = executeInTestDatabase(`
+      begin;
+      do $$
+      declare account_id uuid; scope_id uuid;
+      begin
+        insert into public.fiscal_accounts (
+          code, name, account_type, valid_from_fiscal_year,
+          valid_to_fiscal_year
+        ) values (
+          'coverage-year-account', 'Coverage年度テスト会計',
+          'special', 2026, 2026
+        ) returning id into account_id;
+        select id into scope_id from public.fiscal_reporting_scopes
+          where code = 'all_accounts';
+
+        begin
+          insert into public.fiscal_data_coverage (
+            fiscal_year, reporting_scope_id, account_id,
+            source_kind, data_kind
+          ) values (
+            2027, scope_id, account_id,
+            'settlement_report', 'amount_set'
+          );
+          raise exception 'out-of-period coverage unexpectedly succeeded';
+        exception
+          when others then
+            if sqlerrm not like '%not valid for fiscal year%' then raise; end if;
+        end;
+      end;
+      $$;
+      select 'ok';
+      rollback;
+    `);
+
+    expect(result).toContain("ROLLBACK");
+  });
 });
