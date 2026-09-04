@@ -3019,6 +3019,82 @@ export type Database = {
           },
         ]
       }
+      fiscal_import_batches: {
+        Row: {
+          created_at: string
+          discovered_count: number
+          finished_at: string | null
+          fiscal_year: number | null
+          hard_error_count: number
+          id: string
+          parse_run_id: string
+          profile_key: string
+          profile_version: string
+          source_kind: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+          source_version_id: string
+          staged_count: number
+          status: Database["public"]["Enums"]["fiscal_import_status_enum"]
+          validation_summary: Json
+          warning_count: number
+        }
+        Insert: {
+          created_at?: string
+          discovered_count?: number
+          finished_at?: string | null
+          fiscal_year?: number | null
+          hard_error_count?: number
+          id?: string
+          parse_run_id: string
+          profile_key: string
+          profile_version: string
+          source_kind: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+          source_version_id: string
+          staged_count?: number
+          status?: Database["public"]["Enums"]["fiscal_import_status_enum"]
+          validation_summary?: Json
+          warning_count?: number
+        }
+        Update: {
+          created_at?: string
+          discovered_count?: number
+          finished_at?: string | null
+          fiscal_year?: number | null
+          hard_error_count?: number
+          id?: string
+          parse_run_id?: string
+          profile_key?: string
+          profile_version?: string
+          source_kind?: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+          source_version_id?: string
+          staged_count?: number
+          status?: Database["public"]["Enums"]["fiscal_import_status_enum"]
+          validation_summary?: Json
+          warning_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_import_batches_parse_run_id_fkey"
+            columns: ["parse_run_id"]
+            isOneToOne: true
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_import_batches_parse_run_id_source_version_id_fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "fiscal_import_batches_source_version_id_fkey"
+            columns: ["source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fiscal_reporting_scope_membership_observations: {
         Row: {
           account_id: string | null
@@ -3566,6 +3642,72 @@ export type Database = {
           source_kind?: Database["public"]["Enums"]["fiscal_source_kind_enum"]
         }
         Relationships: []
+      }
+      fiscal_staging_records: {
+        Row: {
+          batch_id: string
+          change_kind: Database["public"]["Enums"]["fiscal_staging_change_kind_enum"]
+          content_fingerprint: string
+          created_at: string
+          id: string
+          matched_target_id: string | null
+          parsed_payload: Json
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          record_kind: Database["public"]["Enums"]["fiscal_staging_record_kind_enum"]
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_record_key: string
+          validation_results: Json
+        }
+        Insert: {
+          batch_id: string
+          change_kind: Database["public"]["Enums"]["fiscal_staging_change_kind_enum"]
+          content_fingerprint: string
+          created_at?: string
+          id?: string
+          matched_target_id?: string | null
+          parsed_payload: Json
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          record_kind: Database["public"]["Enums"]["fiscal_staging_record_kind_enum"]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_record_key: string
+          validation_results?: Json
+        }
+        Update: {
+          batch_id?: string
+          change_kind?: Database["public"]["Enums"]["fiscal_staging_change_kind_enum"]
+          content_fingerprint?: string
+          created_at?: string
+          id?: string
+          matched_target_id?: string | null
+          parsed_payload?: Json
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          record_kind?: Database["public"]["Enums"]["fiscal_staging_record_kind_enum"]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_record_key?: string
+          validation_results?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_staging_records_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_import_batch_qa_counts"
+            referencedColumns: ["batch_id"]
+          },
+          {
+            foreignKeyName: "fiscal_staging_records_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_import_batches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fiscal_validation_result_evidence: {
         Row: {
@@ -6379,7 +6521,14 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      fiscal_import_batch_qa_counts: {
+        Row: {
+          batch_id: string | null
+          pending_count: number | null
+          validation_messages: Json | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       apply_verified_general_question_staging: {
@@ -6728,6 +6877,22 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_fiscal_staging: {
+        Args: {
+          p_discovered_count: number
+          p_finished_at?: string
+          p_fiscal_year: number
+          p_parse_run_id: string
+          p_parse_status?: Database["public"]["Enums"]["ingestion_parse_status_enum"]
+          p_profile_key: string
+          p_profile_version: string
+          p_rows: Json
+          p_source_kind: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+          p_source_version_id: string
+          p_validation_summary?: Json
+        }
+        Returns: string
+      }
       save_general_question_staging: {
         Args: {
           p_council_session_id?: string
@@ -6929,6 +7094,12 @@ export type Database = {
         | "primary"
         | "corroborating"
         | "calculation_input"
+      fiscal_import_status_enum:
+        | "running"
+        | "awaiting_review"
+        | "approved"
+        | "applied"
+        | "failed"
       fiscal_measure_enum:
         | "revenue_budget"
         | "expenditure_budget"
@@ -6962,6 +7133,20 @@ export type Database = {
         | "ten_thousand_yen"
         | "million_yen"
         | "hundred_million_yen"
+      fiscal_staging_change_kind_enum:
+        | "new"
+        | "changed"
+        | "unchanged"
+        | "missing"
+        | "ambiguous"
+      fiscal_staging_record_kind_enum:
+        | "document_metadata"
+        | "scope_membership"
+        | "coverage"
+        | "classification"
+        | "classification_mapping"
+        | "amount"
+        | "bill_link"
       fiscal_validation_comparison_role_enum:
         | "baseline"
         | "compared"
@@ -7319,6 +7504,13 @@ export const Constants = {
         "corroborating",
         "calculation_input",
       ],
+      fiscal_import_status_enum: [
+        "running",
+        "awaiting_review",
+        "approved",
+        "applied",
+        "failed",
+      ],
       fiscal_measure_enum: [
         "revenue_budget",
         "expenditure_budget",
@@ -7355,6 +7547,22 @@ export const Constants = {
         "ten_thousand_yen",
         "million_yen",
         "hundred_million_yen",
+      ],
+      fiscal_staging_change_kind_enum: [
+        "new",
+        "changed",
+        "unchanged",
+        "missing",
+        "ambiguous",
+      ],
+      fiscal_staging_record_kind_enum: [
+        "document_metadata",
+        "scope_membership",
+        "coverage",
+        "classification",
+        "classification_mapping",
+        "amount",
+        "bill_link",
       ],
       fiscal_validation_comparison_role_enum: [
         "baseline",

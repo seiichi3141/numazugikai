@@ -14,9 +14,10 @@ import {
   ingestBillsForSession,
   ingestBillsForTerm,
 } from "./services/ingest-bills";
+import { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
+import { ingestFiscalSources } from "./services/ingest-fiscal-sources";
 import { ingestGeneralQuestionMinutes } from "./services/ingest-general-question-minutes";
 import { ingestGeneralQuestionsForTerm } from "./services/ingest-general-questions";
-import { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
 import { ingestMembers } from "./services/ingest-members";
 import { ingestMinutes } from "./services/ingest-minutes";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
@@ -30,9 +31,10 @@ export {
   ingestBillsForSession,
   ingestBillsForTerm,
 } from "./services/ingest-bills";
+export { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
+export { ingestFiscalSources } from "./services/ingest-fiscal-sources";
 export { ingestGeneralQuestionMinutes } from "./services/ingest-general-question-minutes";
 export { ingestGeneralQuestionsForTerm } from "./services/ingest-general-questions";
-export { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
 export { ingestMembers } from "./services/ingest-members";
 export { ingestMinutes } from "./services/ingest-minutes";
 export { ingestSessionSchedule } from "./services/ingest-sessions";
@@ -48,6 +50,7 @@ export type IngestMode =
   | "amivoice-archive"
   | "general-questions"
   | "general-question-records"
+  | "fiscal"
   | "frequent"
   | "daily"
   | "all";
@@ -162,6 +165,12 @@ async function dispatch(
         years,
       });
     }
+
+    case "fiscal":
+      return ingestFiscalSources({
+        ingestionRunId: runId,
+        client: siteClient,
+      });
 
     case "frequent": {
       const sessions = await ingestSessionSchedule({

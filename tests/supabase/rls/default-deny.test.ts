@@ -99,6 +99,8 @@ const tables = [
   "fiscal_event_bill_link_source_occurrences",
   "fiscal_event_bill_link_sources",
   "fiscal_source_kind_event_rules",
+  "fiscal_import_batches",
+  "fiscal_staging_records",
 ] as const;
 
 describe("RLS default deny（全テーブル共通）", () => {

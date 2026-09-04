@@ -6,8 +6,9 @@
 
 ## この文書の範囲
 
-予算・決算可視化の最初の実装単位として、DBで保持する安定ID、訂正版、出典、
-金額の意味を定義する。初期データの取込、公開API、画面は後続PRで追加する。
+予算・決算可視化の基盤として、DBで保持する安定ID、訂正版、出典、金額の意味と、
+公開前の解析候補を確認するstaging契約を定義する。構造化した金額の公開反映、公開API、
+公開画面は後続PRで追加する。
 
 共通の取得版・解析履歴は
 `20260903231500_add_common_ingestion_audit_foundation.sql`を利用し、財政側で
@@ -107,10 +108,30 @@ parser根拠を公開する後続PRでは、共通registryのconsumer type
 複数出典の必須ロールと別出典性を検証するguardが入るまでは、`cross_source`検算の
 作成もfail closedにする。
 
+## 取込staging
+
+`fiscal_import_batches`は一つの取得版・parse run・source profileを固定し、発見件数、
+staging件数、hard error・warning件数を保存する。parserの出力は
+`fiscal_staging_records`へ資料内の安定キー、fingerprint、変更種別、構造化候補、
+検算結果とともに置く。公開用の財政正本はstagingを直接読まない。
+
+初期source profileは、令和6年度の決算概要・主要施策報告と、令和8年度の一般会計・
+議会費予算概要の公式PDFを対象とする。PDF原本は公開配布せず、共通の非公開
+`source-artifacts` bucketへSHA-256別に保存する。同じ取得版・parser版・profile設定は
+再解析せず、hashまたはparser設定が変わった場合は新しいparse runとして追記する。
+
+管理画面の「財政データQA」は取得版、原本保持状態、parser/profile版、候補数、
+検算警告を表示する。QA情報以外のstaging出力は上書きできず、確認済み行も再編集しない。
+訂正は新しい取得版またはparse runの候補として追加する。
+改訂版の差分は同じsource profileで最後に`applied`となったstagingを基準にし、
+`matched_target_id`には直前に適用したstaging record IDを保持する。確定先との接続は
+後続の適用ワークフローで別途追跡する。同じ資料内キーが複数候補へ解釈された場合は、全候補値を
+`parsed_payload.candidates`へ残し、hard errorとして公開反映を止める。
+
 ## 後続PR
 
 1. publication guard、制御された状態遷移、source registry同期を完成させる。
-2. 令和6年度決算・主要施策報告と令和8年度予算概要のstaging/parserを追加する。
+2. 令和6年度決算・主要施策報告と令和8年度予算概要の金額parserを追加する。
 3. 検算・人手QAを経て初期基準値を投入する。
 4. 公開repository/APIと表中心の`/finance`を追加する。
 5. 議案詳細との双方向リンク、グラフ、アクセシビリティE2Eを追加する。
