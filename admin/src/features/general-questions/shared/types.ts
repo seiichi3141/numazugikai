@@ -34,6 +34,7 @@ export type GeneralQuestionClassificationRow = {
   itemRevisionId: string;
   summary: string;
   speakerName: string;
+  classifiedTopicIds: string[];
   classifiedTopicLabels: string[];
 };
 

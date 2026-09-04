@@ -84,6 +84,8 @@ describe("GeneralQuestionsPage", () => {
     );
     expect(screen.getAllByText("一般質問資料（PDF）")).toHaveLength(2);
     expect(screen.getAllByText("2026/9/4 09:00")).toHaveLength(2);
+    expect(screen.getByText("2026年6月1日〜2026年6月30日")).toBeInTheDocument();
+    expect(screen.getByText(/2026年6月15日/)).toBeInTheDocument();
     expect(
       screen.getByRole("table", { name: /政策分野ごとの質問項目数/ })
     ).toBeInTheDocument();

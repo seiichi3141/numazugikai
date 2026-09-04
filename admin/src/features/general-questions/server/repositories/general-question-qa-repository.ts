@@ -356,7 +356,7 @@ export async function findGeneralQuestionClassifications(params: {
       ? supabase
           .from("general_question_item_classification_sets")
           .select(
-            "question_item_revision_id, general_question_item_topics(policy_topics(label))"
+            "question_item_revision_id, general_question_item_topics(policy_topics(id, label))"
           )
           .eq("qa_status", "verified")
           .in("publication_state", ["reviewed", "published"])
@@ -377,8 +377,15 @@ export async function findGeneralQuestionClassifications(params: {
     ])
   );
   const labelsByRevision = new Map<string, string[]>();
+  const topicIdsByRevision = new Map<string, string[]>();
   for (const set of setsResult.data ?? []) {
     if (labelsByRevision.has(set.question_item_revision_id)) continue;
+    topicIdsByRevision.set(
+      set.question_item_revision_id,
+      set.general_question_item_topics.flatMap((row) =>
+        row.policy_topics ? [row.policy_topics.id] : []
+      )
+    );
     labelsByRevision.set(
       set.question_item_revision_id,
       set.general_question_item_topics.flatMap((row) =>
@@ -391,6 +398,7 @@ export async function findGeneralQuestionClassifications(params: {
       itemRevisionId: item.id,
       summary: item.public_summary,
       speakerName: speakerByAppearance.get(item.appearance_id) ?? "登壇者不明",
+      classifiedTopicIds: topicIdsByRevision.get(item.id) ?? [],
       classifiedTopicLabels: labelsByRevision.get(item.id) ?? [],
     })),
     topics: topicsResult.data ?? [],

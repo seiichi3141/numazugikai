@@ -1,7 +1,11 @@
 import "server-only";
 
 import { generalQuestionLabel } from "@mirai-gikai/shared/general-questions/labels";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { GENERAL_QUESTION_SUMMARY_MAX_LENGTH } from "../../shared/utils/general-question-summary";
 import {
   classifyGeneralQuestion,
@@ -62,14 +66,14 @@ export async function GeneralQuestionQaPage({
           公式資料の解析結果を原資料と照合してから承認します。未確認データは公開されません。
         </p>
       </div>
-      <p aria-live="polite" className="rounded-lg border bg-card p-4">
+      <p aria-live="polite" className="rounded-xl border bg-card p-4 shadow-sm">
         未確認の登壇枠: {qaResult.pendingCount}件（全{qaResult.totalCount}件中、
         {safeQaPage} / {qaPageCount}ページ）
       </p>
       {failedImports.length > 0 ? (
         <section
           aria-labelledby="failed-imports-heading"
-          className="space-y-3 rounded-lg border border-destructive bg-card p-4"
+          className="space-y-3 rounded-xl border border-destructive bg-card p-4 shadow-sm"
         >
           <h2
             id="failed-imports-heading"
@@ -104,13 +108,16 @@ export async function GeneralQuestionQaPage({
         </section>
       ) : null}
       {qaResult.totalCount === 0 ? (
-        <div className="rounded-lg border bg-card p-6">
+        <div className="rounded-xl border bg-card p-6 shadow-sm">
           取込み待ちです。一般質問の公式資料を解析すると、ここに確認対象が表示されます。
         </div>
       ) : (
         <div className="space-y-4">
           {qaResult.items.map((row) => (
-            <article key={row.id} className="rounded-lg border bg-card p-5">
+            <article
+              key={row.id}
+              className="rounded-xl border bg-card p-5 shadow-sm"
+            >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
@@ -123,13 +130,13 @@ export async function GeneralQuestionQaPage({
                     {row.speakerName}
                   </h2>
                 </div>
-                <span className="rounded-full border px-3 py-1 text-sm">
+                <Badge variant="outline">
                   {row.qaStatus === "pending"
                     ? "未確認"
                     : row.qaStatus === "verified"
                       ? "確認済み"
                       : "却下"}
-                </span>
+                </Badge>
               </div>
               <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                 <div>
@@ -223,7 +230,10 @@ export async function GeneralQuestionQaPage({
                           </p>
                         ) : row.qaStatus === "pending" &&
                           item.generatedSummary ? (
-                          <label className="mt-2 block text-sm font-medium">
+                          <label
+                            htmlFor={`summary-${row.id}-${item.sourceKey}`}
+                            className="mt-2 block text-sm font-medium"
+                          >
                             公開用要約（人手確認・編集）
                             <input
                               type="hidden"
@@ -231,7 +241,8 @@ export async function GeneralQuestionQaPage({
                               value={item.sourceKey}
                               form={`review-${row.id}`}
                             />
-                            <textarea
+                            <Textarea
+                              id={`summary-${row.id}-${item.sourceKey}`}
                               name="summaryValue"
                               form={`review-${row.id}`}
                               required
@@ -239,7 +250,7 @@ export async function GeneralQuestionQaPage({
                               defaultValue={
                                 item.reviewedSummary ?? item.generatedSummary
                               }
-                              className="mt-1 min-h-16 w-full rounded-md border p-2 font-normal"
+                              className="mt-1 min-h-16 font-normal"
                             />
                           </label>
                         ) : item.reviewedSummary ? (
@@ -270,19 +281,23 @@ export async function GeneralQuestionQaPage({
                   >
                     確認メモ
                   </label>
-                  <textarea
+                  <Textarea
                     id={`note-${row.id}`}
                     name="reviewNote"
-                    className="min-h-20 w-full rounded-md border p-2"
+                    className="min-h-20"
                   />
                   {row.heldOn === null ? (
-                    <label className="block text-sm font-medium">
+                    <label
+                      htmlFor={`held-on-${row.id}`}
+                      className="block text-sm font-medium"
+                    >
                       開催日（公式資料で確認）
-                      <input
+                      <Input
+                        id={`held-on-${row.id}`}
                         type="date"
                         name="reviewedHeldOn"
                         required
-                        className="mt-1 block rounded-md border p-2"
+                        className="mt-1 w-auto"
                       />
                     </label>
                   ) : null}
@@ -300,7 +315,7 @@ export async function GeneralQuestionQaPage({
                           row.sourceKind === "general_question_record" &&
                           !row.summaryGenerationModel
                         }
-                        className="mt-1 block w-full rounded-md border p-2"
+                        className="mt-1 block h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       >
                         <option value="">新しい登壇枠として登録</option>
                         {row.matchCandidates.map((candidate) => (
@@ -378,13 +393,17 @@ export async function GeneralQuestionQaPage({
             action={publishGeneralQuestionRelease}
             className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-[minmax(0,12rem)_auto]"
           >
-            <label className="min-w-0 text-sm font-medium">
+            <label
+              htmlFor="general-question-release-key"
+              className="min-w-0 text-sm font-medium"
+            >
               <span className="sr-only">releaseキー</span>
-              <input
+              <Input
+                id="general-question-release-key"
                 name="releaseKey"
                 required
                 placeholder="2026-09-v1"
-                className="w-full min-w-0 rounded-md border p-2"
+                className="w-full min-w-0"
               />
             </label>
             <Button
@@ -404,7 +423,7 @@ export async function GeneralQuestionQaPage({
         {classifications.items.map((item) => (
           <article
             key={item.itemRevisionId}
-            className="rounded-lg border bg-card p-5"
+            className="rounded-xl border bg-card p-5 shadow-sm"
           >
             <p className="text-sm text-muted-foreground">{item.speakerName}</p>
             <h3 className="mt-1 font-semibold">{item.summary}</h3>
@@ -425,8 +444,20 @@ export async function GeneralQuestionQaPage({
                 </legend>
                 <div className="mt-2 grid gap-2 sm:grid-cols-2">
                   {classifications.topics.map((topic) => (
-                    <label key={topic.id} className="flex gap-2 text-sm">
-                      <input type="checkbox" name="topicId" value={topic.id} />
+                    <label
+                      key={topic.id}
+                      htmlFor={`topic-${item.itemRevisionId}-${topic.id}`}
+                      className="flex items-start gap-2 text-sm"
+                    >
+                      <Checkbox
+                        id={`topic-${item.itemRevisionId}-${topic.id}`}
+                        name="topicId"
+                        value={topic.id}
+                        defaultChecked={item.classifiedTopicIds.includes(
+                          topic.id
+                        )}
+                        className="mt-0.5"
+                      />
                       <span>
                         <span className="font-medium">{topic.label}</span>
                         <span className="block text-xs text-muted-foreground">

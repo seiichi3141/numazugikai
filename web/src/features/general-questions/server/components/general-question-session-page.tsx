@@ -4,9 +4,10 @@ import { generalQuestionLabel } from "@mirai-gikai/shared/general-questions/labe
 import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { routes } from "@/lib/routes";
-import { formatDateTime } from "@/lib/utils/date";
+import { formatDate, formatDateTime } from "@/lib/utils/date";
 import { getGeneralQuestionSessionBySlug } from "../loaders/get-general-question-sessions";
 
 export async function GeneralQuestionSessionPage({ slug }: { slug: string }) {
@@ -20,24 +21,31 @@ export async function GeneralQuestionSessionPage({ slug }: { slug: string }) {
             {session.name}の一般質問
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            集計単位: 1人の1登壇枠。対象期間: {session.startDate}〜
-            {session.endDate}
+            集計単位: 1人の1登壇枠。対象期間:{" "}
+            <span className="whitespace-nowrap">
+              {formatDate(session.startDate)}〜{formatDate(session.endDate)}
+            </span>
           </p>
         </header>
         <p aria-live="polite" className="font-medium">
           {session.appearances.length}件の登壇枠
         </p>
         {session.appearances.length === 0 ? (
-          <div className="rounded-xl border bg-card p-6">
+          <div className="rounded-xl border bg-card p-6 shadow">
             公開済みの一般質問データはありません。これは「実施なし」ではなく、未取得または未公開の可能性があります。
           </div>
         ) : (
           <ol className="space-y-5">
             {session.appearances.map((appearance) => (
-              <li key={appearance.id} className="rounded-xl border bg-card p-5">
+              <li
+                key={appearance.id}
+                className="rounded-xl border bg-card p-5 shadow"
+              >
                 <p className="text-sm font-medium text-primary-accent">
-                  {appearance.heldOn ?? "開催日未確認"}・
-                  {appearance.meetingStatus === "scheduled" ? "予定" : "実績"}
+                  {appearance.heldOn
+                    ? formatDate(appearance.heldOn)
+                    : "開催日未確認"}
+                  ・{appearance.meetingStatus === "scheduled" ? "予定" : "実績"}
                 </p>
                 <h2 className="mt-1 text-xl font-bold">
                   {appearance.questionOrder
@@ -84,11 +92,13 @@ export async function GeneralQuestionSessionPage({ slug }: { slug: string }) {
                   {appearance.answerers.length ? (
                     <ul className="mt-2 flex flex-wrap gap-2">
                       {appearance.answerers.map((answerer) => (
-                        <li
-                          key={answerer.id}
-                          className="rounded-full border px-3 py-1 text-sm"
-                        >
-                          {answerer.roleName}
+                        <li key={answerer.id} className="min-w-0 max-w-full">
+                          <Badge
+                            variant="outline"
+                            className="max-w-full whitespace-normal"
+                          >
+                            {answerer.roleName}
+                          </Badge>
                         </li>
                       ))}
                     </ul>
@@ -107,7 +117,7 @@ export async function GeneralQuestionSessionPage({ slug }: { slug: string }) {
                       href={appearance.sourceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 font-medium text-primary-accent underline"
+                      className="inline-flex min-h-6 items-center gap-1 py-0.5 font-medium text-primary-accent underline"
                     >
                       公式資料を確認する
                       <ExternalLink className="size-4" aria-hidden="true" />
