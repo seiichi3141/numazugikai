@@ -469,7 +469,7 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
             ))}
           </ul>
           <div className="hidden overflow-x-auto rounded-xl border bg-card shadow sm:block">
-            <table className="w-full min-w-2xl border-collapse text-left text-sm">
+            <table className="w-full border-collapse text-left text-sm">
               <caption className="p-4 text-left text-muted-foreground">
                 会期ごとの一般質問資料の確認状態
               </caption>
