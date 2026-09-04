@@ -17,7 +17,7 @@
 | SA: runtime | Job 実行用。secret 読み取り権限 |
 | SA: invoker | admin が `jobs:run` を呼ぶ用。custom invoker role + runtime への actAs |
 | SA: scheduler | Cloud Scheduler が `jobs:run` を呼ぶ用。custom invoker role + runtime への actAs（**鍵は発行しない**） |
-| SA: deployer | CI（`deploy_worker.yml`）用。AR writer + run.developer + actAs |
+| SA: deployer | CI（`deploy_worker.yml`）用。AR writer + run.developer + actAs + Worker用Supabase secretのversion管理（値の読み取り不可） |
 | Cloud Run Job | `topic-analysis-worker-<DEPLOY_ENV>`（batch 向け設定）。**無ければ作成**、以後の image 更新は CI |
 | Cloud Scheduler | 分析用1件と、軽量・会議録取り込み用2件を**作成 or 設定更新**（冪等） |
 | Cloud Monitoring | 取り込み失敗と、各取り込み系統で所定時間成功がない状態のalert policy |
@@ -39,6 +39,20 @@ Secret Manager は **プロジェクトでグローバル（名前が一意）**
 `develop`→`topic-analysis-worker-staging` を既定 Job 名として更新する。provision 時に別名の Job を
 作った場合は、各 GitHub Environment の Secret `GCP_TOPIC_ANALYSIS_JOB` を**その Job 名に合わせて**設定すること
 （不一致だと `gcloud run jobs update` が `NOT_FOUND` で失敗する）。
+
+`main`のWorkerデプロイでは、Vercel Web production環境の
+`NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SECRET_KEY`を正本として、対応するGCP Secretへ
+新しいversionを追加し、2つのversionをCloud Run Jobへまとめて固定する。途中失敗時は
+Jobを旧ペアへ戻してから新versionを無効化するため、URLとkeyの片方だけが切り替わる
+ことはない。成功時は現行と直前の2世代だけを有効なまま保持する。これによりWebとWorkerの
+接続先がずれることを防ぐ。GitHubの
+production Environmentには`VERCEL_TOKEN` / `VERCEL_ORG_ID` /
+`VERCEL_PROJECT_ID_WEB`も設定する。
+
+Secret名を`SECRET_SUFFIX`等で変更した環境では、GitHub Environment variablesの
+`GCP_SUPABASE_URL_SECRET` / `GCP_SUPABASE_SECRET_KEY_SECRET`に実際の名前を設定する。
+`workflow_dispatch`をmain branchで実行すれば、Vercel側の値だけを変更した場合も
+Workerの再デプロイとSecret再同期を明示的に行える。
 
 **サービスアカウントの分離（任意）**: 既定では runtime / invoker / deployer SA は環境間で**共有**される
 （runtime SA は `*_STAGING` と `*_PRODUCTION` の両 Secret にアクセス可能）。環境ごとに IAM を完全分離したい場合は
