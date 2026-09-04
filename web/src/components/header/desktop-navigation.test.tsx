@@ -17,6 +17,7 @@ describe("DesktopNavigation", () => {
       ["トップ", "/"],
       ["議案を検索する", "/bills"],
       ["定例会の一覧", "/gikai"],
+      ["一般質問を見る", "/questions"],
     ]);
   });
 

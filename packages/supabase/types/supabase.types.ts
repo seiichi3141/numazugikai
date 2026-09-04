@@ -467,6 +467,289 @@ export type Database = {
         }
         Relationships: []
       }
+      council_meeting_revisions: {
+        Row: {
+          closed_at: string | null
+          committee_id: string | null
+          council_session_id: string | null
+          created_at: string
+          day_number: number | null
+          display_title: string
+          held_on: string | null
+          id: string
+          kind: Database["public"]["Enums"]["council_meeting_kind_enum"]
+          meeting_id: string
+          opened_at: string | null
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_number: number
+          scheduled_on: string | null
+          scheduled_starts_at: string | null
+          source_support_status: Database["public"]["Enums"]["source_support_status_enum"]
+          status: Database["public"]["Enums"]["council_meeting_status_enum"]
+          venue: string | null
+        }
+        Insert: {
+          closed_at?: string | null
+          committee_id?: string | null
+          council_session_id?: string | null
+          created_at?: string
+          day_number?: number | null
+          display_title: string
+          held_on?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["council_meeting_kind_enum"]
+          meeting_id: string
+          opened_at?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number: number
+          scheduled_on?: string | null
+          scheduled_starts_at?: string | null
+          source_support_status?: Database["public"]["Enums"]["source_support_status_enum"]
+          status: Database["public"]["Enums"]["council_meeting_status_enum"]
+          venue?: string | null
+        }
+        Update: {
+          closed_at?: string | null
+          committee_id?: string | null
+          council_session_id?: string | null
+          created_at?: string
+          day_number?: number | null
+          display_title?: string
+          held_on?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["council_meeting_kind_enum"]
+          meeting_id?: string
+          opened_at?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number?: number
+          scheduled_on?: string | null
+          scheduled_starts_at?: string | null
+          source_support_status?: Database["public"]["Enums"]["source_support_status_enum"]
+          status?: Database["public"]["Enums"]["council_meeting_status_enum"]
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "council_meeting_revisions_committee_id_fkey"
+            columns: ["committee_id"]
+            isOneToOne: false
+            referencedRelation: "committees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "council_meeting_revisions_council_session_id_fkey"
+            columns: ["council_session_id"]
+            isOneToOne: false
+            referencedRelation: "council_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "council_meeting_revisions_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "council_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      council_meeting_source_evidence: {
+        Row: {
+          availability: Database["public"]["Enums"]["source_availability_enum"]
+          created_at: string
+          evidence_revision: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id: string
+          ingestion_source_id: string
+          locator: string | null
+          meeting_id: string
+          meeting_source_occurrence_id: string
+          observed_closed_at: string | null
+          observed_day_number: number | null
+          observed_held_on: string | null
+          observed_opened_at: string | null
+          observed_scheduled_on: string | null
+          observed_starts_at: string | null
+          observed_status:
+            | Database["public"]["Enums"]["council_meeting_status_enum"]
+            | null
+          observed_title: string | null
+          observed_venue: string | null
+          parse_run_id: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          revision_id: string
+          role: Database["public"]["Enums"]["council_meeting_evidence_role_enum"]
+          source_evidence_key: string
+          source_version_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          availability?: Database["public"]["Enums"]["source_availability_enum"]
+          created_at?: string
+          evidence_revision?: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id: string
+          locator?: string | null
+          meeting_id: string
+          meeting_source_occurrence_id: string
+          observed_closed_at?: string | null
+          observed_day_number?: number | null
+          observed_held_on?: string | null
+          observed_opened_at?: string | null
+          observed_scheduled_on?: string | null
+          observed_starts_at?: string | null
+          observed_status?:
+            | Database["public"]["Enums"]["council_meeting_status_enum"]
+            | null
+          observed_title?: string | null
+          observed_venue?: string | null
+          parse_run_id?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          revision_id: string
+          role: Database["public"]["Enums"]["council_meeting_evidence_role_enum"]
+          source_evidence_key: string
+          source_version_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          availability?: Database["public"]["Enums"]["source_availability_enum"]
+          created_at?: string
+          evidence_revision?: number
+          extraction_method?: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id?: string
+          locator?: string | null
+          meeting_id?: string
+          meeting_source_occurrence_id?: string
+          observed_closed_at?: string | null
+          observed_day_number?: number | null
+          observed_held_on?: string | null
+          observed_opened_at?: string | null
+          observed_scheduled_on?: string | null
+          observed_starts_at?: string | null
+          observed_status?:
+            | Database["public"]["Enums"]["council_meeting_status_enum"]
+            | null
+          observed_title?: string | null
+          observed_venue?: string | null
+          parse_run_id?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          revision_id?: string
+          role?: Database["public"]["Enums"]["council_meeting_evidence_role_enum"]
+          source_evidence_key?: string
+          source_version_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "council_meeting_evidence_occurrence_fk"
+            columns: [
+              "meeting_source_occurrence_id",
+              "meeting_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "council_meeting_source_occurrences"
+            referencedColumns: ["id", "meeting_id", "ingestion_source_id"]
+          },
+          {
+            foreignKeyName: "council_meeting_evidence_parse_run_fk"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "council_meeting_evidence_revision_fk"
+            columns: ["revision_id", "meeting_id"]
+            isOneToOne: false
+            referencedRelation: "council_meeting_revisions"
+            referencedColumns: ["id", "meeting_id"]
+          },
+          {
+            foreignKeyName: "council_meeting_evidence_source_version_fk"
+            columns: ["source_version_id", "ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id", "ingestion_source_id"]
+          },
+        ]
+      }
+      council_meeting_source_occurrences: {
+        Row: {
+          created_at: string
+          external_id: string | null
+          id: string
+          ingestion_source_id: string
+          meeting_id: string
+          source_occurrence_key: string
+          source_system: string
+        }
+        Insert: {
+          created_at?: string
+          external_id?: string | null
+          id?: string
+          ingestion_source_id: string
+          meeting_id: string
+          source_occurrence_key: string
+          source_system: string
+        }
+        Update: {
+          created_at?: string
+          external_id?: string | null
+          id?: string
+          ingestion_source_id?: string
+          meeting_id?: string
+          source_occurrence_key?: string
+          source_system?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "council_meeting_source_occurrences_ingestion_source_id_fkey"
+            columns: ["ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "council_meeting_source_occurrences_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "council_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      council_meetings: {
+        Row: {
+          canonical_meeting_key: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          canonical_meeting_key: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          canonical_meeting_key?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       council_members: {
         Row: {
           created_at: string
@@ -685,6 +968,1437 @@ export type Database = {
         }
         Relationships: []
       }
+      general_question_answerer_revisions: {
+        Row: {
+          answerer_id: string
+          appearance_id: string
+          council_member_id: string | null
+          created_at: string
+          department_key: string | null
+          display_order: number | null
+          id: string
+          person_display_name: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_number: number
+          role_display_name: string
+          role_group: Database["public"]["Enums"]["general_question_role_group_enum"]
+        }
+        Insert: {
+          answerer_id: string
+          appearance_id: string
+          council_member_id?: string | null
+          created_at?: string
+          department_key?: string | null
+          display_order?: number | null
+          id?: string
+          person_display_name: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number: number
+          role_display_name: string
+          role_group?: Database["public"]["Enums"]["general_question_role_group_enum"]
+        }
+        Update: {
+          answerer_id?: string
+          appearance_id?: string
+          council_member_id?: string | null
+          created_at?: string
+          department_key?: string | null
+          display_order?: number | null
+          id?: string
+          person_display_name?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number?: number
+          role_display_name?: string
+          role_group?: Database["public"]["Enums"]["general_question_role_group_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_answerer_revisi_answerer_id_appearance_id_fkey"
+            columns: ["answerer_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_answerers"
+            referencedColumns: ["id", "appearance_id"]
+          },
+          {
+            foreignKeyName: "general_question_answerer_revisions_council_member_id_fkey"
+            columns: ["council_member_id"]
+            isOneToOne: false
+            referencedRelation: "council_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_answerer_source_occurrences: {
+        Row: {
+          answerer_id: string
+          appearance_id: string
+          appearance_source_occurrence_id: string
+          created_at: string
+          id: string
+          source_answerer_key: string
+        }
+        Insert: {
+          answerer_id: string
+          appearance_id: string
+          appearance_source_occurrence_id: string
+          created_at?: string
+          id?: string
+          source_answerer_key: string
+        }
+        Update: {
+          answerer_id?: string
+          appearance_id?: string
+          appearance_source_occurrence_id?: string
+          created_at?: string
+          id?: string
+          source_answerer_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_answerer_sou_appearance_source_occurrence_fkey"
+            columns: ["appearance_source_occurrence_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearance_source_occurrences"
+            referencedColumns: ["id", "appearance_id"]
+          },
+          {
+            foreignKeyName: "general_question_answerer_source_answerer_id_appearance_id_fkey"
+            columns: ["answerer_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_answerers"
+            referencedColumns: ["id", "appearance_id"]
+          },
+        ]
+      }
+      general_question_answerer_sources: {
+        Row: {
+          answerer_id: string
+          answerer_revision_id: string
+          answerer_source_occurrence_id: string
+          appearance_id: string
+          appearance_source_id: string
+          appearance_source_occurrence_id: string
+          created_at: string
+          evidence_revision: number
+          id: string
+          observed_department_name: string | null
+          observed_person_name: string | null
+          observed_role_name: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          source_locator: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          answerer_id: string
+          answerer_revision_id: string
+          answerer_source_occurrence_id: string
+          appearance_id: string
+          appearance_source_id: string
+          appearance_source_occurrence_id: string
+          created_at?: string
+          evidence_revision?: number
+          id?: string
+          observed_department_name?: string | null
+          observed_person_name?: string | null
+          observed_role_name?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_locator?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          answerer_id?: string
+          answerer_revision_id?: string
+          answerer_source_occurrence_id?: string
+          appearance_id?: string
+          appearance_source_id?: string
+          appearance_source_occurrence_id?: string
+          created_at?: string
+          evidence_revision?: number
+          id?: string
+          observed_department_name?: string | null
+          observed_person_name?: string | null
+          observed_role_name?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_locator?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_answerer_sou_answerer_revision_id_answere_fkey"
+            columns: ["answerer_revision_id", "answerer_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_answerer_revisions"
+            referencedColumns: ["id", "answerer_id", "appearance_id"]
+          },
+          {
+            foreignKeyName: "general_question_answerer_sou_answerer_source_occurrence_i_fkey"
+            columns: [
+              "answerer_source_occurrence_id",
+              "answerer_id",
+              "appearance_id",
+              "appearance_source_occurrence_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_answerer_source_occurrences"
+            referencedColumns: [
+              "id",
+              "answerer_id",
+              "appearance_id",
+              "appearance_source_occurrence_id",
+            ]
+          },
+          {
+            foreignKeyName: "general_question_answerer_sou_appearance_source_id_appeara_fkey"
+            columns: [
+              "appearance_source_id",
+              "appearance_source_occurrence_id",
+              "appearance_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_appearance_sources"
+            referencedColumns: [
+              "id",
+              "appearance_source_occurrence_id",
+              "appearance_id",
+            ]
+          },
+        ]
+      }
+      general_question_answerers: {
+        Row: {
+          answerer_key: string
+          appearance_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          answerer_key: string
+          appearance_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          answerer_key?: string
+          appearance_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_answerers_appearance_id_fkey"
+            columns: ["appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_appearance_revisions: {
+        Row: {
+          appearance_id: string
+          council_member_id: string | null
+          created_at: string
+          delivery_method: Database["public"]["Enums"]["general_question_delivery_method_enum"]
+          id: string
+          meeting_id: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          published_at: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          question_kind: Database["public"]["Enums"]["general_question_kind_enum"]
+          question_order: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_number: number
+          seat_number: number | null
+          speaker_display_name: string
+        }
+        Insert: {
+          appearance_id: string
+          council_member_id?: string | null
+          created_at?: string
+          delivery_method?: Database["public"]["Enums"]["general_question_delivery_method_enum"]
+          id?: string
+          meeting_id: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_kind?: Database["public"]["Enums"]["general_question_kind_enum"]
+          question_order?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number: number
+          seat_number?: number | null
+          speaker_display_name: string
+        }
+        Update: {
+          appearance_id?: string
+          council_member_id?: string | null
+          created_at?: string
+          delivery_method?: Database["public"]["Enums"]["general_question_delivery_method_enum"]
+          id?: string
+          meeting_id?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_kind?: Database["public"]["Enums"]["general_question_kind_enum"]
+          question_order?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number?: number
+          seat_number?: number | null
+          speaker_display_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_appearance_revis_appearance_id_meeting_id_fkey"
+            columns: ["appearance_id", "meeting_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id", "meeting_id"]
+          },
+          {
+            foreignKeyName: "general_question_appearance_revisions_council_member_id_fkey"
+            columns: ["council_member_id"]
+            isOneToOne: false
+            referencedRelation: "council_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_appearance_source_occurrences: {
+        Row: {
+          appearance_id: string
+          created_at: string
+          id: string
+          ingestion_source_id: string
+          meeting_id: string
+          meeting_source_occurrence_id: string
+          source_appearance_key: string
+        }
+        Insert: {
+          appearance_id: string
+          created_at?: string
+          id?: string
+          ingestion_source_id: string
+          meeting_id: string
+          meeting_source_occurrence_id: string
+          source_appearance_key: string
+        }
+        Update: {
+          appearance_id?: string
+          created_at?: string
+          id?: string
+          ingestion_source_id?: string
+          meeting_id?: string
+          meeting_source_occurrence_id?: string
+          source_appearance_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_appearance_s_meeting_source_occurrence_id_fkey"
+            columns: [
+              "meeting_source_occurrence_id",
+              "meeting_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "council_meeting_source_occurrences"
+            referencedColumns: ["id", "meeting_id", "ingestion_source_id"]
+          },
+          {
+            foreignKeyName: "general_question_appearance_sourc_appearance_id_meeting_id_fkey"
+            columns: ["appearance_id", "meeting_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id", "meeting_id"]
+          },
+        ]
+      }
+      general_question_appearance_sources: {
+        Row: {
+          appearance_id: string
+          appearance_revision_id: string
+          appearance_source_occurrence_id: string
+          created_at: string
+          evidence_revision: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id: string
+          ingestion_source_id: string
+          meeting_id: string
+          observed_delivery_method:
+            | Database["public"]["Enums"]["general_question_delivery_method_enum"]
+            | null
+          observed_question_kind:
+            | Database["public"]["Enums"]["general_question_kind_enum"]
+            | null
+          observed_question_order: number | null
+          observed_seat_number: number | null
+          observed_speaker_name: string | null
+          parse_run_id: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          role: Database["public"]["Enums"]["general_question_evidence_role_enum"]
+          source_locator: string | null
+          source_version_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          appearance_id: string
+          appearance_revision_id: string
+          appearance_source_occurrence_id: string
+          created_at?: string
+          evidence_revision?: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id: string
+          meeting_id: string
+          observed_delivery_method?:
+            | Database["public"]["Enums"]["general_question_delivery_method_enum"]
+            | null
+          observed_question_kind?:
+            | Database["public"]["Enums"]["general_question_kind_enum"]
+            | null
+          observed_question_order?: number | null
+          observed_seat_number?: number | null
+          observed_speaker_name?: string | null
+          parse_run_id?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          role?: Database["public"]["Enums"]["general_question_evidence_role_enum"]
+          source_locator?: string | null
+          source_version_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          appearance_id?: string
+          appearance_revision_id?: string
+          appearance_source_occurrence_id?: string
+          created_at?: string
+          evidence_revision?: number
+          extraction_method?: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id?: string
+          meeting_id?: string
+          observed_delivery_method?:
+            | Database["public"]["Enums"]["general_question_delivery_method_enum"]
+            | null
+          observed_question_kind?:
+            | Database["public"]["Enums"]["general_question_kind_enum"]
+            | null
+          observed_question_order?: number | null
+          observed_seat_number?: number | null
+          observed_speaker_name?: string | null
+          parse_run_id?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          role?: Database["public"]["Enums"]["general_question_evidence_role_enum"]
+          source_locator?: string | null
+          source_version_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_appearance_s_appearance_revision_id_appea_fkey"
+            columns: ["appearance_revision_id", "appearance_id", "meeting_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearance_revisions"
+            referencedColumns: ["id", "appearance_id", "meeting_id"]
+          },
+          {
+            foreignKeyName: "general_question_appearance_s_appearance_source_occurrence_fkey"
+            columns: [
+              "appearance_source_occurrence_id",
+              "appearance_id",
+              "meeting_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_appearance_source_occurrences"
+            referencedColumns: [
+              "id",
+              "appearance_id",
+              "meeting_id",
+              "ingestion_source_id",
+            ]
+          },
+          {
+            foreignKeyName: "general_question_appearance_s_parse_run_id_source_version__fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "general_question_appearance_s_source_version_id_ingestion__fkey"
+            columns: ["source_version_id", "ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id", "ingestion_source_id"]
+          },
+        ]
+      }
+      general_question_appearances: {
+        Row: {
+          appearance_key: string
+          created_at: string
+          id: string
+          meeting_id: string
+        }
+        Insert: {
+          appearance_key: string
+          created_at?: string
+          id?: string
+          meeting_id: string
+        }
+        Update: {
+          appearance_key?: string
+          created_at?: string
+          id?: string
+          meeting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_appearances_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "council_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_classification_population_members: {
+        Row: {
+          ordinal: number
+          question_item_revision_id: string
+          snapshot_id: string
+        }
+        Insert: {
+          ordinal: number
+          question_item_revision_id: string
+          snapshot_id: string
+        }
+        Update: {
+          ordinal?: number
+          question_item_revision_id?: string
+          snapshot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_classification__question_item_revision_id_fkey"
+            columns: ["question_item_revision_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_item_revisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_question_classification_population_mem_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "topic_classification_population_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_classification_release_items: {
+        Row: {
+          classification_set_id: string | null
+          coverage_disposition: Database["public"]["Enums"]["classification_coverage_disposition_enum"]
+          created_at: string
+          exclusion_reason: string | null
+          population_snapshot_id: string
+          question_item_revision_id: string
+          release_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          taxonomy_id: string
+        }
+        Insert: {
+          classification_set_id?: string | null
+          coverage_disposition: Database["public"]["Enums"]["classification_coverage_disposition_enum"]
+          created_at?: string
+          exclusion_reason?: string | null
+          population_snapshot_id: string
+          question_item_revision_id: string
+          release_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          taxonomy_id: string
+        }
+        Update: {
+          classification_set_id?: string | null
+          coverage_disposition?: Database["public"]["Enums"]["classification_coverage_disposition_enum"]
+          created_at?: string
+          exclusion_reason?: string | null
+          population_snapshot_id?: string
+          question_item_revision_id?: string
+          release_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          taxonomy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_classificati_classification_set_id_taxono_fkey"
+            columns: ["classification_set_id", "taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_item_classification_sets"
+            referencedColumns: ["id", "taxonomy_id"]
+          },
+          {
+            foreignKeyName: "general_question_classificati_population_snapshot_id_quest_fkey"
+            columns: ["population_snapshot_id", "question_item_revision_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_classification_population_members"
+            referencedColumns: ["snapshot_id", "question_item_revision_id"]
+          },
+          {
+            foreignKeyName: "general_question_classification_release_items_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "topic_classification_releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_import_batches: {
+        Row: {
+          council_session_id: string | null
+          created_at: string
+          discovered_count: number
+          error_details: Json | null
+          finished_at: string | null
+          id: string
+          parse_run_id: string
+          source_version_id: string
+          staged_count: number
+          status: Database["public"]["Enums"]["general_question_import_status_enum"]
+        }
+        Insert: {
+          council_session_id?: string | null
+          created_at?: string
+          discovered_count?: number
+          error_details?: Json | null
+          finished_at?: string | null
+          id?: string
+          parse_run_id: string
+          source_version_id: string
+          staged_count?: number
+          status?: Database["public"]["Enums"]["general_question_import_status_enum"]
+        }
+        Update: {
+          council_session_id?: string | null
+          created_at?: string
+          discovered_count?: number
+          error_details?: Json | null
+          finished_at?: string | null
+          id?: string
+          parse_run_id?: string
+          source_version_id?: string
+          staged_count?: number
+          status?: Database["public"]["Enums"]["general_question_import_status_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_import_batch_parse_run_id_source_version__fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "general_question_import_batches_council_session_id_fkey"
+            columns: ["council_session_id"]
+            isOneToOne: false
+            referencedRelation: "council_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_question_import_batches_parse_run_id_fkey"
+            columns: ["parse_run_id"]
+            isOneToOne: true
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_question_import_batches_source_version_id_fkey"
+            columns: ["source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_item_classification_sets: {
+        Row: {
+          classification_run_id: string
+          created_at: string
+          id: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_revision_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          taxonomy_id: string
+        }
+        Insert: {
+          classification_run_id: string
+          created_at?: string
+          id?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_revision_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          taxonomy_id: string
+        }
+        Update: {
+          classification_run_id?: string
+          created_at?: string
+          id?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_revision_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          taxonomy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_item_classif_classification_run_id_taxono_fkey"
+            columns: ["classification_run_id", "taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "topic_classification_runs"
+            referencedColumns: ["id", "taxonomy_id"]
+          },
+          {
+            foreignKeyName: "general_question_item_classifica_question_item_revision_id_fkey"
+            columns: ["question_item_revision_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_item_revisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_item_revisions: {
+        Row: {
+          appearance_id: string
+          created_at: string
+          id: string
+          item_order: number | null
+          parent_item_id: string | null
+          public_summary: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_number: number
+          summary_generation_model: string
+          summary_prompt_version: string
+        }
+        Insert: {
+          appearance_id: string
+          created_at?: string
+          id?: string
+          item_order?: number | null
+          parent_item_id?: string | null
+          public_summary: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number: number
+          summary_generation_model: string
+          summary_prompt_version: string
+        }
+        Update: {
+          appearance_id?: string
+          created_at?: string
+          id?: string
+          item_order?: number | null
+          parent_item_id?: string | null
+          public_summary?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number?: number
+          summary_generation_model?: string
+          summary_prompt_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_item_revisio_parent_item_id_appearance_id_fkey"
+            columns: ["parent_item_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_items"
+            referencedColumns: ["id", "appearance_id"]
+          },
+          {
+            foreignKeyName: "general_question_item_revisio_question_item_id_appearance__fkey"
+            columns: ["question_item_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_items"
+            referencedColumns: ["id", "appearance_id"]
+          },
+        ]
+      }
+      general_question_item_source_occurrences: {
+        Row: {
+          appearance_id: string
+          appearance_source_occurrence_id: string
+          created_at: string
+          id: string
+          question_item_id: string
+          source_item_key: string
+        }
+        Insert: {
+          appearance_id: string
+          appearance_source_occurrence_id: string
+          created_at?: string
+          id?: string
+          question_item_id: string
+          source_item_key: string
+        }
+        Update: {
+          appearance_id?: string
+          appearance_source_occurrence_id?: string
+          created_at?: string
+          id?: string
+          question_item_id?: string
+          source_item_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_item_source__appearance_source_occurrence_fkey"
+            columns: ["appearance_source_occurrence_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearance_source_occurrences"
+            referencedColumns: ["id", "appearance_id"]
+          },
+          {
+            foreignKeyName: "general_question_item_source__question_item_id_appearance__fkey"
+            columns: ["question_item_id", "appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_items"
+            referencedColumns: ["id", "appearance_id"]
+          },
+        ]
+      }
+      general_question_item_sources: {
+        Row: {
+          appearance_id: string
+          appearance_source_id: string
+          appearance_source_occurrence_id: string
+          created_at: string
+          evidence_revision: number
+          id: string
+          item_source_occurrence_id: string
+          observed_label: string | null
+          official_label_hash: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_id: string
+          question_item_revision_id: string
+          source_locator: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          appearance_id: string
+          appearance_source_id: string
+          appearance_source_occurrence_id: string
+          created_at?: string
+          evidence_revision?: number
+          id?: string
+          item_source_occurrence_id: string
+          observed_label?: string | null
+          official_label_hash?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_id: string
+          question_item_revision_id: string
+          source_locator?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          appearance_id?: string
+          appearance_source_id?: string
+          appearance_source_occurrence_id?: string
+          created_at?: string
+          evidence_revision?: number
+          id?: string
+          item_source_occurrence_id?: string
+          observed_label?: string | null
+          official_label_hash?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          question_item_id?: string
+          question_item_revision_id?: string
+          source_locator?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_item_sources_appearance_source_id_appeara_fkey"
+            columns: [
+              "appearance_source_id",
+              "appearance_source_occurrence_id",
+              "appearance_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_appearance_sources"
+            referencedColumns: [
+              "id",
+              "appearance_source_occurrence_id",
+              "appearance_id",
+            ]
+          },
+          {
+            foreignKeyName: "general_question_item_sources_item_source_occurrence_id_qu_fkey"
+            columns: [
+              "item_source_occurrence_id",
+              "question_item_id",
+              "appearance_id",
+              "appearance_source_occurrence_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_item_source_occurrences"
+            referencedColumns: [
+              "id",
+              "question_item_id",
+              "appearance_id",
+              "appearance_source_occurrence_id",
+            ]
+          },
+          {
+            foreignKeyName: "general_question_item_sources_question_item_revision_id_qu_fkey"
+            columns: [
+              "question_item_revision_id",
+              "question_item_id",
+              "appearance_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_item_revisions"
+            referencedColumns: ["id", "question_item_id", "appearance_id"]
+          },
+        ]
+      }
+      general_question_item_topics: {
+        Row: {
+          classification_set_id: string
+          confidence: number | null
+          created_at: string
+          policy_topic_id: string
+          taxonomy_id: string
+        }
+        Insert: {
+          classification_set_id: string
+          confidence?: number | null
+          created_at?: string
+          policy_topic_id: string
+          taxonomy_id: string
+        }
+        Update: {
+          classification_set_id?: string
+          confidence?: number | null
+          created_at?: string
+          policy_topic_id?: string
+          taxonomy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_item_topics_classification_set_id_taxonom_fkey"
+            columns: ["classification_set_id", "taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_item_classification_sets"
+            referencedColumns: ["id", "taxonomy_id"]
+          },
+          {
+            foreignKeyName: "general_question_item_topics_policy_topic_id_taxonomy_id_fkey"
+            columns: ["policy_topic_id", "taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "policy_topics"
+            referencedColumns: ["id", "taxonomy_id"]
+          },
+        ]
+      }
+      general_question_items: {
+        Row: {
+          appearance_id: string
+          created_at: string
+          id: string
+          item_key: string
+        }
+        Insert: {
+          appearance_id: string
+          created_at?: string
+          id?: string
+          item_key: string
+        }
+        Update: {
+          appearance_id?: string
+          created_at?: string
+          id?: string
+          item_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_items_appearance_id_fkey"
+            columns: ["appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_session_coverage: {
+        Row: {
+          council_session_id: string
+          created_at: string
+          id: string
+          source_kind: string
+        }
+        Insert: {
+          council_session_id: string
+          created_at?: string
+          id?: string
+          source_kind: string
+        }
+        Update: {
+          council_session_id?: string
+          created_at?: string
+          id?: string
+          source_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_session_coverage_council_session_id_fkey"
+            columns: ["council_session_id"]
+            isOneToOne: false
+            referencedRelation: "council_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_session_coverage_observation_sources: {
+        Row: {
+          council_session_id: string
+          coverage_id: string
+          coverage_source_occurrence_id: string
+          created_at: string
+          evidence_revision: number
+          evidence_role: Database["public"]["Enums"]["general_question_evidence_role_enum"]
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id: string
+          ingestion_source_id: string
+          observation_id: string
+          parse_run_id: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          source_kind: string
+          source_locator: string | null
+          source_version_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          council_session_id: string
+          coverage_id: string
+          coverage_source_occurrence_id: string
+          created_at?: string
+          evidence_revision?: number
+          evidence_role?: Database["public"]["Enums"]["general_question_evidence_role_enum"]
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id: string
+          observation_id: string
+          parse_run_id?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_kind: string
+          source_locator?: string | null
+          source_version_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          council_session_id?: string
+          coverage_id?: string
+          coverage_source_occurrence_id?: string
+          created_at?: string
+          evidence_revision?: number
+          evidence_role?: Database["public"]["Enums"]["general_question_evidence_role_enum"]
+          extraction_method?: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id?: string
+          observation_id?: string
+          parse_run_id?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_kind?: string
+          source_locator?: string | null
+          source_version_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_session_cove_coverage_source_occurrence_i_fkey"
+            columns: [
+              "coverage_source_occurrence_id",
+              "coverage_id",
+              "council_session_id",
+              "source_kind",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_session_coverage_source_occurrences"
+            referencedColumns: [
+              "id",
+              "coverage_id",
+              "council_session_id",
+              "source_kind",
+              "ingestion_source_id",
+            ]
+          },
+          {
+            foreignKeyName: "general_question_session_cove_observation_id_coverage_id_c_fkey"
+            columns: [
+              "observation_id",
+              "coverage_id",
+              "council_session_id",
+              "source_kind",
+            ]
+            isOneToOne: false
+            referencedRelation: "general_question_session_coverage_observations"
+            referencedColumns: [
+              "id",
+              "coverage_id",
+              "council_session_id",
+              "source_kind",
+            ]
+          },
+          {
+            foreignKeyName: "general_question_session_cove_parse_run_id_source_version__fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "general_question_session_cove_source_version_id_ingestion__fkey"
+            columns: ["source_version_id", "ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id", "ingestion_source_id"]
+          },
+        ]
+      }
+      general_question_session_coverage_observations: {
+        Row: {
+          checked_at: string
+          council_session_id: string
+          coverage_id: string
+          created_at: string
+          expected_count: number | null
+          id: string
+          matched_count: number | null
+          observation_key: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          record_presence: Database["public"]["Enums"]["record_presence_enum"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          session_disposition: Database["public"]["Enums"]["general_question_session_disposition_enum"]
+          source_kind: string
+          state: Database["public"]["Enums"]["coverage_state_enum"]
+        }
+        Insert: {
+          checked_at: string
+          council_session_id: string
+          coverage_id: string
+          created_at?: string
+          expected_count?: number | null
+          id?: string
+          matched_count?: number | null
+          observation_key: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          record_presence: Database["public"]["Enums"]["record_presence_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          session_disposition: Database["public"]["Enums"]["general_question_session_disposition_enum"]
+          source_kind: string
+          state: Database["public"]["Enums"]["coverage_state_enum"]
+        }
+        Update: {
+          checked_at?: string
+          council_session_id?: string
+          coverage_id?: string
+          created_at?: string
+          expected_count?: number | null
+          id?: string
+          matched_count?: number | null
+          observation_key?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          record_presence?: Database["public"]["Enums"]["record_presence_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          session_disposition?: Database["public"]["Enums"]["general_question_session_disposition_enum"]
+          source_kind?: string
+          state?: Database["public"]["Enums"]["coverage_state_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_session_cove_coverage_id_council_session__fkey"
+            columns: ["coverage_id", "council_session_id", "source_kind"]
+            isOneToOne: false
+            referencedRelation: "general_question_session_coverage"
+            referencedColumns: ["id", "council_session_id", "source_kind"]
+          },
+        ]
+      }
+      general_question_session_coverage_source_occurrences: {
+        Row: {
+          council_session_id: string
+          coverage_id: string
+          created_at: string
+          id: string
+          ingestion_source_id: string
+          source_coverage_key: string
+          source_kind: string
+        }
+        Insert: {
+          council_session_id: string
+          coverage_id: string
+          created_at?: string
+          id?: string
+          ingestion_source_id: string
+          source_coverage_key: string
+          source_kind: string
+        }
+        Update: {
+          council_session_id?: string
+          coverage_id?: string
+          created_at?: string
+          id?: string
+          ingestion_source_id?: string
+          source_coverage_key?: string
+          source_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_session_cov_coverage_id_council_session__fkey1"
+            columns: ["coverage_id", "council_session_id", "source_kind"]
+            isOneToOne: false
+            referencedRelation: "general_question_session_coverage"
+            referencedColumns: ["id", "council_session_id", "source_kind"]
+          },
+          {
+            foreignKeyName: "general_question_session_coverage_sour_ingestion_source_id_fkey"
+            columns: ["ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_staging_appearances: {
+        Row: {
+          batch_id: string
+          change_kind: Database["public"]["Enums"]["general_question_change_kind_enum"]
+          content_fingerprint: string
+          created_at: string
+          generated_public_summaries: Json
+          id: string
+          matched_appearance_id: string | null
+          parsed_payload: Json
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewed_held_on: string | null
+          reviewed_match_confirmed: boolean
+          reviewed_matched_appearance_id: string | null
+          reviewed_public_summaries: Json
+          source_appearance_key: string
+          summary_generated_at: string | null
+          summary_generation_model: string | null
+          summary_prompt_version: string | null
+        }
+        Insert: {
+          batch_id: string
+          change_kind: Database["public"]["Enums"]["general_question_change_kind_enum"]
+          content_fingerprint: string
+          created_at?: string
+          generated_public_summaries?: Json
+          id?: string
+          matched_appearance_id?: string | null
+          parsed_payload: Json
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewed_held_on?: string | null
+          reviewed_match_confirmed?: boolean
+          reviewed_matched_appearance_id?: string | null
+          reviewed_public_summaries?: Json
+          source_appearance_key: string
+          summary_generated_at?: string | null
+          summary_generation_model?: string | null
+          summary_prompt_version?: string | null
+        }
+        Update: {
+          batch_id?: string
+          change_kind?: Database["public"]["Enums"]["general_question_change_kind_enum"]
+          content_fingerprint?: string
+          created_at?: string
+          generated_public_summaries?: Json
+          id?: string
+          matched_appearance_id?: string | null
+          parsed_payload?: Json
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewed_held_on?: string | null
+          reviewed_match_confirmed?: boolean
+          reviewed_matched_appearance_id?: string | null
+          reviewed_public_summaries?: Json
+          source_appearance_key?: string
+          summary_generated_at?: string | null
+          summary_generation_model?: string | null
+          summary_prompt_version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_staging_appe_reviewed_matched_appearance__fkey"
+            columns: ["reviewed_matched_appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_question_staging_appearances_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_import_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_question_staging_appearances_matched_appearance_id_fkey"
+            columns: ["matched_appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      general_question_staging_applications: {
+        Row: {
+          appearance_id: string
+          applied_at: string
+          applied_by: string
+          id: string
+          staging_id: string
+        }
+        Insert: {
+          appearance_id: string
+          applied_at?: string
+          applied_by: string
+          id?: string
+          staging_id: string
+        }
+        Update: {
+          appearance_id?: string
+          applied_at?: string
+          applied_by?: string
+          id?: string
+          staging_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "general_question_staging_applications_appearance_id_fkey"
+            columns: ["appearance_id"]
+            isOneToOne: false
+            referencedRelation: "general_question_appearances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "general_question_staging_applications_staging_id_fkey"
+            columns: ["staging_id"]
+            isOneToOne: true
+            referencedRelation: "general_question_staging_appearances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingestion_parse_runs: {
+        Row: {
+          configuration_hash: string
+          finished_at: string | null
+          id: string
+          ingestion_run_id: string
+          parse_stats: Json | null
+          parser_name: string
+          parser_version: string
+          source_version_id: string
+          started_at: string
+          status: Database["public"]["Enums"]["ingestion_parse_status_enum"]
+        }
+        Insert: {
+          configuration_hash: string
+          finished_at?: string | null
+          id?: string
+          ingestion_run_id: string
+          parse_stats?: Json | null
+          parser_name: string
+          parser_version: string
+          source_version_id: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["ingestion_parse_status_enum"]
+        }
+        Update: {
+          configuration_hash?: string
+          finished_at?: string | null
+          id?: string
+          ingestion_run_id?: string
+          parse_stats?: Json | null
+          parser_name?: string
+          parser_version?: string
+          source_version_id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["ingestion_parse_status_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_parse_runs_ingestion_run_id_fkey"
+            columns: ["ingestion_run_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ingestion_parse_runs_source_version_id_fkey"
+            columns: ["source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ingestion_runs: {
         Row: {
           error: string | null
@@ -714,6 +2428,118 @@ export type Database = {
           status?: string
         }
         Relationships: []
+      }
+      ingestion_source_version_retention_transitions: {
+        Row: {
+          changed_at: string
+          changed_by: string
+          from_private_object_key: string | null
+          from_reparse_available_until: string | null
+          from_state: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+          id: string
+          reason: string
+          source_version_id: string
+          to_private_object_key: string | null
+          to_reparse_available_until: string | null
+          to_state: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+        }
+        Insert: {
+          changed_at?: string
+          changed_by: string
+          from_private_object_key?: string | null
+          from_reparse_available_until?: string | null
+          from_state: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+          id?: string
+          reason: string
+          source_version_id: string
+          to_private_object_key?: string | null
+          to_reparse_available_until?: string | null
+          to_state: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string
+          from_private_object_key?: string | null
+          from_reparse_available_until?: string | null
+          from_state?: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+          id?: string
+          reason?: string
+          source_version_id?: string
+          to_private_object_key?: string | null
+          to_reparse_available_until?: string | null
+          to_state?: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_source_version_retention_trans_source_version_id_fkey"
+            columns: ["source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingestion_source_versions: {
+        Row: {
+          artifact_retention_state: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+          as_of_date: string | null
+          byte_size: number | null
+          content_hash: string
+          created_at: string
+          etag: string | null
+          fetched_at: string
+          id: string
+          ingestion_source_id: string
+          last_modified: string | null
+          media_type: string | null
+          private_object_key: string | null
+          published_at: string | null
+          reparse_available_until: string | null
+          source_title: string | null
+        }
+        Insert: {
+          artifact_retention_state?: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+          as_of_date?: string | null
+          byte_size?: number | null
+          content_hash: string
+          created_at?: string
+          etag?: string | null
+          fetched_at: string
+          id?: string
+          ingestion_source_id: string
+          last_modified?: string | null
+          media_type?: string | null
+          private_object_key?: string | null
+          published_at?: string | null
+          reparse_available_until?: string | null
+          source_title?: string | null
+        }
+        Update: {
+          artifact_retention_state?: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+          as_of_date?: string | null
+          byte_size?: number | null
+          content_hash?: string
+          created_at?: string
+          etag?: string | null
+          fetched_at?: string
+          id?: string
+          ingestion_source_id?: string
+          last_modified?: string | null
+          media_type?: string | null
+          private_object_key?: string | null
+          published_at?: string | null
+          reparse_available_until?: string | null
+          source_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_source_versions_ingestion_source_id_fkey"
+            columns: ["ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ingestion_sources: {
         Row: {
@@ -1140,6 +2966,86 @@ export type Database = {
           },
         ]
       }
+      policy_taxonomies: {
+        Row: {
+          content_hash: string | null
+          created_at: string
+          id: string
+          label: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          published_at: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          version: string
+        }
+        Insert: {
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          label: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          version: string
+        }
+        Update: {
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          label?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          version?: string
+        }
+        Relationships: []
+      }
+      policy_topics: {
+        Row: {
+          created_at: string
+          description: string
+          display_order: number
+          id: string
+          is_active: boolean
+          label: string
+          slug: string
+          taxonomy_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          label: string
+          slug: string
+          taxonomy_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          label?: string
+          slug?: string
+          taxonomy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policy_topics_taxonomy_id_fkey"
+            columns: ["taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "policy_taxonomies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       preview_tokens: {
         Row: {
           bill_id: string
@@ -1175,6 +3081,54 @@ export type Database = {
           },
         ]
       }
+      published_source_version_references: {
+        Row: {
+          activated_at: string
+          consumer_id: string
+          consumer_type: string
+          evidence_id: string
+          evidence_table: string
+          id: string
+          released_at: string | null
+          source_version_id: string
+        }
+        Insert: {
+          activated_at?: string
+          consumer_id: string
+          consumer_type: string
+          evidence_id: string
+          evidence_table: string
+          id?: string
+          released_at?: string | null
+          source_version_id: string
+        }
+        Update: {
+          activated_at?: string
+          consumer_id?: string
+          consumer_type?: string
+          evidence_id?: string
+          evidence_table?: string
+          id?: string
+          released_at?: string | null
+          source_version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "published_source_version_references_consumer_type_fkey"
+            columns: ["consumer_type"]
+            isOneToOne: false
+            referencedRelation: "source_artifact_consumer_types"
+            referencedColumns: ["consumer_type"]
+          },
+          {
+            foreignKeyName: "published_source_version_references_source_version_id_fkey"
+            columns: ["source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_reactions: {
         Row: {
           created_at: string
@@ -1206,6 +3160,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      source_artifact_consumer_types: {
+        Row: {
+          consumer_type: string
+          created_at: string
+          description: string
+          registered_by_migration: string
+        }
+        Insert: {
+          consumer_type: string
+          created_at?: string
+          description: string
+          registered_by_migration: string
+        }
+        Update: {
+          consumer_type?: string
+          created_at?: string
+          description?: string
+          registered_by_migration?: string
+        }
+        Relationships: []
       }
       tags: {
         Row: {
@@ -1481,6 +3456,163 @@ export type Database = {
           },
         ]
       }
+      topic_classification_population_snapshots: {
+        Row: {
+          consumer_type: string
+          council_session_id: string | null
+          created_at: string
+          cutoff_at: string
+          fiscal_year: number | null
+          id: string
+          ordered_subject_ids_hash: string
+          period_end: string | null
+          period_start: string | null
+          scope_kind: Database["public"]["Enums"]["classification_scope_kind_enum"]
+          selection_rule_version: string
+          snapshot_key: string
+          subject_count: number
+        }
+        Insert: {
+          consumer_type: string
+          council_session_id?: string | null
+          created_at?: string
+          cutoff_at: string
+          fiscal_year?: number | null
+          id?: string
+          ordered_subject_ids_hash: string
+          period_end?: string | null
+          period_start?: string | null
+          scope_kind: Database["public"]["Enums"]["classification_scope_kind_enum"]
+          selection_rule_version: string
+          snapshot_key: string
+          subject_count: number
+        }
+        Update: {
+          consumer_type?: string
+          council_session_id?: string | null
+          created_at?: string
+          cutoff_at?: string
+          fiscal_year?: number | null
+          id?: string
+          ordered_subject_ids_hash?: string
+          period_end?: string | null
+          period_start?: string | null
+          scope_kind?: Database["public"]["Enums"]["classification_scope_kind_enum"]
+          selection_rule_version?: string
+          snapshot_key?: string
+          subject_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_classification_population_snapsho_council_session_id_fkey"
+            columns: ["council_session_id"]
+            isOneToOne: false
+            referencedRelation: "council_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_classification_releases: {
+        Row: {
+          consumer_type: string
+          created_at: string
+          id: string
+          population_snapshot_id: string
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          published_at: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          release_key: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          taxonomy_id: string
+        }
+        Insert: {
+          consumer_type: string
+          created_at?: string
+          id?: string
+          population_snapshot_id: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          release_key: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          taxonomy_id: string
+        }
+        Update: {
+          consumer_type?: string
+          created_at?: string
+          id?: string
+          population_snapshot_id?: string
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          release_key?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          taxonomy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_classification_releases_population_snapshot_id_fkey"
+            columns: ["population_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "topic_classification_population_snapshots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topic_classification_releases_taxonomy_id_fkey"
+            columns: ["taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "policy_taxonomies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_classification_runs: {
+        Row: {
+          created_at: string
+          finished_at: string | null
+          id: string
+          method: Database["public"]["Enums"]["topic_classification_method_enum"]
+          model_name: string | null
+          prompt_version: string | null
+          started_at: string
+          status: Database["public"]["Enums"]["topic_classification_status_enum"]
+          taxonomy_id: string
+        }
+        Insert: {
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          method: Database["public"]["Enums"]["topic_classification_method_enum"]
+          model_name?: string | null
+          prompt_version?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["topic_classification_status_enum"]
+          taxonomy_id: string
+        }
+        Update: {
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["topic_classification_method_enum"]
+          model_name?: string | null
+          prompt_version?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["topic_classification_status_enum"]
+          taxonomy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_classification_runs_taxonomy_id_fkey"
+            columns: ["taxonomy_id"]
+            isOneToOne: false
+            referencedRelation: "policy_taxonomies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       topic_opinion: {
         Row: {
           opinion_id: string
@@ -1526,6 +3658,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_verified_general_question_staging: {
+        Args: { p_reviewed_by: string; p_staging_id: string }
+        Returns: string
+      }
       bill_status_group: {
         Args: { p_status: Database["public"]["Enums"]["bill_status_enum"] }
         Returns: string
@@ -1561,6 +3697,14 @@ export type Database = {
           p_min_content_richness: number
         }
         Returns: number
+      }
+      classify_general_question_item_manually: {
+        Args: {
+          p_policy_topic_ids: string[]
+          p_question_item_revision_id: string
+          p_reviewed_by: string
+        }
+        Returns: string
       }
       count_bills_for_list_facets: {
         Args: {
@@ -1614,17 +3758,31 @@ export type Database = {
           session_count: number
         }[]
       }
-      replace_bill_tags: {
+      create_topic_classification_population_snapshot: {
         Args: {
-          p_bill_id: string
-          p_managed_tag_ids: string[]
-          p_next_tag_ids: string[]
+          p_consumer_type: string
+          p_council_session_id?: string
+          p_fiscal_year?: number
+          p_period_end?: string
+          p_period_start?: string
+          p_scope_kind: Database["public"]["Enums"]["classification_scope_kind_enum"]
+          p_selection_rule_version: string
+          p_snapshot_key: string
         }
-        Returns: undefined
+        Returns: string
       }
       extract_assistant_question_id: {
         Args: { content: string }
         Returns: string
+      }
+      finalize_ingestion_parse_run: {
+        Args: {
+          p_finished_at?: string
+          p_parse_run_id: string
+          p_parse_stats: Json
+          p_status: Database["public"]["Enums"]["ingestion_parse_status_enum"]
+        }
+        Returns: undefined
       }
       find_open_data_interview_reports: {
         Args: {
@@ -1805,14 +3963,59 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      list_published_general_question_appearances: {
+        Args: {
+          p_cursor_at?: string
+          p_cursor_id?: string
+          p_limit?: number
+          p_question_kind?: string
+          p_role_group?: string
+          p_session_slug?: string
+          p_topic_slug?: string
+          p_year?: number
+        }
+        Returns: {
+          appearance_id: string
+          cursor_at: string
+        }[]
+      }
       mark_opinions_extracted: {
         Args: { p_extracted_at: string; p_ids: string[] }
         Returns: undefined
       }
       normalize_search_text: { Args: { value: string }; Returns: string }
+      publish_general_question_classification_release: {
+        Args: { p_release_key: string; p_reviewed_by: string }
+        Returns: string
+      }
       publish_topic_analysis_version: {
         Args: { p_version_id: string }
         Returns: undefined
+      }
+      refresh_general_question_batch_publication: {
+        Args: { p_reviewed_by: string; p_staging_id: string }
+        Returns: undefined
+      }
+      replace_bill_tags: {
+        Args: {
+          p_bill_id: string
+          p_managed_tag_ids: string[]
+          p_next_tag_ids: string[]
+        }
+        Returns: undefined
+      }
+      save_general_question_staging: {
+        Args: {
+          p_council_session_id?: string
+          p_discovered_count: number
+          p_finished_at?: string
+          p_parse_run_id: string
+          p_parse_status?: Database["public"]["Enums"]["ingestion_parse_status_enum"]
+          p_rows: Json
+          p_source_version_id: string
+          p_validation_errors?: Json
+        }
+        Returns: string
       }
       search_bills_for_list: {
         Args: {
@@ -1852,6 +4055,17 @@ export type Database = {
       sum_chat_usage_cost: {
         Args: { from_iso: string; to_iso: string }
         Returns: number
+      }
+      transition_ingestion_source_version_retention: {
+        Args: {
+          p_changed_by: string
+          p_private_object_key?: string
+          p_reason: string
+          p_reparse_available_until?: string
+          p_source_version_id: string
+          p_to_state: Database["public"]["Enums"]["source_artifact_retention_state_enum"]
+        }
+        Returns: undefined
       }
       unpublish_reports_by_config_id: {
         Args: { p_config_id: string }
@@ -1916,11 +4130,86 @@ export type Database = {
         | "reported"
       bill_submitter_enum: "mayor" | "member" | "committee" | "citizen"
       chat_role_enum: "user" | "system" | "assistant"
+      classification_coverage_disposition_enum:
+        | "classified"
+        | "not_applicable"
+        | "excluded"
+      classification_scope_kind_enum:
+        | "council_session"
+        | "date_range"
+        | "fiscal_year"
       committee_kind_enum: "standing" | "steering" | "special"
+      council_meeting_evidence_role_enum:
+        | "schedule"
+        | "record"
+        | "video"
+        | "other"
+      council_meeting_kind_enum:
+        | "plenary"
+        | "committee"
+        | "steering"
+        | "all_members"
+        | "other"
+      council_meeting_status_enum:
+        | "scheduled"
+        | "held"
+        | "cancelled"
+        | "unknown"
       council_session_kind_enum: "regular" | "extraordinary"
+      coverage_state_enum:
+        | "uncollected"
+        | "source_not_published"
+        | "source_unavailable"
+        | "not_applicable"
+        | "partial"
+        | "collected"
+        | "error"
       debate_stance_enum: "for" | "against"
       difficulty_level_enum: "normal" | "hard"
+      extraction_method_enum: "parser" | "manual"
       faction_vote_enum: "for" | "against" | "split" | "excluded"
+      general_question_change_kind_enum:
+        | "new"
+        | "changed"
+        | "unchanged"
+        | "missing"
+        | "ambiguous"
+      general_question_delivery_method_enum:
+        | "all_at_once"
+        | "one_by_one"
+        | "combined"
+        | "other"
+        | "unknown"
+      general_question_evidence_role_enum: "primary" | "supplementary"
+      general_question_import_status_enum:
+        | "running"
+        | "awaiting_review"
+        | "approved"
+        | "applied"
+        | "failed"
+      general_question_kind_enum:
+        | "representative"
+        | "personal"
+        | "other"
+        | "unknown"
+      general_question_role_group_enum:
+        | "mayor"
+        | "deputy_mayor"
+        | "superintendent"
+        | "department_head"
+        | "division_head"
+        | "administration_other"
+        | "unknown"
+      general_question_session_disposition_enum:
+        | "held"
+        | "not_held"
+        | "not_applicable"
+        | "unknown"
+      ingestion_parse_status_enum:
+        | "running"
+        | "completed"
+        | "failed"
+        | "rejected"
       interview_config_status_enum: "public" | "closed"
       interview_feedback_tag_enum:
         | "irrelevant_questions"
@@ -1936,6 +4225,20 @@ export type Database = {
         | "general_citizen"
       interview_role_enum: "assistant" | "user"
       moderation_status_enum: "ok" | "warning" | "ng"
+      publication_state_enum: "draft" | "reviewed" | "published" | "superseded"
+      qa_status_enum: "pending" | "verified" | "rejected"
+      record_presence_enum: "present" | "absent" | "unknown"
+      source_artifact_retention_state_enum:
+        | "pending"
+        | "retained"
+        | "expired"
+        | "not_permitted"
+      source_availability_enum: "available" | "not_published" | "unavailable"
+      source_support_status_enum:
+        | "official_supported"
+        | "empirical_verified"
+        | "partial"
+        | "unknown"
       stance_type_enum:
         | "for"
         | "against"
@@ -1946,6 +4249,12 @@ export type Database = {
         | "continued_deliberation"
         | "free_vote"
       topic_analysis_status: "pending" | "running" | "completed" | "failed"
+      topic_classification_method_enum: "ai" | "rule" | "manual"
+      topic_classification_status_enum:
+        | "running"
+        | "completed"
+        | "failed"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2114,11 +4423,99 @@ export const Constants = {
       ],
       bill_submitter_enum: ["mayor", "member", "committee", "citizen"],
       chat_role_enum: ["user", "system", "assistant"],
+      classification_coverage_disposition_enum: [
+        "classified",
+        "not_applicable",
+        "excluded",
+      ],
+      classification_scope_kind_enum: [
+        "council_session",
+        "date_range",
+        "fiscal_year",
+      ],
       committee_kind_enum: ["standing", "steering", "special"],
+      council_meeting_evidence_role_enum: [
+        "schedule",
+        "record",
+        "video",
+        "other",
+      ],
+      council_meeting_kind_enum: [
+        "plenary",
+        "committee",
+        "steering",
+        "all_members",
+        "other",
+      ],
+      council_meeting_status_enum: [
+        "scheduled",
+        "held",
+        "cancelled",
+        "unknown",
+      ],
       council_session_kind_enum: ["regular", "extraordinary"],
+      coverage_state_enum: [
+        "uncollected",
+        "source_not_published",
+        "source_unavailable",
+        "not_applicable",
+        "partial",
+        "collected",
+        "error",
+      ],
       debate_stance_enum: ["for", "against"],
       difficulty_level_enum: ["normal", "hard"],
+      extraction_method_enum: ["parser", "manual"],
       faction_vote_enum: ["for", "against", "split", "excluded"],
+      general_question_change_kind_enum: [
+        "new",
+        "changed",
+        "unchanged",
+        "missing",
+        "ambiguous",
+      ],
+      general_question_delivery_method_enum: [
+        "all_at_once",
+        "one_by_one",
+        "combined",
+        "other",
+        "unknown",
+      ],
+      general_question_evidence_role_enum: ["primary", "supplementary"],
+      general_question_import_status_enum: [
+        "running",
+        "awaiting_review",
+        "approved",
+        "applied",
+        "failed",
+      ],
+      general_question_kind_enum: [
+        "representative",
+        "personal",
+        "other",
+        "unknown",
+      ],
+      general_question_role_group_enum: [
+        "mayor",
+        "deputy_mayor",
+        "superintendent",
+        "department_head",
+        "division_head",
+        "administration_other",
+        "unknown",
+      ],
+      general_question_session_disposition_enum: [
+        "held",
+        "not_held",
+        "not_applicable",
+        "unknown",
+      ],
+      ingestion_parse_status_enum: [
+        "running",
+        "completed",
+        "failed",
+        "rejected",
+      ],
       interview_config_status_enum: ["public", "closed"],
       interview_feedback_tag_enum: [
         "irrelevant_questions",
@@ -2136,6 +4533,22 @@ export const Constants = {
       ],
       interview_role_enum: ["assistant", "user"],
       moderation_status_enum: ["ok", "warning", "ng"],
+      publication_state_enum: ["draft", "reviewed", "published", "superseded"],
+      qa_status_enum: ["pending", "verified", "rejected"],
+      record_presence_enum: ["present", "absent", "unknown"],
+      source_artifact_retention_state_enum: [
+        "pending",
+        "retained",
+        "expired",
+        "not_permitted",
+      ],
+      source_availability_enum: ["available", "not_published", "unavailable"],
+      source_support_status_enum: [
+        "official_supported",
+        "empirical_verified",
+        "partial",
+        "unknown",
+      ],
       stance_type_enum: [
         "for",
         "against",
@@ -2147,6 +4560,13 @@ export const Constants = {
         "free_vote",
       ],
       topic_analysis_status: ["pending", "running", "completed", "failed"],
+      topic_classification_method_enum: ["ai", "rule", "manual"],
+      topic_classification_status_enum: [
+        "running",
+        "completed",
+        "failed",
+        "rejected",
+      ],
     },
   },
 } as const

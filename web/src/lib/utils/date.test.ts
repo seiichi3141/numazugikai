@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   formatDate,
+  formatDateTime,
   formatDateWithDots,
   getJapanTime,
   toDateOnlyString,
@@ -27,6 +28,18 @@ describe("formatDate", () => {
 
   it("returns an empty string for an invalid date string", () => {
     expect(formatDate("not-a-date")).toBe("");
+  });
+});
+
+describe("formatDateTime", () => {
+  it("ISO日時を日本時間の読みやすい形式にする", () => {
+    expect(formatDateTime("2026-09-03T20:53:38.194135+00:00")).toBe(
+      "2026/9/4 05:53"
+    );
+  });
+
+  it("不正な日時は空文字にする", () => {
+    expect(formatDateTime("not-a-date")).toBe("");
   });
 });
 

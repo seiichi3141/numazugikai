@@ -14,6 +14,7 @@ export const routes = {
   admins: () => "/admins" as const,
   tags: () => "/tags" as const,
   councilSessions: () => "/council-sessions" as const,
+  generalQuestionsQa: () => "/general-questions" as const,
   experts: () => "/experts" as const,
   interviews: () => "/interviews" as const,
   interviewOpinionBackfill: () => "/interview-opinion-backfill" as const,

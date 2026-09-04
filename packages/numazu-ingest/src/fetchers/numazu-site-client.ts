@@ -20,6 +20,7 @@ export type FetchedResource = {
 };
 
 export type FetchedText = FetchedResource & { text: string };
+export type FetchedPdfDocument = FetchedText & { bytes: Uint8Array };
 
 export type NumazuSiteClientOptions = {
   /** 連続アクセスの間隔（ミリ秒）。相手サイトへの負荷を抑えるため既定で1秒あける */
@@ -79,6 +80,12 @@ export class NumazuSiteClient {
    * 取得したPDFそのものは一時ファイルに置き、処理後に必ず消す。
    */
   async fetchPdfText(url: string): Promise<FetchedText> {
+    const { bytes: _, ...fetched } = await this.fetchPdfDocument(url);
+    return fetched;
+  }
+
+  /** PDF原本と、同じ原本から生成したlayoutテキストを一度の取得で返す。 */
+  async fetchPdfDocument(url: string): Promise<FetchedPdfDocument> {
     const { buffer, headers } = await this.fetchBinary(url);
     const dir = await mkdtemp(join(tmpdir(), "numazu-ingest-"));
     try {
@@ -91,6 +98,7 @@ export class NumazuSiteClient {
       return {
         url,
         text,
+        bytes: buffer,
         contentHash: sha256(buffer),
         etag: headers.etag,
         lastModified: headers.lastModified,

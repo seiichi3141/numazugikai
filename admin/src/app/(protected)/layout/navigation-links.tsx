@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const navigationLinks = [
   { href: routes.bills(), label: "議案管理" },
   { href: routes.councilSessions(), label: "会期管理" },
+  { href: routes.generalQuestionsQa(), label: "一般質問QA" },
   { href: routes.tags(), label: "タグ管理" },
   { href: routes.interviews(), label: "インタビュー" },
   // 全議案トピック分析(/user-topic-analysis)は隠し機能のためヘッダーに出さない（URL直アクセスのみ）。
@@ -20,8 +21,8 @@ export function NavigationLinks() {
   const pathname = usePathname();
 
   return (
-    <nav>
-      <div className="flex space-x-8">
+    <nav className="-mx-4 overflow-x-auto px-4">
+      <div className="flex w-max min-w-full gap-8">
         {navigationLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
 
@@ -30,7 +31,7 @@ export function NavigationLinks() {
               key={link.href}
               href={link.href as Route}
               className={cn(
-                "inline-flex items-center gap-2 px-1 py-4 text-sm border-b-2 transition-colors",
+                "inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-1 py-4 text-sm border-b-2 transition-colors",
                 isActive
                   ? "border-blue-600 text-blue-600 font-semibold"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium"
