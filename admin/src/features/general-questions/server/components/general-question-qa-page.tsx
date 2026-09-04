@@ -1,5 +1,6 @@
 import "server-only";
 
+import { generalQuestionLabel } from "@mirai-gikai/shared/general-questions/labels";
 import { Button } from "@/components/ui/button";
 import { GENERAL_QUESTION_SUMMARY_MAX_LENGTH } from "../../shared/utils/general-question-summary";
 import {
@@ -133,11 +134,11 @@ export async function GeneralQuestionQaPage({
               <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                 <div>
                   <dt className="font-medium">質問種別</dt>
-                  <dd>{row.questionKind}</dd>
+                  <dd>{generalQuestionLabel(row.questionKind)}</dd>
                 </div>
                 <div>
                   <dt className="font-medium">質問方式</dt>
-                  <dd>{row.deliveryMethod}</dd>
+                  <dd>{generalQuestionLabel(row.deliveryMethod)}</dd>
                 </div>
                 <div>
                   <dt className="font-medium">質問項目</dt>
@@ -373,17 +374,24 @@ export async function GeneralQuestionQaPage({
               公開済みの質問項目を複数の政策分野へ分類します。
             </p>
           </div>
-          <form action={publishGeneralQuestionRelease} className="flex gap-2">
-            <label className="text-sm font-medium">
+          <form
+            action={publishGeneralQuestionRelease}
+            className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-[minmax(0,12rem)_auto]"
+          >
+            <label className="min-w-0 text-sm font-medium">
               <span className="sr-only">releaseキー</span>
               <input
                 name="releaseKey"
                 required
                 placeholder="2026-09-v1"
-                className="rounded-md border p-2"
+                className="w-full min-w-0 rounded-md border p-2"
               />
             </label>
-            <Button type="submit" variant="outline">
+            <Button
+              type="submit"
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
               分類releaseを公開
             </Button>
           </form>

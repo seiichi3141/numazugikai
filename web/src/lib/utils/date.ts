@@ -9,6 +9,16 @@ const jstNumericDateFormat = new Intl.DateTimeFormat("ja-JP", {
   timeZone: "Asia/Tokyo",
 });
 
+const jstDateTimeFormat = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "Asia/Tokyo",
+});
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return "";
@@ -23,6 +33,12 @@ export function formatDateWithDots(dateString: string): string {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return "";
   return jstNumericDateFormat.format(date).replaceAll("/", ".");
+}
+
+export function formatDateTime(dateString: string): string {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "";
+  return jstDateTimeFormat.format(date);
 }
 
 /**

@@ -1,13 +1,14 @@
 import "server-only";
 
+import { generalQuestionLabel } from "@mirai-gikai/shared/general-questions/labels";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/lib/routes";
+import { formatDateTime } from "@/lib/utils/date";
 import { buildGeneralQuestionVisualization } from "../../shared/utils/build-general-question-visualization";
-import { generalQuestionLabel } from "../../shared/utils/general-question-labels";
 import { getGeneralQuestionSessions } from "../loaders/get-general-question-sessions";
 
 type Filters = {
@@ -65,6 +66,16 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
   );
   const taxonomyVersion = shown.find((session) => session.classificationRelease)
     ?.classificationRelease?.taxonomyVersion;
+  const coverageEntries = shown.flatMap((session) => {
+    const sessionCoverage = session.coverage.length ? session.coverage : [null];
+    return sessionCoverage.map((coverage, index) => ({
+      key: `${session.id}-${coverage?.sourceKind ?? "none"}`,
+      sessionName: session.name,
+      coverage,
+      showSessionName: index === 0,
+      sessionRowSpan: sessionCoverage.length,
+    }));
+  });
   const topicOptions = new Map<string, string>();
   const roleOptions = new Set<string>();
   const yearOptions = new Set<string>();
@@ -95,7 +106,7 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
           </p>
         </header>
 
-        <form className="grid gap-4 rounded-xl border bg-card p-5 sm:grid-cols-2 lg:grid-cols-6">
+        <form className="grid gap-4 rounded-xl border bg-card p-5 sm:grid-cols-2 lg:grid-cols-3">
           <label className="space-y-1 text-sm font-medium">
             <span>会期</span>
             <select
@@ -172,7 +183,7 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
               <option value="unknown">種別未確認</option>
             </select>
           </label>
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-1">
             <Button type="submit">絞り込む</Button>
             <Button asChild variant="outline">
               <Link href={routes.generalQuestions()}>解除</Link>
@@ -272,7 +283,7 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border bg-card">
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-xl text-left text-sm">
                 <caption className="p-4 text-left text-muted-foreground">
                   政策分野ごとの質問項目数と登壇枠数。点は最大20個まで表示します。
                 </caption>
@@ -420,8 +431,41 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
           >
             データカバレッジ
           </h2>
-          <div className="overflow-x-auto rounded-xl border bg-card">
-            <table className="w-full border-collapse text-left text-sm">
+          <ul className="space-y-3 sm:hidden">
+            {coverageEntries.map(({ key, sessionName, coverage }) => (
+              <li key={key} className="rounded-xl border bg-card p-4">
+                <h3 className="font-medium">{sessionName}</h3>
+                <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                  <dt className="text-muted-foreground">確認資料</dt>
+                  <dd>
+                    {coverage
+                      ? generalQuestionLabel(coverage.sourceKind)
+                      : "未確認"}
+                  </dd>
+                  <dt className="text-muted-foreground">状態</dt>
+                  <dd>
+                    {coverage
+                      ? `${generalQuestionLabel(coverage.state)} / ${generalQuestionLabel(coverage.disposition)}`
+                      : "未取得"}
+                  </dd>
+                  <dt className="text-muted-foreground">確認件数</dt>
+                  <dd>
+                    {coverage?.matchedCount == null
+                      ? "不明"
+                      : `${coverage.matchedCount}件`}
+                  </dd>
+                  <dt className="text-muted-foreground">確認日時</dt>
+                  <dd>
+                    {coverage?.checkedAt
+                      ? formatDateTime(coverage.checkedAt)
+                      : "未確認"}
+                  </dd>
+                </dl>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-xl border bg-card sm:block">
+            <table className="w-full min-w-2xl border-collapse text-left text-sm">
               <caption className="p-4 text-left text-muted-foreground">
                 会期ごとの一般質問資料の確認状態
               </caption>
@@ -445,22 +489,22 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
                 </tr>
               </thead>
               <tbody>
-                {shown.flatMap((session) => {
-                  const coverageRows = session.coverage.length
-                    ? session.coverage
-                    : [null];
-                  return coverageRows.map((coverage, index) => (
-                    <tr
-                      key={`${session.id}-${coverage?.sourceKind ?? "none"}`}
-                      className="border-b last:border-0"
-                    >
-                      {index === 0 ? (
+                {coverageEntries.map(
+                  ({
+                    key,
+                    sessionName,
+                    coverage,
+                    showSessionName,
+                    sessionRowSpan,
+                  }) => (
+                    <tr key={key} className="border-b last:border-0">
+                      {showSessionName ? (
                         <th
                           scope="rowgroup"
-                          rowSpan={coverageRows.length}
+                          rowSpan={sessionRowSpan}
                           className="p-3 align-top font-medium"
                         >
-                          {session.name}
+                          {sessionName}
                         </th>
                       ) : null}
                       <td className="p-3">
@@ -478,10 +522,14 @@ export async function GeneralQuestionsPage({ filters }: { filters: Filters }) {
                           ? "不明"
                           : `${coverage.matchedCount}件`}
                       </td>
-                      <td className="p-3">{coverage?.checkedAt ?? "未確認"}</td>
+                      <td className="p-3">
+                        {coverage?.checkedAt
+                          ? formatDateTime(coverage.checkedAt)
+                          : "未確認"}
+                      </td>
                     </tr>
-                  ));
-                })}
+                  )
+                )}
               </tbody>
             </table>
           </div>

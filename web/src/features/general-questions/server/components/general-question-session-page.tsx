@@ -1,11 +1,12 @@
 import "server-only";
 
+import { generalQuestionLabel } from "@mirai-gikai/shared/general-questions/labels";
 import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { routes } from "@/lib/routes";
-import { generalQuestionLabel } from "../../shared/utils/general-question-labels";
+import { formatDateTime } from "@/lib/utils/date";
 import { getGeneralQuestionSessionBySlug } from "../loaders/get-general-question-sessions";
 
 export async function GeneralQuestionSessionPage({ slug }: { slug: string }) {
@@ -112,8 +113,8 @@ export async function GeneralQuestionSessionPage({ slug }: { slug: string }) {
                       <ExternalLink className="size-4" aria-hidden="true" />
                     </a>
                     {appearance.sourceFetchedAt ? (
-                      <span className="ml-3 text-xs text-muted-foreground">
-                        取得日時: {appearance.sourceFetchedAt}
+                      <span className="ml-3 inline-block text-xs text-muted-foreground">
+                        取得日時: {formatDateTime(appearance.sourceFetchedAt)}
                       </span>
                     ) : null}
                   </p>

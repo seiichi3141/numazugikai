@@ -82,7 +82,8 @@ describe("GeneralQuestionsPage", () => {
       "aria-live",
       "polite"
     );
-    expect(screen.getByText("一般質問資料（PDF）")).toBeInTheDocument();
+    expect(screen.getAllByText("一般質問資料（PDF）")).toHaveLength(2);
+    expect(screen.getAllByText("2026/9/4 09:00")).toHaveLength(2);
     expect(
       screen.getByRole("table", { name: /政策分野ごとの質問項目数/ })
     ).toBeInTheDocument();

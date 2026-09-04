@@ -24,6 +24,7 @@ const labels: Record<string, string> = {
   present: "記録あり",
   absent: "記録なし",
   general_question_pdf: "一般質問資料（PDF）",
+  general_question_record: "会議録",
   meeting_record: "会議録",
 };
 
