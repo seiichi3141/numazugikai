@@ -42,6 +42,7 @@ import { runIngest, type IngestMode } from "@mirai-gikai/numazu-ingest/ingest";
  *   tsx src/main.ts --mode=ingest --target=general-questions --all-terms
  *   tsx src/main.ts --mode=ingest --target=general-question-records --year=1990
  *   tsx src/main.ts --mode=ingest --target=general-question-records --all-years
+ *   tsx src/main.ts --mode=ingest --target=fiscal                    # 財政資料の版保存とQA候補作成
  *
  *   議案解説の生成（OpenAI API を直接利用。Gateway は経由しない）:
  *   tsx src/main.ts --mode=explain --session=2026-13                  # 指定会期の議案を解説
@@ -90,6 +91,7 @@ const INGEST_TARGETS = [
   "amivoice-archive",
   "general-questions",
   "general-question-records",
+  "fiscal",
   "frequent",
   "daily",
   "all",

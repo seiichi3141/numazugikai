@@ -1,5 +1,5 @@
 // Export types
-export type { Database } from "../types/supabase.types";
+export type { Database, Json } from "../types/supabase.types";
 
 // Framework-agnostic clients
 export { createAdminClient } from "./admin";
