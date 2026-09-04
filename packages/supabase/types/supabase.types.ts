@@ -968,6 +968,1584 @@ export type Database = {
         }
         Relationships: []
       }
+      fiscal_accounts: {
+        Row: {
+          account_type: Database["public"]["Enums"]["fiscal_account_type_enum"]
+          code: string
+          created_at: string
+          id: string
+          name: string
+          predecessor_id: string | null
+          valid_from_fiscal_year: number
+          valid_to_fiscal_year: number | null
+        }
+        Insert: {
+          account_type: Database["public"]["Enums"]["fiscal_account_type_enum"]
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          predecessor_id?: string | null
+          valid_from_fiscal_year: number
+          valid_to_fiscal_year?: number | null
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["fiscal_account_type_enum"]
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          predecessor_id?: string | null
+          valid_from_fiscal_year?: number
+          valid_to_fiscal_year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_accounts_predecessor_id_fkey"
+            columns: ["predecessor_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_amount_evidence: {
+        Row: {
+          amount_id: string
+          amount_revision_id: string
+          amount_set_id: string
+          amount_set_revision_id: string
+          amount_set_source_id: string
+          amount_set_source_occurrence_id: string
+          amount_source_occurrence_id: string
+          confidence: number | null
+          created_at: string
+          evidence_revision: number
+          id: string
+          ingestion_source_id: string
+          normalized_amount_yen: number | null
+          normalized_null_reason:
+            | Database["public"]["Enums"]["fiscal_null_reason_enum"]
+            | null
+          parse_run_id: string | null
+          parse_run_identity_key: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          source_cell: string | null
+          source_page: string | null
+          source_table: string | null
+          source_unit:
+            | Database["public"]["Enums"]["fiscal_source_unit_enum"]
+            | null
+          source_value_numeric: number | null
+          source_value_text: string | null
+          source_version_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount_id: string
+          amount_revision_id: string
+          amount_set_id: string
+          amount_set_revision_id: string
+          amount_set_source_id: string
+          amount_set_source_occurrence_id: string
+          amount_source_occurrence_id: string
+          confidence?: number | null
+          created_at?: string
+          evidence_revision?: number
+          id?: string
+          ingestion_source_id: string
+          normalized_amount_yen?: number | null
+          normalized_null_reason?:
+            | Database["public"]["Enums"]["fiscal_null_reason_enum"]
+            | null
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_cell?: string | null
+          source_page?: string | null
+          source_table?: string | null
+          source_unit?:
+            | Database["public"]["Enums"]["fiscal_source_unit_enum"]
+            | null
+          source_value_numeric?: number | null
+          source_value_text?: string | null
+          source_version_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount_id?: string
+          amount_revision_id?: string
+          amount_set_id?: string
+          amount_set_revision_id?: string
+          amount_set_source_id?: string
+          amount_set_source_occurrence_id?: string
+          amount_source_occurrence_id?: string
+          confidence?: number | null
+          created_at?: string
+          evidence_revision?: number
+          id?: string
+          ingestion_source_id?: string
+          normalized_amount_yen?: number | null
+          normalized_null_reason?:
+            | Database["public"]["Enums"]["fiscal_null_reason_enum"]
+            | null
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_cell?: string | null
+          source_page?: string | null
+          source_table?: string | null
+          source_unit?:
+            | Database["public"]["Enums"]["fiscal_source_unit_enum"]
+            | null
+          source_value_numeric?: number | null
+          source_value_text?: string | null
+          source_version_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_evidence_amount_revision_id_amount_id_amount_fkey"
+            columns: [
+              "amount_revision_id",
+              "amount_id",
+              "amount_set_revision_id",
+              "amount_set_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_revisions"
+            referencedColumns: [
+              "id",
+              "amount_id",
+              "amount_set_revision_id",
+              "amount_set_id",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_amount_evidence_amount_set_source_id_amount_set_rev_fkey"
+            columns: [
+              "amount_set_source_id",
+              "amount_set_revision_id",
+              "amount_set_id",
+              "amount_set_source_occurrence_id",
+              "ingestion_source_id",
+              "source_version_id",
+              "parse_run_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_sources"
+            referencedColumns: [
+              "id",
+              "amount_set_revision_id",
+              "amount_set_id",
+              "amount_set_source_occurrence_id",
+              "ingestion_source_id",
+              "source_version_id",
+              "parse_run_identity_key",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_amount_evidence_amount_source_occurrence_id_amount__fkey"
+            columns: [
+              "amount_source_occurrence_id",
+              "amount_id",
+              "amount_set_id",
+              "amount_set_source_occurrence_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_source_occurrences"
+            referencedColumns: [
+              "id",
+              "amount_id",
+              "amount_set_id",
+              "amount_set_source_occurrence_id",
+              "ingestion_source_id",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_amount_evidence_parse_run_id_source_version_id_fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_evidence_source_version_id_ingestion_source__fkey"
+            columns: ["source_version_id", "ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id", "ingestion_source_id"]
+          },
+        ]
+      }
+      fiscal_amount_revisions: {
+        Row: {
+          amount_id: string
+          amount_set_id: string
+          amount_set_revision_id: string
+          amount_yen: number | null
+          created_at: string
+          id: string
+          null_reason:
+            | Database["public"]["Enums"]["fiscal_null_reason_enum"]
+            | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          revision_number: number
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount_id: string
+          amount_set_id: string
+          amount_set_revision_id: string
+          amount_yen?: number | null
+          created_at?: string
+          id?: string
+          null_reason?:
+            | Database["public"]["Enums"]["fiscal_null_reason_enum"]
+            | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          revision_number: number
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount_id?: string
+          amount_set_id?: string
+          amount_set_revision_id?: string
+          amount_yen?: number | null
+          created_at?: string
+          id?: string
+          null_reason?:
+            | Database["public"]["Enums"]["fiscal_null_reason_enum"]
+            | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          revision_number?: number
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_revisions_amount_id_amount_set_id_fkey"
+            columns: ["amount_id", "amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amounts"
+            referencedColumns: ["id", "amount_set_id"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_revisions_amount_set_revision_id_amount_set__fkey"
+            columns: ["amount_set_revision_id", "amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_revisions"
+            referencedColumns: ["id", "amount_set_id"]
+          },
+        ]
+      }
+      fiscal_amount_set_revisions: {
+        Row: {
+          account_id: string | null
+          account_identity_key: string | null
+          amount_set_id: string
+          created_at: string
+          effective_on: string | null
+          event_kind: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_event_id: string
+          fiscal_year: number
+          id: string
+          membership_observation_id: string | null
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          reporting_scope_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_number: number
+          scope_membership_id: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          amount_set_id: string
+          created_at?: string
+          effective_on?: string | null
+          event_kind: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_event_id: string
+          fiscal_year: number
+          id?: string
+          membership_observation_id?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reporting_scope_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number: number
+          scope_membership_id?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          amount_set_id?: string
+          created_at?: string
+          effective_on?: string | null
+          event_kind?: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_event_id?: string
+          fiscal_year?: number
+          id?: string
+          membership_observation_id?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reporting_scope_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number?: number
+          scope_membership_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_set_revisions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_revisions_amount_set_id_fiscal_event_id__fkey"
+            columns: ["amount_set_id", "fiscal_event_id", "event_kind"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_sets"
+            referencedColumns: ["id", "fiscal_event_id", "event_kind"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_revisions_fiscal_event_id_reporting_scop_fkey"
+            columns: [
+              "fiscal_event_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_events"
+            referencedColumns: [
+              "id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_revisions_membership_observation_id_scop_fkey"
+            columns: [
+              "membership_observation_id",
+              "scope_membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scope_membership_observations"
+            referencedColumns: [
+              "id",
+              "membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+          },
+        ]
+      }
+      fiscal_amount_set_source_occurrences: {
+        Row: {
+          amount_set_id: string
+          created_at: string
+          edition_id: string
+          edition_source_occurrence_id: string
+          id: string
+          ingestion_source_id: string
+          source_amount_set_key: string
+        }
+        Insert: {
+          amount_set_id: string
+          created_at?: string
+          edition_id: string
+          edition_source_occurrence_id: string
+          id?: string
+          ingestion_source_id: string
+          source_amount_set_key: string
+        }
+        Update: {
+          amount_set_id?: string
+          created_at?: string
+          edition_id?: string
+          edition_source_occurrence_id?: string
+          id?: string
+          ingestion_source_id?: string
+          source_amount_set_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_set_source_occu_edition_source_occurrence_id_fkey"
+            columns: [
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_edition_source_occurrences"
+            referencedColumns: ["id", "edition_id", "ingestion_source_id"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_source_occurrences_amount_set_id_fkey"
+            columns: ["amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_amount_set_sources: {
+        Row: {
+          amount_set_id: string
+          amount_set_revision_id: string
+          amount_set_source_occurrence_id: string
+          created_at: string
+          edition_id: string
+          edition_observation_id: string
+          edition_source_occurrence_id: string
+          evidence_revision: number
+          evidence_role: Database["public"]["Enums"]["fiscal_evidence_role_enum"]
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id: string
+          ingestion_source_id: string
+          parse_run_id: string | null
+          parse_run_identity_key: string | null
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          source_locator: string | null
+          source_version_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount_set_id: string
+          amount_set_revision_id: string
+          amount_set_source_occurrence_id: string
+          created_at?: string
+          edition_id: string
+          edition_observation_id: string
+          edition_source_occurrence_id: string
+          evidence_revision?: number
+          evidence_role: Database["public"]["Enums"]["fiscal_evidence_role_enum"]
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id: string
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_locator?: string | null
+          source_version_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount_set_id?: string
+          amount_set_revision_id?: string
+          amount_set_source_occurrence_id?: string
+          created_at?: string
+          edition_id?: string
+          edition_observation_id?: string
+          edition_source_occurrence_id?: string
+          evidence_revision?: number
+          evidence_role?: Database["public"]["Enums"]["fiscal_evidence_role_enum"]
+          extraction_method?: Database["public"]["Enums"]["extraction_method_enum"]
+          id?: string
+          ingestion_source_id?: string
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          source_locator?: string | null
+          source_version_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_set_sources_amount_set_revision_id_amount_se_fkey"
+            columns: ["amount_set_revision_id", "amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_revisions"
+            referencedColumns: ["id", "amount_set_id"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_sources_amount_set_source_occurrence_id__fkey"
+            columns: [
+              "amount_set_source_occurrence_id",
+              "amount_set_id",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_source_occurrences"
+            referencedColumns: [
+              "id",
+              "amount_set_id",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_sources_edition_observation_id_edition_s_fkey"
+            columns: [
+              "edition_observation_id",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+              "source_version_id",
+              "parse_run_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_edition_observations"
+            referencedColumns: [
+              "id",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+              "source_version_id",
+              "parse_run_identity_key",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_amount_set_sources_parse_run_id_source_version_id_fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+        ]
+      }
+      fiscal_amount_sets: {
+        Row: {
+          created_at: string
+          decision_stage: Database["public"]["Enums"]["fiscal_decision_stage_enum"]
+          event_kind: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_event_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          decision_stage: Database["public"]["Enums"]["fiscal_decision_stage_enum"]
+          event_kind: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_event_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          decision_stage?: Database["public"]["Enums"]["fiscal_decision_stage_enum"]
+          event_kind?: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_sets_fiscal_event_id_event_kind_fkey"
+            columns: ["fiscal_event_id", "event_kind"]
+            isOneToOne: false
+            referencedRelation: "fiscal_events"
+            referencedColumns: ["id", "event_kind"]
+          },
+        ]
+      }
+      fiscal_amount_source_occurrences: {
+        Row: {
+          amount_id: string
+          amount_set_id: string
+          amount_set_source_occurrence_id: string
+          created_at: string
+          id: string
+          ingestion_source_id: string
+          source_amount_key: string
+        }
+        Insert: {
+          amount_id: string
+          amount_set_id: string
+          amount_set_source_occurrence_id: string
+          created_at?: string
+          id?: string
+          ingestion_source_id: string
+          source_amount_key: string
+        }
+        Update: {
+          amount_id?: string
+          amount_set_id?: string
+          amount_set_source_occurrence_id?: string
+          created_at?: string
+          id?: string
+          ingestion_source_id?: string
+          source_amount_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amount_source_occurren_amount_set_source_occurrence_fkey"
+            columns: [
+              "amount_set_source_occurrence_id",
+              "amount_set_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_source_occurrences"
+            referencedColumns: ["id", "amount_set_id", "ingestion_source_id"]
+          },
+          {
+            foreignKeyName: "fiscal_amount_source_occurrences_amount_id_amount_set_id_fkey"
+            columns: ["amount_id", "amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amounts"
+            referencedColumns: ["id", "amount_set_id"]
+          },
+        ]
+      }
+      fiscal_amounts: {
+        Row: {
+          amount_set_id: string
+          classification_id: string | null
+          created_at: string
+          created_for_amount_set_revision_id: string
+          id: string
+          measure: Database["public"]["Enums"]["fiscal_measure_enum"]
+        }
+        Insert: {
+          amount_set_id: string
+          classification_id?: string | null
+          created_at?: string
+          created_for_amount_set_revision_id: string
+          id?: string
+          measure: Database["public"]["Enums"]["fiscal_measure_enum"]
+        }
+        Update: {
+          amount_set_id?: string
+          classification_id?: string | null
+          created_at?: string
+          created_for_amount_set_revision_id?: string
+          id?: string
+          measure?: Database["public"]["Enums"]["fiscal_measure_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_amounts_amount_set_id_fkey"
+            columns: ["amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_amounts_classification_id_fkey"
+            columns: ["classification_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_classifications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_amounts_created_for_amount_set_revision_id_amount_s_fkey"
+            columns: ["created_for_amount_set_revision_id", "amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_revisions"
+            referencedColumns: ["id", "amount_set_id"]
+          },
+        ]
+      }
+      fiscal_classification_revisions: {
+        Row: {
+          classification_id: string
+          created_at: string
+          display_label: string
+          id: string
+          parent_classification_id: string | null
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          revision_number: number
+          scheme: string
+          valid_from_fiscal_year: number
+          valid_to_fiscal_year: number | null
+        }
+        Insert: {
+          classification_id: string
+          created_at?: string
+          display_label: string
+          id?: string
+          parent_classification_id?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number: number
+          scheme: string
+          valid_from_fiscal_year: number
+          valid_to_fiscal_year?: number | null
+        }
+        Update: {
+          classification_id?: string
+          created_at?: string
+          display_label?: string
+          id?: string
+          parent_classification_id?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          revision_number?: number
+          scheme?: string
+          valid_from_fiscal_year?: number
+          valid_to_fiscal_year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_classification_revisio_parent_classification_id_sch_fkey"
+            columns: ["parent_classification_id", "scheme"]
+            isOneToOne: false
+            referencedRelation: "fiscal_classifications"
+            referencedColumns: ["id", "scheme"]
+          },
+          {
+            foreignKeyName: "fiscal_classification_revisions_classification_id_scheme_fkey"
+            columns: ["classification_id", "scheme"]
+            isOneToOne: false
+            referencedRelation: "fiscal_classifications"
+            referencedColumns: ["id", "scheme"]
+          },
+        ]
+      }
+      fiscal_classifications: {
+        Row: {
+          canonical_key: string
+          created_at: string
+          id: string
+          scheme: string
+        }
+        Insert: {
+          canonical_key: string
+          created_at?: string
+          id?: string
+          scheme: string
+        }
+        Update: {
+          canonical_key?: string
+          created_at?: string
+          id?: string
+          scheme?: string
+        }
+        Relationships: []
+      }
+      fiscal_event_bill_link_revisions: {
+        Row: {
+          bill_id: string
+          confidence: number | null
+          created_at: string
+          evidence_summary: string
+          fiscal_event_id: string
+          id: string
+          link_id: string
+          match_method: Database["public"]["Enums"]["fiscal_bill_match_method_enum"]
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          relationship: Database["public"]["Enums"]["fiscal_bill_relationship_enum"]
+          revision_number: number
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          bill_id: string
+          confidence?: number | null
+          created_at?: string
+          evidence_summary: string
+          fiscal_event_id: string
+          id?: string
+          link_id: string
+          match_method: Database["public"]["Enums"]["fiscal_bill_match_method_enum"]
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          relationship: Database["public"]["Enums"]["fiscal_bill_relationship_enum"]
+          revision_number: number
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          bill_id?: string
+          confidence?: number | null
+          created_at?: string
+          evidence_summary?: string
+          fiscal_event_id?: string
+          id?: string
+          link_id?: string
+          match_method?: Database["public"]["Enums"]["fiscal_bill_match_method_enum"]
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          relationship?: Database["public"]["Enums"]["fiscal_bill_relationship_enum"]
+          revision_number?: number
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_event_bill_link_revisions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_event_bill_link_revisions_link_id_fiscal_event_id_fkey"
+            columns: ["link_id", "fiscal_event_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_event_bill_links"
+            referencedColumns: ["id", "fiscal_event_id"]
+          },
+        ]
+      }
+      fiscal_event_bill_links: {
+        Row: {
+          created_at: string
+          fiscal_event_id: string
+          id: string
+          link_key: string
+        }
+        Insert: {
+          created_at?: string
+          fiscal_event_id: string
+          id?: string
+          link_key: string
+        }
+        Update: {
+          created_at?: string
+          fiscal_event_id?: string
+          id?: string
+          link_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_event_bill_links_fiscal_event_id_fkey"
+            columns: ["fiscal_event_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_events: {
+        Row: {
+          account_id: string | null
+          account_identity_key: string | null
+          as_of_date: string | null
+          created_at: string
+          event_kind: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_year: number
+          id: string
+          reporting_scope_id: string
+          scope_membership_id: string | null
+          supplement_sequence: number | null
+        }
+        Insert: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          as_of_date?: string | null
+          created_at?: string
+          event_kind: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_year: number
+          id?: string
+          reporting_scope_id: string
+          scope_membership_id?: string | null
+          supplement_sequence?: number | null
+        }
+        Update: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          as_of_date?: string | null
+          created_at?: string
+          event_kind?: Database["public"]["Enums"]["fiscal_event_kind_enum"]
+          fiscal_year?: number
+          id?: string
+          reporting_scope_id?: string
+          scope_membership_id?: string | null
+          supplement_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_events_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_events_reporting_scope_id_fkey"
+            columns: ["reporting_scope_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scopes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_events_scope_membership_id_reporting_scope_id_fisca_fkey"
+            columns: [
+              "scope_membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scope_memberships"
+            referencedColumns: [
+              "id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+          },
+        ]
+      }
+      fiscal_reporting_scope_membership_observations: {
+        Row: {
+          account_id: string | null
+          account_identity_key: string | null
+          created_at: string
+          display_name: string
+          edition_id: string
+          edition_observation_id: string
+          edition_source_occurrence_id: string
+          evidence_revision: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          fiscal_year: number
+          id: string
+          ingestion_source_id: string
+          membership_id: string
+          membership_role: Database["public"]["Enums"]["fiscal_membership_role_enum"]
+          membership_source_occurrence_id: string
+          parse_run_id: string | null
+          parse_run_identity_key: string | null
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          reporting_scope_id: string
+          source_locator: string | null
+          source_member_name: string
+          source_version_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          created_at?: string
+          display_name: string
+          edition_id: string
+          edition_observation_id: string
+          edition_source_occurrence_id: string
+          evidence_revision?: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          fiscal_year: number
+          id?: string
+          ingestion_source_id: string
+          membership_id: string
+          membership_role: Database["public"]["Enums"]["fiscal_membership_role_enum"]
+          membership_source_occurrence_id: string
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reporting_scope_id: string
+          source_locator?: string | null
+          source_member_name: string
+          source_version_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          created_at?: string
+          display_name?: string
+          edition_id?: string
+          edition_observation_id?: string
+          edition_source_occurrence_id?: string
+          evidence_revision?: number
+          extraction_method?: Database["public"]["Enums"]["extraction_method_enum"]
+          fiscal_year?: number
+          id?: string
+          ingestion_source_id?: string
+          membership_id?: string
+          membership_role?: Database["public"]["Enums"]["fiscal_membership_role_enum"]
+          membership_source_occurrence_id?: string
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          reporting_scope_id?: string
+          source_locator?: string | null
+          source_member_name?: string
+          source_version_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_reporting_scope_membe_membership_id_reporting_scop_fkey1"
+            columns: [
+              "membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scope_memberships"
+            referencedColumns: [
+              "id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_member_edition_observation_id_editi_fkey"
+            columns: [
+              "edition_observation_id",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+              "source_version_id",
+              "parse_run_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_edition_observations"
+            referencedColumns: [
+              "id",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+              "source_version_id",
+              "parse_run_identity_key",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_member_membership_source_occurrence_fkey"
+            columns: [
+              "membership_source_occurrence_id",
+              "membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scope_membership_source_occurrences"
+            referencedColumns: [
+              "id",
+              "membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_member_parse_run_id_source_version__fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_membership_observations_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_reporting_scope_membership_source_occurrences: {
+        Row: {
+          account_id: string | null
+          account_identity_key: string | null
+          created_at: string
+          edition_id: string
+          edition_source_occurrence_id: string
+          fiscal_year: number
+          id: string
+          ingestion_source_id: string
+          membership_id: string
+          reporting_scope_id: string
+          source_membership_key: string
+        }
+        Insert: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          created_at?: string
+          edition_id: string
+          edition_source_occurrence_id: string
+          fiscal_year: number
+          id?: string
+          ingestion_source_id: string
+          membership_id: string
+          reporting_scope_id: string
+          source_membership_key: string
+        }
+        Update: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          created_at?: string
+          edition_id?: string
+          edition_source_occurrence_id?: string
+          fiscal_year?: number
+          id?: string
+          ingestion_source_id?: string
+          membership_id?: string
+          reporting_scope_id?: string
+          source_membership_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_reporting_scope_member_edition_source_occurrence_id_fkey"
+            columns: [
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_edition_source_occurrences"
+            referencedColumns: ["id", "edition_id", "ingestion_source_id"]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_member_membership_id_reporting_scop_fkey"
+            columns: [
+              "membership_id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scope_memberships"
+            referencedColumns: [
+              "id",
+              "reporting_scope_id",
+              "fiscal_year",
+              "account_identity_key",
+            ]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_membership_source_occurr_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_reporting_scope_memberships: {
+        Row: {
+          account_id: string | null
+          account_identity_key: string | null
+          created_at: string
+          fiscal_year: number
+          id: string
+          member_key: string
+          reporting_scope_id: string
+        }
+        Insert: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          created_at?: string
+          fiscal_year: number
+          id?: string
+          member_key: string
+          reporting_scope_id: string
+        }
+        Update: {
+          account_id?: string | null
+          account_identity_key?: string | null
+          created_at?: string
+          fiscal_year?: number
+          id?: string
+          member_key?: string
+          reporting_scope_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_reporting_scope_memberships_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_reporting_scope_memberships_reporting_scope_id_fkey"
+            columns: ["reporting_scope_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_reporting_scopes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_reporting_scopes: {
+        Row: {
+          code: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      fiscal_source_document_edition_observations: {
+        Row: {
+          as_of_date: string | null
+          created_at: string
+          edition_id: string
+          edition_source_occurrence_id: string
+          evidence_revision: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          fiscal_source_document_id: string
+          fiscal_year: number | null
+          id: string
+          ingestion_source_id: string
+          license_note: string | null
+          observation_revision: number
+          parse_run_id: string | null
+          parse_run_identity_key: string | null
+          publication_state: Database["public"]["Enums"]["publication_state_enum"]
+          published_at: string | null
+          publisher: string
+          qa_status: Database["public"]["Enums"]["qa_status_enum"]
+          redistribution_allowed: boolean | null
+          source_locator: string | null
+          source_version_id: string
+          title: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          as_of_date?: string | null
+          created_at?: string
+          edition_id: string
+          edition_source_occurrence_id: string
+          evidence_revision?: number
+          extraction_method: Database["public"]["Enums"]["extraction_method_enum"]
+          fiscal_source_document_id: string
+          fiscal_year?: number | null
+          id?: string
+          ingestion_source_id: string
+          license_note?: string | null
+          observation_revision: number
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          publisher: string
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          redistribution_allowed?: boolean | null
+          source_locator?: string | null
+          source_version_id: string
+          title: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          as_of_date?: string | null
+          created_at?: string
+          edition_id?: string
+          edition_source_occurrence_id?: string
+          evidence_revision?: number
+          extraction_method?: Database["public"]["Enums"]["extraction_method_enum"]
+          fiscal_source_document_id?: string
+          fiscal_year?: number | null
+          id?: string
+          ingestion_source_id?: string
+          license_note?: string | null
+          observation_revision?: number
+          parse_run_id?: string | null
+          parse_run_identity_key?: string | null
+          publication_state?: Database["public"]["Enums"]["publication_state_enum"]
+          published_at?: string | null
+          publisher?: string
+          qa_status?: Database["public"]["Enums"]["qa_status_enum"]
+          redistribution_allowed?: boolean | null
+          source_locator?: string | null
+          source_version_id?: string
+          title?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_source_document_editi_edition_id_fiscal_source_doc_fkey1"
+            columns: ["edition_id", "fiscal_source_document_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_editions"
+            referencedColumns: ["id", "fiscal_source_document_id"]
+          },
+          {
+            foreignKeyName: "fiscal_source_document_editio_edition_source_occurrence_id_fkey"
+            columns: [
+              "edition_source_occurrence_id",
+              "edition_id",
+              "ingestion_source_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_edition_source_occurrences"
+            referencedColumns: ["id", "edition_id", "ingestion_source_id"]
+          },
+          {
+            foreignKeyName: "fiscal_source_document_editio_parse_run_id_source_version__fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+          {
+            foreignKeyName: "fiscal_source_document_editio_source_version_id_ingestion__fkey"
+            columns: ["source_version_id", "ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_source_versions"
+            referencedColumns: ["id", "ingestion_source_id"]
+          },
+        ]
+      }
+      fiscal_source_document_edition_source_occurrences: {
+        Row: {
+          created_at: string
+          edition_id: string
+          fiscal_source_document_id: string
+          id: string
+          ingestion_source_id: string
+          source_edition_key: string
+        }
+        Insert: {
+          created_at?: string
+          edition_id: string
+          fiscal_source_document_id: string
+          id?: string
+          ingestion_source_id: string
+          source_edition_key: string
+        }
+        Update: {
+          created_at?: string
+          edition_id?: string
+          fiscal_source_document_id?: string
+          id?: string
+          ingestion_source_id?: string
+          source_edition_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_source_document_editio_edition_id_fiscal_source_doc_fkey"
+            columns: ["edition_id", "fiscal_source_document_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_document_editions"
+            referencedColumns: ["id", "fiscal_source_document_id"]
+          },
+          {
+            foreignKeyName: "fiscal_source_document_edition_source__ingestion_source_id_fkey"
+            columns: ["ingestion_source_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_source_document_editions: {
+        Row: {
+          created_at: string
+          edition_key: string
+          fiscal_source_document_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          edition_key: string
+          fiscal_source_document_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          edition_key?: string
+          fiscal_source_document_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_source_document_editions_fiscal_source_document_id_fkey"
+            columns: ["fiscal_source_document_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_source_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_source_documents: {
+        Row: {
+          created_at: string
+          id: string
+          series_code: string
+          source_kind: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          series_code: string
+          source_kind: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          series_code?: string
+          source_kind?: Database["public"]["Enums"]["fiscal_source_kind_enum"]
+        }
+        Relationships: []
+      }
+      fiscal_validation_result_evidence: {
+        Row: {
+          amount_evidence_id: string
+          amount_set_id: string
+          amount_set_revision_id: string
+          comparison_role: Database["public"]["Enums"]["fiscal_validation_comparison_role_enum"]
+          created_at: string
+          validation_result_id: string
+        }
+        Insert: {
+          amount_evidence_id: string
+          amount_set_id: string
+          amount_set_revision_id: string
+          comparison_role: Database["public"]["Enums"]["fiscal_validation_comparison_role_enum"]
+          created_at?: string
+          validation_result_id: string
+        }
+        Update: {
+          amount_evidence_id?: string
+          amount_set_id?: string
+          amount_set_revision_id?: string
+          comparison_role?: Database["public"]["Enums"]["fiscal_validation_comparison_role_enum"]
+          created_at?: string
+          validation_result_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_validation_result_evid_amount_evidence_id_amount_se_fkey"
+            columns: [
+              "amount_evidence_id",
+              "amount_set_revision_id",
+              "amount_set_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_evidence"
+            referencedColumns: ["id", "amount_set_revision_id", "amount_set_id"]
+          },
+          {
+            foreignKeyName: "fiscal_validation_result_evid_validation_result_id_amount__fkey"
+            columns: [
+              "validation_result_id",
+              "amount_set_revision_id",
+              "amount_set_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "fiscal_validation_results"
+            referencedColumns: ["id", "amount_set_revision_id", "amount_set_id"]
+          },
+        ]
+      }
+      fiscal_validation_results: {
+        Row: {
+          actual_value: number | null
+          amount_set_id: string | null
+          amount_set_revision_id: string | null
+          created_at: string
+          details: Json | null
+          difference: number | null
+          expected_value: number | null
+          id: string
+          parse_run_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          rule_code: string
+          severity: Database["public"]["Enums"]["fiscal_validation_severity_enum"]
+          source_version_id: string | null
+          status: Database["public"]["Enums"]["fiscal_validation_status_enum"]
+          tolerance: number | null
+          validation_scope: Database["public"]["Enums"]["fiscal_validation_scope_enum"]
+        }
+        Insert: {
+          actual_value?: number | null
+          amount_set_id?: string | null
+          amount_set_revision_id?: string | null
+          created_at?: string
+          details?: Json | null
+          difference?: number | null
+          expected_value?: number | null
+          id?: string
+          parse_run_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rule_code: string
+          severity: Database["public"]["Enums"]["fiscal_validation_severity_enum"]
+          source_version_id?: string | null
+          status?: Database["public"]["Enums"]["fiscal_validation_status_enum"]
+          tolerance?: number | null
+          validation_scope: Database["public"]["Enums"]["fiscal_validation_scope_enum"]
+        }
+        Update: {
+          actual_value?: number | null
+          amount_set_id?: string | null
+          amount_set_revision_id?: string | null
+          created_at?: string
+          details?: Json | null
+          difference?: number | null
+          expected_value?: number | null
+          id?: string
+          parse_run_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rule_code?: string
+          severity?: Database["public"]["Enums"]["fiscal_validation_severity_enum"]
+          source_version_id?: string | null
+          status?: Database["public"]["Enums"]["fiscal_validation_status_enum"]
+          tolerance?: number | null
+          validation_scope?: Database["public"]["Enums"]["fiscal_validation_scope_enum"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_validation_results_amount_set_revision_id_amount_se_fkey"
+            columns: ["amount_set_revision_id", "amount_set_id"]
+            isOneToOne: false
+            referencedRelation: "fiscal_amount_set_revisions"
+            referencedColumns: ["id", "amount_set_id"]
+          },
+          {
+            foreignKeyName: "fiscal_validation_results_parse_run_id_source_version_id_fkey"
+            columns: ["parse_run_id", "source_version_id"]
+            isOneToOne: false
+            referencedRelation: "ingestion_parse_runs"
+            referencedColumns: ["id", "source_version_id"]
+          },
+        ]
+      }
       general_question_answerer_revisions: {
         Row: {
           answerer_id: string
@@ -4168,6 +5746,77 @@ export type Database = {
       difficulty_level_enum: "normal" | "hard"
       extraction_method_enum: "parser" | "manual"
       faction_vote_enum: "for" | "against" | "split" | "excluded"
+      fiscal_account_type_enum: "general" | "special" | "public_enterprise"
+      fiscal_bill_match_method_enum:
+        | "exact_fields"
+        | "manual"
+        | "imported"
+        | "candidate"
+      fiscal_bill_relationship_enum:
+        | "proposes"
+        | "passes"
+        | "amends"
+        | "recognizes"
+        | "related_resolution"
+      fiscal_decision_stage_enum: "proposed" | "passed" | "not_applicable"
+      fiscal_event_kind_enum:
+        | "initial_budget"
+        | "supplementary_budget"
+        | "current_snapshot"
+        | "available_budget_snapshot"
+        | "settlement"
+      fiscal_evidence_role_enum:
+        | "primary"
+        | "corroborating"
+        | "calculation_input"
+      fiscal_measure_enum:
+        | "revenue_budget"
+        | "expenditure_budget"
+        | "revenue_budget_delta"
+        | "expenditure_budget_delta"
+        | "revenue_budget_after"
+        | "expenditure_budget_after"
+        | "revenue_actual"
+        | "expenditure_actual"
+        | "income"
+        | "expense"
+        | "asset"
+        | "liability"
+      fiscal_membership_role_enum: "included" | "eliminated" | "reference_only"
+      fiscal_null_reason_enum:
+        | "not_published"
+        | "not_applicable"
+        | "unreadable"
+        | "suppressed"
+        | "unknown_dash"
+      fiscal_source_kind_enum:
+        | "budget_overview"
+        | "execution_report"
+        | "settlement_report"
+        | "major_measures"
+        | "fiscal_comparison"
+        | "public_accounting"
+      fiscal_source_unit_enum:
+        | "yen"
+        | "thousand_yen"
+        | "ten_thousand_yen"
+        | "million_yen"
+        | "hundred_million_yen"
+      fiscal_validation_comparison_role_enum:
+        | "baseline"
+        | "compared"
+        | "calculation_input"
+        | "output"
+      fiscal_validation_scope_enum:
+        | "source_parse"
+        | "amount_set"
+        | "cross_source"
+      fiscal_validation_severity_enum: "info" | "warning" | "hard_error"
+      fiscal_validation_status_enum:
+        | "pending"
+        | "passed"
+        | "reviewed"
+        | "failed"
       general_question_change_kind_enum:
         | "new"
         | "changed"
@@ -4467,6 +6116,88 @@ export const Constants = {
       difficulty_level_enum: ["normal", "hard"],
       extraction_method_enum: ["parser", "manual"],
       faction_vote_enum: ["for", "against", "split", "excluded"],
+      fiscal_account_type_enum: ["general", "special", "public_enterprise"],
+      fiscal_bill_match_method_enum: [
+        "exact_fields",
+        "manual",
+        "imported",
+        "candidate",
+      ],
+      fiscal_bill_relationship_enum: [
+        "proposes",
+        "passes",
+        "amends",
+        "recognizes",
+        "related_resolution",
+      ],
+      fiscal_decision_stage_enum: ["proposed", "passed", "not_applicable"],
+      fiscal_event_kind_enum: [
+        "initial_budget",
+        "supplementary_budget",
+        "current_snapshot",
+        "available_budget_snapshot",
+        "settlement",
+      ],
+      fiscal_evidence_role_enum: [
+        "primary",
+        "corroborating",
+        "calculation_input",
+      ],
+      fiscal_measure_enum: [
+        "revenue_budget",
+        "expenditure_budget",
+        "revenue_budget_delta",
+        "expenditure_budget_delta",
+        "revenue_budget_after",
+        "expenditure_budget_after",
+        "revenue_actual",
+        "expenditure_actual",
+        "income",
+        "expense",
+        "asset",
+        "liability",
+      ],
+      fiscal_membership_role_enum: ["included", "eliminated", "reference_only"],
+      fiscal_null_reason_enum: [
+        "not_published",
+        "not_applicable",
+        "unreadable",
+        "suppressed",
+        "unknown_dash",
+      ],
+      fiscal_source_kind_enum: [
+        "budget_overview",
+        "execution_report",
+        "settlement_report",
+        "major_measures",
+        "fiscal_comparison",
+        "public_accounting",
+      ],
+      fiscal_source_unit_enum: [
+        "yen",
+        "thousand_yen",
+        "ten_thousand_yen",
+        "million_yen",
+        "hundred_million_yen",
+      ],
+      fiscal_validation_comparison_role_enum: [
+        "baseline",
+        "compared",
+        "calculation_input",
+        "output",
+      ],
+      fiscal_validation_scope_enum: [
+        "source_parse",
+        "amount_set",
+        "cross_source",
+      ],
+      fiscal_validation_severity_enum: ["info", "warning", "hard_error"],
+      fiscal_validation_status_enum: [
+        "pending",
+        "passed",
+        "reviewed",
+        "failed",
+      ],
       general_question_change_kind_enum: [
         "new",
         "changed",
