@@ -6,6 +6,11 @@ export type FiscalSourceKind =
   | "fiscal_comparison"
   | "public_accounting";
 
+export type FiscalParserKind =
+  | "metadata_only"
+  | "settlement_overview_2024"
+  | "major_measures_2024";
+
 export type FiscalSourceProfile = {
   profileKey: string;
   profileVersion: string;
@@ -17,6 +22,7 @@ export type FiscalSourceProfile = {
   title: string;
   url: string;
   expectedMediaType: "application/pdf";
+  parserKind: FiscalParserKind;
 };
 
 const PROFILE_VERSION = "1.0.0";
@@ -35,6 +41,7 @@ export const fiscalSourceProfiles = [
     title: "令和8年度 一般会計",
     url: "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/yosan2026/gaiyousho/pdf/s-1.pdf",
     expectedMediaType: "application/pdf",
+    parserKind: "metadata_only",
   },
   {
     profileKey: "budget-overview-2026-council-expense",
@@ -47,11 +54,12 @@ export const fiscalSourceProfiles = [
     title: "令和8年度 議会費",
     url: "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/yosan2026/gaiyousho/pdf/i-1.pdf",
     expectedMediaType: "application/pdf",
+    parserKind: "metadata_only",
   },
   {
     profileKey: "settlement-overview-2024",
     profileVersion: PROFILE_VERSION,
-    parserName: PARSER_NAME,
+    parserName: "numazu-fiscal-settlement-overview-2024",
     parserVersion: PARSER_VERSION,
     sourceKind: "settlement_report",
     seriesCode: "settlement-overview",
@@ -59,11 +67,12 @@ export const fiscalSourceProfiles = [
     title: "令和6年度 決算の概要",
     url: "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf/gaiyou.pdf",
     expectedMediaType: "application/pdf",
+    parserKind: "settlement_overview_2024",
   },
   {
     profileKey: "major-measures-2024-fiscal",
     profileVersion: PROFILE_VERSION,
-    parserName: PARSER_NAME,
+    parserName: "numazu-fiscal-major-measures-2024",
     parserVersion: PARSER_VERSION,
     sourceKind: "major_measures",
     seriesCode: "major-measures-fiscal",
@@ -71,6 +80,7 @@ export const fiscalSourceProfiles = [
     title: "令和6年度 主要な施策の成果等報告書 第1章 財政",
     url: "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf_houkoku/1.pdf",
     expectedMediaType: "application/pdf",
+    parserKind: "major_measures_2024",
   },
 ] as const satisfies readonly FiscalSourceProfile[];
 
