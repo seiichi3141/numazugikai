@@ -1,4 +1,5 @@
 import { NumazuSiteClient } from "../fetchers/numazu-site-client";
+import { parseFiscalDocument } from "../parsers/parse-fiscal-document";
 import {
   failFiscalParseRun,
   findPreviousFiscalStagingRecords,
@@ -33,7 +34,7 @@ const defaultRepository: FiscalIngestRepository = {
   findPreviousRecords: findPreviousFiscalStagingRecords,
 };
 
-/** 初期対象の公式PDFを版保存し、数値解析前の書誌候補をQAへ積む。 */
+/** 初期対象の公式PDFを版保存し、書誌と対応済み金額をQAへ積む。 */
 export async function ingestFiscalSources(params: {
   ingestionRunId: string;
   client?: Pick<NumazuSiteClient, "fetchPdfDocument">;
@@ -59,16 +60,19 @@ export async function ingestFiscalSources(params: {
       continue;
     }
     try {
-      const record = buildFiscalDocumentMetadataRecord({
+      const metadataRecord = buildFiscalDocumentMetadataRecord({
         profile,
         contentHash: fetched.contentHash,
         text: fetched.text,
       });
+      const parsed = parseFiscalDocument({ profile, text: fetched.text });
+      const records = [metadataRecord, ...parsed.records];
       const previous = await repository.findPreviousRecords(profile.profileKey);
-      const rows = buildFiscalStagingRows([record], previous);
-      const hardErrorCount = rows
-        .flatMap((row) => row.validationResults)
-        .filter((validation) => validation.severity === "hard_error").length;
+      const rows = buildFiscalStagingRows(records, previous);
+      const hardErrorCount = [
+        ...parsed.validationSummary,
+        ...rows.flatMap((row) => row.validationResults),
+      ].filter((validation) => validation.severity === "hard_error").length;
       validationErrorCount += hardErrorCount;
       stagedBatchIds.push(
         await repository.saveStaging({
@@ -76,8 +80,8 @@ export async function ingestFiscalSources(params: {
           parseRunId: prepared.parseRunId,
           profile,
           rows,
-          discoveredCount: 1,
-          validationSummary: [],
+          discoveredCount: records.length,
+          validationSummary: parsed.validationSummary,
           parseStatus: hardErrorCount > 0 ? "failed" : "completed",
         })
       );

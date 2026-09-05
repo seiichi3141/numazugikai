@@ -29,6 +29,13 @@ describe("fiscalSourceProfiles", () => {
     expect(
       findFiscalSourceProfile("settlement-overview-2024")?.fiscalYear
     ).toBe(2024);
+    expect(
+      findFiscalSourceProfile("major-measures-2024-fiscal")?.parserKind
+    ).toBe("major_measures_2024");
+    expect(
+      findFiscalSourceProfile("budget-overview-2026-general-account")
+        ?.parserKind
+    ).toBe("metadata_only");
     expect(findFiscalSourceProfile("unknown")).toBeNull();
   });
 });

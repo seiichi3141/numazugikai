@@ -22,6 +22,7 @@ function configurationHash(profile: FiscalSourceProfile): string {
         fiscalYear: profile.fiscalYear,
         profileKey: profile.profileKey,
         profileVersion: profile.profileVersion,
+        parserKind: profile.parserKind,
         seriesCode: profile.seriesCode,
         sourceKind: profile.sourceKind,
       })
