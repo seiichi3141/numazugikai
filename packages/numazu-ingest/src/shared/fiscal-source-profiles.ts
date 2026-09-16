@@ -8,6 +8,8 @@ export type FiscalSourceKind =
 
 export type FiscalParserKind =
   | "metadata_only"
+  | "general_budget_2026"
+  | "council_budget_2026"
   | "settlement_overview_2024"
   | "major_measures_2024";
 
@@ -26,27 +28,33 @@ export type FiscalSourceProfile = {
 };
 
 const PROFILE_VERSION = "1.0.0";
-const PARSER_NAME = "numazu-fiscal-document-metadata";
 const PARSER_VERSION = "1.0.0";
+
+/**
+ * 令和8年度一般会計の予算概要は、款別内訳を抽出するparserへ差し替えた。
+ * `prepareFiscalSource` は同じ parser 版の完了済み解析を再利用するため、
+ * 抽出結果が変わった profile だけ版を分けて再解析させる。
+ */
+const GENERAL_BUDGET_2026_PARSER_VERSION = "1.1.0";
 
 export const fiscalSourceProfiles = [
   {
     profileKey: "budget-overview-2026-general-account",
     profileVersion: PROFILE_VERSION,
-    parserName: PARSER_NAME,
-    parserVersion: PARSER_VERSION,
+    parserName: "numazu-fiscal-general-budget-2026",
+    parserVersion: GENERAL_BUDGET_2026_PARSER_VERSION,
     sourceKind: "budget_overview",
     seriesCode: "budget-overview-general-account",
     fiscalYear: 2026,
     title: "令和8年度 一般会計",
     url: "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/yosan2026/gaiyousho/pdf/s-1.pdf",
     expectedMediaType: "application/pdf",
-    parserKind: "metadata_only",
+    parserKind: "general_budget_2026",
   },
   {
     profileKey: "budget-overview-2026-council-expense",
     profileVersion: PROFILE_VERSION,
-    parserName: PARSER_NAME,
+    parserName: "numazu-fiscal-council-budget-2026",
     parserVersion: PARSER_VERSION,
     sourceKind: "budget_overview",
     seriesCode: "budget-overview-council-expense",
@@ -54,7 +62,7 @@ export const fiscalSourceProfiles = [
     title: "令和8年度 議会費",
     url: "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/yosan2026/gaiyousho/pdf/i-1.pdf",
     expectedMediaType: "application/pdf",
-    parserKind: "metadata_only",
+    parserKind: "council_budget_2026",
   },
   {
     profileKey: "settlement-overview-2024",

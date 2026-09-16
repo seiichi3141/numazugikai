@@ -17,8 +17,12 @@ export type FiscalParserResult = {
 export type FiscalAmountRecordParams = {
   fiscalYear: number;
   eventKind: "initial_budget" | "available_budget_snapshot" | "settlement";
-  decisionStage: "passed" | "not_applicable";
-  measure: "expenditure_budget" | "revenue_actual" | "expenditure_actual";
+  decisionStage: "proposed" | "passed" | "not_applicable";
+  measure:
+    | "revenue_budget"
+    | "expenditure_budget"
+    | "revenue_actual"
+    | "expenditure_actual";
   amountYen: bigint;
   sourceValueText: string;
   sourceValueNumeric: string;
@@ -26,6 +30,7 @@ export type FiscalAmountRecordParams = {
   sourcePage: number;
   sourceTable: string;
   classificationKey?: string;
+  classificationScheme?: string;
   sourceClassificationLabel?: string;
   sourcePrecisionYen?: number;
   asOfDate?: string;
@@ -53,7 +58,9 @@ export function buildFiscalAmountRecord(
       amountYen: params.amountYen.toString(),
       asOfDate: params.asOfDate ?? null,
       classificationKey: params.classificationKey ?? null,
-      classificationScheme: params.classificationKey ? "purpose" : null,
+      classificationScheme:
+        params.classificationScheme ??
+        (params.classificationKey ? "purpose" : null),
       comparisonToleranceYen: params.comparisonToleranceYen ?? 0,
       decisionStage: params.decisionStage,
       evidenceRole: params.evidenceRole ?? "primary",
