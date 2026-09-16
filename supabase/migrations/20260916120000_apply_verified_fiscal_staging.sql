@@ -201,10 +201,20 @@ begin
     from public.fiscal_staging_records record
     where record.batch_id = p_batch_id
       and (record.qa_status <> 'verified'
-        or record.change_kind in ('ambiguous', 'missing', 'changed'))
+        or record.change_kind <> 'new')
   ) then
     raise exception
       'fiscal staging apply supports verified new candidates only';
+  end if;
+  -- 未対応の候補を黙って落とすと、資料に載っているのに公開正本に無い値ができる。
+  if exists (
+    select 1
+    from public.fiscal_staging_records record
+    where record.batch_id = p_batch_id
+      and record.record_kind not in ('document_metadata', 'amount')
+  ) then
+    raise exception
+      'fiscal staging apply does not support every record kind in the batch';
   end if;
   if exists (
     select 1
@@ -233,6 +243,9 @@ begin
 
   if v_source_kind is distinct from v_batch.source_kind then
     raise exception 'fiscal staging metadata source kind does not match batch';
+  end if;
+  if v_fiscal_year is distinct from v_batch.fiscal_year then
+    raise exception 'fiscal staging metadata fiscal year does not match batch';
   end if;
   if v_fiscal_year is null or v_series_code is null or v_title is null then
     raise exception 'fiscal staging metadata is incomplete';

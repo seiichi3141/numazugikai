@@ -773,6 +773,142 @@ describe("apply_verified_fiscal_staging()", () => {
     expect(output).toContain("ROLLBACK");
   });
 
+  it("確定していない差分候補を適用しない", () => {
+    const output = executeInTestDatabase(`
+      begin;
+      ${preparedBatchSql(PRIMARY, [
+        documentMetadataRow(),
+        amountRow({
+          changeKind: "unchanged",
+          matchedTargetId: MATCHED_TARGET_ID,
+        }),
+      ])}
+      select ${approveCallSql(PRIMARY)};
+      ${expectRaiseSql(
+        `perform ${applyCallSql(PRIMARY)}`,
+        "supports verified new candidates only"
+      )}
+      rollback;
+    `);
+
+    expect(output).toContain("ROLLBACK");
+  });
+
+  it("未対応の種別の候補が残るバッチを適用しない", () => {
+    const output = executeInTestDatabase(`
+      begin;
+      ${preparedBatchSql(PRIMARY)}
+      select ${approveCallSql(PRIMARY)};
+      insert into public.fiscal_staging_records (
+        batch_id, record_kind, source_record_key, content_fingerprint,
+        change_kind, parsed_payload, validation_results, qa_status,
+        reviewed_by, reviewed_at
+      ) values (
+        ${batchIdSql(PRIMARY)}, 'coverage', 'coverage:general',
+        'sha256:coverage', 'new', '{}'::jsonb, '[]'::jsonb, 'verified',
+        '${REVIEWER_ID}', now()
+      );
+      ${expectRaiseSql(
+        `perform ${applyCallSql(PRIMARY)}`,
+        "does not support every record kind"
+      )}
+      rollback;
+    `);
+
+    expect(output).toContain("ROLLBACK");
+  });
+
+  it("hard_errorが残るバッチの適用を拒否する", () => {
+    const output = executeInTestDatabase(`
+      begin;
+      ${preparedBatchSql(PRIMARY)}
+      select ${approveCallSql(PRIMARY)};
+      insert into public.fiscal_staging_records (
+        batch_id, record_kind, source_record_key, content_fingerprint,
+        change_kind, parsed_payload, validation_results, qa_status,
+        reviewed_by, reviewed_at
+      ) values (
+        ${batchIdSql(PRIMARY)}, 'amount', 'amount:late-arrival',
+        'sha256:amount:late-arrival', 'new',
+        ${jsonLiteral(
+          amountRow({
+            sourceRecordKey: "amount:late-arrival",
+          }).parsed_payload
+        )}, '[
+        {"rule_code": "amount_control_total", "severity": "hard_error",
+         "message": "合計が一致しません"}
+      ]'::jsonb, 'verified', '${REVIEWER_ID}', now()
+      );
+      ${expectRaiseSql(
+        `perform ${applyCallSql(PRIMARY)}`,
+        "fiscal staging candidates contain hard errors"
+      )}
+      rollback;
+    `);
+
+    expect(output).toContain("ROLLBACK");
+  });
+
+  it("公開済みの金額セットを入れ替えない", () => {
+    const output = executeInTestDatabase(`
+      begin;
+      ${preparedBatchSql(PRIMARY)}
+      select ${approveCallSql(PRIMARY)};
+      select ${applyCallSql(PRIMARY)};
+      ${ingestionFixtureSql(SECONDARY)}
+      ${saveBatchSql(SECONDARY, [
+        documentMetadataRow({ seriesCode: SECONDARY_SERIES_CODE }),
+        amountRow({ payload: { amountYen: "2000" } }),
+      ])}
+      ${verifyRecordsSql(SECONDARY)}
+      select ${approveCallSql(SECONDARY)};
+      ${expectRaiseSql(
+        `perform ${applyCallSql(SECONDARY)}`,
+        "published fiscal amount set cannot be replaced in place"
+      )}
+      do $block$
+      begin
+        if (
+          select count(*)
+          from public.fiscal_amount_revisions revision
+          join public.fiscal_amount_set_revisions set_revision
+            on set_revision.id = revision.amount_set_revision_id
+           and set_revision.publication_state = 'published'
+          where revision.amount_yen = 2000
+        ) <> 0 then
+          raise exception 'rejected apply published the replacement amount';
+        end if;
+      end;
+      $block$;
+      rollback;
+    `);
+
+    expect(output).toContain("ROLLBACK");
+  });
+
+  it("公開済みの資料版を入れ替えない", () => {
+    const output = executeInTestDatabase(`
+      begin;
+      ${preparedBatchSql(PRIMARY)}
+      select ${approveCallSql(PRIMARY)};
+      select ${applyCallSql(PRIMARY)};
+      ${ingestionFixtureSql(SECONDARY)}
+      ${saveBatchSql(SECONDARY, [
+        documentMetadataRow(),
+        amountRow({ payload: { amountYen: "2000" } }),
+      ])}
+      ${verifyRecordsSql(SECONDARY)}
+      select ${approveCallSql(SECONDARY)};
+      ${expectRaiseSql(
+        `perform ${applyCallSql(SECONDARY)}`,
+        "published fiscal document edition cannot be replaced in place"
+      )}
+      rollback;
+    `);
+
+    expect(output).toContain("ROLLBACK");
+  });
+
   it("service_roleだけに実行権限を与える", () => {
     const output = executeInTestDatabase(`
       select (
