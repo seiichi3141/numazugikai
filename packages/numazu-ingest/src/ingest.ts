@@ -15,8 +15,12 @@ import {
   ingestBillsForTerm,
 } from "./services/ingest-bills";
 import { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
+import { ingestFiscalSources } from "./services/ingest-fiscal-sources";
+import { ingestGeneralQuestionMinutes } from "./services/ingest-general-question-minutes";
+import { ingestGeneralQuestionsForTerm } from "./services/ingest-general-questions";
 import { ingestMembers } from "./services/ingest-members";
 import { ingestMinutes } from "./services/ingest-minutes";
+import { ingestSessionProgress } from "./services/ingest-session-progress";
 import { ingestSessionSchedule } from "./services/ingest-sessions";
 import { CURRENT_TERM } from "./shared/constants-site";
 
@@ -29,8 +33,12 @@ export {
   ingestBillsForTerm,
 } from "./services/ingest-bills";
 export { ingestCurrentSessionBills } from "./services/ingest-current-session-bills";
+export { ingestFiscalSources } from "./services/ingest-fiscal-sources";
+export { ingestGeneralQuestionMinutes } from "./services/ingest-general-question-minutes";
+export { ingestGeneralQuestionsForTerm } from "./services/ingest-general-questions";
 export { ingestMembers } from "./services/ingest-members";
 export { ingestMinutes } from "./services/ingest-minutes";
+export { ingestSessionProgress } from "./services/ingest-session-progress";
 export { ingestSessionSchedule } from "./services/ingest-sessions";
 export { CURRENT_TERM } from "./shared/constants-site";
 
@@ -38,10 +46,14 @@ export type IngestMode =
   | "sessions"
   | "members"
   | "current-bills"
+  | "session-progress"
   | "bills"
   | "minutes"
   | "amivoice"
   | "amivoice-archive"
+  | "general-questions"
+  | "general-question-records"
+  | "fiscal"
   | "frequent"
   | "daily"
   | "all";
@@ -55,6 +67,8 @@ export type IngestOptions = {
   force?: boolean;
   /** 公開されているすべての期を取り込む */
   allTerms?: boolean;
+  /** 会議記録補完を公式案内の開始年（1990年）から実行する */
+  allYears?: boolean;
   /** amivoice-archive で取り込む年（西暦） */
   year?: number;
 };
@@ -71,7 +85,7 @@ const REGULAR_SESSION_MONTHS = [2, 6, 9, 11] as const;
 export async function runIngest(options: IngestOptions): Promise<void> {
   const runId = await startIngestionRun(options.mode);
   try {
-    const stats = await dispatch(options);
+    const stats = await dispatch(options, runId);
     await finishIngestionRun(runId, { status: "completed", stats });
     console.log(`取り込み完了 (${options.mode}):`, JSON.stringify(stats));
   } catch (error) {
@@ -82,7 +96,10 @@ export async function runIngest(options: IngestOptions): Promise<void> {
   }
 }
 
-async function dispatch(options: IngestOptions): Promise<unknown> {
+async function dispatch(
+  options: IngestOptions,
+  runId: string
+): Promise<unknown> {
   const siteClient = new NumazuSiteClient();
   const discussVisionClient = new DiscussVisionClient();
 
@@ -98,6 +115,12 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
 
     case "current-bills":
       return ingestCurrentSessionBills({
+        force: options.force,
+        client: siteClient,
+      });
+
+    case "session-progress":
+      return ingestSessionProgress({
         force: options.force,
         client: siteClient,
       });
@@ -121,6 +144,43 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
       return ingestAmivoiceArchive({ years });
     }
 
+    case "general-questions": {
+      const terms = options.allTerms
+        ? allTerms()
+        : [options.term ?? CURRENT_TERM];
+      const results = [];
+      for (const term of terms) {
+        results.push(
+          await ingestGeneralQuestionsForTerm({
+            ingestionRunId: runId,
+            term,
+            client: siteClient,
+          })
+        );
+      }
+      return results;
+    }
+
+    case "general-question-records": {
+      const currentYear = new Date().getFullYear();
+      const years = options.allYears
+        ? Array.from(
+            { length: currentYear - 1990 + 1 },
+            (_, index) => 1990 + index
+          )
+        : [options.year ?? currentYear];
+      return ingestGeneralQuestionMinutes({
+        ingestionRunId: runId,
+        years,
+      });
+    }
+
+    case "fiscal":
+      return ingestFiscalSources({
+        ingestionRunId: runId,
+        client: siteClient,
+      });
+
     case "frequent": {
       const sessions = await ingestSessionSchedule({
         force: options.force,
@@ -130,7 +190,11 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
         force: options.force,
         client: siteClient,
       });
-      return { sessions, currentBills };
+      const sessionProgress = await ingestSessionProgress({
+        force: options.force,
+        client: siteClient,
+      });
+      return { sessions, currentBills, sessionProgress };
     }
 
     case "daily": {
@@ -156,10 +220,27 @@ async function dispatch(options: IngestOptions): Promise<unknown> {
         force: options.force,
         client: siteClient,
       });
+      const sessionProgress = await ingestSessionProgress({
+        force: options.force,
+        client: siteClient,
+      });
       const bills = await ingestBills(options, siteClient);
       // 会議録は議案が入っている前提で突合するため最後に流す
       const minutes = await ingestMinutesForYear(options, discussVisionClient);
-      return { sessions, members, currentBills, bills, minutes };
+      const generalQuestions = await ingestGeneralQuestionsForTerm({
+        ingestionRunId: runId,
+        term: options.term ?? CURRENT_TERM,
+        client: siteClient,
+      });
+      return {
+        sessions,
+        members,
+        currentBills,
+        sessionProgress,
+        bills,
+        minutes,
+        generalQuestions,
+      };
     }
   }
 }

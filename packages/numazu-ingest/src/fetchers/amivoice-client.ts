@@ -148,6 +148,8 @@ export class AmivoiceClient {
     meetingTypes?: readonly string[];
     /** 取得するページ数の上限。既定は制限なし（全件） */
     maxPages?: number;
+    /** 公式画面の該当件数と取得件数が一致しなければ失敗させる */
+    requireComplete?: boolean;
   }): Promise<{ hitCount: number | null; hits: AmivoiceSearchHit[] }> {
     const hits: AmivoiceSearchHit[] = [];
     const seen = new Set<string>();
@@ -177,6 +179,15 @@ export class AmivoiceClient {
     }
 
     hits.sort((a, b) => a.date.localeCompare(b.date));
+    if (
+      params.requireComplete &&
+      hitCount !== null &&
+      hitCount !== hits.length
+    ) {
+      throw new Error(
+        `会議記録検索の取得件数が一致しない（公式${hitCount}件 / 取得${hits.length}件）`
+      );
+    }
     return { hitCount, hits };
   }
 

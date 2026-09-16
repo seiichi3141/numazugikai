@@ -22,5 +22,6 @@ export const numazuCityProfile = {
     report: "https://forms.gle/wJXXMt6cv2ZdiCgg6",
     councilOfficial:
       "https://www.city.numazu.shizuoka.jp/shisei/g-shigiki/g-sigiki/index.htm",
+    sourceTerms: "https://www.city.numazu.shizuoka.jp/about/copyright.htm",
   },
 } as const satisfies RuntimeReadySiteProfile;

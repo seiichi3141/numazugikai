@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPublishedBillSitemapEntries } from "@/features/bills/server/loaders/get-published-bill-sitemap-entries";
+import { getGeneralQuestionSessions } from "@/features/general-questions/server/loaders/get-general-question-sessions";
+import { GENERAL_QUESTIONS_ENABLED } from "@/features/general-questions/shared/constants";
 import { env } from "@/lib/env";
 import { getPublicBaseUrl } from "@/lib/metadata/utils/get-public-base-url";
 import { routes } from "@/lib/routes";
@@ -9,7 +11,12 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getPublicBaseUrl(env.webUrl);
 
-  const bills = await getPublishedBillSitemapEntries();
+  const [bills, generalQuestionSessions] = await Promise.all([
+    getPublishedBillSitemapEntries(),
+    GENERAL_QUESTIONS_ENABLED
+      ? getGeneralQuestionSessions()
+      : Promise.resolve([]),
+  ]);
   const now = new Date();
 
   const billUrls = bills.map((bill) => ({
@@ -18,6 +25,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
+  const generalQuestionSessionUrls = generalQuestionSessions
+    .filter(
+      (session) => session.appearances.length > 0 || session.coverage.length > 0
+    )
+    .map((session) => ({
+      url: `${baseUrl}${routes.generalQuestionsSession(session.slug)}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
 
   return [
     {
@@ -34,6 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...[
       routes.gikaiSessions(),
+      ...(GENERAL_QUESTIONS_ENABLED ? [routes.generalQuestions()] : []),
       routes.developers(),
       routes.developersOpenDataApi(),
       routes.interviewDataTerms(),
@@ -46,5 +64,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     })),
     ...billUrls,
+    ...generalQuestionSessionUrls,
   ];
 }

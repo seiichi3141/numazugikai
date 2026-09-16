@@ -164,6 +164,14 @@ describe("AmivoiceClient.searchMinutes: ページング", () => {
     await client.searchMinutes({});
     expect(bodies).toHaveLength(1);
   });
+
+  it("完全取得を要求した場合は公式件数との不一致を失敗にする", async () => {
+    const { impl } = fakeFetch([page2]);
+    const client = new AmivoiceClient({ fetchImpl: impl, sleep: noSleep });
+    await expect(
+      client.searchMinutes({ requireComplete: true })
+    ).rejects.toThrow(/公式45件 \/ 取得1件/);
+  });
 });
 
 describe("会議記録IDの拡張子", () => {

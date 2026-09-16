@@ -50,4 +50,9 @@ export const routes = {
   // ── 会期 ──────────────────────────────────────────
   gikaiSessions: () => "/gikai" as const,
   gikaiSessionBills: (slug: string) => `/gikai/${slug}/bills` as const,
+
+  // ── 一般質問 ──────────────────────────────────────
+  generalQuestions: () => "/questions" as const,
+  generalQuestionsSession: (slug: string) =>
+    `/questions/sessions/${slug}` as const,
 } as const;

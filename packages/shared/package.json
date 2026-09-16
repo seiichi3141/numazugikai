@@ -135,6 +135,10 @@
     "./concurrency/map-with-concurrency": {
       "types": "./src/concurrency/map-with-concurrency.ts",
       "default": "./src/concurrency/map-with-concurrency.ts"
+    },
+    "./general-questions/labels": {
+      "types": "./src/general-questions/labels.ts",
+      "default": "./src/general-questions/labels.ts"
     }
   },
   "dependencies": {
