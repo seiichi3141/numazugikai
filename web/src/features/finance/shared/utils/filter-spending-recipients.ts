@@ -2,7 +2,7 @@ import type { RecipientKind, SpendingRecipient } from "../types/spending-flow";
 
 export type RecipientKindFilter = RecipientKind | "all";
 
-function normalizeQuery(text: string): string {
+export function normalizeQuery(text: string): string {
   return text.normalize("NFKC").toLowerCase().trim();
 }
 

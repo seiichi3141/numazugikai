@@ -34,11 +34,11 @@ export function parseTsvWords(tsv) {
   return words;
 }
 
-function parseAmount(text) {
+export function parseAmount(text) {
   return Number(text.replaceAll(",", ""));
 }
 
-function joinCell(words) {
+export function joinCell(words) {
   const sorted = [...words].sort((a, b) =>
     Math.abs(a.top - b.top) > 3 ? a.top - b.top : a.left - b.left
   );

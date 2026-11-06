@@ -106,3 +106,8 @@ export function calculateExecutionRate(
 ): number | null {
   return calculateSharePercent(actualYen, availableBudgetYen);
 }
+
+/** 千円単位の金額を「1億2,345万円」の形にする。 */
+export function formatThousandYen(thousandYen: number): string {
+  return formatYenWithUnits(thousandYenToYen(thousandYen));
+}

@@ -11,10 +11,7 @@ import {
   filterSpendingRecipients,
   type RecipientKindFilter,
 } from "../../shared/utils/filter-spending-recipients";
-import {
-  formatYenWithUnits,
-  thousandYenToYen,
-} from "../../shared/utils/format-yen";
+import { formatThousandYen } from "../../shared/utils/format-yen";
 
 const PAGE_SIZE = 30;
 
@@ -96,7 +93,7 @@ export function SpendingRecipientExplorer({
               </p>
             </div>
             <p className="shrink-0 font-bold tabular-nums text-mirai-text">
-              {formatYenWithUnits(thousandYenToYen(row.amountThousandYen))}
+              {formatThousandYen(row.amountThousandYen)}
             </p>
           </li>
         ))}

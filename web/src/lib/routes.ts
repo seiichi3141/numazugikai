@@ -60,4 +60,6 @@ export const routes = {
   finance: () => "/finance" as const,
   financeYear: (fiscalYear: number) => `/finance/${fiscalYear}` as const,
   financeFlow: (fiscalYear: number) => `/finance/${fiscalYear}/flow` as const,
+  financeProjects: (fiscalYear: number) =>
+    `/finance/${fiscalYear}/projects` as const,
 } as const;

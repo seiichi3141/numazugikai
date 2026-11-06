@@ -15,6 +15,7 @@ import {
   getPublishedFiscalYearAmounts,
   getPublishedFiscalYears,
 } from "../loaders/get-fiscal-years";
+import { hasProjectBudget } from "../loaders/get-project-budget";
 import { hasSpendingFlow } from "../loaders/get-spending-flow";
 import { FiscalComparisonSection } from "./fiscal-comparison-section";
 import { FiscalPlainSummarySection } from "./fiscal-plain-summary";
@@ -49,13 +50,21 @@ export async function FiscalYearPage({ fiscalYear }: { fiscalYear: number }) {
             金額は円単位です。構成比は合計額に対する割合を小数第1位まで四捨五入したもので、合計が100.0%にならないことがあります。
           </p>
           {hasSpendingFlow(fiscalYear) ? (
-            <p className="text-sm">
+            <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
               <Link
                 href={routes.financeFlow(fiscalYear)}
                 className="font-medium text-mirai-text underline"
               >
                 お金の流れと補助金の行き先を見る（試作）
               </Link>
+              {hasProjectBudget(fiscalYear) ? (
+                <Link
+                  href={routes.financeProjects(fiscalYear)}
+                  className="font-medium text-mirai-text underline"
+                >
+                  事業の予算と実績を見る（試作）
+                </Link>
+              ) : null}
             </p>
           ) : null}
         </header>
