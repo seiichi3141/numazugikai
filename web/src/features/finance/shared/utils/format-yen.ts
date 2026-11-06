@@ -19,6 +19,11 @@ export function parseYen(value: string): bigint {
   return BigInt(trimmed);
 }
 
+/** 千円単位の金額を、円の10進文字列にする。 */
+export function thousandYenToYen(thousandYen: number): string {
+  return (BigInt(thousandYen) * THOUSAND).toString();
+}
+
 /** 円金額の大小を比べる。a が小さければ負、大きければ正、等しければ 0。 */
 export function compareYen(a: string, b: string): number {
   const left = parseYen(a);
@@ -100,4 +105,9 @@ export function calculateExecutionRate(
   availableBudgetYen: string
 ): number | null {
   return calculateSharePercent(actualYen, availableBudgetYen);
+}
+
+/** 千円単位の金額を「1億2,345万円」の形にする。 */
+export function formatThousandYen(thousandYen: number): string {
+  return formatYenWithUnits(thousandYenToYen(thousandYen));
 }

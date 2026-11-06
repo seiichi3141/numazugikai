@@ -3,10 +3,12 @@ import {
   calculateExecutionRate,
   calculateSharePercent,
   formatSharePercent,
+  formatThousandYen,
   formatYenExact,
   formatYenWithUnits,
   groupDigits,
   parseYen,
+  thousandYenToYen,
 } from "./format-yen";
 
 describe("parseYen", () => {
@@ -102,5 +104,18 @@ describe("calculateExecutionRate", () => {
 
   it("予算現額が 0 のときは率を返さない", () => {
     expect(calculateExecutionRate("100", "0")).toBeNull();
+  });
+});
+
+describe("thousandYenToYen", () => {
+  it("千円単位を円の10進文字列にする", () => {
+    expect(thousandYenToYen(1234)).toBe("1234000");
+    expect(thousandYenToYen(0)).toBe("0");
+  });
+});
+
+describe("formatThousandYen", () => {
+  it("千円単位の金額を億・万の単位で表す", () => {
+    expect(formatThousandYen(709)).toBe(formatYenWithUnits("709000"));
   });
 });
