@@ -288,7 +288,11 @@ const NUMBER_MARGIN = { before: 25, after: 3 };
  * 理由の列は転載しないので読まない。
  */
 export function parseContractRows(words) {
-  const pages = Map.groupBy(words, (word) => word.page);
+  // CI の Node 20 には Map.groupBy がない
+  const pages = new Map();
+  for (const word of words) {
+    pages.set(word.page, [...(pages.get(word.page) ?? []), word]);
+  }
   const rows = [];
   let columns = null;
 
