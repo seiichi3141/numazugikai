@@ -1,0 +1,6779 @@
+{
+  "fiscalYear": 2024,
+  "purposeNames": [
+    "議会費",
+    "総務費",
+    "民生費",
+    "衛生費",
+    "労働費",
+    "農林水産業費",
+    "商工費",
+    "土木費",
+    "消防費",
+    "教育費",
+    "災害復旧費",
+    "公債費"
+  ],
+  "revenue": [
+    {
+      "code": 1,
+      "name": "市税",
+      "amountThousandYen": 34113138
+    },
+    {
+      "code": 2,
+      "name": "地方譲与税",
+      "amountThousandYen": 481872
+    },
+    {
+      "code": 3,
+      "name": "利子割交付金",
+      "amountThousandYen": 14982
+    },
+    {
+      "code": 4,
+      "name": "配当割交付金",
+      "amountThousandYen": 275304
+    },
+    {
+      "code": 5,
+      "name": "株式等譲渡所得割交付金",
+      "amountThousandYen": 474178
+    },
+    {
+      "code": 6,
+      "name": "法人事業税交付金",
+      "amountThousandYen": 650180
+    },
+    {
+      "code": 7,
+      "name": "地方消費税交付金",
+      "amountThousandYen": 5207343
+    },
+    {
+      "code": 8,
+      "name": "ゴルフ場利用税交付金",
+      "amountThousandYen": 102496
+    },
+    {
+      "code": 9,
+      "name": "環境性能割交付金",
+      "amountThousandYen": 84306
+    },
+    {
+      "code": 10,
+      "name": "国有提供施設等所在市町村助成交付金",
+      "amountThousandYen": 300
+    },
+    {
+      "code": 11,
+      "name": "地方特例交付金",
+      "amountThousandYen": 1021480
+    },
+    {
+      "code": 12,
+      "name": "地方交付税",
+      "amountThousandYen": 4402744
+    },
+    {
+      "code": 13,
+      "name": "交通安全対策特別交付金",
+      "amountThousandYen": 31195
+    },
+    {
+      "code": 14,
+      "name": "分担金及び負担金",
+      "amountThousandYen": 519180
+    },
+    {
+      "code": 15,
+      "name": "使用料及び手数料",
+      "amountThousandYen": 1090036
+    },
+    {
+      "code": 16,
+      "name": "国庫支出金",
+      "amountThousandYen": 19281065
+    },
+    {
+      "code": 17,
+      "name": "県支出金",
+      "amountThousandYen": 6485606
+    },
+    {
+      "code": 18,
+      "name": "財産収入",
+      "amountThousandYen": 569736
+    },
+    {
+      "code": 19,
+      "name": "寄附金",
+      "amountThousandYen": 4644702
+    },
+    {
+      "code": 20,
+      "name": "繰入金",
+      "amountThousandYen": 5135808
+    },
+    {
+      "code": 21,
+      "name": "繰越金",
+      "amountThousandYen": 2979508
+    },
+    {
+      "code": 22,
+      "name": "諸収入",
+      "amountThousandYen": 2027207
+    },
+    {
+      "code": 23,
+      "name": "市債",
+      "amountThousandYen": 6928100
+    }
+  ],
+  "expenditureRows": [
+    {
+      "name": "報酬",
+      "amounts": [
+        170342, 336257, 254335, 168829, 0, 24955, 24647, 100041, 102125, 766263,
+        0, 0
+      ]
+    },
+    {
+      "name": "給料",
+      "amounts": [
+        55562, 1084674, 853304, 546541, 11358, 105111, 139210, 773713, 0,
+        756531, 0, 0
+      ]
+    },
+    {
+      "name": "職員手当等",
+      "amounts": [
+        113717, 1522618, 644828, 433234, 8162, 89376, 104108, 577115, 0, 722388,
+        0, 0
+      ]
+    },
+    {
+      "name": "共済費",
+      "amounts": [
+        67388, 455348, 312363, 212921, 3942, 38115, 50803, 270830, 0, 352077, 0,
+        0
+      ]
+    },
+    {
+      "name": "災害補償費",
+      "amounts": [0, 4876, 0, 0, 0, 0, 0, 0, 16, 22, 0, 0]
+    },
+    {
+      "name": "恩給及び退職年金",
+      "amounts": [0, 1517, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "報償費",
+      "amounts": [
+        49, 53822, 56093, 61325, 180, 4466, 1150, 31663, 20714, 34316, 0, 0
+      ]
+    },
+    {
+      "name": "旅費",
+      "amounts": [
+        6109, 17983, 9437, 8718, 52, 844, 2833, 13050, 19, 35406, 106, 0
+      ]
+    },
+    {
+      "name": "交際費",
+      "amounts": [239, 732, 0, 0, 0, 5, 0, 0, 30, 31, 0, 0]
+    },
+    {
+      "name": "需用費",
+      "amounts": [
+        11585, 282924, 113993, 708966, 486, 52715, 37107, 535255, 11806,
+        1532629, 22126, 278
+      ]
+    },
+    {
+      "name": "役務費",
+      "amounts": [
+        694, 727451, 121244, 46464, 0, 1177, 3675, 20283, 835, 46412, 0, 0
+      ]
+    },
+    {
+      "name": "委託料",
+      "amounts": [
+        3168, 2759062, 1447814, 3164477, 13385, 156198, 196983, 1594397, 31157,
+        1375007, 4950, 0
+      ]
+    },
+    {
+      "name": "使用料及び賃借料",
+      "amounts": [
+        8450, 638604, 104040, 208251, 202, 2804, 5712, 210396, 3334, 260515,
+        9174, 0
+      ]
+    },
+    {
+      "name": "工事請負費",
+      "amounts": [
+        0, 67700, 82421, 871886, 0, 32048, 13264, 5769906, 19881, 872583,
+        232384, 0
+      ]
+    },
+    {
+      "name": "原材料費",
+      "amounts": [0, 0, 0, 145, 0, 10655, 34, 51786, 0, 1256, 0, 0]
+    },
+    {
+      "name": "公有財産購入費",
+      "amounts": [0, 13461, 0, 0, 0, 0, 0, 243173, 114647, 65621, 0, 0]
+    },
+    {
+      "name": "備品購入費",
+      "amounts": [
+        2624, 102982, 17910, 8696, 0, 92, 1467, 95757, 46247, 104097, 0, 0
+      ]
+    },
+    {
+      "name": "負担金補助及び交付金",
+      "amounts": [
+        9589, 280266, 5144405, 155645, 53395, 408663, 324149, 2370117, 2621949,
+        58635, 0, 100
+      ]
+    },
+    {
+      "name": "扶助費",
+      "amounts": [0, 0, 20293961, 158873, 0, 0, 0, 0, 0, 231523, 0, 0]
+    },
+    {
+      "name": "貸付金",
+      "amounts": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "補償補塡及び賠償金",
+      "amounts": [0, 0, 255, 0, 0, 0, 0, 1211577, 0, 5062, 0, 0]
+    },
+    {
+      "name": "償還金利子及び割引料",
+      "amounts": [
+        0, 98492, 124243, 82239, 0, 226, 745, 1623, 0, 237, 0, 6408299
+      ]
+    },
+    {
+      "name": "出資金",
+      "amounts": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "積立金",
+      "amounts": [0, 4557690, 13951, 0, 1292, 1209, 0, 294, 0, 8101, 0, 0]
+    },
+    {
+      "name": "寄附金",
+      "amounts": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "公課費",
+      "amounts": [0, 2351, 0, 1967, 0, 0, 0, 0, 920, 0, 0, 0]
+    },
+    {
+      "name": "繰出金",
+      "amounts": [0, 0, 4863009, 3001556, 0, 0, 76106, 2226013, 0, 0, 0, 0]
+    }
+  ],
+  "kindTotals": {
+    "subsidy": {
+      "amountThousandYen": 2156611,
+      "count": 237
+    },
+    "burden": {
+      "amountThousandYen": 6729792,
+      "count": 385
+    },
+    "grant": {
+      "amountThousandYen": 2540520,
+      "count": 24
+    }
+  },
+  "recipients": [
+    {
+      "kind": "subsidy",
+      "no": 1,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": "事業費",
+      "name": "移住・就業支援金",
+      "recipient": "申請者",
+      "amountThousandYen": 34000
+    },
+    {
+      "kind": "subsidy",
+      "no": 2,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": "事業費",
+      "name": "沼津市移住者支援交通費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 200
+    },
+    {
+      "kind": "subsidy",
+      "no": 3,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": "事業費",
+      "name": "テレワーク移住支援補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "subsidy",
+      "no": 4,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": "事業費",
+      "name": "結婚新生活支援補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 8400
+    },
+    {
+      "kind": "subsidy",
+      "no": 5,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "通学路防犯カメラ設置費補助金",
+      "recipient": "地区連合自治会・地区コミュニティ",
+      "amountThousandYen": 1393
+    },
+    {
+      "kind": "subsidy",
+      "no": 6,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "自治会防犯灯設置費補助金",
+      "recipient": "自治会・地区連合自治会",
+      "amountThousandYen": 3920
+    },
+    {
+      "kind": "subsidy",
+      "no": 7,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "自治会放送施設設置費補助金",
+      "recipient": "自治会・地区連合自治会",
+      "amountThousandYen": 600
+    },
+    {
+      "kind": "subsidy",
+      "no": 8,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "自治会防犯灯維持管理費補助金",
+      "recipient": "自治会・地区連合自治会",
+      "amountThousandYen": 37446
+    },
+    {
+      "kind": "subsidy",
+      "no": 9,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "自治会放送施設維持管理費補助金",
+      "recipient": "自治会・地区連合自治会",
+      "amountThousandYen": 2140
+    },
+    {
+      "kind": "subsidy",
+      "no": 10,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "運営費",
+      "name": "沼津市交通安全父母の会連合会事業補助金",
+      "recipient": "沼津市交通安全父母の会連合会",
+      "amountThousandYen": 154
+    },
+    {
+      "kind": "subsidy",
+      "no": 11,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "運営費",
+      "name": "沼津市交通指導員会事業補助金",
+      "recipient": "沼津市交通指導員会",
+      "amountThousandYen": 154
+    },
+    {
+      "kind": "subsidy",
+      "no": 12,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "運営費",
+      "name": "沼津市自治会交通安全会連合会事業補助金",
+      "recipient": "沼津市自治会交通安全会連合会",
+      "amountThousandYen": 1649
+    },
+    {
+      "kind": "subsidy",
+      "no": 13,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "沼津市消費者協会活動事業補助金",
+      "recipient": "沼津市消費者協会",
+      "amountThousandYen": 365
+    },
+    {
+      "kind": "subsidy",
+      "no": 14,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": "事業費",
+      "name": "悪質電話対策機器購入費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 809
+    },
+    {
+      "kind": "subsidy",
+      "no": 15,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "コミュニティリーダー育成支援事業補助金",
+      "recipient": "地区コミュニティ推進委員会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "subsidy",
+      "no": 16,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "自治会連合会常任委員視察研修事業費補助金",
+      "recipient": "自治会連合会",
+      "amountThousandYen": 719
+    },
+    {
+      "kind": "subsidy",
+      "no": 17,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "自治会集会所修繕事業補助金",
+      "recipient": "自治会・地区連合自治会",
+      "amountThousandYen": 6394
+    },
+    {
+      "kind": "subsidy",
+      "no": 18,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "自治会集会所購入事業補助金",
+      "recipient": "自治会・地区連合自治会",
+      "amountThousandYen": 16000
+    },
+    {
+      "kind": "subsidy",
+      "no": 19,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "地域活性化事業補助金",
+      "recipient": "地区コミュニティ推進委員会・連合自治会",
+      "amountThousandYen": 1080
+    },
+    {
+      "kind": "subsidy",
+      "no": 20,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "運営費",
+      "name": "地区自治会運営費補助金",
+      "recipient": "各自治会",
+      "amountThousandYen": 27054
+    },
+    {
+      "kind": "subsidy",
+      "no": 21,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "運営費",
+      "name": "地区連合自治会運営費補助金",
+      "recipient": "地区連合自治会",
+      "amountThousandYen": 814
+    },
+    {
+      "kind": "subsidy",
+      "no": 22,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "運営費",
+      "name": "自治会連合会運営費補助金",
+      "recipient": "自治会連合会",
+      "amountThousandYen": 5248
+    },
+    {
+      "kind": "subsidy",
+      "no": 23,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "地域コミュニティ事業補助金",
+      "recipient": "自治会連合会",
+      "amountThousandYen": 2500
+    },
+    {
+      "kind": "subsidy",
+      "no": 24,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "運営費",
+      "name": "沼津市暴力追放推進協議会運営事業補助金",
+      "recipient": "沼津市暴力追放推進協議会",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "subsidy",
+      "no": 25,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "運営費",
+      "name": "沼津市市民憲章推進協議会運営事業補助金",
+      "recipient": "沼津市市民憲章推進協議会",
+      "amountThousandYen": 547
+    },
+    {
+      "kind": "subsidy",
+      "no": 26,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "運営費",
+      "name": "沼津国際交流協会事業補助金",
+      "recipient": "沼津国際交流協会",
+      "amountThousandYen": 700
+    },
+    {
+      "kind": "subsidy",
+      "no": 27,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": "事業費",
+      "name": "民間まちづくり活動支援事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 6152
+    },
+    {
+      "kind": "subsidy",
+      "no": 28,
+      "department": "総務部",
+      "division": "人事課",
+      "category": "事業費",
+      "name": "職員自主研究グループ活動費補助金",
+      "recipient": "職員自主研究グループ",
+      "amountThousandYen": 37
+    },
+    {
+      "kind": "subsidy",
+      "no": 29,
+      "department": "総務部",
+      "division": "人事課",
+      "category": "事業費",
+      "name": "職員自主(通信教育)補助金",
+      "recipient": "申請職員",
+      "amountThousandYen": 124
+    },
+    {
+      "kind": "subsidy",
+      "no": 30,
+      "department": null,
+      "division": "危機管理課",
+      "category": "事業費",
+      "name": "沼津市津波避難路整備事業費補助金",
+      "recipient": "申請自主防災組織",
+      "amountThousandYen": 2866
+    },
+    {
+      "kind": "subsidy",
+      "no": 31,
+      "department": null,
+      "division": "危機管理課",
+      "category": "事業費",
+      "name": "沼津市自主防災会育成強化事業補助金",
+      "recipient": "各自主防災会",
+      "amountThousandYen": 16365
+    },
+    {
+      "kind": "subsidy",
+      "no": 32,
+      "department": null,
+      "division": "危機管理課",
+      "category": "事業費",
+      "name": "沼津市感震ブレーカー設置事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 5377
+    },
+    {
+      "kind": "subsidy",
+      "no": 33,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": "運営費",
+      "name": "沼津市納税推進協議会補助金",
+      "recipient": "沼津市納税推進協議会",
+      "amountThousandYen": 328
+    },
+    {
+      "kind": "subsidy",
+      "no": 34,
+      "department": "市民福祉部",
+      "division": "福祉企画課",
+      "category": "事業費",
+      "name": "沼津市社会福祉協議会地域福祉推進事業費補助金",
+      "recipient": "社会福祉法人沼津市社会福祉協議会",
+      "amountThousandYen": 42855
+    },
+    {
+      "kind": "subsidy",
+      "no": 35,
+      "department": "市民福祉部",
+      "division": "福祉企画課",
+      "category": "運営費",
+      "name": "沼津市遺族会運営事業補助金",
+      "recipient": "沼津市遺族会",
+      "amountThousandYen": 462
+    },
+    {
+      "kind": "subsidy",
+      "no": 36,
+      "department": "市民福祉部",
+      "division": "福祉企画課",
+      "category": "運営費",
+      "name": "公益財団法人静岡県アイバンク運営事業補助金",
+      "recipient": "公益財団法人静岡県アイバンク",
+      "amountThousandYen": 32
+    },
+    {
+      "kind": "subsidy",
+      "no": 37,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "運営費",
+      "name": "沼津市ひとり親会運営事業補助金",
+      "recipient": "沼津市ひとり親会",
+      "amountThousandYen": 120
+    },
+    {
+      "kind": "subsidy",
+      "no": 38,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "支援対象児童等見守り強化事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 600
+    },
+    {
+      "kind": "subsidy",
+      "no": 39,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "沼津市保育士会研修事業補助金",
+      "recipient": "沼津市保育士会",
+      "amountThousandYen": 405
+    },
+    {
+      "kind": "subsidy",
+      "no": 40,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "待機児童対策事業費補助金(年度途中入所サポート事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 4525
+    },
+    {
+      "kind": "subsidy",
+      "no": 41,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "運営費",
+      "name": "民間保育所等運営支援事業補助金",
+      "recipient": "民間保育所",
+      "amountThousandYen": 21022
+    },
+    {
+      "kind": "subsidy",
+      "no": 42,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "民間保育所等運営支援事業補助金(保育士確保対策事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 33261
+    },
+    {
+      "kind": "subsidy",
+      "no": 43,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "民間保育所等運営支援事業補助金(保育体制強化事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 23943
+    },
+    {
+      "kind": "subsidy",
+      "no": 44,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "民間保育所等運営支援事業補助金(ICT化推進事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 825
+    },
+    {
+      "kind": "subsidy",
+      "no": 45,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(病後児等保育事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 28793
+    },
+    {
+      "kind": "subsidy",
+      "no": 46,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(乳幼児保育促進事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 121155
+    },
+    {
+      "kind": "subsidy",
+      "no": 47,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(障害児保育促進事業(保))",
+      "recipient": "民間保育所",
+      "amountThousandYen": 8332
+    },
+    {
+      "kind": "subsidy",
+      "no": 48,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(障害児保育促進事業(幼))",
+      "recipient": "民間幼稚園",
+      "amountThousandYen": 3108
+    },
+    {
+      "kind": "subsidy",
+      "no": 49,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(延長保育促進事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 16299
+    },
+    {
+      "kind": "subsidy",
+      "no": 50,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(一時預かり事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 44053
+    },
+    {
+      "kind": "subsidy",
+      "no": 51,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(一時保育事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 138
+    },
+    {
+      "kind": "subsidy",
+      "no": 52,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "多様な保育サービス事業補助金(外国人児童保育事業)",
+      "recipient": "民間保育所",
+      "amountThousandYen": 960
+    },
+    {
+      "kind": "subsidy",
+      "no": 53,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "民間保育所施設整備費借入金償還補助",
+      "recipient": "民間保育所(8園)",
+      "amountThousandYen": 6321
+    },
+    {
+      "kind": "subsidy",
+      "no": 54,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "実費徴収に係る補足給付事業費補助",
+      "recipient": "対象事業所",
+      "amountThousandYen": 16954
+    },
+    {
+      "kind": "subsidy",
+      "no": 55,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": "運営費",
+      "name": "老人クラブ運営事業費補助金",
+      "recipient": "単位老人クラブ",
+      "amountThousandYen": 1775
+    },
+    {
+      "kind": "subsidy",
+      "no": 56,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": "運営費",
+      "name": "老人クラブ連合会運営事業補助金",
+      "recipient": "沼津市老人クラブ連合会",
+      "amountThousandYen": 1443
+    },
+    {
+      "kind": "subsidy",
+      "no": 57,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": "事業費",
+      "name": "地域介護・福祉空間整備等補助事業費補助金",
+      "recipient": "対象事業所",
+      "amountThousandYen": 15460
+    },
+    {
+      "kind": "subsidy",
+      "no": 58,
+      "department": null,
+      "division": "長寿福祉課",
+      "category": "事業費",
+      "name": "老人つどいの家設置費補助金",
+      "recipient": "自治会",
+      "amountThousandYen": 2000
+    },
+    {
+      "kind": "subsidy",
+      "no": 59,
+      "department": "市民福祉部",
+      "division": "介護保険課",
+      "category": "事業費",
+      "name": "社会福祉法人等による利用者負担軽減制度事業費補助金",
+      "recipient": "対象事業所",
+      "amountThousandYen": 1816
+    },
+    {
+      "kind": "subsidy",
+      "no": 60,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": "事業費",
+      "name": "身体障害者自動車改造費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 153
+    },
+    {
+      "kind": "subsidy",
+      "no": 61,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": "運営費",
+      "name": "まごころ会運営事業補助金",
+      "recipient": "まごころ会",
+      "amountThousandYen": 267
+    },
+    {
+      "kind": "subsidy",
+      "no": 62,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": "運営費",
+      "name": "身体障害者福祉会運営事業補助金",
+      "recipient": "身体障害者福祉会",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "subsidy",
+      "no": 63,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": "運営費",
+      "name": "肢体不自由児(者)を守る父母の会運営事業補助金",
+      "recipient": "肢体不自由児(者)を守る父母の会",
+      "amountThousandYen": 40
+    },
+    {
+      "kind": "subsidy",
+      "no": 64,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": "事業費",
+      "name": "身体障害者自動車運転免許取得費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "subsidy",
+      "no": 65,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "運営費",
+      "name": "沼津医師会運営事業費補助金",
+      "recipient": "一般社団法人沼津医師会",
+      "amountThousandYen": 6511
+    },
+    {
+      "kind": "subsidy",
+      "no": 66,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "事業費",
+      "name": "生活習慣病健康診査事業費補助金",
+      "recipient": "一般社団法人沼津医師会",
+      "amountThousandYen": 1082
+    },
+    {
+      "kind": "subsidy",
+      "no": 67,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "運営費",
+      "name": "沼津市歯科医師会運営事業費補助金",
+      "recipient": "一般社団法人沼津市歯科医師会",
+      "amountThousandYen": 4050
+    },
+    {
+      "kind": "subsidy",
+      "no": 68,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "運営費",
+      "name": "沼津食品衛生協会運営事業費補助金",
+      "recipient": "沼津食品衛生協会",
+      "amountThousandYen": 473
+    },
+    {
+      "kind": "subsidy",
+      "no": 69,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "運営費",
+      "name": "沼津断酒会運営事業費補助金",
+      "recipient": "沼津断酒会",
+      "amountThousandYen": 36
+    },
+    {
+      "kind": "subsidy",
+      "no": 70,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "事業費",
+      "name": "沼津市病院群輪番制病院設備整備事業費補助金",
+      "recipient": "一般財団法人芙蓉協会聖隷沼津病院",
+      "amountThousandYen": 7733
+    },
+    {
+      "kind": "subsidy",
+      "no": 71,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": "事業費",
+      "name": "沼津市骨髄ドナー助成金",
+      "recipient": "申請者",
+      "amountThousandYen": 140
+    },
+    {
+      "kind": "subsidy",
+      "no": 72,
+      "department": "市民福祉部",
+      "division": "市民課",
+      "category": "事業費",
+      "name": "沼津市市外火葬場使用料助成金",
+      "recipient": "申請者",
+      "amountThousandYen": 780
+    },
+    {
+      "kind": "subsidy",
+      "no": 73,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "沼津市住宅用新エネ・省エネ機器設置費及び省エネリフォーム費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 4627
+    },
+    {
+      "kind": "subsidy",
+      "no": 74,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "沼津市EV導入促進補助金",
+      "recipient": "事業者",
+      "amountThousandYen": 150
+    },
+    {
+      "kind": "subsidy",
+      "no": 75,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "事業者向け自家消費型太陽光発電設備等設置事業",
+      "recipient": "事業者",
+      "amountThousandYen": 16200
+    },
+    {
+      "kind": "subsidy",
+      "no": 76,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "個人向け新築住宅ZEH化事業",
+      "recipient": "申請者",
+      "amountThousandYen": 1430
+    },
+    {
+      "kind": "subsidy",
+      "no": 77,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "沼津市第三者所有モデルによる住宅用再生可能エネルギー普及促進事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "subsidy",
+      "no": 78,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "沼津市飼い主のいない猫不妊去勢手術費補助金",
+      "recipient": "協定を締結した動物病院",
+      "amountThousandYen": 2374
+    },
+    {
+      "kind": "subsidy",
+      "no": 79,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "事業費",
+      "name": "ごみ集積施設整備補助金",
+      "recipient": "ごみ集積場所設置者(自治会長)",
+      "amountThousandYen": 2373
+    },
+    {
+      "kind": "subsidy",
+      "no": 80,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "運営費",
+      "name": "環境衛生自治推進協会補助金",
+      "recipient": "沼津市環境衛生自治推進協会",
+      "amountThousandYen": 765
+    },
+    {
+      "kind": "subsidy",
+      "no": 81,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": "運営費",
+      "name": "沼津市市民環境活動費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 177
+    },
+    {
+      "kind": "subsidy",
+      "no": 82,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": "事業費",
+      "name": "浄化槽設置事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 13016
+    },
+    {
+      "kind": "subsidy",
+      "no": 83,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": "事業費",
+      "name": "戸田地区一般廃棄物排出事業者支援事業補助金",
+      "recipient": "事業系一般廃棄物排出事業者(戸田)",
+      "amountThousandYen": 3136
+    },
+    {
+      "kind": "subsidy",
+      "no": 84,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": "運営費",
+      "name": "沼津市シルバー人材センター運営事業補助金",
+      "recipient": "公益社団法人沼津市シルバー人材センター",
+      "amountThousandYen": 11000
+    },
+    {
+      "kind": "subsidy",
+      "no": 85,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "勤労者住宅建設資金利子補給金",
+      "recipient": "静岡県労働金庫(沼津支店)",
+      "amountThousandYen": 26908
+    },
+    {
+      "kind": "subsidy",
+      "no": 86,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "勤労者育児支援資金利子補給金",
+      "recipient": "静岡県労働金庫(沼津支店)",
+      "amountThousandYen": 215
+    },
+    {
+      "kind": "subsidy",
+      "no": 87,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津市・清水町勤労者共済会管理運営事務補助金",
+      "recipient": "沼津市・清水町勤労者共済会",
+      "amountThousandYen": 9137
+    },
+    {
+      "kind": "subsidy",
+      "no": 88,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津地区労働者福祉協議会補助金",
+      "recipient": "沼津地区労働者福祉協議会",
+      "amountThousandYen": 1681
+    },
+    {
+      "kind": "subsidy",
+      "no": 89,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "勤労者教育資金利子補給金",
+      "recipient": "静岡県労働金庫(沼津支店)",
+      "amountThousandYen": 2705
+    },
+    {
+      "kind": "subsidy",
+      "no": 90,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "奨学金返還支援事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 1584
+    },
+    {
+      "kind": "subsidy",
+      "no": 91,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "沼津茶消費拡大推進事業補助金",
+      "recipient": "沼津市茶業振興協議会",
+      "amountThousandYen": 2080
+    },
+    {
+      "kind": "subsidy",
+      "no": 92,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "茶の伝統文化推進事業補助金",
+      "recipient": "沼津茶手揉保存会",
+      "amountThousandYen": 150
+    },
+    {
+      "kind": "subsidy",
+      "no": 93,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "食の安全・安心推進事業補助金",
+      "recipient": "富士伊豆協同組合",
+      "amountThousandYen": 700
+    },
+    {
+      "kind": "subsidy",
+      "no": 94,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "担い手育成支援事業補助金",
+      "recipient": "沼津市農業再生協議会",
+      "amountThousandYen": 180
+    },
+    {
+      "kind": "subsidy",
+      "no": 95,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "中山間地域等直接支払事業補助金",
+      "recipient": "内浦重須他8集落",
+      "amountThousandYen": 17322
+    },
+    {
+      "kind": "subsidy",
+      "no": 96,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "茶の魅力再発見事業補助金",
+      "recipient": "日本茶インストラクター沼津支部",
+      "amountThousandYen": 180
+    },
+    {
+      "kind": "subsidy",
+      "no": 97,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "農業経営体育成総合融資助成事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 34
+    },
+    {
+      "kind": "subsidy",
+      "no": 98,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "沼津農林まつり事業補助金",
+      "recipient": "沼津農林まつり実行委員会",
+      "amountThousandYen": 1400
+    },
+    {
+      "kind": "subsidy",
+      "no": 99,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "美しい森林づくり基盤整備事業補助金",
+      "recipient": "戸田森林組合",
+      "amountThousandYen": 1350
+    },
+    {
+      "kind": "subsidy",
+      "no": 100,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "死亡獣畜処理費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 166
+    },
+    {
+      "kind": "subsidy",
+      "no": 101,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "畜舎一斉防除事業補助金",
+      "recipient": "富士伊豆協同組合",
+      "amountThousandYen": 194
+    },
+    {
+      "kind": "subsidy",
+      "no": 102,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "その他土地改良事業補助金(香貫用水補助金)",
+      "recipient": "香貫用水委員会",
+      "amountThousandYen": 180
+    },
+    {
+      "kind": "subsidy",
+      "no": 103,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "かんがい揚水施設電気料補助金",
+      "recipient": "大平東部揚水組合他全20組合",
+      "amountThousandYen": 800
+    },
+    {
+      "kind": "subsidy",
+      "no": 104,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "狩猟免許取得補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "subsidy",
+      "no": 105,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "新規就農者育成総合対策(経営開始資金)",
+      "recipient": "申請者",
+      "amountThousandYen": 2250
+    },
+    {
+      "kind": "subsidy",
+      "no": 106,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "有害鳥獣防護柵等設置事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 1638
+    },
+    {
+      "kind": "subsidy",
+      "no": 107,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "みかん品種転換促進事業補助金",
+      "recipient": "富士伊豆協同組合",
+      "amountThousandYen": 613
+    },
+    {
+      "kind": "subsidy",
+      "no": 108,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "鳥獣被害防止総合対策事業費補助金",
+      "recipient": "沼津市有害鳥獣被害防止対策協議会",
+      "amountThousandYen": 2695
+    },
+    {
+      "kind": "subsidy",
+      "no": 109,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "多面的機能支払交付金事業補助金",
+      "recipient": "浮島地区・柳沢地区・西浦平沢地区・重須地区",
+      "amountThousandYen": 7803
+    },
+    {
+      "kind": "subsidy",
+      "no": 110,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "環境保全型農業直接支払交付金事業補助金",
+      "recipient": "愛鷹山麓環境保全型農業推進協議会",
+      "amountThousandYen": 1447
+    },
+    {
+      "kind": "subsidy",
+      "no": 111,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "茶園集積推進事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 315
+    },
+    {
+      "kind": "subsidy",
+      "no": 112,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "荒廃農地再生・集積促進事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 996
+    },
+    {
+      "kind": "subsidy",
+      "no": 113,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "西浦みかん土地改良区運営事業補助金",
+      "recipient": "西浦みかん土地改良区",
+      "amountThousandYen": 300
+    },
+    {
+      "kind": "subsidy",
+      "no": 114,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "農業収入保険加入事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 24
+    },
+    {
+      "kind": "subsidy",
+      "no": 115,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "経営発展支援事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 692
+    },
+    {
+      "kind": "subsidy",
+      "no": 116,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "沼津市スマート農業導入支援事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 3043
+    },
+    {
+      "kind": "subsidy",
+      "no": 117,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "沼津市資源循環型農業推進事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 240
+    },
+    {
+      "kind": "subsidy",
+      "no": 118,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "沼津LocalFoodMeeting事業補助金",
+      "recipient": "沼津LocalFoodMeeting実行委員会",
+      "amountThousandYen": 400
+    },
+    {
+      "kind": "subsidy",
+      "no": 119,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "沼津市畜産臭気対策事業補助金",
+      "recipient": "(有)アイエーエフ石塚",
+      "amountThousandYen": 1513
+    },
+    {
+      "kind": "subsidy",
+      "no": 120,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "その他土地改良事業補助金(大平東部揚水組合揚水ポンプ修繕補助金)",
+      "recipient": "大平東部揚水組合",
+      "amountThousandYen": 137
+    },
+    {
+      "kind": "subsidy",
+      "no": 121,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "その他土地改良事業補助金(大平灰塚揚水組合揚水ポンプ更新補助金)",
+      "recipient": "大平灰塚揚水組合",
+      "amountThousandYen": 864
+    },
+    {
+      "kind": "subsidy",
+      "no": 122,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": "事業費",
+      "name": "担い手確保・経営強化支援事業",
+      "recipient": "申請者",
+      "amountThousandYen": 9200
+    },
+    {
+      "kind": "subsidy",
+      "no": 123,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "販路拡大推進事業",
+      "recipient": "沼津地域広域水産業再生委員会",
+      "amountThousandYen": 150
+    },
+    {
+      "kind": "subsidy",
+      "no": 124,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "水産物流通促進事業",
+      "recipient": "沼津魚市場(株)",
+      "amountThousandYen": 2314
+    },
+    {
+      "kind": "subsidy",
+      "no": 125,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "出漁促進事業",
+      "recipient": "沼津魚市場(株)",
+      "amountThousandYen": 8889
+    },
+    {
+      "kind": "subsidy",
+      "no": 126,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "出漁促進事業",
+      "recipient": "静浦漁業協同組合",
+      "amountThousandYen": 361
+    },
+    {
+      "kind": "subsidy",
+      "no": 127,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "魚食普及促進事業(朝市・さんさん祭等)",
+      "recipient": "戸田漁業協同組合",
+      "amountThousandYen": 135
+    },
+    {
+      "kind": "subsidy",
+      "no": 128,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "沼津おさかな教室事業",
+      "recipient": "沼津市漁業協同組合青壮年部連絡協議会",
+      "amountThousandYen": 200
+    },
+    {
+      "kind": "subsidy",
+      "no": 129,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "種苗放流事業(タカアシガニ)",
+      "recipient": "戸田漁業協同組合",
+      "amountThousandYen": 80
+    },
+    {
+      "kind": "subsidy",
+      "no": 130,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "種苗放流事業(アワビ・マダイ)",
+      "recipient": "戸田漁業協同組合",
+      "amountThousandYen": 82
+    },
+    {
+      "kind": "subsidy",
+      "no": 131,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "種苗放流事業(マダイ)",
+      "recipient": "沼津市漁業協同組合青壮年部連絡協議会",
+      "amountThousandYen": 340
+    },
+    {
+      "kind": "subsidy",
+      "no": 132,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "漁業近代化資金利子補給事業",
+      "recipient": "東日本信用漁業協同組合連合会静岡支店",
+      "amountThousandYen": 6332
+    },
+    {
+      "kind": "subsidy",
+      "no": 133,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "水産業共同施設整備事業",
+      "recipient": "内浦漁業協同組合",
+      "amountThousandYen": 4300
+    },
+    {
+      "kind": "subsidy",
+      "no": 134,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "魚食普及促進事業補助金",
+      "recipient": "静浦漁業協同組合",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "subsidy",
+      "no": 135,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "水産業振興事業費補助金",
+      "recipient": "沼津魚市場(株)",
+      "amountThousandYen": 9700
+    },
+    {
+      "kind": "subsidy",
+      "no": 136,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "小口資金利子補給金",
+      "recipient": "取扱金融機関",
+      "amountThousandYen": 5202
+    },
+    {
+      "kind": "subsidy",
+      "no": 137,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "短期経営改善資金利子補給金",
+      "recipient": "取扱金融機関",
+      "amountThousandYen": 572
+    },
+    {
+      "kind": "subsidy",
+      "no": 138,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "小規模事業者経営改善資金利子補給事業",
+      "recipient": "取扱金融機関",
+      "amountThousandYen": 320
+    },
+    {
+      "kind": "subsidy",
+      "no": 139,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "近代化資金等利子補給金",
+      "recipient": "商工組合中央金庫沼津支店",
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "subsidy",
+      "no": 140,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "開業パワーアップ支援資金等利子補給金",
+      "recipient": "申請者",
+      "amountThousandYen": 1138
+    },
+    {
+      "kind": "subsidy",
+      "no": 141,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "中小企業災害対策資金利子補給金",
+      "recipient": "申請者",
+      "amountThousandYen": 182
+    },
+    {
+      "kind": "subsidy",
+      "no": 142,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "まちなか賑わい創生事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 4700
+    },
+    {
+      "kind": "subsidy",
+      "no": 143,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "沼津市物産振興事業補助金",
+      "recipient": "沼津市物産振興協議会",
+      "amountThousandYen": 1350
+    },
+    {
+      "kind": "subsidy",
+      "no": 144,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津商工会議所運営事業補助金",
+      "recipient": "沼津商工会議所",
+      "amountThousandYen": 6840
+    },
+    {
+      "kind": "subsidy",
+      "no": 145,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津市商工会運営事業補助金",
+      "recipient": "沼津市商工会",
+      "amountThousandYen": 5130
+    },
+    {
+      "kind": "subsidy",
+      "no": 146,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津中小企業相談所運営事業補助金",
+      "recipient": "沼津商工会議所",
+      "amountThousandYen": 2078
+    },
+    {
+      "kind": "subsidy",
+      "no": 147,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津市商店街連盟補助金",
+      "recipient": "沼津市商店街連盟",
+      "amountThousandYen": 2078
+    },
+    {
+      "kind": "subsidy",
+      "no": 148,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津たばこ販売協同組合運営事業補助金",
+      "recipient": "沼津たばこ販売協同組合",
+      "amountThousandYen": 428
+    },
+    {
+      "kind": "subsidy",
+      "no": 149,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "沼津市ニュービジネス創出事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 4229
+    },
+    {
+      "kind": "subsidy",
+      "no": 150,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "小学生科学ものづくり体験教室支援事業補助金",
+      "recipient": "沼津市少年少女発明クラブ実行委員会",
+      "amountThousandYen": 200
+    },
+    {
+      "kind": "subsidy",
+      "no": 151,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": "事業費",
+      "name": "ITオフィス等進出事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 5736
+    },
+    {
+      "kind": "subsidy",
+      "no": 152,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "静岡県中小企業団体中央会補助金",
+      "recipient": "静岡県中小企業団体中央会",
+      "amountThousandYen": 342
+    },
+    {
+      "kind": "subsidy",
+      "no": 153,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津高等職業訓練校運営事業補助金",
+      "recipient": "職業訓練法人沼津高等職業訓練校",
+      "amountThousandYen": 553
+    },
+    {
+      "kind": "subsidy",
+      "no": 154,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "伊豆高等職業訓練校運営事業補助金",
+      "recipient": "職業訓練法人伊豆高等職業訓練校",
+      "amountThousandYen": 46
+    },
+    {
+      "kind": "subsidy",
+      "no": 155,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "運営費",
+      "name": "沼津地域中小企業支援センター運営事業補助金",
+      "recipient": "沼津商工会議所",
+      "amountThousandYen": 2940
+    },
+    {
+      "kind": "subsidy",
+      "no": 156,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": "事業費",
+      "name": "企業立地促進事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 51633
+    },
+    {
+      "kind": "subsidy",
+      "no": 157,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "知的財産活用事業補助金",
+      "recipient": "静岡県東部地域技術振興協議会",
+      "amountThousandYen": 3000
+    },
+    {
+      "kind": "subsidy",
+      "no": 158,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "沼津市中小企業販路開拓支援事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 553
+    },
+    {
+      "kind": "subsidy",
+      "no": 159,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": "事業費",
+      "name": "中小企業設備投資促進事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 10757
+    },
+    {
+      "kind": "subsidy",
+      "no": 160,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": "事業費",
+      "name": "本社機能移転拡充促進事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 698
+    },
+    {
+      "kind": "subsidy",
+      "no": 161,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "狩野川周辺にぎわい創出事業補助金",
+      "recipient": "沼津上土町周辺狩野川河川空間利用調整協議会",
+      "amountThousandYen": 3050
+    },
+    {
+      "kind": "subsidy",
+      "no": 162,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "経済変動対策資金利子補給金",
+      "recipient": "申請者",
+      "amountThousandYen": 39011
+    },
+    {
+      "kind": "subsidy",
+      "no": 163,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "沼津市商店街共同施設設置費補助金",
+      "recipient": "沼津仲見世商店街振興組合",
+      "amountThousandYen": 5940
+    },
+    {
+      "kind": "subsidy",
+      "no": 164,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "沼津市商店街共同施設設置費補助金",
+      "recipient": "沼津駅前名店街",
+      "amountThousandYen": 10082
+    },
+    {
+      "kind": "subsidy",
+      "no": 165,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": "事業費",
+      "name": "沼津商工会議所創立100周年記念支援事業",
+      "recipient": "沼津商工会議所",
+      "amountThousandYen": 3500
+    },
+    {
+      "kind": "subsidy",
+      "no": 166,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "沼津夏まつり開催事業補助金",
+      "recipient": "沼津夏まつり実行委員会",
+      "amountThousandYen": 23000
+    },
+    {
+      "kind": "subsidy",
+      "no": 167,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "燦々ぬまづキャンペーン事業補助金",
+      "recipient": "燦々ぬまづ推進委員会",
+      "amountThousandYen": 2500
+    },
+    {
+      "kind": "subsidy",
+      "no": 168,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "井田魅力創出事業補助金(植栽・まちづくり事業)",
+      "recipient": "井田むらおこし実行委員会",
+      "amountThousandYen": 300
+    },
+    {
+      "kind": "subsidy",
+      "no": 169,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "コンベンション等誘致支援補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 2570
+    },
+    {
+      "kind": "subsidy",
+      "no": 170,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "市内観光ボランティアガイド研修会補助金",
+      "recipient": "ぬまづ観光ボランティアガイド",
+      "amountThousandYen": 360
+    },
+    {
+      "kind": "subsidy",
+      "no": 171,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "運営費",
+      "name": "沼津観光協会運営費補助金",
+      "recipient": "NPO法人沼津観光協会",
+      "amountThousandYen": 4500
+    },
+    {
+      "kind": "subsidy",
+      "no": 172,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "運営費",
+      "name": "戸田観光協会運営費補助金",
+      "recipient": "戸田観光協会",
+      "amountThousandYen": 2600
+    },
+    {
+      "kind": "subsidy",
+      "no": 173,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "戸田港まつり開催事業補助金",
+      "recipient": "戸田港まつり実行委員会",
+      "amountThousandYen": 1600
+    },
+    {
+      "kind": "subsidy",
+      "no": 174,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "戸田さんさんまつり開催事業補助金",
+      "recipient": "戸田さんさんまつり実行委員会",
+      "amountThousandYen": 1500
+    },
+    {
+      "kind": "subsidy",
+      "no": 175,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "ごぜ芸能まつり開催事業補助金",
+      "recipient": "戸田観光協会",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "subsidy",
+      "no": 176,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": "事業費",
+      "name": "沼津御用邸記念公園hana・花・シンフォニー開催事業補助金",
+      "recipient": "沼津御用邸記念公園hana・花・シンフォニー実行委員会",
+      "amountThousandYen": 6000
+    },
+    {
+      "kind": "subsidy",
+      "no": 177,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": "事業費",
+      "name": "スポーツ大会・合宿等開催支援事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 875
+    },
+    {
+      "kind": "subsidy",
+      "no": 178,
+      "department": "駅整備部",
+      "division": "推進課",
+      "category": "運営費",
+      "name": "鉄道高架化とまちづくりを推進する会補助金",
+      "recipient": "鉄道高架化とまちづくりを推進する会",
+      "amountThousandYen": 300
+    },
+    {
+      "kind": "subsidy",
+      "no": 179,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": "運営費",
+      "name": "沼津市緑化推進協議会事業費補助金",
+      "recipient": "沼津市緑化推進協議会",
+      "amountThousandYen": 366
+    },
+    {
+      "kind": "subsidy",
+      "no": 180,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": "事業費",
+      "name": "みどりまつり開催事業費補助金",
+      "recipient": "沼津市緑化推進実行委員会",
+      "amountThousandYen": 1300
+    },
+    {
+      "kind": "subsidy",
+      "no": 181,
+      "department": "都市計画部",
+      "division": "市街地整備課",
+      "category": "事業費",
+      "name": "町方町・通横町第一地区第一種市街地再開発事業補助金",
+      "recipient": "町方町・通横町第一地区市街地再開発組合",
+      "amountThousandYen": 881246
+    },
+    {
+      "kind": "subsidy",
+      "no": 182,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": "事業費",
+      "name": "狭あい道路拡幅整備事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 656
+    },
+    {
+      "kind": "subsidy",
+      "no": 183,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": "事業費",
+      "name": "既存建築物等耐震化促進事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 81792
+    },
+    {
+      "kind": "subsidy",
+      "no": 184,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": "事業費",
+      "name": "空家等除却事業費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 1071
+    },
+    {
+      "kind": "subsidy",
+      "no": 185,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": "事業費",
+      "name": "空き家活用定住支援補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 400
+    },
+    {
+      "kind": "subsidy",
+      "no": 186,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市自主運行バス運行事業補助金(西浦線)",
+      "recipient": "(株)東海バス",
+      "amountThousandYen": 39779
+    },
+    {
+      "kind": "subsidy",
+      "no": 187,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市自主運行バス(デマンド式乗合タクシー)運行事業補助金(戸田・土肥線)",
+      "recipient": "戸田交通(株)",
+      "amountThousandYen": 7859
+    },
+    {
+      "kind": "subsidy",
+      "no": 188,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市自主運行バス(デマンド式乗合タクシー)運行事業補助金(戸田・江梨線)",
+      "recipient": "戸田交通(株)",
+      "amountThousandYen": 15345
+    },
+    {
+      "kind": "subsidy",
+      "no": 189,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(ららぽーと・原団地・原駅線)",
+      "recipient": "富士急シティバス(株)",
+      "amountThousandYen": 17756
+    },
+    {
+      "kind": "subsidy",
+      "no": 190,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(片浜・柳沢線)",
+      "recipient": "富士急シティバス(株)",
+      "amountThousandYen": 5941
+    },
+    {
+      "kind": "subsidy",
+      "no": 191,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(北小林線)",
+      "recipient": "富士急シティバス(株)",
+      "amountThousandYen": 7088
+    },
+    {
+      "kind": "subsidy",
+      "no": 192,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(運転免許センター線)",
+      "recipient": "富士急シティバス(株)",
+      "amountThousandYen": 6312
+    },
+    {
+      "kind": "subsidy",
+      "no": 193,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(拓南東線)",
+      "recipient": "富士急シティバス(株)",
+      "amountThousandYen": 5280
+    },
+    {
+      "kind": "subsidy",
+      "no": 194,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(東海道線)",
+      "recipient": "富士急シティバス(株)",
+      "amountThousandYen": 7028
+    },
+    {
+      "kind": "subsidy",
+      "no": 195,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(下香貫循環線)",
+      "recipient": "(株)東海バス",
+      "amountThousandYen": 3520
+    },
+    {
+      "kind": "subsidy",
+      "no": 196,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "沼津市地域内フィーダー系統確保維持費補助事業(ミューバス原・浮島線)",
+      "recipient": "富士急静岡タクシー(株)",
+      "amountThousandYen": 6121
+    },
+    {
+      "kind": "subsidy",
+      "no": 197,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": "事業費",
+      "name": "リノベーションまちづくり推進事業補助金⇒2款から",
+      "recipient": "沼津市リノベーションまちづくり実行協議会",
+      "amountThousandYen": 1500
+    },
+    {
+      "kind": "subsidy",
+      "no": 198,
+      "department": "建設部",
+      "division": "道路管理課",
+      "category": "事業費",
+      "name": "私道舗装事業補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 264
+    },
+    {
+      "kind": "subsidy",
+      "no": 199,
+      "department": "建設部",
+      "division": "河川課",
+      "category": "事業費",
+      "name": "沼川流域を良くする会運営補助金",
+      "recipient": "沼川流域を良くする会",
+      "amountThousandYen": 81
+    },
+    {
+      "kind": "subsidy",
+      "no": 200,
+      "department": "建設部",
+      "division": "河川課",
+      "category": "事業費",
+      "name": "雨水浸透・貯留施設設置費補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 26
+    },
+    {
+      "kind": "subsidy",
+      "no": 201,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "水産多面的機能発揮対策事業補助金",
+      "recipient": "静岡県水産多面的機能発揮対策協議会",
+      "amountThousandYen": 120
+    },
+    {
+      "kind": "subsidy",
+      "no": 202,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "沼津港エリア渋滞緩和等安全推進事業補助金",
+      "recipient": "沼津港交通対策協議会",
+      "amountThousandYen": 4000
+    },
+    {
+      "kind": "subsidy",
+      "no": 203,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "沼津港みなとまちづくり防災支援事業補助金",
+      "recipient": "沼津魚市場(株)",
+      "amountThousandYen": 900
+    },
+    {
+      "kind": "subsidy",
+      "no": 204,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": "事業費",
+      "name": "沼津港にぎわい振興事業補助金",
+      "recipient": "沼津港振興会",
+      "amountThousandYen": 5900
+    },
+    {
+      "kind": "subsidy",
+      "no": 205,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": "事業費",
+      "name": "高齢者向け優良賃貸住宅家賃補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 2747
+    },
+    {
+      "kind": "subsidy",
+      "no": 206,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": "事業費",
+      "name": "沼津市営住宅共益費補助金",
+      "recipient": "申請者(市営住宅管理組合など)",
+      "amountThousandYen": 790
+    },
+    {
+      "kind": "subsidy",
+      "no": 207,
+      "department": null,
+      "division": "危機管理課",
+      "category": "事業費",
+      "name": "消防団施設整備補助事業補助金",
+      "recipient": "消防団",
+      "amountThousandYen": 2496
+    },
+    {
+      "kind": "subsidy",
+      "no": 208,
+      "department": null,
+      "division": "危機管理課",
+      "category": "事業費",
+      "name": "消防団員研修厚生事業補助金",
+      "recipient": "消防団",
+      "amountThousandYen": 380
+    },
+    {
+      "kind": "subsidy",
+      "no": 209,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": "事業費",
+      "name": "沼津市私立学校振興事業補助金",
+      "recipient": "学校法人加藤学園",
+      "amountThousandYen": 517
+    },
+    {
+      "kind": "subsidy",
+      "no": 210,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": "事業費",
+      "name": "沼津市私立学校振興事業補助金",
+      "recipient": "学校法人沼津学園",
+      "amountThousandYen": 476
+    },
+    {
+      "kind": "subsidy",
+      "no": 211,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": "事業費",
+      "name": "沼津市私立学校振興事業補助金",
+      "recipient": "学校法人沼津精華学園",
+      "amountThousandYen": 317
+    },
+    {
+      "kind": "subsidy",
+      "no": 212,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": "事業費",
+      "name": "育英奨学金",
+      "recipient": "奨学生51名",
+      "amountThousandYen": 5210
+    },
+    {
+      "kind": "subsidy",
+      "no": 213,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": "事業費",
+      "name": "部活動推進事業補助金",
+      "recipient": "各中学校",
+      "amountThousandYen": 550
+    },
+    {
+      "kind": "subsidy",
+      "no": 214,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": "運営費",
+      "name": "育成教育振興事業費補助金",
+      "recipient": "沼津市手をつなぐ育成会",
+      "amountThousandYen": 231
+    },
+    {
+      "kind": "subsidy",
+      "no": 215,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": "運営費",
+      "name": "私立幼稚園教育支援事業費補助金",
+      "recipient": "沼津市私立幼稚園",
+      "amountThousandYen": 5100
+    },
+    {
+      "kind": "subsidy",
+      "no": 216,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": "事業費",
+      "name": "実費徴収に係る補足給付事業費補助",
+      "recipient": "沼津市私立幼稚園",
+      "amountThousandYen": 4090
+    },
+    {
+      "kind": "subsidy",
+      "no": 217,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": "事業費",
+      "name": "沼津市私立幼稚園協会補助金",
+      "recipient": "沼津市私立幼稚園協会",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "subsidy",
+      "no": 218,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": "事業費",
+      "name": "小中学校認定就学者介助費用補助金",
+      "recipient": "申請者",
+      "amountThousandYen": 320
+    },
+    {
+      "kind": "subsidy",
+      "no": 219,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": "運営費",
+      "name": "沼津ユネスコ協会運営事業補助金",
+      "recipient": "沼津ユネスコ協会",
+      "amountThousandYen": 22
+    },
+    {
+      "kind": "subsidy",
+      "no": 220,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": "事業費",
+      "name": "「ぬまづ茶会」開催事業補助金",
+      "recipient": "沼津市茶道連盟",
+      "amountThousandYen": 700
+    },
+    {
+      "kind": "subsidy",
+      "no": 221,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": "事業費",
+      "name": "第95期将棋棋聖戦沼津開催事業補助金",
+      "recipient": "第95期将棋棋聖戦沼津開催実行委員会",
+      "amountThousandYen": 393
+    },
+    {
+      "kind": "subsidy",
+      "no": 222,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": "事業費",
+      "name": "市指定史跡名勝天然記念物久連神社社叢枯木伐採、枝落し作業補助事業費補助",
+      "recipient": "西浦久連自治会長山田伸行",
+      "amountThousandYen": 252
+    },
+    {
+      "kind": "subsidy",
+      "no": 223,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": "事業費",
+      "name": "市民文化センター市民参加型文化事業補助金",
+      "recipient": "公益社団法人沼津市振興公社(一般会計)理事長塚本秀綱",
+      "amountThousandYen": 2000
+    },
+    {
+      "kind": "subsidy",
+      "no": 224,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "運営費",
+      "name": "沼津市PTA連絡協議会運営費補助金",
+      "recipient": "沼津市PTA連絡協議会",
+      "amountThousandYen": 437
+    },
+    {
+      "kind": "subsidy",
+      "no": 225,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "事業費",
+      "name": "沼津市子ども会「砂の造形大会」事業費補助",
+      "recipient": "沼津市子ども会育成連絡協議会",
+      "amountThousandYen": 235
+    },
+    {
+      "kind": "subsidy",
+      "no": 226,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "事業費",
+      "name": "「子どもの遊び王国in沼津」事業費補助",
+      "recipient": "沼津市青少年育成団体連絡協議会",
+      "amountThousandYen": 400
+    },
+    {
+      "kind": "subsidy",
+      "no": 227,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "事業費",
+      "name": "沼津市子ども会「球技大会」事業費補助",
+      "recipient": "沼津市子ども会育成連絡協議会",
+      "amountThousandYen": 116
+    },
+    {
+      "kind": "subsidy",
+      "no": 228,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "事業費",
+      "name": "こいのぼりフェスティバル事業費補助",
+      "recipient": "こいのぼりフェスティバル実行委員会",
+      "amountThousandYen": 2000
+    },
+    {
+      "kind": "subsidy",
+      "no": 229,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "運営費",
+      "name": "沼津市子ども会育成連絡協議会補助金",
+      "recipient": "沼津市子ども会育成連絡協議会",
+      "amountThousandYen": 285
+    },
+    {
+      "kind": "subsidy",
+      "no": 230,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "運営費",
+      "name": "ボーイスカウト沼津支部育成補助金",
+      "recipient": "ボーイスカウト沼津支部",
+      "amountThousandYen": 150
+    },
+    {
+      "kind": "subsidy",
+      "no": 231,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "運営費",
+      "name": "ガールスカウト沼津地区連絡協議会補助金",
+      "recipient": "ガールスカウト沼津地区連絡協議会",
+      "amountThousandYen": 45
+    },
+    {
+      "kind": "subsidy",
+      "no": 232,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": "運営費",
+      "name": "沼津市青少年を健やかに育てる会運営事業補助金",
+      "recipient": "青少年を健やかに育てる会(18地区他)",
+      "amountThousandYen": 5192
+    },
+    {
+      "kind": "subsidy",
+      "no": 233,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": "事業費",
+      "name": "静岡県市町対抗駅伝競走大会参加事業補助金",
+      "recipient": "静岡県市町村対抗駅伝競走大会沼津市実行委員会",
+      "amountThousandYen": 1000
+    },
+    {
+      "kind": "subsidy",
+      "no": 234,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": "事業費",
+      "name": "NPO法人沼津市体育協会スポーツ振興事業に対する補助金",
+      "recipient": "特定非営利活動法人沼津市体育協会",
+      "amountThousandYen": 3531
+    },
+    {
+      "kind": "subsidy",
+      "no": 235,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": "事業費",
+      "name": "地区体育委員会事業に対する補助金",
+      "recipient": "沼津市22地区・体育委員会",
+      "amountThousandYen": 1548
+    },
+    {
+      "kind": "subsidy",
+      "no": 236,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": "事業費",
+      "name": "沼津市スポーツ推進委員連絡協議会事業に対する補助金",
+      "recipient": "沼津市スポーツ推進委員連絡協議会",
+      "amountThousandYen": 1585
+    },
+    {
+      "kind": "subsidy",
+      "no": 237,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": "事業費",
+      "name": "沼津市立沼津高等学校・中等部部活動遠征費補助金",
+      "recipient": "沼津市立沼津高等学校・中等部部活動後援会",
+      "amountThousandYen": 440
+    },
+    {
+      "kind": "burden",
+      "no": 1,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "議会事務局会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 34
+    },
+    {
+      "kind": "burden",
+      "no": 2,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "中山間地域活性化市議会議長協議会負担金",
+      "recipient": "中山間地域活性化市議会議長協議会",
+      "amountThousandYen": 6
+    },
+    {
+      "kind": "burden",
+      "no": 3,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "静岡県市議会議長会負担金",
+      "recipient": "静岡県市議会議長会",
+      "amountThousandYen": 74
+    },
+    {
+      "kind": "burden",
+      "no": 4,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "静岡県市議会議長会定期総会出席者負担金",
+      "recipient": "静岡県市議会議長会",
+      "amountThousandYen": 27
+    },
+    {
+      "kind": "burden",
+      "no": 5,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国高速自動車道市議会協議会負担金",
+      "recipient": "全国高速自動車道市議会協議会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 6,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国市議会議長会基地協議会負担金",
+      "recipient": "全国市議会議長会基地協議会",
+      "amountThousandYen": 31
+    },
+    {
+      "kind": "burden",
+      "no": 7,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国市議会議長会基地協議会東海部会負担金",
+      "recipient": "全国市議会議長会基地協議会東海部会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 8,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国市議会議長会基地協議会東海部会会議出席者負担金",
+      "recipient": "全国市議会議長会基地協議会東海部会",
+      "amountThousandYen": 14
+    },
+    {
+      "kind": "burden",
+      "no": 9,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国市議会議長会負担金",
+      "recipient": "全国市議会議長会",
+      "amountThousandYen": 588
+    },
+    {
+      "kind": "burden",
+      "no": 10,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国温泉所在都市議会議長協議会加盟市負担金",
+      "recipient": "全国温泉所在都市議会議長協議会",
+      "amountThousandYen": 11
+    },
+    {
+      "kind": "burden",
+      "no": 11,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "全国自治体病院経営都市議会協議会負担金",
+      "recipient": "全国自治体病院経営都市議会協議会",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 12,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "東部地区6市4町議会議長連絡会出席者負担金",
+      "recipient": "6市4町議会議長連絡会",
+      "amountThousandYen": 48
+    },
+    {
+      "kind": "burden",
+      "no": 13,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "静岡県東部地区市議会議長会出席者負担金",
+      "recipient": "東部地区市議会議長会",
+      "amountThousandYen": 24
+    },
+    {
+      "kind": "burden",
+      "no": 14,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "一般財団法人地域活性化センター会費各市分担金",
+      "recipient": "静岡県市長会",
+      "amountThousandYen": 140
+    },
+    {
+      "kind": "burden",
+      "no": 15,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "一般財団法人地方自治研究機構賛助会費",
+      "recipient": "一般財団法人地方自治研究機構",
+      "amountThousandYen": 36
+    },
+    {
+      "kind": "burden",
+      "no": 16,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "御殿場線利活用推進協議会負担金",
+      "recipient": "御殿場線利活用推進協議会",
+      "amountThousandYen": 71
+    },
+    {
+      "kind": "burden",
+      "no": 17,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "静岡県地域活性化協議会会費",
+      "recipient": "静岡県地域活性化協議会",
+      "amountThousandYen": 59
+    },
+    {
+      "kind": "burden",
+      "no": 18,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "全国半島振興市町村協議会会費",
+      "recipient": "全国半島振興市町村協議会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 19,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "公益社団法人ふじのくに地域・大学コンソーシアム年会費",
+      "recipient": "公益社団法人ふじのくに地域・大学コンソーシアム",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 20,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "ふじのくに結婚応援協議会会費",
+      "recipient": "ふじのくに結婚応援協議会",
+      "amountThousandYen": 188
+    },
+    {
+      "kind": "burden",
+      "no": 21,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "静岡まるごと移住フェア出展料",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 140
+    },
+    {
+      "kind": "burden",
+      "no": 22,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "静岡県東部生産性本部2024年度会費",
+      "recipient": "静岡県東部生産性本部",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 23,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "静岡県東部経営品質研究会2024年度研究会活動参加料",
+      "recipient": "静岡県東部経営品質研究会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 24,
+      "department": "政策推進部",
+      "division": "政策企画課",
+      "category": null,
+      "name": "静岡県東部生産性本部研修参加費",
+      "recipient": "静岡県東部生産性本部",
+      "amountThousandYen": 15
+    },
+    {
+      "kind": "burden",
+      "no": 25,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "静岡新聞社・静岡放送「サンフロント21懇話会」年会費",
+      "recipient": "静岡新聞社・静岡放送サンフロント21懇話会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 26,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "内外情勢調査会会費",
+      "recipient": "一般社団法人内外情勢調査会",
+      "amountThousandYen": 238
+    },
+    {
+      "kind": "burden",
+      "no": 27,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "駿東市町長会負担金",
+      "recipient": "駿東市町長会",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "burden",
+      "no": 28,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "静岡県市政事務研究会分担金",
+      "recipient": "静岡県市政事務研究会",
+      "amountThousandYen": 103
+    },
+    {
+      "kind": "burden",
+      "no": 29,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "静岡県市長会分担金",
+      "recipient": "静岡県市長会",
+      "amountThousandYen": 741
+    },
+    {
+      "kind": "burden",
+      "no": 30,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "全国市長会分担金",
+      "recipient": "全国市長会",
+      "amountThousandYen": 705
+    },
+    {
+      "kind": "burden",
+      "no": 31,
+      "department": "総務部",
+      "division": "総務課(秘書室)",
+      "category": null,
+      "name": "秘書室会議等出席者負担金",
+      "recipient": null,
+      "amountThousandYen": 123
+    },
+    {
+      "kind": "burden",
+      "no": 32,
+      "department": "政策推進部",
+      "division": "広報課",
+      "category": null,
+      "name": "広報課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 167
+    },
+    {
+      "kind": "burden",
+      "no": 33,
+      "department": "政策推進部",
+      "division": "広報課",
+      "category": null,
+      "name": "静岡県広報協会会費",
+      "recipient": "静岡県広報協会",
+      "amountThousandYen": 110
+    },
+    {
+      "kind": "burden",
+      "no": 34,
+      "department": "政策推進部",
+      "division": "広報課",
+      "category": null,
+      "name": "日本広報協会会費",
+      "recipient": "公益社団法人日本広報協会",
+      "amountThousandYen": 42
+    },
+    {
+      "kind": "burden",
+      "no": 35,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "生活安心課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 36,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "「ぬまづ消費生活展」負担金",
+      "recipient": "ぬまづ消費生活展運営委員会",
+      "amountThousandYen": 400
+    },
+    {
+      "kind": "burden",
+      "no": 37,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "駿河地区行政相談事務連絡協議会負担金",
+      "recipient": "駿河地区行政相談事務連絡協議会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 38,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "沼津人権擁護委員協議会運営のための協力金",
+      "recipient": "沼津人権擁護委員協議会",
+      "amountThousandYen": 635
+    },
+    {
+      "kind": "burden",
+      "no": 39,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "静岡県東部市相談業務連絡協議会負担金",
+      "recipient": "静岡県東部市相談業務連絡協議会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 40,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "防犯講座「あぶトレ!」開催負担金",
+      "recipient": "静岡県",
+      "amountThousandYen": 90
+    },
+    {
+      "kind": "burden",
+      "no": 41,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "沼津警察署管内防犯協会負担金",
+      "recipient": "沼津警察署管内防犯協会",
+      "amountThousandYen": 6021
+    },
+    {
+      "kind": "burden",
+      "no": 42,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "沼津地区交通安全連絡協議会負担金",
+      "recipient": "沼津地区交通安全連絡協議会",
+      "amountThousandYen": 300
+    },
+    {
+      "kind": "burden",
+      "no": 43,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "静岡県交通安全指導員設置費負担金",
+      "recipient": "一般財団法人静岡県交通安全協会",
+      "amountThousandYen": 20923
+    },
+    {
+      "kind": "burden",
+      "no": 44,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "高齢者運転免許証自主返納支援事業バス・タクシー利用券負担金",
+      "recipient": "申請者",
+      "amountThousandYen": 3342
+    },
+    {
+      "kind": "burden",
+      "no": 45,
+      "department": "政策推進部",
+      "division": "生活安心課",
+      "category": null,
+      "name": "認定NPO法人静岡犯罪被害者支援センター賛助会費",
+      "recipient": "認定NPO法人静岡犯罪被害者支援センター",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 46,
+      "department": "政策推進部",
+      "division": "地域自治課",
+      "category": null,
+      "name": "地域自治課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 77
+    },
+    {
+      "kind": "burden",
+      "no": 47,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "人事課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 1921
+    },
+    {
+      "kind": "burden",
+      "no": 48,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "人間ドック等検査費用負担金",
+      "recipient": "医療機関",
+      "amountThousandYen": 3581
+    },
+    {
+      "kind": "burden",
+      "no": 49,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "社会保険協会会費",
+      "recipient": "一般財団法人静岡県社会保険協会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 50,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "静岡県都市職員福利厚生連絡会分担金",
+      "recipient": "静岡県都市職員福利厚生連絡会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 51,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "NOMA正会員会費",
+      "recipient": "一般社団法人日本経営協会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 52,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "企業経営研究所賛助会費",
+      "recipient": "一般財団法人企業経営研究所",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 53,
+      "department": "総務部",
+      "division": "人事課",
+      "category": null,
+      "name": "静岡県市職員研修協議会年会費",
+      "recipient": "静岡県市職員研修協議会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 54,
+      "department": "政策推進部",
+      "division": "ICT推進課",
+      "category": null,
+      "name": "一般事業負担金(地方公共団体情報システム機構)",
+      "recipient": "地方公共団体情報システム機構",
+      "amountThousandYen": 180
+    },
+    {
+      "kind": "burden",
+      "no": 55,
+      "department": "政策推進部",
+      "division": "ICT推進課",
+      "category": null,
+      "name": "静岡県統計協会普通会費",
+      "recipient": "静岡県統計協会",
+      "amountThousandYen": 32
+    },
+    {
+      "kind": "burden",
+      "no": 56,
+      "department": "政策推進部",
+      "division": "ICT推進課",
+      "category": null,
+      "name": "ICT推進課会議、研修等負担金",
+      "recipient": "一般社団法人日本経営協会、一般社団法人自治経営協会",
+      "amountThousandYen": 124
+    },
+    {
+      "kind": "burden",
+      "no": 57,
+      "department": "総務部",
+      "division": "総務課",
+      "category": null,
+      "name": "総務課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 84
+    },
+    {
+      "kind": "burden",
+      "no": 58,
+      "department": "総務部",
+      "division": "総務課",
+      "category": null,
+      "name": "全国公平委員会連合会会費",
+      "recipient": "全国公平委員会連合会",
+      "amountThousandYen": 27
+    },
+    {
+      "kind": "burden",
+      "no": 59,
+      "department": "総務部",
+      "division": "総務課",
+      "category": null,
+      "name": "静岡県防衛協会会費",
+      "recipient": "静岡県防衛協会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 60,
+      "department": "総務部",
+      "division": "総務課",
+      "category": null,
+      "name": "防衛施設周辺整備全国協議会分担金",
+      "recipient": "防衛施設周辺整備全国協議会",
+      "amountThousandYen": 6
+    },
+    {
+      "kind": "burden",
+      "no": 61,
+      "department": "総務部",
+      "division": "総務課",
+      "category": null,
+      "name": "平和首長会議メンバーシップ納付金",
+      "recipient": "平和首長会議",
+      "amountThousandYen": 2
+    },
+    {
+      "kind": "burden",
+      "no": 62,
+      "department": "総務部",
+      "division": "総務課",
+      "category": null,
+      "name": "北方領土返還要求静岡県民会議会費",
+      "recipient": "北方領土返還要求静岡県民会議",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 63,
+      "department": "財務部",
+      "division": "契約検査課",
+      "category": null,
+      "name": "静岡県共同利用電子入札システム利用負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 2496
+    },
+    {
+      "kind": "burden",
+      "no": 64,
+      "department": "財務部",
+      "division": "契約検査課",
+      "category": null,
+      "name": "契約検査課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 205
+    },
+    {
+      "kind": "burden",
+      "no": 65,
+      "department": "財務部",
+      "division": "財政課",
+      "category": null,
+      "name": "財政課課研修負担金",
+      "recipient": null,
+      "amountThousandYen": 34
+    },
+    {
+      "kind": "burden",
+      "no": 66,
+      "department": "財務部",
+      "division": "資産活用課",
+      "category": null,
+      "name": "資産活用課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 45
+    },
+    {
+      "kind": "burden",
+      "no": 67,
+      "department": "財務部",
+      "division": "資産活用課",
+      "category": null,
+      "name": "沼津地区安全運転管理協会会費",
+      "recipient": "沼津地区安全運転管理協会",
+      "amountThousandYen": 102
+    },
+    {
+      "kind": "burden",
+      "no": 68,
+      "department": "財務部",
+      "division": "資産活用課",
+      "category": null,
+      "name": "公益財団法人日本電信電話ユーザ協会静岡東部地区協会会費",
+      "recipient": "公益財団法人日本電信電話ユーザー協会",
+      "amountThousandYen": 4
+    },
+    {
+      "kind": "burden",
+      "no": 69,
+      "department": "財務部",
+      "division": "資産活用課",
+      "category": null,
+      "name": "沼津市防火協会会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 70,
+      "department": "財務部",
+      "division": "資産活用課",
+      "category": null,
+      "name": "沼津御殿場地区電力協議会会費",
+      "recipient": "沼津御殿場地区電力協議会",
+      "amountThousandYen": 6
+    },
+    {
+      "kind": "burden",
+      "no": 71,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 411
+    },
+    {
+      "kind": "burden",
+      "no": 72,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "(財)資産評価システム研究センター正会員会費",
+      "recipient": "一般財団法人資産評価システム研究センター",
+      "amountThousandYen": 90
+    },
+    {
+      "kind": "burden",
+      "no": 73,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "沼津税務推進協議会分担金",
+      "recipient": "沼津税務推進協議会",
+      "amountThousandYen": 112
+    },
+    {
+      "kind": "burden",
+      "no": 74,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "軽自動車税環境性能割徴収取扱費",
+      "recipient": "静岡県",
+      "amountThousandYen": 1735
+    },
+    {
+      "kind": "burden",
+      "no": 75,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "地方税共同機構負担金",
+      "recipient": "地方税共同機構",
+      "amountThousandYen": 14211
+    },
+    {
+      "kind": "burden",
+      "no": 76,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "給与支払報告書等の統合印刷に係る経費負担",
+      "recipient": "静岡県市長会",
+      "amountThousandYen": 52
+    },
+    {
+      "kind": "burden",
+      "no": 77,
+      "department": "財務部",
+      "division": "納税管理課",
+      "category": null,
+      "name": "静岡地方税滞納整理機構負担金",
+      "recipient": "静岡地方税滞納整理機構",
+      "amountThousandYen": 12264
+    },
+    {
+      "kind": "burden",
+      "no": 78,
+      "department": "市民福祉部",
+      "division": "市民課",
+      "category": null,
+      "name": "市民課会議、研修負担金",
+      "recipient": null,
+      "amountThousandYen": 16
+    },
+    {
+      "kind": "burden",
+      "no": 79,
+      "department": "市民福祉部",
+      "division": "市民課",
+      "category": null,
+      "name": "沼津地区戸籍住民基本台帳事務協議会会費",
+      "recipient": "沼津地区戸籍住民基本台帳事務協議会",
+      "amountThousandYen": 199
+    },
+    {
+      "kind": "burden",
+      "no": 80,
+      "department": "市民福祉部",
+      "division": "市民課",
+      "category": null,
+      "name": "コンビニ交付に係る運営負担金",
+      "recipient": "地方公共団体情報システム機構",
+      "amountThousandYen": 4787
+    },
+    {
+      "kind": "burden",
+      "no": 81,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "一般財団法人静岡県環境・産業保安機構会費(旧静岡県冷凍設備保安協会会費)",
+      "recipient": "一般財団法人静岡県環境・産業保安機構",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 82,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": null,
+      "name": "ふるさと納税返礼品水ペットボトル提供に関する負担金",
+      "recipient": "水道事業会計",
+      "amountThousandYen": 46
+    },
+    {
+      "kind": "burden",
+      "no": 83,
+      "department": "事務局",
+      "division": "出納事務局",
+      "category": null,
+      "name": "研修負担金",
+      "recipient": null,
+      "amountThousandYen": 34
+    },
+    {
+      "kind": "burden",
+      "no": 84,
+      "department": "事務局",
+      "division": "選挙管理委員会",
+      "category": null,
+      "name": "選挙管理委員会会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 25
+    },
+    {
+      "kind": "burden",
+      "no": 85,
+      "department": "事務局",
+      "division": "選挙管理委員会",
+      "category": null,
+      "name": "静岡県各市選挙管理委員会連合会分担金",
+      "recipient": "静岡県各市選挙管理委員会連合会",
+      "amountThousandYen": 156
+    },
+    {
+      "kind": "burden",
+      "no": 86,
+      "department": "事務局",
+      "division": "選挙管理委員会",
+      "category": null,
+      "name": "静岡県東部明るい選挙推進協議会負担金",
+      "recipient": "静岡県東部明るい選挙推進協議会",
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "burden",
+      "no": 87,
+      "department": "事務局",
+      "division": "選挙管理委員会",
+      "category": null,
+      "name": "全国市区選挙管理委員会連合会分担金",
+      "recipient": "全国市区選挙管理委員会連合会",
+      "amountThousandYen": 51
+    },
+    {
+      "kind": "burden",
+      "no": 88,
+      "department": "事務局",
+      "division": "監査委員",
+      "category": null,
+      "name": "監査委員事務局会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 35
+    },
+    {
+      "kind": "burden",
+      "no": 89,
+      "department": "事務局",
+      "division": "監査委員",
+      "category": null,
+      "name": "静岡県都市監査委員会会費",
+      "recipient": "静岡県都市監査委員会",
+      "amountThousandYen": 14
+    },
+    {
+      "kind": "burden",
+      "no": 90,
+      "department": "事務局",
+      "division": "監査委員",
+      "category": null,
+      "name": "全国都市監査委員会会費",
+      "recipient": "全国都市監査委員会",
+      "amountThousandYen": 37
+    },
+    {
+      "kind": "burden",
+      "no": 91,
+      "department": "事務局",
+      "division": "監査委員",
+      "category": null,
+      "name": "東海地区都市監査委員会会費",
+      "recipient": "東海地区都市監査委員会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 92,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "危機管理課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 16
+    },
+    {
+      "kind": "burden",
+      "no": 93,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "静岡県防災ヘリコプター運航連絡協議会負担金",
+      "recipient": "静岡県防災ヘリコプター運航連絡協議会",
+      "amountThousandYen": 6456
+    },
+    {
+      "kind": "burden",
+      "no": 94,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "静岡県防災行政無線運営協議会分担金",
+      "recipient": "静岡県防災行政無線運営協議会",
+      "amountThousandYen": 610
+    },
+    {
+      "kind": "burden",
+      "no": 95,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "無線電波利用共益費用負担金",
+      "recipient": "東海総合通信局",
+      "amountThousandYen": 165
+    },
+    {
+      "kind": "burden",
+      "no": 96,
+      "department": "市民福祉部",
+      "division": "国民健康保険課",
+      "category": null,
+      "name": "静岡県後期高齢者医療広域連合後期高齢者医療事業療養給付費負担金",
+      "recipient": "静岡県後期高齢者医療広域連合",
+      "amountThousandYen": 2093321
+    },
+    {
+      "kind": "burden",
+      "no": 97,
+      "department": "市民福祉部",
+      "division": "国民健康保険課",
+      "category": null,
+      "name": "特定検診負担金",
+      "recipient": "一般社団法人沼津医師会",
+      "amountThousandYen": 19
+    },
+    {
+      "kind": "burden",
+      "no": 98,
+      "department": "市民福祉部",
+      "division": "国民健康保険課",
+      "category": null,
+      "name": "静岡県後期高齢者医療広域連合事務費負担金(広域連合一般会計分)",
+      "recipient": "静岡県後期高齢者医療広域連合",
+      "amountThousandYen": 6599
+    },
+    {
+      "kind": "burden",
+      "no": 99,
+      "department": "市民福祉部",
+      "division": "国民健康保険課",
+      "category": null,
+      "name": "静岡県後期高齢者医療広域連合事務費負担金(広域連合特別会計分)",
+      "recipient": "静岡県後期高齢者医療広域連合",
+      "amountThousandYen": 71639
+    },
+    {
+      "kind": "burden",
+      "no": 100,
+      "department": "市民福祉部",
+      "division": "国民健康保険課",
+      "category": null,
+      "name": "光学文字読取装置賃借料負担金",
+      "recipient": "沼津市長",
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "burden",
+      "no": 101,
+      "department": "市民福祉部",
+      "division": "国民健康保険課",
+      "category": null,
+      "name": "後期高齢者医療給付費市町負担金(精算分)",
+      "recipient": "静岡県後期高齢者医療広域連合",
+      "amountThousandYen": 85104
+    },
+    {
+      "kind": "burden",
+      "no": 102,
+      "department": "市民福祉部",
+      "division": "福祉企画課",
+      "category": null,
+      "name": "福祉企画課研修負担金",
+      "recipient": null,
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "burden",
+      "no": 103,
+      "department": "市民福祉部",
+      "division": "社会福祉課",
+      "category": null,
+      "name": "社会福祉主事資格認定通信課程受講に係る負担金",
+      "recipient": "全国社会福祉協議会",
+      "amountThousandYen": 254
+    },
+    {
+      "kind": "burden",
+      "no": 104,
+      "department": "市民福祉部",
+      "division": "社会福祉課",
+      "category": null,
+      "name": "全国婦人相談員連絡協議会会費",
+      "recipient": "全国婦人相談員連絡協議会",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 105,
+      "department": "市民福祉部",
+      "division": "社会福祉課",
+      "category": null,
+      "name": "オンライン資格確認に係る運営費負担金",
+      "recipient": "社会保険診療報酬支払基金",
+      "amountThousandYen": 264
+    },
+    {
+      "kind": "burden",
+      "no": 106,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "子育て支援課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 235
+    },
+    {
+      "kind": "burden",
+      "no": 107,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市社会福祉協議会福祉事業会員会費(保)",
+      "recipient": "社会福祉法人沼津市社会福祉協議会",
+      "amountThousandYen": 35
+    },
+    {
+      "kind": "burden",
+      "no": 108,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "社会福祉法人静岡県社会福祉協議会会費(保)",
+      "recipient": "社会福祉法人静岡県社会福祉協議会",
+      "amountThousandYen": 115
+    },
+    {
+      "kind": "burden",
+      "no": 109,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "日本スポーツ振興センター災害共済掛金設置者負担分",
+      "recipient": "独立行政法人日本スポーツ振興センター",
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "burden",
+      "no": 110,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市保育園連盟会費",
+      "recipient": "沼津市保育園連盟",
+      "amountThousandYen": 105
+    },
+    {
+      "kind": "burden",
+      "no": 111,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市防火協会会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 112,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市幼児教育研究協議会会費",
+      "recipient": "沼津市幼児教育研究協議会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 113,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市幼年消防クラブ連絡協議会年会費",
+      "recipient": "沼津市幼年消防クラブ連絡協議会",
+      "amountThousandYen": 52
+    },
+    {
+      "kind": "burden",
+      "no": 114,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "静岡県給食協会本部会費及び沼津伊豆支部会費",
+      "recipient": "静岡県給食協会沼津伊豆支部",
+      "amountThousandYen": 14
+    },
+    {
+      "kind": "burden",
+      "no": 115,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "静岡県東部市町保育所栄養士研究会負担金",
+      "recipient": "静岡県東部市町保育所栄養士研究会",
+      "amountThousandYen": 6
+    },
+    {
+      "kind": "burden",
+      "no": 116,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "保育所連合会東部支部会費",
+      "recipient": "保育所連合会東部支部",
+      "amountThousandYen": 255
+    },
+    {
+      "kind": "burden",
+      "no": 117,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市社会福祉協議会福祉事業会員会費(児童発達支援センターみゆき)",
+      "recipient": "社会福祉法人沼津市社会福祉協議会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 118,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "社会福祉法人静岡県社会福祉協議会会費(児童発達支援センターみゆき)",
+      "recipient": "社会福祉法人静岡県社会福祉協議会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 119,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "言語・聴覚・発達障害教育究会会費(児童発達支援センターみゆき)",
+      "recipient": "静岡県言語・聴覚・発達障害教育研究会",
+      "amountThousandYen": 4
+    },
+    {
+      "kind": "burden",
+      "no": 120,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "静岡県家庭児童相談室連絡協議会会費",
+      "recipient": "静岡県家庭児童相談室連絡協議会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 121,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "静岡県東部地区家庭児童相談室連絡協議会負担金",
+      "recipient": "静岡県東部地区家庭児童相談室連絡協議会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 122,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "心身障害者扶養共済制度年金掛金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 4432
+    },
+    {
+      "kind": "burden",
+      "no": 123,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "静岡県精神保健福祉協会会費",
+      "recipient": "静岡県精神保健福祉協会",
+      "amountThousandYen": 45
+    },
+    {
+      "kind": "burden",
+      "no": 124,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "駿豆学園管理組合分担金",
+      "recipient": "駿豆学園管理組合",
+      "amountThousandYen": 155
+    },
+    {
+      "kind": "burden",
+      "no": 125,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "全国手話言語市区長会会費",
+      "recipient": "全国手話言語市区長会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 126,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "障がい福祉課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 7
+    },
+    {
+      "kind": "burden",
+      "no": 127,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "健康づくり課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 51
+    },
+    {
+      "kind": "burden",
+      "no": 128,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "公益社団法人沼津夜間救急医療対策協会会費",
+      "recipient": "公益社団法人沼津夜間救急医療対策協会",
+      "amountThousandYen": 164
+    },
+    {
+      "kind": "burden",
+      "no": 129,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "医薬品等備蓄センター運営費負担金",
+      "recipient": "一般社団法人静岡県薬事振興会",
+      "amountThousandYen": 127
+    },
+    {
+      "kind": "burden",
+      "no": 130,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "静岡県対がん協会会費",
+      "recipient": "公益財団法人静岡県対がん協会",
+      "amountThousandYen": 80
+    },
+    {
+      "kind": "burden",
+      "no": 131,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "広域救急事業市町負担金",
+      "recipient": "一般社団法人沼津医師会",
+      "amountThousandYen": 3278
+    },
+    {
+      "kind": "burden",
+      "no": 132,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "甲種防火管理新規講習負担金",
+      "recipient": null,
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 133,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "静岡県行政栄養士会負担金",
+      "recipient": "静岡県行政栄養士会",
+      "amountThousandYen": 11
+    },
+    {
+      "kind": "burden",
+      "no": 134,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "予防接種法第15条第1講に基づく認定に係る給付(予防接種健康被害救済制度給付金)",
+      "recipient": null,
+      "amountThousandYen": 1396
+    },
+    {
+      "kind": "burden",
+      "no": 135,
+      "department": "市民福祉部",
+      "division": "健康づくり課",
+      "category": null,
+      "name": "令和6年度医療マップ作製事業負担金",
+      "recipient": "一般社団法人沼津医師会",
+      "amountThousandYen": 829
+    },
+    {
+      "kind": "burden",
+      "no": 136,
+      "department": "市民福祉部",
+      "division": "看護専門学校",
+      "category": null,
+      "name": "看護専門学校会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 115
+    },
+    {
+      "kind": "burden",
+      "no": 137,
+      "department": "市民福祉部",
+      "division": "看護専門学校",
+      "category": null,
+      "name": "一般社団法人日本看護学校協議会年会費",
+      "recipient": "一般社団法人日本看護学校協議会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 138,
+      "department": "市民福祉部",
+      "division": "看護専門学校",
+      "category": null,
+      "name": "静岡県自治体立看護学校協議会会費",
+      "recipient": "静岡県自治体立看護学校協議会",
+      "amountThousandYen": 25
+    },
+    {
+      "kind": "burden",
+      "no": 139,
+      "department": "市民福祉部",
+      "division": "看護専門学校",
+      "category": null,
+      "name": "東海北陸地区自治体看護学校協議会会費",
+      "recipient": "東海北陸地区自治体看護学校協議会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 140,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "狩野川水系水質保全協議会沼津支部負担金",
+      "recipient": "狩野川水系水質保全協議会沼津支部",
+      "amountThousandYen": 200
+    },
+    {
+      "kind": "burden",
+      "no": 141,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "黄瀬川地域地下水利用対策協議会負担金",
+      "recipient": "黄瀬川地域地下水利用対策協議会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 142,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "一般社団法人静岡県動物保護協会会費",
+      "recipient": "一般社団法人静岡県動物保護協会",
+      "amountThousandYen": 270
+    },
+    {
+      "kind": "burden",
+      "no": 143,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "公益社団法人全国都市清掃会議年会費",
+      "recipient": "公益社団法人全国都市清掃会議",
+      "amountThousandYen": 116
+    },
+    {
+      "kind": "burden",
+      "no": 144,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "静岡県都市清掃協議会分担金",
+      "recipient": "静岡県都市清掃協議会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 145,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "静岡県都市環境保全行政研究会",
+      "recipient": "静岡県都市環境保全行政研究会",
+      "amountThousandYen": 25
+    },
+    {
+      "kind": "burden",
+      "no": 146,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "静岡県都市環境保全行政研究会県外視察研修参加者負担金",
+      "recipient": "静岡県都市環境保全行政研究会",
+      "amountThousandYen": 12
+    },
+    {
+      "kind": "burden",
+      "no": 147,
+      "department": "生活環境部",
+      "division": "新中間処理施設整備室",
+      "category": null,
+      "name": "新中間処理施設整備室会議、研修等負担金",
+      "recipient": "株式会社廃棄物工学研究所",
+      "amountThousandYen": 14
+    },
+    {
+      "kind": "burden",
+      "no": 148,
+      "department": "生活環境部",
+      "division": "新中間処理施設整備室",
+      "category": null,
+      "name": "新中間処理施設整備に伴う特別高圧線接続負担金",
+      "recipient": "東京電力パワーグリッド株式会社",
+      "amountThousandYen": 42445
+    },
+    {
+      "kind": "burden",
+      "no": 149,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "クリーンセンター管理課会議、研修等負担金",
+      "recipient": "公益社団法人静岡県労働基準協会連合会等",
+      "amountThousandYen": 430
+    },
+    {
+      "kind": "burden",
+      "no": 150,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "一般財団法人日本環境衛生センター会費",
+      "recipient": "一般財団法人日本環境衛生センター",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 151,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "ねずみ衛生害虫駆除技術研修会受講料",
+      "recipient": "一般財団法人日本環境衛生センター",
+      "amountThousandYen": 46
+    },
+    {
+      "kind": "burden",
+      "no": 152,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "静岡県浄化槽推進協議会会費",
+      "recipient": "静岡県浄化槽推進協議会",
+      "amountThousandYen": 28
+    },
+    {
+      "kind": "burden",
+      "no": 153,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "沼津地区安全運転管理協会会費",
+      "recipient": "沼津地区安全運転管理協会",
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "burden",
+      "no": 154,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "沼津御殿場地区電力協議会年会費",
+      "recipient": "沼津地区電力協議会",
+      "amountThousandYen": 6
+    },
+    {
+      "kind": "burden",
+      "no": 155,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "沼津市清掃プラント運営協議会負担金",
+      "recipient": "沼津市清掃プラント運営協議会",
+      "amountThousandYen": 130
+    },
+    {
+      "kind": "burden",
+      "no": 156,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "沼津市防火協会年会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 11
+    },
+    {
+      "kind": "burden",
+      "no": 157,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "伊豆市沼津市衛生施設組合負担金",
+      "recipient": "伊豆市沼津市衛生施設組合",
+      "amountThousandYen": 31010
+    },
+    {
+      "kind": "burden",
+      "no": 158,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "土肥リサイクルセンター施設利用に伴う負担金",
+      "recipient": "伊豆市長",
+      "amountThousandYen": 1841
+    },
+    {
+      "kind": "burden",
+      "no": 159,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "使用済み乾電池等運搬・処理にかかる管理費等経費",
+      "recipient": "公益社団法人全国都市清掃会議",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 160,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "伊賀市環境保全負担金",
+      "recipient": "伊賀市長",
+      "amountThousandYen": 7030
+    },
+    {
+      "kind": "burden",
+      "no": 161,
+      "department": "生活環境部",
+      "division": "クリーンセンター管理課",
+      "category": null,
+      "name": "浄化槽設置事業補助金事務委任負担金",
+      "recipient": "沼津市長",
+      "amountThousandYen": 373
+    },
+    {
+      "kind": "burden",
+      "no": 162,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": null,
+      "name": "公益社団法人全国シルバー人材センター事業協会賛助会員会費",
+      "recipient": "公益社団法人全国シルバー人材センター事業協会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 163,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": null,
+      "name": "静岡県シルバー人材センター連合会賛助会員会費",
+      "recipient": "公益社団法人静岡県シルバー人材センター事業協会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 164,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": null,
+      "name": "沼津地区雇用対策協議会",
+      "recipient": "沼津地区雇用対策協議会負担金",
+      "amountThousandYen": 64
+    },
+    {
+      "kind": "burden",
+      "no": 165,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県農業会議拠出金",
+      "recipient": "静岡県農業会議",
+      "amountThousandYen": 528
+    },
+    {
+      "kind": "burden",
+      "no": 166,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "駿豆地区農業委員会協議会負担金",
+      "recipient": "駿豆地区農業委員会協議会",
+      "amountThousandYen": 141
+    },
+    {
+      "kind": "burden",
+      "no": 167,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "伊豆の国地区地域農業振興協議会負担金",
+      "recipient": "伊豆の国地区地域農業振興協議会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 168,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "ふじのくに美しく品格のある邑づくり連合負担金",
+      "recipient": "ふじのくに美しく品格のある邑づくり連合",
+      "amountThousandYen": 80
+    },
+    {
+      "kind": "burden",
+      "no": 169,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "沼津市農業振興推進協議会負担金",
+      "recipient": "沼津市農業振興推進協議会",
+      "amountThousandYen": 550
+    },
+    {
+      "kind": "burden",
+      "no": 170,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県農業用廃プラスチック適正処理推進委員会会費",
+      "recipient": "静岡県農業用廃プラスチック適正処理推進委員会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 171,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県農業共済組合負担金",
+      "recipient": "静岡県農業共済組合",
+      "amountThousandYen": 2775
+    },
+    {
+      "kind": "burden",
+      "no": 172,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県椎茸産業振興協議会会費",
+      "recipient": "静岡県椎茸産業振興協議会会費",
+      "amountThousandYen": 32
+    },
+    {
+      "kind": "burden",
+      "no": 173,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "公益社団法人静岡県山林協会会費",
+      "recipient": "公益社団法人静岡県山林協会",
+      "amountThousandYen": 379
+    },
+    {
+      "kind": "burden",
+      "no": 174,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "富士流域林業活性化センター会費",
+      "recipient": "富士流域林業活性化センター",
+      "amountThousandYen": 227
+    },
+    {
+      "kind": "burden",
+      "no": 175,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "東部家畜保健衛生推進協議会会費",
+      "recipient": "東部家畜保健衛生推進協議会",
+      "amountThousandYen": 17
+    },
+    {
+      "kind": "burden",
+      "no": 176,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県土地改良事業団体連合会農道台帳管理事業賦課金",
+      "recipient": "静岡県土地改良事業団体連合会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 177,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "東部土地改良事業推進協議会会費",
+      "recipient": "東部土地改良事業推進協議会",
+      "amountThousandYen": 40
+    },
+    {
+      "kind": "burden",
+      "no": 178,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "昭和放水路樋門及び浮島排水機場操作等に係る維持管理費負担金",
+      "recipient": "富士市長",
+      "amountThousandYen": 1315
+    },
+    {
+      "kind": "burden",
+      "no": 179,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "松毛川排水機場維持管理負担金",
+      "recipient": "三島市長",
+      "amountThousandYen": 764
+    },
+    {
+      "kind": "burden",
+      "no": 180,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県土地改良事業団体連合会一般・特別賦課金",
+      "recipient": "静岡県土地改良事業団体連合会",
+      "amountThousandYen": 817
+    },
+    {
+      "kind": "burden",
+      "no": 181,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "県営土地改良事業負担金(重須地区ほか6地区)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 241956
+    },
+    {
+      "kind": "burden",
+      "no": 182,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "土地改良施設維持管理適正化事業賦課金",
+      "recipient": "静岡県土地改良事業団体連合会",
+      "amountThousandYen": 510
+    },
+    {
+      "kind": "burden",
+      "no": 183,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "全国中山間地域振興対策協議会会費",
+      "recipient": "全国中山間地域振興対策協議会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 184,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "沼津市有害鳥獣被害防止対策協議会負担金",
+      "recipient": "沼津市有害鳥獣被害防止対策協議会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 185,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "県営地域用水環境整備事業負担金(水の都三島地区)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 1255
+    },
+    {
+      "kind": "burden",
+      "no": 186,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "ブランド米推進協議会負担金",
+      "recipient": "ブランド米推進協議会",
+      "amountThousandYen": 550
+    },
+    {
+      "kind": "burden",
+      "no": 187,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県食肉センター再編整備事業費負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 4786
+    },
+    {
+      "kind": "burden",
+      "no": 188,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "静岡県水源林造林推進協議会会費",
+      "recipient": "静岡県水源林造林推進協議会",
+      "amountThousandYen": 15
+    },
+    {
+      "kind": "burden",
+      "no": 189,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "県営水利施設等整備事業「月川排水機場保全地区」負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 3436
+    },
+    {
+      "kind": "burden",
+      "no": 190,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "県営農村災害対策整備事業「排水機場東部地区」負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 2100
+    },
+    {
+      "kind": "burden",
+      "no": 191,
+      "department": "産業振興部",
+      "division": "農林農地課",
+      "category": null,
+      "name": "(県単独)農業農村整備調査費「西浦みかん区画整理」負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 1843
+    },
+    {
+      "kind": "burden",
+      "no": 192,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "沼津地区幼稚仔保育場管理運営委員会事業費負担金",
+      "recipient": "沼津地区幼稚仔保育場管理運営委員会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 193,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "静岡県おさかな普及協議会会費",
+      "recipient": "静岡県おさかな普及協議会",
+      "amountThousandYen": 324
+    },
+    {
+      "kind": "burden",
+      "no": 194,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "静岡県遊漁船業協会会費",
+      "recipient": "静岡県遊漁船業協会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 195,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "駿河湾地区遊漁協議会負担金",
+      "recipient": "駿河湾地区遊漁協議会",
+      "amountThousandYen": 85
+    },
+    {
+      "kind": "burden",
+      "no": 196,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "沼津市水産振興会負担金",
+      "recipient": "沼津市水産振興会",
+      "amountThousandYen": 120
+    },
+    {
+      "kind": "burden",
+      "no": 197,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "伊豆地域栽培推進事業マダイ放流事業負担金",
+      "recipient": "公益財団法人静岡県漁業振興基金",
+      "amountThousandYen": 1067
+    },
+    {
+      "kind": "burden",
+      "no": 198,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "栽培漁業推進事業放流効果実証事業に係る負担金",
+      "recipient": "公益財団法人静岡県漁業振興基金",
+      "amountThousandYen": 1300
+    },
+    {
+      "kind": "burden",
+      "no": 199,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "静岡県漁港漁場協会負担金",
+      "recipient": "静岡県漁港漁場協会",
+      "amountThousandYen": 1280
+    },
+    {
+      "kind": "burden",
+      "no": 200,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "県営漁港整備事業負担金(静浦・戸田漁港)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 48165
+    },
+    {
+      "kind": "burden",
+      "no": 201,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "水産土木工事実施担当職員研修会受講料負担金",
+      "recipient": "一般社団法人水産土木建設技術センター",
+      "amountThousandYen": 13
+    },
+    {
+      "kind": "burden",
+      "no": 202,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "公益社団法人関東小型船安全協会賛助会費",
+      "recipient": "公益社団法人関東小型船安全協会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 203,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": null,
+      "name": "公益社団法人静岡県国際経済振興会事業負担金",
+      "recipient": "公益社団法人静岡県国際経済振興会",
+      "amountThousandYen": 1080
+    },
+    {
+      "kind": "burden",
+      "no": 204,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": null,
+      "name": "日本貿易振興機構静岡貿易情報センター事業運営負担金",
+      "recipient": "独立行政法人日本貿易振興機構",
+      "amountThousandYen": 823
+    },
+    {
+      "kind": "burden",
+      "no": 205,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": null,
+      "name": "静岡県信用保証協会事務負担金",
+      "recipient": "静岡県信用保証協会",
+      "amountThousandYen": 1950
+    },
+    {
+      "kind": "burden",
+      "no": 206,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": null,
+      "name": "静岡県企業立地市町推進連絡会会費",
+      "recipient": "静岡県企業立地市町推進連絡会",
+      "amountThousandYen": 37
+    },
+    {
+      "kind": "burden",
+      "no": 207,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": null,
+      "name": "大手町地区第一種市街地再開発事業施設建築物共有店舗床賃貸借契約に基づく諸費用負担金",
+      "recipient": "沼津まちづくり株式会社",
+      "amountThousandYen": 28224
+    },
+    {
+      "kind": "burden",
+      "no": 208,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": null,
+      "name": "大手町地区第一種市街地再開発事業施設建築物駐車場管理運営契約に基づく諸費用負担金",
+      "recipient": "沼津まちづくり株式会社",
+      "amountThousandYen": 30295
+    },
+    {
+      "kind": "burden",
+      "no": 209,
+      "department": "産業振興部",
+      "division": "商工振興課",
+      "category": null,
+      "name": "全国特定市計量行政協議会会費",
+      "recipient": "全国特定市計量行政協議会",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 210,
+      "department": "産業振興部",
+      "division": "産業政策課",
+      "category": null,
+      "name": "富士山麓ビジネスマッチング促進事業負担金",
+      "recipient": "公益財団法人ふじのくに医療城下町推進機構",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "burden",
+      "no": 211,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "日本富士山協会負担金",
+      "recipient": "日本富士山協会",
+      "amountThousandYen": 175
+    },
+    {
+      "kind": "burden",
+      "no": 212,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "北条五代観光推進協議会負担金",
+      "recipient": "北条五代観光推進協議会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 213,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "公益社団法人静岡県観光協会運営会費",
+      "recipient": "公益社団法人静岡県観光協会",
+      "amountThousandYen": 1234
+    },
+    {
+      "kind": "burden",
+      "no": 214,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "静岡県大型観光キャンペーン推進協議会負担金",
+      "recipient": "静岡県大型観光キャンペーン推進協議会",
+      "amountThousandYen": 422
+    },
+    {
+      "kind": "burden",
+      "no": 215,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "富士山静岡空港利用促進協議会会費",
+      "recipient": "富士山静岡空港利用促進協議会",
+      "amountThousandYen": 700
+    },
+    {
+      "kind": "burden",
+      "no": 216,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "富士箱根伊豆国際観光テーマ地区静岡県協議会負担金",
+      "recipient": "富士箱根伊豆国際観光テーマ地区静岡県協議会",
+      "amountThousandYen": 250
+    },
+    {
+      "kind": "burden",
+      "no": 217,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "美しい伊豆創造センター負担金",
+      "recipient": "美しい伊豆創造センター",
+      "amountThousandYen": 10411
+    },
+    {
+      "kind": "burden",
+      "no": 218,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "西伊豆歩道運営協議会負担金",
+      "recipient": "西伊豆歩道運営協議会",
+      "amountThousandYen": 411
+    },
+    {
+      "kind": "burden",
+      "no": 219,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "伊豆山稜線歩道運営協議会負担金",
+      "recipient": "伊豆山稜線歩道運営協議会",
+      "amountThousandYen": 76
+    },
+    {
+      "kind": "burden",
+      "no": 220,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "静岡県温泉協会修善寺支部負担金",
+      "recipient": "静岡県温泉協会修善寺支部",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 221,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "温泉所在都市協議会分担金",
+      "recipient": "温泉所在都市協議会",
+      "amountThousandYen": 7
+    },
+    {
+      "kind": "burden",
+      "no": 222,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "静岡県温泉協会市町賛助会費",
+      "recipient": "静岡県温泉協会",
+      "amountThousandYen": 14
+    },
+    {
+      "kind": "burden",
+      "no": 223,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "静岡県東部地域コンベンションビューロー会費",
+      "recipient": "静岡県東部地域コンベンションビューロー",
+      "amountThousandYen": 4340
+    },
+    {
+      "kind": "burden",
+      "no": 224,
+      "department": "産業振興部",
+      "division": "観光戦略課",
+      "category": null,
+      "name": "中部ブロック「道の駅」連絡会年会費",
+      "recipient": "中部ブロック「道の駅」連絡会事務局",
+      "amountThousandYen": 70
+    },
+    {
+      "kind": "burden",
+      "no": 225,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "狩野川周辺サイクル事業推進協議会負担金",
+      "recipient": "狩野川周辺サイクル事業推進協議会",
+      "amountThousandYen": 1247
+    },
+    {
+      "kind": "burden",
+      "no": 226,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "静岡県東部地域スポーツ産業振興協議会会費",
+      "recipient": "静岡県東部地域スポーツ産業振興協議会",
+      "amountThousandYen": 120
+    },
+    {
+      "kind": "burden",
+      "no": 227,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "自転車を活用したまちづくりを推進する全国市区町村の会会費",
+      "recipient": "自転車を活用したまちづくりを推進する全国市区町村の会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 228,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "フェンシングのまち沼津推進協議会負担金",
+      "recipient": "フェンシングのまち沼津推進協議会",
+      "amountThousandYen": 22961
+    },
+    {
+      "kind": "burden",
+      "no": 229,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "伊豆狩野川ガイドサイクリング開催負担金",
+      "recipient": "伊豆狩野川ガイドサイクリング実行委員会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 230,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "富士海岸保全施設整備促進期成同盟会負担金",
+      "recipient": "富士海岸保全施設整備促進期成同盟会",
+      "amountThousandYen": 150
+    },
+    {
+      "kind": "burden",
+      "no": 231,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "沼津港振興会負担金",
+      "recipient": "沼津港振興会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 232,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "静岡県港湾振興会会費及び特別会費",
+      "recipient": "静岡県港湾振興会",
+      "amountThousandYen": 750
+    },
+    {
+      "kind": "burden",
+      "no": 233,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "中部みなとオアシス連絡協議会会費",
+      "recipient": "中部みなとオアシス連絡協議会",
+      "amountThousandYen": 60
+    },
+    {
+      "kind": "burden",
+      "no": 234,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "特定地域振興重要港湾活性化協議会会費",
+      "recipient": "特定地域振興重要港湾活性化協議会",
+      "amountThousandYen": 60
+    },
+    {
+      "kind": "burden",
+      "no": 235,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "県営港湾整備事業負担金(沼津港)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 42069
+    },
+    {
+      "kind": "burden",
+      "no": 236,
+      "department": "産業振興部",
+      "division": "水産海浜課",
+      "category": null,
+      "name": "一般社団法人ウォーターフロント協会負担金",
+      "recipient": "一般社団法人ウォーターフロント協会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 237,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "まちづくり政策課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 117
+    },
+    {
+      "kind": "burden",
+      "no": 238,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "公益財団法人都市計画協会会費",
+      "recipient": "公益財団法人都市計画協会",
+      "amountThousandYen": 190
+    },
+    {
+      "kind": "burden",
+      "no": 239,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "コンパクトなまちづくり推進協議会会費",
+      "recipient": "コンパクトなまちづくり推進協議会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 240,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "沼津バス協会負担金※2款から",
+      "recipient": "沼津バス協会",
+      "amountThousandYen": 250
+    },
+    {
+      "kind": "burden",
+      "no": 241,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "静岡県タクシー協会沼津三島支部負担金※2款から",
+      "recipient": "静岡県タクシー協会沼津三島支部",
+      "amountThousandYen": 250
+    },
+    {
+      "kind": "burden",
+      "no": 242,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "伊豆地域公共交通活性化協議会負担金",
+      "recipient": "伊豆地域公共交通活性化協議会",
+      "amountThousandYen": 328
+    },
+    {
+      "kind": "burden",
+      "no": 243,
+      "department": "都市計画部",
+      "division": "まちづくり政策課",
+      "category": null,
+      "name": "夜間乗合タクシー実証運行運行経費負担金",
+      "recipient": "平和タクシー株式会社代表取締役鈴木智善他全9名",
+      "amountThousandYen": 2016
+    },
+    {
+      "kind": "burden",
+      "no": 244,
+      "department": "都市計画部",
+      "division": "市街地整備課",
+      "category": null,
+      "name": "市街地整備課会議、研修等負担金",
+      "recipient": "公益社団法人街づくり区画整理協会、公益社団法人全国市街地再開発協会ほか",
+      "amountThousandYen": 59
+    },
+    {
+      "kind": "burden",
+      "no": 245,
+      "department": "都市計画部",
+      "division": "市街地整備課",
+      "category": null,
+      "name": "公益社団法人街づくり区画整理協会会費",
+      "recipient": "公益社団法人街づくり区画整理協会",
+      "amountThousandYen": 132
+    },
+    {
+      "kind": "burden",
+      "no": 246,
+      "department": "都市計画部",
+      "division": "市街地整備課",
+      "category": null,
+      "name": "公益社団法人全国市街地再開発協会会費",
+      "recipient": "公益社団法人全国市街地再開発協会",
+      "amountThousandYen": 80
+    },
+    {
+      "kind": "burden",
+      "no": 247,
+      "department": "都市計画部",
+      "division": "市街地整備課",
+      "category": null,
+      "name": "沼津土木事務所管内土地区画整理事業連絡協議会負担金",
+      "recipient": "沼津土木事務所管内土地区画整理事業連絡協議会",
+      "amountThousandYen": 25
+    },
+    {
+      "kind": "burden",
+      "no": 248,
+      "department": "都市計画部",
+      "division": "市街地整備課",
+      "category": null,
+      "name": "静岡県土地区画整理組合連合会均等割会費",
+      "recipient": "静岡県土地区画整理組合連合会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 249,
+      "department": "都市計画部",
+      "division": "開発指導課",
+      "category": null,
+      "name": "静岡県国土調査協議会会費※6款から",
+      "recipient": "静岡県国土調査協議会",
+      "amountThousandYen": 81
+    },
+    {
+      "kind": "burden",
+      "no": 250,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "緑地公園課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 22
+    },
+    {
+      "kind": "burden",
+      "no": 251,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "全国都市公園整備促進協議会会費",
+      "recipient": "全国都市公園整備促進協議会",
+      "amountThousandYen": 42
+    },
+    {
+      "kind": "burden",
+      "no": 252,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "日本公園緑地協会会費",
+      "recipient": "一般社団法人日本公園緑地協会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 253,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "鮎壷の滝緑地歩道橋(吊橋)管理に伴う負担金",
+      "recipient": "長泉町長",
+      "amountThousandYen": 217
+    },
+    {
+      "kind": "burden",
+      "no": 254,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "静岡県さくらの会会費",
+      "recipient": "静岡県さくらの会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 255,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "公益社団法人静岡県グリーンバンク会費",
+      "recipient": "公益社団法人静岡県グリーンバンク",
+      "amountThousandYen": 129
+    },
+    {
+      "kind": "burden",
+      "no": 256,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "子どもたちと地域の未来を考える花と緑のまちづくり全国首長会会費",
+      "recipient": "子どもたちと地域の未来を考える花と緑のまちづくり全国首長会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 257,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "国立公園関係都市協議会分担金",
+      "recipient": "国立公園関係都市協議会",
+      "amountThousandYen": 15
+    },
+    {
+      "kind": "burden",
+      "no": 258,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "愛鷹広域公園内給水及び汚水処理施設の管理負担金(愛鷹運動公園内宿泊施設分)",
+      "recipient": "あしたかスポーツ&ネイチャーパートナーズ",
+      "amountThousandYen": 274
+    },
+    {
+      "kind": "burden",
+      "no": 259,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "谷戸1号公園水道加入金",
+      "recipient": "沼津市長(水道会計)",
+      "amountThousandYen": 108
+    },
+    {
+      "kind": "burden",
+      "no": 260,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "さくら公園他1公園水道加入金",
+      "recipient": "沼津市長(水道会計)",
+      "amountThousandYen": 216
+    },
+    {
+      "kind": "burden",
+      "no": 261,
+      "department": "都市計画部",
+      "division": "緑地公園課",
+      "category": null,
+      "name": "岡宮5号公園水道加入金",
+      "recipient": "沼津市長(水道会計)",
+      "amountThousandYen": 108
+    },
+    {
+      "kind": "burden",
+      "no": 262,
+      "department": "都市計画部",
+      "division": "開発指導課",
+      "category": null,
+      "name": "開発指導課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 114
+    },
+    {
+      "kind": "burden",
+      "no": 263,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "静岡県建築行政連絡会議会費",
+      "recipient": "静岡県建築行政連絡会議",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 264,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "全国建築審査会協議会会費",
+      "recipient": "全国建築審査会協議会",
+      "amountThousandYen": 48
+    },
+    {
+      "kind": "burden",
+      "no": 265,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "日本建築行政会議負担金",
+      "recipient": "日本建築行政会議",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 266,
+      "department": "都市計画部",
+      "division": "開発指導課",
+      "category": null,
+      "name": "中部地方都市美協議会会費※H27:計画課",
+      "recipient": "中部地方都市美協議会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 267,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "静岡県マンション管理適正化推進協議会会費",
+      "recipient": "静岡県マンション管理適正化推進協議会",
+      "amountThousandYen": 129
+    },
+    {
+      "kind": "burden",
+      "no": 268,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "静岡県住宅振興協議会会費",
+      "recipient": "静岡県住宅振興協議会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "burden",
+      "no": 269,
+      "department": "都市計画部",
+      "division": "岡宮北区画整理事務所",
+      "category": null,
+      "name": "研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 29
+    },
+    {
+      "kind": "burden",
+      "no": 270,
+      "department": "都市計画部",
+      "division": "岡宮北区画整理事務所",
+      "category": null,
+      "name": "上水道施設新設に係る負担金",
+      "recipient": "沼津市長(水道会計)",
+      "amountThousandYen": 5052
+    },
+    {
+      "kind": "burden",
+      "no": 271,
+      "department": "駅周辺整備部",
+      "division": "沼津駅周辺区画整理事務所",
+      "category": null,
+      "name": "区画整理事務所会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 130
+    },
+    {
+      "kind": "burden",
+      "no": 272,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "推進課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 49
+    },
+    {
+      "kind": "burden",
+      "no": 273,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "沼津駅付近鉄道高架建設促進期成同盟会負担金",
+      "recipient": "沼津駅付近鉄道高架建設促進期成同盟会",
+      "amountThousandYen": 300
+    },
+    {
+      "kind": "burden",
+      "no": 274,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "都市計画事業(街路事業)に係る市町負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 884675
+    },
+    {
+      "kind": "burden",
+      "no": 275,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "下水道施設の移設設計業務委託負担金",
+      "recipient": "沼津市長(下水道会計)",
+      "amountThousandYen": 6050
+    },
+    {
+      "kind": "burden",
+      "no": 276,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "沼津駅付近鉄道高架事業に係る沼津市建設負担金(鉄道施設移転事業)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 10163
+    },
+    {
+      "kind": "burden",
+      "no": 277,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "沼津駅付近鉄道高架事業に係る沼津市建設負担金(片浜西沢田線道路改良事業)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 189920
+    },
+    {
+      "kind": "burden",
+      "no": 278,
+      "department": "駅周辺整備部",
+      "division": "推進課",
+      "category": null,
+      "name": "沼津駅付近鉄道高架事業に係る沼津市建設負担金(道路新設改良事業)",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 20485
+    },
+    {
+      "kind": "burden",
+      "no": 279,
+      "department": "建設部",
+      "division": "道路建設課",
+      "category": null,
+      "name": "道路建設課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 26
+    },
+    {
+      "kind": "burden",
+      "no": 280,
+      "department": "建設部",
+      "division": "道路建設課",
+      "category": null,
+      "name": "沼津・熱海土木事務所管内土木行政研究会分担金",
+      "recipient": "沼津・熱海土木事務所管内土木行政研究会",
+      "amountThousandYen": 20
+    },
+    {
+      "kind": "burden",
+      "no": 281,
+      "department": "建設部",
+      "division": "河川課",
+      "category": null,
+      "name": "河川課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 168
+    },
+    {
+      "kind": "burden",
+      "no": 282,
+      "department": "建設部",
+      "division": "河川課",
+      "category": null,
+      "name": "狩野川改修促進期成同盟会負担金",
+      "recipient": "狩野川改修促進期成同盟会",
+      "amountThousandYen": 121
+    },
+    {
+      "kind": "burden",
+      "no": 283,
+      "department": "建設部",
+      "division": "河川課",
+      "category": null,
+      "name": "静岡県河川協会事業負担金及び会費",
+      "recipient": "静岡県河川協会",
+      "amountThousandYen": 325
+    },
+    {
+      "kind": "burden",
+      "no": 284,
+      "department": "建設部",
+      "division": "河川課",
+      "category": null,
+      "name": "全国治水砂防協会静岡県支部会費",
+      "recipient": "全国治水砂防協会静岡県支部",
+      "amountThousandYen": 172
+    },
+    {
+      "kind": "burden",
+      "no": 285,
+      "department": "建設部",
+      "division": "河川課",
+      "category": null,
+      "name": "黄瀬川改修促進期成同盟会負担金",
+      "recipient": "黄瀬川改修促進期成同盟会",
+      "amountThousandYen": 73
+    },
+    {
+      "kind": "burden",
+      "no": 286,
+      "department": "建設部",
+      "division": "河川課",
+      "category": null,
+      "name": "急傾斜地崩壊対策事業の施行に係る地元負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 13290
+    },
+    {
+      "kind": "burden",
+      "no": 287,
+      "department": "建設部",
+      "division": "道路管理課",
+      "category": null,
+      "name": "道路管理課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 94
+    },
+    {
+      "kind": "burden",
+      "no": 288,
+      "department": "建設部",
+      "division": "道路管理課",
+      "category": null,
+      "name": "静岡県道路利用者会議負担金",
+      "recipient": "静岡県道路利用者会議",
+      "amountThousandYen": 830
+    },
+    {
+      "kind": "burden",
+      "no": 289,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "住宅政策課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 298
+    },
+    {
+      "kind": "burden",
+      "no": 290,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "一般社団法人日本住宅協会会費",
+      "recipient": "一般社団法人日本住宅協会",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 291,
+      "department": "都市計画部",
+      "division": "公共建築課",
+      "category": null,
+      "name": "公共建築課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 105
+    },
+    {
+      "kind": "burden",
+      "no": 292,
+      "department": "都市計画部",
+      "division": "公共建築課",
+      "category": null,
+      "name": "一般社団法人公共建築協会賛助会員会費",
+      "recipient": "一般社団法人公共建築協会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 293,
+      "department": "都市計画部",
+      "division": "公共建築課",
+      "category": null,
+      "name": "静岡県公共建築推進協議会会費",
+      "recipient": "静岡県公共建築推進協議会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 294,
+      "department": "都市計画部",
+      "division": "住宅政策課",
+      "category": null,
+      "name": "静岡県住宅行政連絡協議会会費",
+      "recipient": "静岡県住宅行政連絡協議会",
+      "amountThousandYen": 35
+    },
+    {
+      "kind": "burden",
+      "no": 295,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "建設デザイン政策課研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "burden",
+      "no": 296,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "伊豆縦貫自動車道建設促進期成同盟会負担金",
+      "recipient": "伊豆縦貫自動車道建設促進期成同盟会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 297,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "伊豆湘南道路建設促進期成同盟会会費",
+      "recipient": "伊豆湘南道路建設促進期成同盟会",
+      "amountThousandYen": 60
+    },
+    {
+      "kind": "burden",
+      "no": 298,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "新東名高速道路建設促進期成同盟会会費",
+      "recipient": "新東名高速道路建設促進期成同盟会",
+      "amountThousandYen": 21
+    },
+    {
+      "kind": "burden",
+      "no": 299,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "静岡県スマートIC協議会会費",
+      "recipient": "静岡県スマートIC協議会",
+      "amountThousandYen": 4
+    },
+    {
+      "kind": "burden",
+      "no": 300,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "静岡県国道協会会費",
+      "recipient": "静岡県国道協会",
+      "amountThousandYen": 40
+    },
+    {
+      "kind": "burden",
+      "no": 301,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "静岡県市町村道整備促進期成同盟会会費",
+      "recipient": "静岡県市町村道整備促進期成同盟会",
+      "amountThousandYen": 13
+    },
+    {
+      "kind": "burden",
+      "no": 302,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "静岡県道路協会特別会員会費",
+      "recipient": "静岡県道路協会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 303,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "東駿河湾環状道路整備促進期成同盟会負担金",
+      "recipient": "東駿河湾環状道路整備促進期成同盟会",
+      "amountThousandYen": 78
+    },
+    {
+      "kind": "burden",
+      "no": 304,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "県単独道路整備事業負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 9084
+    },
+    {
+      "kind": "burden",
+      "no": 305,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "都市計画事業(街路事業)に係る市町負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 65000
+    },
+    {
+      "kind": "burden",
+      "no": 306,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "無電柱化を推進する市区町村長の会会費",
+      "recipient": "無電柱化を推進する市区町村長の会",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 307,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "一般国道246号バイパス建設促進期成同盟負担金",
+      "recipient": "一般国道246号バイパス建設促進期成同盟",
+      "amountThousandYen": 55
+    },
+    {
+      "kind": "burden",
+      "no": 308,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "国道414号整備促進期成同盟会負担金",
+      "recipient": "国道414号整備促進期成同盟",
+      "amountThousandYen": 51
+    },
+    {
+      "kind": "burden",
+      "no": 309,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "静岡県街路事業促進協議会会費",
+      "recipient": "静岡県街路事業促進協議会",
+      "amountThousandYen": 67
+    },
+    {
+      "kind": "burden",
+      "no": 310,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "電線共同溝引込設備工事に係る建設費用負担金",
+      "recipient": "西日本電信電話株式会社",
+      "amountThousandYen": 6852
+    },
+    {
+      "kind": "burden",
+      "no": 311,
+      "department": "建設部",
+      "division": "建設デザイン政策課",
+      "category": null,
+      "name": "電線共同溝引込設備工事に係る建設費用負担金",
+      "recipient": "東京電力パワーグリッド株式会社静岡総支社",
+      "amountThousandYen": 2144
+    },
+    {
+      "kind": "burden",
+      "no": 312,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "静岡県消防学校入校経費",
+      "recipient": "静岡県消防学校長",
+      "amountThousandYen": 9
+    },
+    {
+      "kind": "burden",
+      "no": 313,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "消防団員等公務災害補償等共済基金掛金",
+      "recipient": "消防団員等公務災害補償等共済基金",
+      "amountThousandYen": 21742
+    },
+    {
+      "kind": "burden",
+      "no": 314,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "静岡県消防協会駿東支部負担金",
+      "recipient": "静岡県消防協会駿東支部",
+      "amountThousandYen": 1392
+    },
+    {
+      "kind": "burden",
+      "no": 315,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "静岡県消防協会駿東支部人件費負担金",
+      "recipient": "静岡県消防協会駿東支部",
+      "amountThousandYen": 579
+    },
+    {
+      "kind": "burden",
+      "no": 316,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "静岡県消防協会賞じゅつ金等負担金",
+      "recipient": "静岡県消防協会駿東支部長",
+      "amountThousandYen": 212
+    },
+    {
+      "kind": "burden",
+      "no": 317,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "消火栓新設及び維持補修に係る負担金",
+      "recipient": "沼津市長(水道会計)",
+      "amountThousandYen": 24598
+    },
+    {
+      "kind": "burden",
+      "no": 318,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "無線電波利用料負担金",
+      "recipient": "東海総合通信局",
+      "amountThousandYen": 132
+    },
+    {
+      "kind": "burden",
+      "no": 319,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "駿東伊豆消防組合負担金",
+      "recipient": "駿東伊豆消防組合",
+      "amountThousandYen": 2537314
+    },
+    {
+      "kind": "burden",
+      "no": 320,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "デジタル簡易無線電波利用料",
+      "recipient": "東海総合通信局",
+      "amountThousandYen": 9
+    },
+    {
+      "kind": "burden",
+      "no": 321,
+      "department": "教育委員会",
+      "division": "教育企画課",
+      "category": null,
+      "name": "教育企画課会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 322,
+      "department": "教育委員会",
+      "division": "教育企画課",
+      "category": null,
+      "name": "静岡県市町教育委員会連絡協議会負担金",
+      "recipient": "静岡県市町教育委員会連絡協議会",
+      "amountThousandYen": 67
+    },
+    {
+      "kind": "burden",
+      "no": 323,
+      "department": "教育委員会",
+      "division": "教育企画課",
+      "category": null,
+      "name": "静岡県都市教育長協議会負担金",
+      "recipient": "静岡県都市教育長協議会",
+      "amountThousandYen": 63
+    },
+    {
+      "kind": "burden",
+      "no": 324,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": null,
+      "name": "全国へき地教育研究連盟負担金",
+      "recipient": "全国へき地教育研究連盟静岡県",
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "burden",
+      "no": 325,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": null,
+      "name": "沼津市立小学校沼津市防火協会会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 326,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": null,
+      "name": "沼津市立中学校沼津市防火協会会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 327,
+      "department": "教育委員会",
+      "division": "学校施設課",
+      "category": null,
+      "name": "チェーンソー作業特別教育受講料",
+      "recipient": "林材業労災防止協会静岡県支部",
+      "amountThousandYen": 41
+    },
+    {
+      "kind": "burden",
+      "no": 328,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市幼児教育研究協議会会費",
+      "recipient": "沼津市幼児教育研究協議会",
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "burden",
+      "no": 329,
+      "department": "市民福祉部",
+      "division": "こども未来創造課",
+      "category": null,
+      "name": "沼津市幼年消防クラブ連絡協議会年会費",
+      "recipient": "沼津市幼年消防クラブ連絡協議会",
+      "amountThousandYen": 7
+    },
+    {
+      "kind": "burden",
+      "no": 330,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "市立高校会議、研修等負担金",
+      "recipient": null,
+      "amountThousandYen": 28
+    },
+    {
+      "kind": "burden",
+      "no": 331,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "静岡県高等学校長協会費",
+      "recipient": "静岡県高等学校長協会",
+      "amountThousandYen": 40
+    },
+    {
+      "kind": "burden",
+      "no": 332,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "沼津市防火協会年会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 14
+    },
+    {
+      "kind": "burden",
+      "no": 333,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "静岡県都市立高等学校長会会費",
+      "recipient": "静岡県都市立高等学校長会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 334,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "全国高等学校教頭・副校長会会費",
+      "recipient": "全国高等学校教頭・副校長会",
+      "amountThousandYen": 9
+    },
+    {
+      "kind": "burden",
+      "no": 335,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "全国高等学校長協会諸会費",
+      "recipient": "静岡県高等学校長協会",
+      "amountThousandYen": 19
+    },
+    {
+      "kind": "burden",
+      "no": 336,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "東海地方公立高等学校事務職員研究協議会負担金",
+      "recipient": "東海地方公立高等学校事務職員研究協議会",
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "burden",
+      "no": 337,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "全国普通科高等学校長会第72回総会・研究協議会(東京大会)参加費",
+      "recipient": "全国普通科高等学校長会",
+      "amountThousandYen": 7
+    },
+    {
+      "kind": "burden",
+      "no": 338,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "全国公立高等学校事務職員協会会費",
+      "recipient": "全国公立高等学校事務職員協会",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 339,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "第75回全国公立高等学校事務職員研究大会参加費",
+      "recipient": "全国公立高等学校事務職員研究大会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 340,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "東海地方公立高等学校事務職員研究協議会総会、研究大会参加負担金",
+      "recipient": "東海地方公立高等学校事務職員研究協議会",
+      "amountThousandYen": 2
+    },
+    {
+      "kind": "burden",
+      "no": 341,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "外国青年招致事業に係る人員割会費、保険負担金、渡航負担金、オリエンテーション負担金",
+      "recipient": "一般財団法人自治体国際化協会",
+      "amountThousandYen": 460
+    },
+    {
+      "kind": "burden",
+      "no": 342,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "甲種防火管理新規講習受講料",
+      "recipient": "日本防火防災協会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 343,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "令和6年度東海四県高等学校長生徒指導連絡協議会参加費",
+      "recipient": "静岡県高等学校長協会生徒指導専門委員会",
+      "amountThousandYen": 2
+    },
+    {
+      "kind": "burden",
+      "no": 344,
+      "department": "教育委員会",
+      "division": "市立高校",
+      "category": null,
+      "name": "令和6年度教育研究会学校会費",
+      "recipient": "静岡県高等学校教育研究会",
+      "amountThousandYen": 33
+    },
+    {
+      "kind": "burden",
+      "no": 345,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "育成教育事業研究事業関係全国特別支援学級設置学校長協会会費",
+      "recipient": "静岡県校長会",
+      "amountThousandYen": 21
+    },
+    {
+      "kind": "burden",
+      "no": 346,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "育成教育事業研究事業関係全特連沼津地区会費",
+      "recipient": "静岡県教育研究会特別支援教育研究部",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 347,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "全国公立学校難聴・言語障害教育研究協議会負担金",
+      "recipient": "全国公立学校難聴・言語障害教育研究協議会(下記と一本化)",
+      "amountThousandYen": 27
+    },
+    {
+      "kind": "burden",
+      "no": 348,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "静岡県教育研究部(特別支援教育研究部)東部支部事務局費",
+      "recipient": "静岡県教育研究会特別支援教育研究部東部支部",
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "burden",
+      "no": 349,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "沼津学校腎検診(学童腎臓検診)判定委員会負担金",
+      "recipient": "一般社団法人沼津医師会",
+      "amountThousandYen": 808
+    },
+    {
+      "kind": "burden",
+      "no": 350,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "独立行政法人日本スポーツ振興センター災害共済給付契約に係る共済掛金設置者負担分",
+      "recipient": "独立行政法人日本スポーツ振興センター",
+      "amountThousandYen": 5565
+    },
+    {
+      "kind": "burden",
+      "no": 351,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "独立行政法人日本スポーツ振興センター災害共済給付契約に係る共済掛金準要保護児童生徒返金分",
+      "recipient": "独立行政法人日本スポーツ振興センター",
+      "amountThousandYen": 597
+    },
+    {
+      "kind": "burden",
+      "no": 352,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "教職員人間ドック負担金",
+      "recipient": "公立学校共済組合静岡支部",
+      "amountThousandYen": 5495
+    },
+    {
+      "kind": "burden",
+      "no": 353,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "ALT資質向上研修負担金",
+      "recipient": "静岡県知事",
+      "amountThousandYen": 1
+    },
+    {
+      "kind": "burden",
+      "no": 354,
+      "department": "教育委員会",
+      "division": "教職員研修センター",
+      "category": null,
+      "name": "教職員研修センター研修等負担金",
+      "recipient": "一般財団法人教育調査研究所",
+      "amountThousandYen": 6
+    },
+    {
+      "kind": "burden",
+      "no": 355,
+      "department": "教育委員会",
+      "division": "教職員研修センター",
+      "category": null,
+      "name": "教職員研修センター教科用図書採択連絡協議会負担金",
+      "recipient": "駿東沼津地区教科用図書採択連絡協議会",
+      "amountThousandYen": 78
+    },
+    {
+      "kind": "burden",
+      "no": 356,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": null,
+      "name": "静岡県文化財保存協会団体会員年会費",
+      "recipient": "静岡県文化財保存協会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 357,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": null,
+      "name": "全国史跡整備市町村協議会東海地区協議会加盟負担金",
+      "recipient": "全国史跡整備市町村協議会東海地区協議会",
+      "amountThousandYen": 10
+    },
+    {
+      "kind": "burden",
+      "no": 358,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": null,
+      "name": "全国史跡整備市町村協議会負担金",
+      "recipient": "全国史跡整備市町村協議会",
+      "amountThousandYen": 40
+    },
+    {
+      "kind": "burden",
+      "no": 359,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": null,
+      "name": "興国寺城跡常設簡易水洗トイレ水道料負担金",
+      "recipient": "根古屋自治会",
+      "amountThousandYen": 12
+    },
+    {
+      "kind": "burden",
+      "no": 360,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": null,
+      "name": "静岡県博物館協会会費",
+      "recipient": "静岡県博物館協会",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 361,
+      "department": "教育委員会",
+      "division": "文化振興課",
+      "category": null,
+      "name": "日本博物館協会維持会費",
+      "recipient": "公益財団法人日本博物館協会",
+      "amountThousandYen": 25
+    },
+    {
+      "kind": "burden",
+      "no": 362,
+      "department": "教育委員会",
+      "division": "歴史民俗資料館",
+      "category": null,
+      "name": "日本民俗学会会費",
+      "recipient": "日本民俗学会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 363,
+      "department": "教育委員会",
+      "division": "歴史民俗資料館",
+      "category": null,
+      "name": "沼津市防火協会会費",
+      "recipient": "沼津市防火協会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 364,
+      "department": "教育委員会",
+      "division": "歴史民俗資料館",
+      "category": null,
+      "name": "静岡県博物館協会会費",
+      "recipient": "静岡県博物館協会",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 365,
+      "department": "教育委員会",
+      "division": "歴史民俗資料館",
+      "category": null,
+      "name": "日本博物館協会維持会費",
+      "recipient": "公益財団法人日本博物館協会",
+      "amountThousandYen": 25
+    },
+    {
+      "kind": "burden",
+      "no": 366,
+      "department": "教育委員会",
+      "division": "明治史料館",
+      "category": null,
+      "name": "富士・沼津・三島三市博物館連絡協議会負担金",
+      "recipient": "富士・沼津・三島三市博物館連絡協議会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 367,
+      "department": "教育委員会",
+      "division": "明治史料館",
+      "category": null,
+      "name": "日本博物館協会維持会費",
+      "recipient": "公益財団法人日本博物館協会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 368,
+      "department": "教育委員会",
+      "division": "明治史料館",
+      "category": null,
+      "name": "全国歴史資料保存利用機関連絡協議会会費",
+      "recipient": "全国歴史資料保存利用機関連絡協議会",
+      "amountThousandYen": 35
+    },
+    {
+      "kind": "burden",
+      "no": 369,
+      "department": "教育委員会",
+      "division": "明治史料館",
+      "category": null,
+      "name": "静岡県博物館協会会費",
+      "recipient": "静岡県博物館協会",
+      "amountThousandYen": 18
+    },
+    {
+      "kind": "burden",
+      "no": 370,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": null,
+      "name": "静岡県社会教育委員連絡協議会市町会費",
+      "recipient": "静岡県社会教育委員連絡協議会",
+      "amountThousandYen": 322
+    },
+    {
+      "kind": "burden",
+      "no": 371,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": null,
+      "name": "東部社会教育振興協議会負担金",
+      "recipient": "東部社会教育振興協議会",
+      "amountThousandYen": 299
+    },
+    {
+      "kind": "burden",
+      "no": 372,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": null,
+      "name": "静岡県電話相談機関連絡協議会会費",
+      "recipient": "静岡県電話相談機関連絡協議会",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 373,
+      "department": "教育委員会",
+      "division": "生涯学習課",
+      "category": null,
+      "name": "教育相談推進事業研修参加負担金",
+      "recipient": "静岡県東部地区学校臨床研究会",
+      "amountThousandYen": 4
+    },
+    {
+      "kind": "burden",
+      "no": 374,
+      "department": "教育委員会",
+      "division": "図書館",
+      "category": null,
+      "name": "公益社団法人日本図書館協会会費",
+      "recipient": "公益社団法人日本図書館協会",
+      "amountThousandYen": 50
+    },
+    {
+      "kind": "burden",
+      "no": 375,
+      "department": "教育委員会",
+      "division": "図書館",
+      "category": null,
+      "name": "公益財団法人図書館振興財団友の会会費",
+      "recipient": "公益財団法人図書館振興財団",
+      "amountThousandYen": 3
+    },
+    {
+      "kind": "burden",
+      "no": 376,
+      "department": "教育委員会",
+      "division": "図書館",
+      "category": null,
+      "name": "静岡県図書館協会会費",
+      "recipient": "静岡県図書館協会",
+      "amountThousandYen": 90
+    },
+    {
+      "kind": "burden",
+      "no": 377,
+      "department": "教育委員会",
+      "division": "図書館",
+      "category": null,
+      "name": "静岡県統計協会特別会費",
+      "recipient": "静岡県統計協会",
+      "amountThousandYen": 17
+    },
+    {
+      "kind": "burden",
+      "no": 378,
+      "department": "教育委員会",
+      "division": "図書館",
+      "category": null,
+      "name": "甲種防火管理新規講習受講料",
+      "recipient": "一般財団法人日本防火・防災協会",
+      "amountThousandYen": 8
+    },
+    {
+      "kind": "burden",
+      "no": 379,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "静岡県スポーツ推進委員連絡協議会負担金及び公益社団法人全国スポーツ推進委員連合普通会員会費",
+      "recipient": "静岡県スポーツ推進委員連絡協議会",
+      "amountThousandYen": 142
+    },
+    {
+      "kind": "burden",
+      "no": 380,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "静岡県スポーツ施設協会会費",
+      "recipient": "静岡県スポーツ施設協会",
+      "amountThousandYen": 5
+    },
+    {
+      "kind": "burden",
+      "no": 381,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "東海四県スポーツ推進委員研究大会参加者負担金",
+      "recipient": "東武トップツアーズ株式会社三重支店",
+      "amountThousandYen": 2
+    },
+    {
+      "kind": "burden",
+      "no": 382,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "静岡県B&G財団地域海洋センター連絡協議会負担金",
+      "recipient": "静岡県B&G財団地域海洋センター連絡協議会",
+      "amountThousandYen": 30
+    },
+    {
+      "kind": "burden",
+      "no": 383,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "沼津市民屋内温水プール利用料助成金交付事業助成券負担金",
+      "recipient": "シンコースポーツ株式会社静岡支店他全4名",
+      "amountThousandYen": 880
+    },
+    {
+      "kind": "burden",
+      "no": 384,
+      "department": "産業振興部",
+      "division": "ウィズスポーツ課",
+      "category": null,
+      "name": "天皇賜杯第79回全日本軟式野球大会ENEOSトーナメント開催負担金",
+      "recipient": "一般財団法人静岡県野球連盟",
+      "amountThousandYen": 500
+    },
+    {
+      "kind": "burden",
+      "no": 385,
+      "department": "財務部",
+      "division": "財政課",
+      "category": null,
+      "name": "一般財団法人地方債協会会費",
+      "recipient": "一般財団法人地方債協会",
+      "amountThousandYen": 100
+    },
+    {
+      "kind": "grant",
+      "no": 1,
+      "department": "事務局",
+      "division": "議会事務局",
+      "category": null,
+      "name": "政務活動費",
+      "recipient": "市議会議員",
+      "amountThousandYen": 8674
+    },
+    {
+      "kind": "grant",
+      "no": 2,
+      "department": "政策推進部",
+      "division": "ICT推進課",
+      "category": null,
+      "name": "特定個人情報の提供の求め等に係る電子計算機の設置等関連事務の委任に係る交付金",
+      "recipient": "地方公共団体情報システム機構",
+      "amountThousandYen": 8857
+    },
+    {
+      "kind": "grant",
+      "no": 3,
+      "department": "財務部",
+      "division": "総務課",
+      "category": null,
+      "name": "沼津海浜訓練場施設区域取得等事務交付金",
+      "recipient": "今沢自治会",
+      "amountThousandYen": 135
+    },
+    {
+      "kind": "grant",
+      "no": 4,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "沼津市耐震性貯水槽水替え業務交付金",
+      "recipient": "沼津市消防団",
+      "amountThousandYen": 915
+    },
+    {
+      "kind": "grant",
+      "no": 5,
+      "department": "市民福祉部",
+      "division": "福祉企画課",
+      "category": null,
+      "name": "沼津地区保護司会運営事業交付金",
+      "recipient": "沼津地区保護司会",
+      "amountThousandYen": 486
+    },
+    {
+      "kind": "grant",
+      "no": 6,
+      "department": "市民福祉部",
+      "division": "福祉企画課",
+      "category": null,
+      "name": "沼津市民生委員児童委員協議会運営事業交付金",
+      "recipient": "沼津市民生委員児童委員協議会",
+      "amountThousandYen": 29843
+    },
+    {
+      "kind": "grant",
+      "no": 7,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "心身障害者扶養共済制度年金",
+      "recipient": "申請者",
+      "amountThousandYen": 25760
+    },
+    {
+      "kind": "grant",
+      "no": 8,
+      "department": "市民福祉部",
+      "division": "障がい福祉課",
+      "category": null,
+      "name": "沼津市「障害者週間」市民の集い開催事業交付金",
+      "recipient": "沼津市「障害者週間」市民の集い実行委員会",
+      "amountThousandYen": 800
+    },
+    {
+      "kind": "grant",
+      "no": 9,
+      "department": "市民福祉部",
+      "division": "長寿福祉課",
+      "category": null,
+      "name": "「敬老の日」行事開催事業交付金",
+      "recipient": "連合自治会",
+      "amountThousandYen": 1954
+    },
+    {
+      "kind": "grant",
+      "no": 10,
+      "department": "市民福祉部",
+      "division": "臨時福祉給付金室",
+      "category": null,
+      "name": "低所得者支援・定額減税補足給付金(繰越明許)",
+      "recipient": "申請者",
+      "amountThousandYen": 96200
+    },
+    {
+      "kind": "grant",
+      "no": 11,
+      "department": "市民福祉部",
+      "division": "臨時福祉給付金室",
+      "category": null,
+      "name": "低所得者支援・定額減税補足給付金",
+      "recipient": "申請者",
+      "amountThousandYen": 1756000
+    },
+    {
+      "kind": "grant",
+      "no": 12,
+      "department": "市民福祉部",
+      "division": "臨時福祉給付金室",
+      "category": null,
+      "name": "低所得世帯支援給付金支給事業",
+      "recipient": "申請者",
+      "amountThousandYen": 572730
+    },
+    {
+      "kind": "grant",
+      "no": 13,
+      "department": "生活環境部",
+      "division": "環境政策課",
+      "category": null,
+      "name": "し尿くみ取料金遠距離加算料交付金",
+      "recipient": "し尿くみ取業者",
+      "amountThousandYen": 178
+    },
+    {
+      "kind": "grant",
+      "no": 14,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "消防団燃料交付金",
+      "recipient": "沼津市消防団",
+      "amountThousandYen": 2465
+    },
+    {
+      "kind": "grant",
+      "no": 15,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "消防団員福祉共済制度加入交付金",
+      "recipient": "沼津市消防団",
+      "amountThousandYen": 1478
+    },
+    {
+      "kind": "grant",
+      "no": 16,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "沼津市消防団運営事業費交付金",
+      "recipient": "沼津市消防団",
+      "amountThousandYen": 28541
+    },
+    {
+      "kind": "grant",
+      "no": 17,
+      "department": null,
+      "division": "危機管理課",
+      "category": null,
+      "name": "沼津市消防出初式交付金",
+      "recipient": "沼津市消防団",
+      "amountThousandYen": 602
+    },
+    {
+      "kind": "grant",
+      "no": 18,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "沼津市立小中高等学校ネットワーク協議会交付金",
+      "recipient": "沼津市立小中高等学校ネットワーク協議会",
+      "amountThousandYen": 250
+    },
+    {
+      "kind": "grant",
+      "no": 19,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "地域交流推進・外部人材活用事業交付金(小学校分)",
+      "recipient": "小学校",
+      "amountThousandYen": 645
+    },
+    {
+      "kind": "grant",
+      "no": 20,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "地域交流推進・外部人材活用事業交付金(中学校分)",
+      "recipient": "中学校",
+      "amountThousandYen": 1248
+    },
+    {
+      "kind": "grant",
+      "no": 21,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "「チーム学校」実現事業(校務効率化事業)交付金",
+      "recipient": "小中学校",
+      "amountThousandYen": 79
+    },
+    {
+      "kind": "grant",
+      "no": 22,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "沼津教育振興会事業費交付金",
+      "recipient": "一般社団法人沼津教育振興会",
+      "amountThousandYen": 1170
+    },
+    {
+      "kind": "grant",
+      "no": 23,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "沼津市学校保健会事業費交付金",
+      "recipient": "沼津市学校保健会",
+      "amountThousandYen": 600
+    },
+    {
+      "kind": "grant",
+      "no": 24,
+      "department": "教育委員会",
+      "division": "学校教育課",
+      "category": null,
+      "name": "沼津市中学校体育振興交付金",
+      "recipient": "沼津市中学校体育連盟",
+      "amountThousandYen": 910
+    }
+  ],
+  "sources": [
+    {
+      "title": "一般会計決算（歳入）",
+      "url": "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf/sainyu.pdf"
+    },
+    {
+      "title": "市政報告書 附表（一般会計歳出決算節別集計表）",
+      "url": "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf_houkoku/fuhyou.pdf"
+    },
+    {
+      "title": "補助金一覧",
+      "url": "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf/hojyokin.pdf"
+    },
+    {
+      "title": "負担金一覧",
+      "url": "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf/futankin.pdf"
+    },
+    {
+      "title": "交付金一覧",
+      "url": "https://www.city.numazu.shizuoka.jp/shisei/gyozaisei/finance/kessan2024/pdf/koufukin.pdf"
+    }
+  ]
+}

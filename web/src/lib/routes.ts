@@ -59,4 +59,5 @@ export const routes = {
   // ── 財政 ──────────────────────────────────────────
   finance: () => "/finance" as const,
   financeYear: (fiscalYear: number) => `/finance/${fiscalYear}` as const,
+  financeFlow: (fiscalYear: number) => `/finance/${fiscalYear}/flow` as const,
 } as const;
